@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /private
+
+Sitemap: https://kadeh.com/sitemap.xml
+
+# Crawl delay (in seconds)
+Crawl-delay: 1
+
+# Request rate
+Request-rate: 1/1s
