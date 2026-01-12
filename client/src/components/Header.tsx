@@ -22,6 +22,9 @@ export default function Header() {
           <Link href="/#solucoes" className="text-sm text-foreground hover:text-primary transition-colors">
             Soluções
           </Link>
+          <Link href="/picking" className="text-sm text-foreground hover:text-primary transition-colors">
+            Picking
+          </Link>
           <Link href="/#como-funciona" className="text-sm text-foreground hover:text-primary transition-colors">
             Como Funciona
           </Link>

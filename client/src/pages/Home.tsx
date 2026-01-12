@@ -17,6 +17,7 @@ import {
   Users,
   Shield,
   BarChart3,
+  CheckCircle,
 } from "lucide-react";
 
 export default function Home() {
@@ -71,6 +72,12 @@ export default function Home() {
       description:
         "Aeroportos, rodoviárias e serviços públicos com rotas certeiras, menos filas e menos necessidade de orientação humana.",
       icon: <MapPin className="w-6 h-6" />,
+    },
+    {
+      title: "Kadeh Picking",
+      description:
+        "Picking eficiente para e-commerce com rotas otimizadas, validação em tempo real e rastreamento completo.",
+      icon: <CheckCircle className="w-6 h-6" />,
     },
   ];
 
