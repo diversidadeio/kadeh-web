@@ -10,6 +10,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
+import SmartLayoutSimulator from "@/components/SmartLayoutSimulator";
 import {
   BarChart3,
   Zap,
@@ -453,6 +454,21 @@ export default function SmartLayout() {
               <p className="text-muted-foreground">Tempo para Resultados</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Simulador Interativo */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Teste o Smart Layout: Simulador Interativo
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Configure sua gôndola, adicione produtos e veja as recomendações de layout em tempo real.
+            </p>
+          </div>
+          <SmartLayoutSimulator />
         </div>
       </section>
 
