@@ -34,6 +34,7 @@ export default function Footer() {
               <li><Link href="/#solucoes" className="hover:text-primary transition-colors">Kadeh Saúde</Link></li>
               <li><Link href="/#solucoes" className="hover:text-primary transition-colors">Kadeh Localiza</Link></li>
               <li><Link href="/picking" className="hover:text-primary transition-colors">Kadeh Picking</Link></li>
+              <li><Link href="/smart-layout" className="hover:text-primary transition-colors">Kadeh Smart Layout</Link></li>
             </ul>
           </div>
 

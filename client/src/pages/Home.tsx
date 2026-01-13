@@ -18,6 +18,7 @@ import {
   Shield,
   BarChart3,
   CheckCircle,
+  Grid3X3,
 } from "lucide-react";
 
 export default function Home() {
@@ -78,6 +79,12 @@ export default function Home() {
       description:
         "Picking eficiente para e-commerce com rotas otimizadas, validação em tempo real e rastreamento completo.",
       icon: <CheckCircle className="w-6 h-6" />,
+    },
+    {
+      title: "Kadeh Smart Layout",
+      description:
+        "Gerenciamento inteligente de categorias com recomendações de frentes, posicionamento e redimensionamento de gôndolas.",
+      icon: <BarChart3 className="w-6 h-6" />,
     },
   ];
 
