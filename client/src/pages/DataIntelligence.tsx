@@ -10,6 +10,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
+import DataIntelligenceDashboard from "@/components/DataIntelligenceDashboard";
 import {
   BarChart3,
   TrendingUp,
@@ -430,6 +431,21 @@ export default function DataIntelligence() {
               <p className="text-muted-foreground">Latência de Dados</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Dashboard Interativo */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Dashboard On-Time: Visualize Dados em Tempo Real
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Acompanhe métricas, padrões de busca, heat map e intenção de compra em tempo real.
+            </p>
+          </div>
+          <DataIntelligenceDashboard />
         </div>
       </section>
 
