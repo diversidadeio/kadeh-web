@@ -11,6 +11,7 @@ import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import DataIntelligenceDashboard from "@/components/DataIntelligenceDashboard";
+import MarginAnalysisByStore from "@/components/MarginAnalysisByStore";
 import {
   BarChart3,
   TrendingUp,
@@ -446,6 +447,21 @@ export default function DataIntelligence() {
             </p>
           </div>
           <DataIntelligenceDashboard />
+        </div>
+      </section>
+
+      {/* Análise de Margens por Loja */}
+      <section className="bg-secondary/20 py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Análise de Margens por Loja: Decisões Estratégicas em Tempo Real
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Conheça as margens de cada categoria em suas lojas ou grupos de lojas. Compare desempenho, identifique oportunidades e tome decisões baseadas em dados.
+            </p>
+          </div>
+          <MarginAnalysisByStore />
         </div>
       </section>
 
