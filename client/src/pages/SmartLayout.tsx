@@ -407,7 +407,71 @@ export default function SmartLayout() {
         </div>
       </section>
 
-      {/* Casos de Uso */}
+      {/* Exemplo Prático: Azeites */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Exemplo Prático: Otimização de Categoria de Azeites
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Veja como o Kadeh Smart Layout recomenda o posicionamento estratégico de produtos de azeite baseado em giro e margem de lucratividade.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="rounded-md overflow-hidden border border-border">
+              <img src="/images/smart-layout-olive-oil-detailed.png" alt="Exemplo de otimização de gôndola de azeites" className="w-full h-auto" />
+            </div>
+
+            <div className="space-y-6">
+              <div className="p-6 bg-green-50 border-l-4 border-green-600 rounded-md">
+                <h3 className="text-lg font-semibold text-green-900 mb-2 flex items-center gap-2">
+                  <span className="text-2xl">🏆</span>
+                  Azeite Extra Virgem Premium
+                </h3>
+                <p className="text-green-800 mb-3"><strong>Características:</strong> Alto Giro + Alta Margem</p>
+                <p className="text-green-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura dos olhos (TOP SHELF) - Melhor posição da gôndola</p>
+                <p className="text-green-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 40% da categoria (2 frentes)</p>
+                <p className="text-green-700 text-sm"><strong>Preço:</strong> R$ 89.90 - Margem: 35% | Giro: 8 unidades/semana</p>
+              </div>
+
+              <div className="p-6 bg-yellow-50 border-l-4 border-yellow-600 rounded-md">
+                <h3 className="text-lg font-semibold text-yellow-900 mb-2 flex items-center gap-2">
+                  <span className="text-2xl">⚖️</span>
+                  Azeite Extra Virgem
+                </h3>
+                <p className="text-yellow-800 mb-3"><strong>Características:</strong> Médio Giro + Média Margem</p>
+                <p className="text-yellow-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura das mãos (SECOND SHELF) - Posição balanceada</p>
+                <p className="text-yellow-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 35% da categoria (3 frentes)</p>
+                <p className="text-yellow-700 text-sm"><strong>Preço:</strong> R$ 45.50 - Margem: 22% | Giro: 12 unidades/semana</p>
+              </div>
+
+              <div className="p-6 bg-blue-50 border-l-4 border-blue-600 rounded-md">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  <span className="text-2xl">📦</span>
+                  Azeite Virgem + Óleo Composto
+                </h3>
+                <p className="text-blue-800 mb-3"><strong>Características:</strong> Alto Giro + Baixa Margem</p>
+                <p className="text-blue-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura das mãos e piso (THIRD/BOTTOM SHELF) - Posições secundárias</p>
+                <p className="text-blue-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 25% da categoria (6 frentes combinadas)</p>
+                <p className="text-blue-700 text-sm"><strong>Preço:</strong> R$ 22.90 / R$ 12.50 - Margem: 12-15% | Giro: 20+ unidades/semana</p>
+              </div>
+
+              <div className="p-4 bg-card border border-border rounded-md">
+                <h3 className="font-semibold text-foreground mb-2">📊 Resultado Esperado:</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>✓ <strong>+12% de lucratividade</strong> ao dar mais espaço para azeites premium</li>
+                  <li>✓ <strong>-15% de ruptura</strong> ao posicionar produtos de alto giro adequadamente</li>
+                  <li>✓ <strong>+8% de ticket médio</strong> ao destacar produtos de maior valor</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+            {/* Casos de Uso */}
       <section className="bg-card py-20 lg:py-32 border-t border-border">
         <div className="container">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-12">
