@@ -28,6 +28,9 @@ export default function Header() {
           <Link href="/smart-layout" className="text-sm text-foreground hover:text-primary transition-colors">
             Smart Layout
           </Link>
+          <Link href="/data-intelligence" className="text-sm text-foreground hover:text-primary transition-colors">
+            Intelligence
+          </Link>
           <Link href="/#como-funciona" className="text-sm text-foreground hover:text-primary transition-colors">
             Como Funciona
           </Link>

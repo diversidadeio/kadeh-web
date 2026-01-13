@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Picking from "./pages/Picking";
 import SmartLayout from "./pages/SmartLayout";
+import DataIntelligence from "./pages/DataIntelligence";
 
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/picking" component={Picking} />
       <Route path="/smart-layout" component={SmartLayout} />
+      <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
