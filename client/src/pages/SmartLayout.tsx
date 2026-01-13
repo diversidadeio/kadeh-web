@@ -274,7 +274,7 @@ export default function SmartLayout() {
         subtitle="Recomendações automáticas de número de frentes, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver funcionalidades"
-        imageUrl="/images/smart-layout-gondola.png"
+        imageUrl="/images/smart-layout-olive-oil.png"
         imageAlt="Smart Layout - Otimização de Gôndolas"
       />
 

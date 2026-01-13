@@ -12,10 +12,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-border">
       <nav className="container flex items-center justify-between py-6">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-            <span className="text-white font-bold text-sm">K</span>
-          </div>
-          <span className="font-bold text-lg text-foreground">Kadeh</span>
+          <img src="/images/logo-kadeh.png" alt="Kadeh" className="h-14 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
