@@ -20,6 +20,15 @@ interface Product {
   margem: "Baixa" | "Média" | "Alta";
   category: CategoryType;
   subCategory: SubCategory;
+  largura?: number; // largura do produto em cm
+  comprimento?: number; // comprimento/profundidade do produto em cm
+  promotionalPoints?: PromotionalPoint[];
+}
+
+interface PromotionalPoint {
+  id: string;
+  type: "Ilha Promocional" | "Terminal de Gôndola" | "Outro";
+  capacity: number; // capacidade em unidades
 }
 
 interface Recommendation {
@@ -62,6 +71,7 @@ export default function SmartLayoutSimulator() {
 
   const [gondolaWidth, setGondolaWidth] = useState(280);
   const [shelves, setShelves] = useState(5);
+  const [shelfDepth, setShelfDepth] = useState(40); // profundidade da prateleira em cm
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | "Todas">("Todas");
   const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory | "Todas">("Todas");
   const [newProductName, setNewProductName] = useState("");
@@ -69,6 +79,8 @@ export default function SmartLayoutSimulator() {
   const [newProductMargem, setNewProductMargem] = useState<"Baixa" | "Média" | "Alta">("Média");
   const [newProductCategory, setNewProductCategory] = useState<CategoryType>("Alimentar");
   const [newProductSubCategory, setNewProductSubCategory] = useState<SubCategory>("Alimentos");
+  const [promotionalPointType, setPromotionalPointType] = useState<"Ilha Promocional" | "Terminal de Gôndola" | "Outro">("Ilha Promocional");
+  const [promotionalPointCapacity, setPromotionalPointCapacity] = useState(0);
 
   const addProduct = () => {
     if (newProductName.trim()) {
@@ -99,14 +111,69 @@ export default function SmartLayoutSimulator() {
 
   const resetSimulator = () => {
     setProducts([
-      { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos" },
-      { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas" },
-      { id: "3", name: "Brinquedo Premium", giro: "Baixo", margem: "Alta", category: "Não-Alimentar", subCategory: "Brinquedos" },
+      { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+      { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas", largura: 10, comprimento: 25 },
+      { id: "3", name: "Brinquedo Premium", giro: "Baixo", margem: "Alta", category: "Não-Alimentar", subCategory: "Brinquedos", largura: 15, comprimento: 20 },
     ]);
     setGondolaWidth(280);
     setShelves(5);
+    setShelfDepth(40);
     setSelectedCategory("Todas");
     setSelectedSubCategory("Todas");
+  };
+
+  // Calcular capacidade no ponto natural (gôndola)
+  const calculateNaturalPointCapacity = (product: Product): number => {
+    if (!product.largura || !product.comprimento) return 0;
+    const rec = getRecommendation(product.giro, product.margem);
+    const produtosPorFrente = Math.floor(shelfDepth / product.comprimento);
+    return rec.frentes * produtosPorFrente * shelves;
+  };
+
+  // Calcular capacidade em pontos promocionais
+  const calculatePromotionalCapacity = (product: Product): number => {
+    if (!product.promotionalPoints || product.promotionalPoints.length === 0) return 0;
+    return product.promotionalPoints.reduce((sum, point) => sum + point.capacity, 0);
+  };
+
+  // Calcular capacidade total (ponto natural + promocional)
+  const calculateTotalStoreCapacity = (product: Product): number => {
+    return calculateNaturalPointCapacity(product) + calculatePromotionalCapacity(product);
+  };
+
+  // Adicionar ponto promocional a um produto
+  const addPromotionalPoint = (productId: string) => {
+    if (promotionalPointCapacity <= 0) return;
+    setProducts(products.map(p => {
+      if (p.id === productId) {
+        return {
+          ...p,
+          promotionalPoints: [
+            ...(p.promotionalPoints || []),
+            {
+              id: `promo-${Date.now()}`,
+              type: promotionalPointType,
+              capacity: promotionalPointCapacity,
+            }
+          ]
+        };
+      }
+      return p;
+    }));
+    setPromotionalPointCapacity(0);
+  };
+
+  // Remover ponto promocional
+  const removePromotionalPoint = (productId: string, promoId: string) => {
+    setProducts(products.map(p => {
+      if (p.id === productId) {
+        return {
+          ...p,
+          promotionalPoints: (p.promotionalPoints || []).filter(pr => pr.id !== promoId)
+        };
+      }
+      return p;
+    }));
   };
 
   const totalShare = filteredProducts.reduce((sum, p) => {
@@ -127,6 +194,9 @@ export default function SmartLayoutSimulator() {
       margem: typeof p.margem === "number" ? numericToCategory(p.margem, "margem") as "Baixa" | "Média" | "Alta" : p.margem,
       category: p.category,
       subCategory: p.subCategory,
+      largura: p.largura,
+      comprimento: p.comprimento,
+      promotionalPoints: [],
     }));
     setProducts([...products, ...newProducts]);
   };
@@ -179,7 +249,7 @@ export default function SmartLayoutSimulator() {
       </div>
 
       {/* Configuração da Gôndola */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Largura da Gôndola (cm)</label>
           <input
@@ -203,6 +273,18 @@ export default function SmartLayoutSimulator() {
             className="w-full"
           />
           <p className="text-xs text-muted-foreground mt-1">{shelves} prateleiras</p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">Profundidade da Prateleira (cm)</label>
+          <input
+            type="range"
+            min="20"
+            max="80"
+            value={shelfDepth}
+            onChange={(e) => setShelfDepth(Number(e.target.value))}
+            className="w-full"
+          />
+          <p className="text-xs text-muted-foreground mt-1">{shelfDepth} cm</p>
         </div>
         <div className="flex items-end">
           <Button onClick={resetSimulator} variant="outline" className="w-full flex items-center gap-2">
@@ -279,12 +361,14 @@ export default function SmartLayoutSimulator() {
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-3 px-4 font-semibold">Produto</th>
+                <th className="text-left py-3 px-4 font-semibold">Dimensões (L×C)</th>
                 <th className="text-left py-3 px-4 font-semibold">Categoria</th>
                 <th className="text-left py-3 px-4 font-semibold">Giro</th>
                 <th className="text-left py-3 px-4 font-semibold">Margem</th>
+                <th className="text-left py-3 px-4 font-semibold">Por Prateleira</th>
+                <th className="text-left py-3 px-4 font-semibold">Ponto Natural</th>
                 <th className="text-left py-3 px-4 font-semibold">Frentes</th>
                 <th className="text-left py-3 px-4 font-semibold">Zona</th>
-                <th className="text-left py-3 px-4 font-semibold">% Espaço</th>
                 <th className="text-left py-3 px-4 font-semibold">Ação</th>
               </tr>
             </thead>
@@ -292,15 +376,18 @@ export default function SmartLayoutSimulator() {
               {filteredProducts.map((product) => {
                 const rec = getRecommendation(product.giro, product.margem);
                 const spaceWidth = (rec.share / 100) * gondolaWidth;
+                const naturalCapacity = calculateNaturalPointCapacity(product);
                 return (
                   <tr key={product.id} className="border-b border-border hover:bg-muted/50">
                     <td className="py-3 px-4">{product.name}</td>
+                    <td className="py-3 px-4 text-xs">{product.largura || '-'}cm × {product.comprimento || '-'}cm</td>
                     <td className="py-3 px-4 text-xs">{product.subCategory}</td>
                     <td className="py-3 px-4">{product.giro}</td>
                     <td className="py-3 px-4">{product.margem}</td>
+                    <td className="py-3 px-4 font-medium text-blue-600">{Math.floor(shelfDepth / (product.comprimento || 1))} unid.</td>
+                    <td className="py-3 px-4 font-medium text-green-600">{naturalCapacity} unid.</td>
                     <td className="py-3 px-4 font-medium">{rec.frentes}</td>
                     <td className="py-3 px-4 text-xs">{rec.zone}</td>
-                    <td className="py-3 px-4">{rec.share}% ({spaceWidth.toFixed(1)} cm)</td>
                     <td className="py-3 px-4">
                       <button
                         onClick={() => removeProduct(product.id)}
@@ -341,6 +428,86 @@ export default function SmartLayoutSimulator() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Pontos Promocionais */}
+      <div className="bg-card p-6 rounded-md border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Pontos Promocionais</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+          <select
+            value={promotionalPointType}
+            onChange={(e) => setPromotionalPointType(e.target.value as "Ilha Promocional" | "Terminal de Gôndola" | "Outro")}
+            className="px-3 py-2 border border-border rounded-md text-sm"
+          >
+            <option value="Ilha Promocional">Ilha Promocional</option>
+            <option value="Terminal de Gôndola">Terminal de Gôndola</option>
+            <option value="Outro">Outro</option>
+          </select>
+          <input
+            type="number"
+            placeholder="Capacidade (unidades)"
+            value={promotionalPointCapacity}
+            onChange={(e) => setPromotionalPointCapacity(Number(e.target.value))}
+            className="px-3 py-2 border border-border rounded-md text-sm"
+            min="0"
+          />
+          <div className="col-span-2 text-xs text-muted-foreground pt-2">
+            Selecione um produto na tabela abaixo para adicionar ponto promocional
+          </div>
+        </div>
+
+        {/* Lista de Produtos com Pontos Promocionais */}
+        <div className="space-y-4">
+          {filteredProducts.map((product) => {
+            const naturalCapacity = calculateNaturalPointCapacity(product);
+            const promotionalCapacity = calculatePromotionalCapacity(product);
+            const totalCapacity = calculateTotalStoreCapacity(product);
+            return (
+              <div key={product.id} className="border border-border rounded-md p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-foreground">{product.name}</h4>
+                    <p className="text-xs text-muted-foreground">Dimensões: {product.largura || '-'}cm × {product.comprimento || '-'}cm</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-blue-600">Ponto Natural: {naturalCapacity} unid.</p>
+                    <p className="text-sm font-medium text-orange-600">Promocional: {promotionalCapacity} unid.</p>
+                    <p className="text-sm font-bold text-green-600">Total Loja: {totalCapacity} unid.</p>
+                  </div>
+                </div>
+
+                {/* Botão para adicionar ponto promocional */}
+                <Button
+                  onClick={() => addPromotionalPoint(product.id)}
+                  disabled={promotionalPointCapacity <= 0}
+                  className="w-full mb-3 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Adicionar {promotionalPointType}
+                </Button>
+
+                {/* Lista de pontos promocionais do produto */}
+                {product.promotionalPoints && product.promotionalPoints.length > 0 && (
+                  <div className="space-y-2">
+                    {product.promotionalPoints.map((point) => (
+                      <div key={point.id} className="flex justify-between items-center bg-muted p-2 rounded text-sm">
+                        <span>
+                          <strong>{point.type}</strong>: {point.capacity} unid.
+                        </span>
+                        <button
+                          onClick={() => removePromotionalPoint(product.id, point.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

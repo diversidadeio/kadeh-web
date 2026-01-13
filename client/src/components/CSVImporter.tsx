@@ -17,6 +17,8 @@ interface ImportedProduct {
   ean: string;
   codigoInterno?: string;
   dimensoes?: string;
+  largura?: number; // largura do produto em cm
+  comprimento?: number; // comprimento/profundidade do produto em cm
   precoVenda: number;
   margem: "Baixa" | "Média" | "Alta" | number;
   giro: "Baixo" | "Médio" | "Alto" | number;
@@ -40,12 +42,12 @@ export default function CSVImporter({ onImport }: CSVImporterProps) {
   const [previewData, setPreviewData] = useState<ImportedProduct[]>([]);
 
   const downloadTemplate = () => {
-    const template = `EAN,Código Interno,Nome do Produto,Dimensões,Preço de Venda,Margem,Giro,Categoria,Subcategoria
-7891234567890,INT001,Arroz Integral 5kg,20x30x10,25.50,Alta,Alto,Alimentar,Alimentos
-7891234567891,INT002,Óleo de Soja 900ml,8x15x20,8.99,Média,Médio,Alimentar,Alimentos
-7891234567892,INT003,Refrigerante 2L,10x20x30,7.50,Baixa,Alto,Alimentar,Bebidas
-7891234567893,INT004,Sabonete Líquido 250ml,5x10x15,12.00,Média,Médio,Não-Alimentar,Higiene
-7891234567894,INT005,Creme Facial 50ml,3x8x10,45.00,Alta,Baixo,Não-Alimentar,Beleza`;
+    const template = `EAN,Código Interno,Nome do Produto,Largura (cm),Comprimento (cm),Preço de Venda,Margem,Giro,Categoria,Subcategoria
+7891234567890,INT001,Arroz Integral 5kg,20,30,25.50,Alta,Alto,Alimentar,Alimentos
+7891234567891,INT002,Óleo de Soja 900ml,8,15,8.99,Média,Médio,Alimentar,Alimentos
+7891234567892,INT003,Refrigerante 2L,10,20,7.50,Baixa,Alto,Alimentar,Bebidas
+7891234567893,INT004,Sabonete Líquido 250ml,5,10,12.00,Média,Médio,Não-Alimentar,Higiene
+7891234567894,INT005,Creme Facial 50ml,3,8,45.00,Alta,Baixo,Não-Alimentar,Beleza`;
 
     const blob = new Blob([template], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -120,12 +122,18 @@ export default function CSVImporter({ onImport }: CSVImporterProps) {
           processedGiro = giroNum;
         }
 
+        // Parsear largura e comprimento
+        const largura = row["largura (cm)"] ? parseFloat(row["largura (cm)"]) : undefined;
+        const comprimento = row["comprimento (cm)"] ? parseFloat(row["comprimento (cm)"]) : undefined;
+
         products.push({
           id: `import-${i}-${Date.now()}`,
           name: nome,
           ean,
           codigoInterno: row["código interno"] || undefined,
           dimensoes: row["dimensões"] || undefined,
+          largura: largura && !isNaN(largura) ? largura : undefined,
+          comprimento: comprimento && !isNaN(comprimento) ? comprimento : undefined,
           precoVenda: preco,
           margem: processedMargem,
           giro: processedGiro,
@@ -177,7 +185,7 @@ export default function CSVImporter({ onImport }: CSVImporterProps) {
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-2">Importar Produtos via CSV</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Faça upload de um arquivo CSV com os produtos. Colunas obrigatórias: EAN, Nome do Produto, Preço de Venda, Margem, Giro, Categoria, Subcategoria.
+              Faça upload de um arquivo CSV com os produtos. Colunas obrigatórias: EAN, Nome do Produto, Preço de Venda, Margem, Giro, Categoria, Subcategoria. Colunas opcionais: Largura (cm), Comprimento (cm) para cálculo de capacidade.
             </p>
           </div>
 
