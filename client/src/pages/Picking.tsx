@@ -163,7 +163,7 @@ export default function Picking() {
         subtitle="Kadeh Picking otimiza o fluxo de coleta de mercadorias com rotas inteligentes, validação em tempo real e rastreamento completo — reduzindo tempo, erros e aumentando produtividade de entregadores e funcionários de loja."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver funcionalidades"
-        imageUrl="/images/picking-delivery-person.png"
+        imageUrl="/images/picking-delivery-app.png"
         imageAlt="Picking eficiente com Kadeh"
       />
 
