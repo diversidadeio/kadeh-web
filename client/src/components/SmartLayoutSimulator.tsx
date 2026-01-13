@@ -7,6 +7,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
+import CSVImporter from "@/components/CSVImporter";
+import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 type SubCategory = "Alimentos" | "Bebidas" | "Higiene" | "Beleza" | "Vestuário" | "Eletrônicos" | "Brinquedos" | "Outro";
@@ -117,8 +119,23 @@ export default function SmartLayoutSimulator() {
     ? Object.values(CATEGORIES).flat() as SubCategory[]
     : (CATEGORIES[selectedCategory as CategoryType] as SubCategory[]);
 
+  const handleImportProducts = (importedProducts: any[]) => {
+    const newProducts = importedProducts.map((p) => ({
+      id: p.id,
+      name: p.name,
+      giro: typeof p.giro === "number" ? numericToCategory(p.giro, "giro") as "Baixo" | "Médio" | "Alto" : p.giro,
+      margem: typeof p.margem === "number" ? numericToCategory(p.margem, "margem") as "Baixa" | "Média" | "Alta" : p.margem,
+      category: p.category,
+      subCategory: p.subCategory,
+    }));
+    setProducts([...products, ...newProducts]);
+  };
+
+
   return (
     <div className="space-y-8">
+      <CSVImporter onImport={handleImportProducts} />
+
       {/* Filtros de Categoria */}
       <div className="bg-card p-6 rounded-md border border-border">
         <h3 className="text-lg font-semibold text-foreground mb-4">Filtrar por Categoria</h3>
