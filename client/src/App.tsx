@@ -11,6 +11,7 @@ import DataIntelligence from "./pages/DataIntelligence";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import Media from "./pages/Media";
+import Video from "./pages/Video";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/media" component={Media} />
+      <Route path="/video" component={Video} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

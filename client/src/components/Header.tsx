@@ -34,6 +34,9 @@ export default function Header() {
           <Link href="/media" className="text-sm text-foreground hover:text-primary transition-colors">
             Mídia
           </Link>
+          <Link href="/video" className="text-sm text-foreground hover:text-primary transition-colors">
+            Vídeo
+          </Link>
           <Link href="/#faq" className="text-sm text-foreground hover:text-primary transition-colors">
             FAQ
           </Link>
