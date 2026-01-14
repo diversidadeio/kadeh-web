@@ -5,6 +5,7 @@
  */
 
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 interface CTASectionProps {
   title: string;
@@ -12,6 +13,8 @@ interface CTASectionProps {
   primaryCTA: string;
   secondaryCTA?: string;
   backgroundColor?: string;
+  primaryLink?: string;
+  secondaryLink?: string;
 }
 
 export default function CTASection({
@@ -20,6 +23,8 @@ export default function CTASection({
   primaryCTA,
   secondaryCTA,
   backgroundColor = "bg-white",
+  primaryLink = "/contact",
+  secondaryLink,
 }: CTASectionProps) {
   return (
     <section className={`${backgroundColor} py-20 lg:py-32 border-t border-border`}>
@@ -34,13 +39,17 @@ export default function CTASection({
         )}
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">
-            {primaryCTA}
-          </Button>
-          {secondaryCTA && (
-            <Button size="lg" variant="outline">
-              {secondaryCTA}
+          <Link href={primaryLink}>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">
+              {primaryCTA}
             </Button>
+          </Link>
+          {secondaryCTA && (
+            <Link href={secondaryLink || "/contact"}>
+              <Button size="lg" variant="outline">
+                {secondaryCTA}
+              </Button>
+            </Link>
           )}
         </div>
       </div>

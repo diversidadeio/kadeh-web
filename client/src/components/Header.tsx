@@ -37,12 +37,16 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="hidden sm:inline-flex text-sm">
-            Falar com especialista
-          </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
-            Solicitar demonstração
-          </Button>
+          <Link href="/contact">
+            <Button variant="outline" className="hidden sm:inline-flex text-sm">
+              Falar com especialista
+            </Button>
+          </Link>
+          <Link href="/contact">
+            <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
+              Solicitar demonstração
+            </Button>
+          </Link>
         </div>
       </nav>
     </header>

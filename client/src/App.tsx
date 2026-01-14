@@ -9,6 +9,7 @@ import Picking from "./pages/Picking";
 import SmartLayout from "./pages/SmartLayout";
 import DataIntelligence from "./pages/DataIntelligence";
 import HowItWorks from "./pages/HowItWorks";
+import Contact from "./pages/Contact";
 
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/contact" component={Contact} />
       <Route path="/picking" component={Picking} />
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
