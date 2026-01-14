@@ -28,7 +28,7 @@ export default function Header() {
           <Link href="/data-intelligence" className="text-sm text-foreground hover:text-primary transition-colors">
             Intelligence
           </Link>
-          <Link href="/#como-funciona" className="text-sm text-foreground hover:text-primary transition-colors">
+          <Link href="/how-it-works" className="text-sm text-foreground hover:text-primary transition-colors">
             Como Funciona
           </Link>
           <Link href="/#faq" className="text-sm text-foreground hover:text-primary transition-colors">

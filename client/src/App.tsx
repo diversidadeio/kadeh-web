@@ -8,12 +8,14 @@ import Home from "./pages/Home";
 import Picking from "./pages/Picking";
 import SmartLayout from "./pages/SmartLayout";
 import DataIntelligence from "./pages/DataIntelligence";
+import HowItWorks from "./pages/HowItWorks";
 
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/picking" component={Picking} />
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
