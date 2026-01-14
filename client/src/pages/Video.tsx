@@ -6,7 +6,7 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Play } from "lucide-react";
+import { Play, Download } from "lucide-react";
 
 export default function Video() {
   const solutions = [
@@ -67,8 +67,41 @@ export default function Video() {
       {/* Video Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-5xl mx-auto">
+          {/* Short Video for Social Media */}
+          <div className="mb-20 p-6 bg-orange-50 rounded-lg border border-orange-200">
+            <h3 className="text-lg font-bold text-foreground mb-4">📱 Versão para Redes Sociais</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Compartilhe esta versão curta (15 segundos) no Instagram Reels, TikTok e outras redes sociais:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Instagram Reels</p>
+                <a
+                  href="/videos/kadeh-short-15s.mp4"
+                  download="kadeh-short-15s.mp4"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Baixar para Instagram
+                </a>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground mb-2">TikTok</p>
+                <a
+                  href="/videos/kadeh-short-15s.mp4"
+                  download="kadeh-short-15s.mp4"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Baixar para TikTok
+                </a>
+              </div>
+            </div>
+          </div>
+
           {/* Main Video Player */}
           <div className="mb-16">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Vídeo Completo (48 segundos)</h2>
             <div className="relative w-full bg-black rounded-lg overflow-hidden shadow-2xl" style={{ paddingBottom: "177.78%" }}>
               <video
                 className="absolute top-0 left-0 w-full h-full"
@@ -80,7 +113,7 @@ export default function Video() {
               </video>
             </div>
             <p className="text-center text-muted-foreground mt-4 text-sm">
-              Vídeo compilado com todas as soluções Kadeh (48 segundos)
+              Vídeo compilado com todas as soluções Kadeh
             </p>
           </div>
 
