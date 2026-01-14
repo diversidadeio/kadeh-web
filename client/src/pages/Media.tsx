@@ -102,6 +102,49 @@ export default function Media() {
         </div>
       </section>
 
+      {/* APAS Experience Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-border">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-12 text-foreground text-center">
+            APAS Experience
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Image */}
+            <div className="overflow-hidden rounded-lg">
+              <img
+                src="/images/kadeh_apas_experience.jpg"
+                alt="Kadeh no APAS Experience"
+                className="w-full h-auto object-cover rounded-lg"
+              />
+            </div>
+            {/* Content */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-2xl font-bold text-foreground mb-4">
+                  Participação nos APAS Experience
+                </h3>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  A Kadeh Soluções participou dos eventos <strong>APAS Experience</strong> nas cidades de <strong>Guarulhos</strong> e <strong>São José dos Campos</strong>, apresentando sua solução inovadora de geolocalização e IA para o varejo supermercadista.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  A APAS (Associação Paulista de Supermercados) é a maior organização de varejo supermercadista da América Latina, reunindo os principais players do setor para discussão de tendências, inovações e estratégias de negócio.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <p className="text-sm text-muted-foreground mb-2">Evento</p>
+                  <p className="font-bold text-foreground">APAS Experience</p>
+                </div>
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <p className="text-sm text-muted-foreground mb-2">Cidades</p>
+                  <p className="font-bold text-foreground">Guarulhos & SJC</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Additional Info Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20 border-t border-border">
         <div className="max-w-4xl mx-auto text-center">
