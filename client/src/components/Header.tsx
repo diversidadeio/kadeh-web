@@ -31,6 +31,9 @@ export default function Header() {
           <Link href="/how-it-works" className="text-sm text-foreground hover:text-primary transition-colors">
             Como Funciona
           </Link>
+          <Link href="/media" className="text-sm text-foreground hover:text-primary transition-colors">
+            Mídia
+          </Link>
           <Link href="/#faq" className="text-sm text-foreground hover:text-primary transition-colors">
             FAQ
           </Link>
