@@ -102,7 +102,8 @@ export default function Video() {
           {/* Main Video Player */}
           <div className="mb-16">
             <h2 className="text-2xl font-bold text-foreground mb-6">Vídeo Completo (48 segundos)</h2>
-            <div className="relative w-full bg-black rounded-lg overflow-hidden shadow-2xl" style={{ paddingBottom: "177.78%" }}>
+            <div className="relative mx-auto" style={{ width: "50%", paddingBottom: "88.89%" }}>
+              <div className="relative w-full bg-black rounded-lg overflow-hidden shadow-2xl" style={{ paddingBottom: "177.78%" }}>
               <video
                 className="absolute top-0 left-0 w-full h-full"
                 controls
@@ -111,6 +112,7 @@ export default function Video() {
                 <source src="/videos/kadeh-all-solutions.mp4" type="video/mp4" />
                 Seu navegador não suporta o elemento de vídeo.
               </video>
+              </div>
             </div>
             <p className="text-center text-muted-foreground mt-4 text-sm">
               Vídeo compilado com todas as soluções Kadeh
