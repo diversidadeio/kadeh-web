@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,30 @@ export default function Contact() {
     message: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const submitMutation = trpc.contact.submit.useMutation({
+    onSuccess: () => {
+      setSubmitted(true);
+      toast.success("Formulário enviado com sucesso! Entraremos em contato em breve.");
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          type: "",
+          companyName: "",
+          cnpj: "",
+          contactPreference: "",
+          message: "",
+        });
+        setSubmitted(false);
+      }, 3000);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erro ao enviar formulário. Tente novamente.");
+    },
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -98,37 +121,16 @@ export default function Contact() {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      // Simulate form submission
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Here you would typically send the data to your backend
-      console.log("Form data:", formData);
-
-      setSubmitted(true);
-      toast.success("Formulário enviado com sucesso! Entraremos em contato em breve.");
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          phone: "",
-          email: "",
-          type: "",
-          companyName: "",
-          cnpj: "",
-          contactPreference: "",
-          message: "",
-        });
-        setSubmitted(false);
-      }, 3000);
-    } catch (error) {
-      toast.error("Erro ao enviar formulário. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    submitMutation.mutate({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      type: formData.type as "consumer" | "business",
+      companyName: formData.companyName || undefined,
+      cnpj: formData.cnpj || undefined,
+      contactPreference: formData.contactPreference as "whatsapp" | "email" | "phone",
+      message: formData.message || undefined,
+    });
   };
 
   if (submitted) {
@@ -377,10 +379,10 @@ export default function Contact() {
             <div className="flex gap-4">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={submitMutation.isPending}
                 className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 text-lg"
               >
-                {isSubmitting ? "Enviando..." : "Enviar Formulário"}
+                {submitMutation.isPending ? "Enviando..." : "Enviar Formulário"}
               </Button>
             </div>
 

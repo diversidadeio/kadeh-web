@@ -20,8 +20,13 @@ import {
   CheckCircle,
   Grid3X3,
 } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Home() {
+  // The userAuth hooks provides authentication state
+  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
   const deliverables = [
     {
       title: "Navegação que qualquer pessoa entende",
