@@ -21,11 +21,15 @@ import {
   Grid3X3,
 } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useState } from "react";
+import { Link } from "wouter";
+import { X } from "lucide-react";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
   let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   const deliverables = [
     {
@@ -279,12 +283,17 @@ export default function Home() {
             a singularidade da solução e a segurança para parceiros e clientes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="px-6 py-3 border border-primary text-primary rounded-md font-medium hover:bg-primary hover:text-white transition-colors">
+            <button 
+              onClick={() => setShowPdfModal(true)}
+              className="px-6 py-3 border border-primary text-primary rounded-md font-medium hover:bg-primary hover:text-white transition-colors"
+            >
               Ver Declaração de Exclusividade
             </button>
-            <button className="px-6 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">
-              Falar com um especialista
-            </button>
+            <Link href="/contact">
+              <button className="px-6 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">
+                Falar com um especialista
+              </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -340,6 +349,45 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      {/* PDF Modal */}
+      {showPdfModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">Declaração de Exclusividade</h3>
+              <button 
+                onClick={() => setShowPdfModal(false)}
+                className="p-2 hover:bg-secondary rounded-md transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <iframe
+                src="/documents/declaracao-exclusividade.pdf"
+                className="w-full h-full"
+                title="Declaração de Exclusividade"
+              />
+            </div>
+            <div className="p-6 border-t border-border flex gap-4 justify-end">
+              <button
+                onClick={() => setShowPdfModal(false)}
+                className="px-6 py-2 border border-border rounded-md font-medium hover:bg-secondary transition-colors"
+              >
+                Fechar
+              </button>
+              <a
+                href="/documents/declaracao-exclusividade.pdf"
+                download
+                className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
+              >
+                Baixar PDF
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
