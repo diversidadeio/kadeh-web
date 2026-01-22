@@ -30,6 +30,7 @@ export default function Home() {
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
   let { user, loading, error, isAuthenticated, logout } = useAuth();
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [presentationUrl, setPresentationUrl] = useState<string | null>(null);
 
   const deliverables = [
     {
@@ -76,6 +77,7 @@ export default function Home() {
       description:
         "Melhore a jornada do paciente e otimize a gestão de equipamentos e ativos móveis.",
       icon: <Shield className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-saude-presentation.pdf",
     },
     {
       title: "Kadeh Localiza",
@@ -175,6 +177,10 @@ export default function Home() {
         title="Soluções desenhadas para cada ambiente"
         features={solutions}
         columns={3}
+        onPresentationClick={(url) => {
+          setPresentationUrl(url);
+          setShowPdfModal(true);
+        }}
       />
 
       {/* Como Funciona */}
@@ -351,7 +357,48 @@ export default function Home() {
       <Footer />
 
       {/* PDF Modal */}
-      {showPdfModal && (
+      {showPdfModal && presentationUrl && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">
+                {presentationUrl.includes('saude') ? 'Kadeh Saúde - Apresentação' : 'Apresentação'}
+              </h3>
+              <button 
+                onClick={() => setShowPdfModal(false)}
+                className="p-2 hover:bg-secondary rounded-md transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <iframe
+                src={presentationUrl}
+                className="w-full h-full"
+                title="Apresentação"
+              />
+            </div>
+            <div className="p-6 border-t border-border flex gap-4 justify-end">
+              <button
+                onClick={() => setShowPdfModal(false)}
+                className="px-6 py-2 border border-border rounded-md font-medium hover:bg-secondary transition-colors"
+              >
+                Fechar
+              </button>
+              <a
+                href={presentationUrl}
+                download
+                className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
+              >
+                Baixar PDF
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Exclusivity Declaration Modal */}
+      {showPdfModal && !presentationUrl && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center p-6 border-b border-border">
