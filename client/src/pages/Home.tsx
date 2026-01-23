@@ -65,6 +65,7 @@ export default function Home() {
       description:
         "Navegação do estacionamento às lojas e serviços, com rotas para facilidades e segurança.",
       icon: <MapPin className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-shopping-presentation.pdf",
     },
     {
       title: "Kadeh Eventos",
