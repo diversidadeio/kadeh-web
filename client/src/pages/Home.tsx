@@ -58,6 +58,7 @@ export default function Home() {
       description:
         "Localize produtos, aumente conversão e gere eficiência operacional com dados em tempo real.",
       icon: <BarChart3 className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-varejo-presentation.pdf",
     },
     {
       title: "Kadeh Shopping",
@@ -76,6 +77,7 @@ export default function Home() {
       description:
         "Melhore a jornada do paciente e otimize a gestão de equipamentos e ativos móveis.",
       icon: <Shield className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-saude-presentation.pdf",
     },
     {
       title: "Kadeh Localiza",
