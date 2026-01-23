@@ -30,6 +30,12 @@ export default function Home() {
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
   let { user, loading, error, isAuthenticated, logout } = useAuth();
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string>("");
+
+  const handlePresentationClick = (url: string) => {
+    setPdfUrl(url);
+    setShowPdfModal(true);
+  };
 
   const deliverables = [
     {
@@ -178,6 +184,7 @@ export default function Home() {
         title="Soluções desenhadas para cada ambiente"
         features={solutions}
         columns={3}
+        onPresentationClick={handlePresentationClick}
       />
 
       {/* Como Funciona */}
@@ -354,11 +361,13 @@ export default function Home() {
       <Footer />
 
       {/* PDF Modal */}
-      {showPdfModal && (
+      {showPdfModal && pdfUrl && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center p-6 border-b border-border">
-              <h3 className="text-xl font-semibold text-foreground">Declaração de Exclusividade</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                {pdfUrl.includes('varejo') ? 'Kadeh Varejo' : pdfUrl.includes('shopping') ? 'Kadeh Shopping' : pdfUrl.includes('saude') ? 'Kadeh Saude' : 'Apresentacao'}
+              </h3>
               <button 
                 onClick={() => setShowPdfModal(false)}
                 className="p-2 hover:bg-secondary rounded-md transition-colors"
@@ -368,9 +377,9 @@ export default function Home() {
             </div>
             <div className="flex-1 overflow-auto">
               <iframe
-                src="/documents/declaracao-exclusividade.pdf"
+                src={pdfUrl}
                 className="w-full h-full"
-                title="Declaração de Exclusividade"
+                title="Apresentacao"
               />
             </div>
             <div className="p-6 border-t border-border flex gap-4 justify-end">
@@ -381,7 +390,7 @@ export default function Home() {
                 Fechar
               </button>
               <a
-                href="/documents/declaracao-exclusividade.pdf"
+                href={pdfUrl}
                 download
                 className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
               >
