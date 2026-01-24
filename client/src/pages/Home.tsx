@@ -49,6 +49,9 @@ export default function Home() {
     } else if (url.includes('eventos')) {
       name = 'kadeh-eventos';
       title = 'Kadeh Eventos';
+    } else if (url.includes('picking')) {
+      name = 'kadeh-picking';
+      title = 'Kadeh Picking';
     }
     
     setPresentationName(name);
@@ -118,6 +121,7 @@ export default function Home() {
       description:
         "Picking eficiente para e-commerce com rotas otimizadas, validação em tempo real e rastreamento completo.",
       icon: <CheckCircle className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-picking-presentation.pdf",
     },
     {
       title: "Kadeh Smart Layout",
