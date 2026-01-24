@@ -23,7 +23,7 @@ import {
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useState } from "react";
 import { Link } from "wouter";
-import { X } from "lucide-react";
+import PDFModal from "@/components/PDFModal";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
@@ -31,9 +31,12 @@ export default function Home() {
   let { user, loading, error, isAuthenticated, logout } = useAuth();
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string>("");
+  const [pdfTitle, setPdfTitle] = useState<string>("");
 
   const handlePresentationClick = (url: string) => {
     setPdfUrl(url);
+    const title = url.includes('varejo') ? 'Kadeh Varejo' : url.includes('shopping') ? 'Kadeh Shopping' : url.includes('saude') ? 'Kadeh Saúde' : 'Apresentação';
+    setPdfTitle(title);
     setShowPdfModal(true);
   };
 
@@ -361,39 +364,12 @@ export default function Home() {
       <Footer />
 
       {/* PDF Modal */}
-      {showPdfModal && pdfUrl && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center p-6 border-b border-border">
-              <h3 className="text-xl font-semibold text-foreground">
-                {pdfUrl.includes('varejo') ? 'Kadeh Varejo' : pdfUrl.includes('shopping') ? 'Kadeh Shopping' : pdfUrl.includes('saude') ? 'Kadeh Saude' : 'Apresentacao'}
-              </h3>
-              <button 
-                onClick={() => setShowPdfModal(false)}
-                className="p-2 hover:bg-secondary rounded-md transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-auto bg-gray-100">
-              <iframe
-                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                className="w-full h-full"
-                style={{ minHeight: '600px', border: 'none' }}
-                title="PDF Viewer"
-              />
-            </div>
-            <div className="p-6 border-t border-border flex gap-4 justify-end">
-              <button
-                onClick={() => setShowPdfModal(false)}
-                className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PDFModal 
+        isOpen={showPdfModal} 
+        pdfUrl={pdfUrl} 
+        title={pdfTitle}
+        onClose={() => setShowPdfModal(false)} 
+      />
     </>
   );
 }
