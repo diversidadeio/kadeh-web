@@ -23,21 +23,34 @@ import {
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useState } from "react";
 import { Link } from "wouter";
-import PDFModal from "@/components/PDFModal";
+import PresentationCarousel from "@/components/PresentationCarousel";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
   // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
   let { user, loading, error, isAuthenticated, logout } = useAuth();
-  const [showPdfModal, setShowPdfModal] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState<string>("");
-  const [pdfTitle, setPdfTitle] = useState<string>("");
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [presentationName, setPresentationName] = useState<string>("");
+  const [presentationTitle, setPresentationTitle] = useState<string>("");
 
   const handlePresentationClick = (url: string) => {
-    setPdfUrl(url);
-    const title = url.includes('varejo') ? 'Kadeh Varejo' : url.includes('shopping') ? 'Kadeh Shopping' : url.includes('saude') ? 'Kadeh Saúde' : 'Apresentação';
-    setPdfTitle(title);
-    setShowPdfModal(true);
+    let name = 'kadeh-varejo';
+    let title = 'Kadeh Varejo';
+    
+    if (url.includes('shopping')) {
+      name = 'kadeh-shopping';
+      title = 'Kadeh Shopping';
+    } else if (url.includes('saude')) {
+      name = 'kadeh-saude';
+      title = 'Kadeh Saúde';
+    } else if (url.includes('localiza')) {
+      name = 'kadeh-localiza';
+      title = 'Kadeh Localiza';
+    }
+    
+    setPresentationName(name);
+    setPresentationTitle(title);
+    setShowCarousel(true);
   };
 
   const deliverables = [
@@ -94,6 +107,7 @@ export default function Home() {
       description:
         "Aeroportos, rodoviárias e serviços públicos com rotas certeiras, menos filas e menos necessidade de orientação humana.",
       icon: <MapPin className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-localiza-presentation.pdf",
     },
     {
       title: "Kadeh Picking",
@@ -296,12 +310,14 @@ export default function Home() {
             a singularidade da solução e a segurança para parceiros e clientes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button 
-              onClick={() => setShowPdfModal(true)}
+            <a
+              href="/documents/declaracao-exclusividade.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-6 py-3 border border-primary text-primary rounded-md font-medium hover:bg-primary hover:text-white transition-colors"
             >
               Ver Declaração de Exclusividade
-            </button>
+            </a>
             <Link href="/contact">
               <button className="px-6 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors">
                 Falar com um especialista
@@ -363,12 +379,12 @@ export default function Home() {
 
       <Footer />
 
-      {/* PDF Modal */}
-      <PDFModal 
-        isOpen={showPdfModal} 
-        pdfUrl={pdfUrl} 
-        title={pdfTitle}
-        onClose={() => setShowPdfModal(false)} 
+      {/* Presentation Carousel */}
+      <PresentationCarousel 
+        isOpen={showCarousel} 
+        presentationName={presentationName}
+        title={presentationTitle}
+        onClose={() => setShowCarousel(false)} 
       />
     </>
   );
