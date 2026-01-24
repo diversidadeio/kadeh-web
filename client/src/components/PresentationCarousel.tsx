@@ -34,6 +34,7 @@ export default function PresentationCarousel({
         'kadeh-shopping': 13,
         'kadeh-saude': 8,
         'kadeh-localiza': 14,
+        'kadeh-eventos': 10,
       };
       
       const pages = pageCount[presentationName] || 0;

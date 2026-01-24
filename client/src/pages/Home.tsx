@@ -46,6 +46,9 @@ export default function Home() {
     } else if (url.includes('localiza')) {
       name = 'kadeh-localiza';
       title = 'Kadeh Localiza';
+    } else if (url.includes('eventos')) {
+      name = 'kadeh-eventos';
+      title = 'Kadeh Eventos';
     }
     
     setPresentationName(name);
@@ -94,6 +97,7 @@ export default function Home() {
       description:
         "Encontre stands e palestras, monte roteiro e receba sugestões por interesse via IA.",
       icon: <Users className="w-6 h-6" />,
+      presentationUrl: "/documents/kadeh-eventos-presentation.pdf",
     },
     {
       title: "Kadeh Saúde",
