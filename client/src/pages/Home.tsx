@@ -128,6 +128,7 @@ export default function Home() {
       description:
         "Gerenciamento inteligente de categorias com recomendações de frentes, posicionamento e redimensionamento de gôndolas.",
       icon: <BarChart3 className="w-6 h-6" />,
+      externalUrl: "https://kadeh.io/smart-layout",
     },
   ];
 

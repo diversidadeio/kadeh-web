@@ -9,6 +9,7 @@ interface SolutionCardProps {
   description: string;
   icon?: React.ReactNode;
   presentationUrl?: string;
+  externalUrl?: string;
   onPresentationClick?: (url: string) => void;
 }
 
@@ -17,10 +18,13 @@ export default function SolutionCard({
   description,
   icon,
   presentationUrl,
+  externalUrl,
   onPresentationClick,
 }: SolutionCardProps) {
   const handleClick = () => {
-    if (presentationUrl && onPresentationClick) {
+    if (externalUrl) {
+      window.open(externalUrl, '_blank');
+    } else if (presentationUrl && onPresentationClick) {
       onPresentationClick(presentationUrl);
     }
   };
@@ -28,7 +32,7 @@ export default function SolutionCard({
   return (
     <div 
       className={`group p-8 border border-border rounded-md hover:border-primary transition-colors duration-300 bg-white hover:bg-card ${
-        presentationUrl ? 'cursor-pointer' : ''
+        presentationUrl || externalUrl ? 'cursor-pointer' : ''
       }`}
       onClick={handleClick}
     >
