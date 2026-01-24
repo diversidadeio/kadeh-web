@@ -376,11 +376,11 @@ export default function Home() {
               </button>
             </div>
             <div className="flex-1 overflow-auto bg-gray-100">
-              <embed
-                src={pdfUrl}
-                type="application/pdf"
+              <iframe
+                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                 className="w-full h-full"
-                style={{ minHeight: '600px' }}
+                style={{ minHeight: '600px', border: 'none' }}
+                title="PDF Viewer"
               />
             </div>
             <div className="p-6 border-t border-border flex gap-4 justify-end">
