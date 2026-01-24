@@ -386,17 +386,10 @@ export default function Home() {
             <div className="p-6 border-t border-border flex gap-4 justify-end">
               <button
                 onClick={() => setShowPdfModal(false)}
-                className="px-6 py-2 border border-border rounded-md font-medium hover:bg-secondary transition-colors"
+                className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
               >
                 Fechar
               </button>
-              <a
-                href={pdfUrl}
-                download
-                className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
-              >
-                Baixar PDF
-              </a>
             </div>
           </div>
         </div>
