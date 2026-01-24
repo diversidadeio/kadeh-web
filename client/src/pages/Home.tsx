@@ -377,9 +377,10 @@ export default function Home() {
             </div>
             <div className="flex-1 overflow-auto">
               <iframe
-                src={pdfUrl}
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`}
                 className="w-full h-full"
                 title="Apresentacao"
+                style={{ minHeight: '600px' }}
               />
             </div>
             <div className="p-6 border-t border-border flex gap-4 justify-end">
