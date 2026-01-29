@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
 import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 type SubCategory = "Alimentos" | "Bebidas" | "Higiene" | "Beleza" | "Vestuário" | "Eletrônicos" | "Brinquedos" | "Outro";
@@ -63,6 +64,7 @@ function getRecommendation(giro: string, margem: string): Recommendation {
 }
 
 export default function SmartLayoutSimulator() {
+  const { language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([
     { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos" },
     { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas" },
