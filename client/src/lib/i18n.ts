@@ -222,6 +222,21 @@ export const translations = {
       noContent: 'Nenhum vídeo disponível no momento.',
     },
 
+    // Picking Page
+    picking: {
+      title: 'Picking Eficiente para E-commerce',
+      subtitle: 'Otimize rotas de picking com IA e rastreamento em tempo real',
+      features: {
+        title: 'Recursos do Picking',
+        items: [
+          { title: 'Otimização de Rotas', description: 'Algoritmos de IA calculam a rota mais eficiente para picking, reduzindo tempo e erros.' },
+          { title: 'Validação em Tempo Real', description: 'Verificação instantânea de produtos coletados com código de barras e RFID.' },
+          { title: 'Rastreamento Completo', description: 'Acompanhamento de cada item desde o pedido até a expedição com histórico detalhado.' },
+          { title: 'Integração com Sistemas', description: 'Conecta com ERP e WMS para sincronização automática de pedidos e inventário.' },
+        ]
+      },
+    },
+
     // FAQ Page
     faqPage: {
       title: 'Perguntas Frequentes',
@@ -459,6 +474,21 @@ export const translations = {
       title: 'Video Gallery',
       subtitle: 'Watch Kadeh in action',
       noContent: 'No videos available at this time.',
+    },
+
+    // Picking Page
+    picking: {
+      title: 'Efficient Picking for E-commerce',
+      subtitle: 'Optimize picking routes with AI and real-time tracking',
+      features: {
+        title: 'Picking Features',
+        items: [
+          { title: 'Route Optimization', description: 'AI algorithms calculate the most efficient picking route, reducing time and errors.' },
+          { title: 'Real-time Validation', description: 'Instant verification of collected products with barcode and RFID.' },
+          { title: 'Complete Tracking', description: 'Track each item from order to shipment with detailed history.' },
+          { title: 'System Integration', description: 'Connects with ERP and WMS for automatic synchronization of orders and inventory.' },
+        ]
+      },
     },
 
     // FAQ Page
