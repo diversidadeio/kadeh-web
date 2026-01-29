@@ -1,31 +1,49 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
+import { useLocation } from 'wouter';
 import { Language } from '@/lib/i18n';
 
 interface LanguageContextType {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  getLocalizedPath: (path: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('pt');
+  const [location] = useLocation();
 
-  // Load language from localStorage on mount
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language | null;
-    if (savedLanguage && (savedLanguage === 'pt' || savedLanguage === 'en')) {
-      setLanguageState(savedLanguage);
+  // Extract language from URL path
+  const language = useMemo(() => {
+    const pathSegments = location.split('/').filter(Boolean);
+    const firstSegment = pathSegments[0];
+    
+    if (firstSegment === 'pt' || firstSegment === 'en') {
+      return firstSegment as Language;
     }
-  }, []);
+    
+    return 'pt'; // Default to Portuguese
+  }, [location]);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('language', lang);
+  // Helper function to convert paths to localized versions
+  const getLocalizedPath = (path: string): string => {
+    // Remove any existing language prefix
+    let cleanPath = path;
+    if (cleanPath.startsWith('/pt/') || cleanPath.startsWith('/en/')) {
+      cleanPath = cleanPath.substring(3);
+    }
+    if (cleanPath === '/pt' || cleanPath === '/en') {
+      cleanPath = '/';
+    }
+    
+    // Add new language prefix
+    if (cleanPath === '/' || cleanPath === '') {
+      return `/${language}`;
+    }
+    return `/${language}${cleanPath}`;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
+    <LanguageContext.Provider value={{ language, getLocalizedPath }}>
       {children}
     </LanguageContext.Provider>
   );

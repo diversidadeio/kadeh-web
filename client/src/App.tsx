@@ -17,6 +17,27 @@ function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
+      {/* Portuguese routes */}
+      <Route path="/pt" component={Home} />
+      <Route path="/pt/how-it-works" component={HowItWorks} />
+      <Route path="/pt/contact" component={Contact} />
+      <Route path="/pt/picking" component={Picking} />
+      <Route path="/pt/smart-layout" component={SmartLayout} />
+      <Route path="/pt/data-intelligence" component={DataIntelligence} />
+      <Route path="/pt/media" component={Media} />
+      <Route path="/pt/video" component={Video} />
+
+      {/* English routes */}
+      <Route path="/en" component={Home} />
+      <Route path="/en/how-it-works" component={HowItWorks} />
+      <Route path="/en/contact" component={Contact} />
+      <Route path="/en/picking" component={Picking} />
+      <Route path="/en/smart-layout" component={SmartLayout} />
+      <Route path="/en/data-intelligence" component={DataIntelligence} />
+      <Route path="/en/media" component={Media} />
+      <Route path="/en/video" component={Video} />
+
+      {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
       <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/contact" component={Contact} />
@@ -25,6 +46,7 @@ function Router() {
       <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/media" component={Media} />
       <Route path="/video" component={Video} />
+
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
