@@ -6,8 +6,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 
 export default function Header() {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-border">
       <nav className="container flex items-center justify-between py-6">
@@ -17,40 +23,41 @@ export default function Header() {
 
         <div className="hidden md:flex items-center gap-8">
           <Link href="/#solucoes" className="text-sm text-foreground hover:text-primary transition-colors">
-            Soluções
+            {t.header.solutions}
           </Link>
           <Link href="/picking" className="text-sm text-foreground hover:text-primary transition-colors">
-            Picking
+            {t.header.picking}
           </Link>
           <Link href="/smart-layout" className="text-sm text-foreground hover:text-primary transition-colors">
-            Smart Layout
+            {t.header.smartLayout}
           </Link>
           <Link href="/data-intelligence" className="text-sm text-foreground hover:text-primary transition-colors">
-            Intelligence
+            {t.header.intelligence}
           </Link>
           <Link href="/how-it-works" className="text-sm text-foreground hover:text-primary transition-colors">
-            Como Funciona
+            {t.header.howItWorks}
           </Link>
           <Link href="/media" className="text-sm text-foreground hover:text-primary transition-colors">
-            Mídia
+            {t.header.media}
           </Link>
           <Link href="/video" className="text-sm text-foreground hover:text-primary transition-colors">
-            Vídeo
+            {t.header.video}
           </Link>
           <Link href="/#faq" className="text-sm text-foreground hover:text-primary transition-colors">
-            FAQ
+            {t.header.faq}
           </Link>
         </div>
 
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           <Link href="/contact">
             <Button variant="outline" className="hidden sm:inline-flex text-sm">
-              Falar com especialista
+              {t.header.talkToSpecialist}
             </Button>
           </Link>
           <Link href="/contact">
             <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
-              Solicitar demonstração
+              {t.header.requestDemo}
             </Button>
           </Link>
         </div>
