@@ -245,10 +245,32 @@ export const translations = {
 
     // Footer
     footer: {
+      brand: 'Kadeh',
+      tagline: 'Navegação indoor com IA e analytics em tempo real.',
+      copyright: '© 2025 Kadeh. Todos os direitos reservados.',
+      technology: 'Tecnologia registrada no INPI • Exclusividade nacional (set/2025)',
+      
+      // Sections
       solutions: 'Soluções',
+      company: 'Empresa',
+      legal: 'Legal',
+      
+      // Solutions
+      retail: 'Kadeh Varejo',
+      shopping: 'Kadeh Shopping',
+      events: 'Kadeh Eventos',
+      healthcare: 'Kadeh Saúde',
+      localization: 'Kadeh Localiza',
+      picking: 'Kadeh Picking',
+      smartLayout: 'Kadeh Smart Layout',
+      intelligence: 'Kadeh Intelligence',
+      
+      // Company
       howItWorks: 'Como Funciona',
       faq: 'FAQ',
       contact: 'Contato',
+      
+      // Legal
       privacy: 'Privacidade',
       terms: 'Termos de Uso',
       lgpd: 'LGPD',
@@ -499,10 +521,32 @@ export const translations = {
 
     // Footer
     footer: {
+      brand: 'Kadeh',
+      tagline: 'Indoor navigation with AI and real-time analytics.',
+      copyright: '© 2025 Kadeh. All rights reserved.',
+      technology: 'Technology registered at INPI • National exclusivity (Sep/2025)',
+      
+      // Sections
       solutions: 'Solutions',
+      company: 'Company',
+      legal: 'Legal',
+      
+      // Solutions
+      retail: 'Kadeh Retail',
+      shopping: 'Kadeh Shopping',
+      events: 'Kadeh Events',
+      healthcare: 'Kadeh Healthcare',
+      localization: 'Kadeh Localization',
+      picking: 'Kadeh Picking',
+      smartLayout: 'Kadeh Smart Layout',
+      intelligence: 'Kadeh Intelligence',
+      
+      // Company
       howItWorks: 'How It Works',
       faq: 'FAQ',
       contact: 'Contact',
+      
+      // Legal
       privacy: 'Privacy',
       terms: 'Terms of Use',
       lgpd: 'LGPD',
