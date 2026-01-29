@@ -6,6 +6,8 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 import {
   Smartphone,
   Store,
@@ -24,6 +26,8 @@ import {
 } from "lucide-react";
 
 export default function HowItWorks() {
+  const { language } = useLanguage();
+  const t = translations[language];
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />

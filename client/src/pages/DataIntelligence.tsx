@@ -12,6 +12,8 @@ import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import DataIntelligenceDashboard from "@/components/DataIntelligenceDashboard";
 import MarginAnalysisByStore from "@/components/MarginAnalysisByStore";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 import {
   BarChart3,
   TrendingUp,
@@ -26,6 +28,8 @@ import {
 } from "lucide-react";
 
 export default function DataIntelligence() {
+  const { language } = useLanguage();
+  const t = translations[language];
   const features = [
     {
       title: "Intenção de Compra em Tempo Real",

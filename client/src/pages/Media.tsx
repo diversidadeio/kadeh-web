@@ -7,8 +7,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ExternalLink } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 
 export default function Media() {
+  const { language } = useLanguage();
+  const t = translations[language];
   const articles = [
     {
       id: 1,

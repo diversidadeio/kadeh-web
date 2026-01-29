@@ -167,6 +167,67 @@ export const translations = {
       googlePlay: 'Google Play',
     },
 
+    // Smart Layout Page
+    smartLayout: {
+      title: 'Gerenciamento Inteligente de Categorias',
+      subtitle: 'Otimize espaço de prateleira e posicionamento de produtos com recomendações baseadas em IA',
+      features: {
+        title: 'Recursos do Smart Layout',
+        items: [
+          { title: 'Análise de Mix de Produtos', description: 'Visualize seu portfólio completo com dados de velocidade de vendas, margem e volume.' },
+          { title: 'Recomendações Inteligentes de Prateleira', description: 'Sistema recomenda frentes ideais baseado em velocidade de vendas e lucratividade.' },
+          { title: 'Otimização de Posicionamento', description: 'Produtos posicionados automaticamente por zona (nível dos olhos, mãos, piso) para maximizar conversão.' },
+          { title: 'Redimensionamento de Categorias', description: 'Recomendações para aumentar/reduzir espaço de categoria para melhor lucratividade total.' },
+        ]
+      },
+    },
+
+    // Intelligence Page
+    intelligence: {
+      title: 'Inteligência de Dados em Tempo Real',
+      subtitle: 'Transforme intenção de compra em insights acionáveis para varejo e indústria',
+      features: {
+        title: 'Recursos de Intelligence',
+        items: [
+          { title: 'Rastreamento de Intenção de Compra', description: 'Monitoramento em tempo real de padrões de busca e navegação dos clientes.' },
+          { title: 'Performance de Categorias', description: 'Insights profundos por categoria, segmento e produto buscado.' },
+          { title: 'Análise de Formato de Loja', description: 'Entenda diferenças de performance entre diferentes formatos de loja.' },
+          { title: 'Estratégia de Portfólio', description: 'Recomendações baseadas em dados para execução comercial e otimização de portfólio.' },
+        ]
+      },
+    },
+
+    // How It Works Page
+    howItWorksPage: {
+      title: 'Como a Kadeh Funciona',
+      subtitle: 'Do mapeamento ao impacto em três passos simples',
+      steps: [
+        { title: 'Mapear', description: 'Estruturamos seu ambiente com setores, lojas/POIs, categorias, serviços e rotas.' },
+        { title: 'Ativar', description: 'Publicamos navegação e buscas com recomendações baseadas em IA.' },
+        { title: 'Medir e Otimizar', description: 'Dashboard em tempo real com intenção de compra e padrões de busca.' },
+      ]
+    },
+
+    // Media Page
+    media: {
+      title: 'Mídia e Imprensa',
+      subtitle: 'Últimas notícias e cobertura sobre a Kadeh',
+      noContent: 'Nenhum conteúdo de mídia disponível no momento.',
+    },
+
+    // Video Page
+    video: {
+      title: 'Galeria de Vídeos',
+      subtitle: 'Veja a Kadeh em ação',
+      noContent: 'Nenhum vídeo disponível no momento.',
+    },
+
+    // FAQ Page
+    faqPage: {
+      title: 'Perguntas Frequentes',
+      subtitle: 'Encontre respostas para perguntas comuns sobre a Kadeh',
+    },
+
     // Footer
     footer: {
       solutions: 'Soluções',
@@ -343,6 +404,67 @@ export const translations = {
       description: 'Access intelligent navigation directly from your smartphone',
       appStore: 'Apple Store',
       googlePlay: 'Google Play',
+    },
+
+    // Smart Layout Page
+    smartLayout: {
+      title: 'Intelligent Category Management',
+      subtitle: 'Optimize shelf space and product positioning with AI-powered recommendations',
+      features: {
+        title: 'Smart Layout Features',
+        items: [
+          { title: 'Product Mix Analysis', description: 'Visualize your complete portfolio with sales velocity, margin and volume data.' },
+          { title: 'Intelligent Shelf Recommendations', description: 'System recommends ideal shelf facings based on sales velocity and profitability.' },
+          { title: 'Position Optimization', description: 'Products automatically positioned by zone (eye level, hands, floor) to maximize conversion.' },
+          { title: 'Category Resizing', description: 'Recommendations to increase/reduce category space for improved total profitability.' },
+        ]
+      },
+    },
+
+    // Intelligence Page
+    intelligence: {
+      title: 'Real-time Data Intelligence',
+      subtitle: 'Transform purchase intent into actionable insights for retail and industry',
+      features: {
+        title: 'Intelligence Features',
+        items: [
+          { title: 'Purchase Intent Tracking', description: 'Real-time monitoring of customer searches and navigation patterns.' },
+          { title: 'Category Performance', description: 'Deep insights by category, segment and product searched.' },
+          { title: 'Store Format Analysis', description: 'Understand performance differences across different store formats.' },
+          { title: 'Portfolio Strategy', description: 'Data-driven recommendations for commercial execution and portfolio optimization.' },
+        ]
+      },
+    },
+
+    // How It Works Page
+    howItWorksPage: {
+      title: 'How Kadeh Works',
+      subtitle: 'From mapping to impact in three simple steps',
+      steps: [
+        { title: 'Map', description: 'We structure your environment with sectors, stores/POIs, categories, services and routes.' },
+        { title: 'Activate', description: 'We publish navigation and searches with AI-powered recommendations.' },
+        { title: 'Measure & Optimize', description: 'Real-time dashboard with purchase intent and search patterns.' },
+      ]
+    },
+
+    // Media Page
+    media: {
+      title: 'Media & Press',
+      subtitle: 'Latest news and coverage about Kadeh',
+      noContent: 'No media content available at this time.',
+    },
+
+    // Video Page
+    video: {
+      title: 'Video Gallery',
+      subtitle: 'Watch Kadeh in action',
+      noContent: 'No videos available at this time.',
+    },
+
+    // FAQ Page
+    faqPage: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about Kadeh',
     },
 
     // Footer

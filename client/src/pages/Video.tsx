@@ -7,8 +7,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Play, Download } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 
 export default function Video() {
+  const { language } = useLanguage();
+  const t = translations[language];
   const solutions = [
     {
       id: 1,
