@@ -1,0 +1,4 @@
+- [x] Fix FAQ page - remove solutions section duplication
+- [x] Upload team image to S3 for FAQ page
+- [x] Add image to FAQ page layout
+- [x] Test FAQ page in Portuguese and English

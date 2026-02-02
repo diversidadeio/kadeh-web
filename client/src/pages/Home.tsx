@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
 import CTASection from "@/components/CTASection";
-import FAQSection from "@/components/FAQSection";
+
 import Footer from "@/components/Footer";
 import {
   MapPin,
@@ -234,13 +234,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* FAQ */}
-      <FAQSection
-        id="faq"
-        title={t.faq.title}
-        items={t.faq.items}
-      />
 
       {/* CTA Final */}
       <CTASection

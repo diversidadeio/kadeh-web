@@ -43,7 +43,7 @@ export default function Header() {
           <Link href={getLocalizedPath("/video")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.video}
           </Link>
-          <Link href={getLocalizedPath("/#faq")} className="text-sm text-foreground hover:text-primary transition-colors">
+          <Link href={getLocalizedPath("/faq")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.faq}
           </Link>
         </div>
