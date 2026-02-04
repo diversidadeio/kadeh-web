@@ -5,3 +5,6 @@
 - [x] Fix Smart Layout page hero image - changed from missing smart-layout-hero.jpg to smart-layout-olive-oil.png
 - [x] Restore Smart Layout page with all 5 shelf visualization images and multilingual support
 - [x] Add zoom functionality (50% zoom on click) to shelf visualization images on Smart Layout page
+- [x] Replace Smart Layout simulator with pre-loaded rice varieties example (5 types)
+- [x] Replace all "Frentes" terminology with "Quadrantes" throughout Smart Layout page
+- [x] Test updated Smart Layout simulator in Portuguese and English

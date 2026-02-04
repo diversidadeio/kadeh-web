@@ -33,7 +33,7 @@ interface PromotionalPoint {
 }
 
 interface Recommendation {
-  frentes: number;
+  quadrantes: number;
   zone: string;
   share: number;
   label: string;
@@ -46,29 +46,31 @@ const CATEGORIES = {
 };
 
 const RECOMMENDATION_MATRIX = {
-  "Alto-Alta": { frentes: 1, zone: "Altura dos olhos", share: 35, label: "Maior espaço", color: "bg-green-600" },
-  "Alto-Média": { frentes: 2, zone: "Altura dos olhos", share: 25, label: "Melhor espaço", color: "bg-green-500" },
-  "Alto-Baixa": { frentes: 2, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
-  "Médio-Alta": { frentes: 2, zone: "Altura dos olhos", share: 25, label: "Melhor espaço", color: "bg-green-500" },
-  "Médio-Média": { frentes: 3, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
-  "Médio-Baixa": { frentes: 4, zone: "Altura das mãos", share: 15, label: "Pequeno espaço", color: "bg-orange-400" },
-  "Baixo-Alta": { frentes: 3, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
-  "Baixo-Média": { frentes: 4, zone: "Altura das mãos", share: 15, label: "Pequeno espaço", color: "bg-orange-400" },
-  "Baixo-Baixa": { frentes: 5, zone: "Lugar baixo", share: 5, label: "Menor espaço", color: "bg-red-400" },
+  "Alto-Alta": { quadrantes: 1, zone: "Altura dos olhos", share: 35, label: "Maior espaço", color: "bg-green-600" },
+  "Alto-Média": { quadrantes: 2, zone: "Altura dos olhos", share: 25, label: "Melhor espaço", color: "bg-green-500" },
+  "Alto-Baixa": { quadrantes: 2, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
+  "Médio-Alta": { quadrantes: 2, zone: "Altura dos olhos", share: 25, label: "Melhor espaço", color: "bg-green-500" },
+  "Médio-Média": { quadrantes: 3, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
+  "Médio-Baixa": { quadrantes: 4, zone: "Altura das mãos", share: 15, label: "Pequeno espaço", color: "bg-orange-400" },
+  "Baixo-Alta": { quadrantes: 3, zone: "Altura das mãos", share: 20, label: "Bom espaço", color: "bg-yellow-500" },
+  "Baixo-Média": { quadrantes: 4, zone: "Altura das mãos", share: 15, label: "Pequeno espaço", color: "bg-orange-400" },
+  "Baixo-Baixa": { quadrantes: 5, zone: "Lugar baixo", share: 5, label: "Menor espaço", color: "bg-red-400" },
 };
 
 function getRecommendation(giro: string, margem: string): Recommendation {
   const key = `${giro}-${margem}`;
   return RECOMMENDATION_MATRIX[key as keyof typeof RECOMMENDATION_MATRIX] || 
-    { frentes: 1, zone: "N/A", share: 0, label: "N/A", color: "bg-gray-300" };
+    { quadrantes: 1, zone: "N/A", share: 0, label: "N/A", color: "bg-gray-300" };
 }
 
 export default function SmartLayoutSimulator() {
   const { language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([
-    { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos" },
-    { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas" },
-    { id: "3", name: "Brinquedo Premium", giro: "Baixo", margem: "Alta", category: "Não-Alimentar", subCategory: "Brinquedos" },
+    { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+    { id: "2", name: "Arroz Nobre 5 kg", giro: "Médio", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+    { id: "3", name: "Arroz Precinho 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+    { id: "4", name: "Arroz Marca Própria 5 kg", giro: "Alto", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+    { id: "5", name: "Arroz Premium 5 Kg", giro: "Médio", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
   ]);
 
   const [gondolaWidth, setGondolaWidth] = useState(280);
@@ -93,6 +95,8 @@ export default function SmartLayoutSimulator() {
         margem: newProductMargem,
         category: newProductCategory,
         subCategory: newProductSubCategory,
+        largura: 20,
+        comprimento: 30,
       };
       setProducts([...products, newProduct]);
       setNewProductName("");
@@ -114,8 +118,10 @@ export default function SmartLayoutSimulator() {
   const resetSimulator = () => {
     setProducts([
       { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
-      { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas", largura: 10, comprimento: 25 },
-      { id: "3", name: "Brinquedo Premium", giro: "Baixo", margem: "Alta", category: "Não-Alimentar", subCategory: "Brinquedos", largura: 15, comprimento: 20 },
+      { id: "2", name: "Arroz Nobre 5 kg", giro: "Médio", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+      { id: "3", name: "Arroz Precinho 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+      { id: "4", name: "Arroz Marca Própria 5 kg", giro: "Alto", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
+      { id: "5", name: "Arroz Premium 5 Kg", giro: "Médio", margem: "Alta", category: "Alimentar", subCategory: "Alimentos", largura: 20, comprimento: 30 },
     ]);
     setGondolaWidth(280);
     setShelves(5);
@@ -128,8 +134,8 @@ export default function SmartLayoutSimulator() {
   const calculateNaturalPointCapacity = (product: Product): number => {
     if (!product.largura || !product.comprimento) return 0;
     const rec = getRecommendation(product.giro, product.margem);
-    const produtosPorFrente = Math.floor(shelfDepth / product.comprimento);
-    return rec.frentes * produtosPorFrente * shelves;
+    const produtosPorQuadrante = Math.floor(shelfDepth / product.comprimento);
+    return rec.quadrantes * produtosPorQuadrante * shelves;
   };
 
   // Calcular capacidade em pontos promocionais
@@ -196,8 +202,8 @@ export default function SmartLayoutSimulator() {
       margem: typeof p.margem === "number" ? numericToCategory(p.margem, "margem") as "Baixa" | "Média" | "Alta" : p.margem,
       category: p.category,
       subCategory: p.subCategory,
-      largura: p.largura,
-      comprimento: p.comprimento,
+      largura: p.largura || 20,
+      comprimento: p.comprimento || 30,
       promotionalPoints: [],
     }));
     setProducts([...products, ...newProducts]);
@@ -369,7 +375,7 @@ export default function SmartLayoutSimulator() {
                 <th className="text-left py-3 px-4 font-semibold">Margem</th>
                 <th className="text-left py-3 px-4 font-semibold">Por Prateleira</th>
                 <th className="text-left py-3 px-4 font-semibold">Ponto Natural</th>
-                <th className="text-left py-3 px-4 font-semibold">Frentes</th>
+                <th className="text-left py-3 px-4 font-semibold bg-blue-50">Quadrantes</th>
                 <th className="text-left py-3 px-4 font-semibold">Zona</th>
                 <th className="text-left py-3 px-4 font-semibold">Ação</th>
               </tr>
@@ -388,7 +394,7 @@ export default function SmartLayoutSimulator() {
                     <td className="py-3 px-4">{product.margem}</td>
                     <td className="py-3 px-4 font-medium text-blue-600">{Math.floor(shelfDepth / (product.comprimento || 1))} unid.</td>
                     <td className="py-3 px-4 font-medium text-green-600">{naturalCapacity} unid.</td>
-                    <td className="py-3 px-4 font-medium">{rec.frentes}</td>
+                    <td className="py-3 px-4 font-medium bg-blue-50">{rec.quadrantes}</td>
                     <td className="py-3 px-4 text-xs">{rec.zone}</td>
                     <td className="py-3 px-4">
                       <button

@@ -41,9 +41,9 @@ export default function SmartLayout() {
       icon: <Package className="w-6 h-6" />,
     },
     {
-      title: language === 'pt' ? "Recomendação Inteligente de Frentes" : "Intelligent Shelf Recommendations",
+      title: language === 'pt' ? "Recomendação Inteligente de Quadrantes" : "Intelligent Shelf Recommendations",
       description: language === 'pt'
-        ? "Sistema recomenda o número ideal de frentes por produto baseado em giro e margem de lucratividade."
+        ? "Sistema recomenda o número ideal de quadrantes por produto baseado em giro e margem de lucratividade."
         : "System recommends the ideal number of shelf facings per product based on sales velocity and profitability margin.",
       icon: <Target className="w-6 h-6" />,
     },
@@ -93,7 +93,7 @@ export default function SmartLayout() {
     {
       title: language === 'pt' ? "Redução de Ruptura" : "Reduced Stockouts",
       description: language === 'pt'
-        ? "Produtos com alto giro recebem mais frentes, reduzindo falta de estoque e perda de vendas."
+        ? "Produtos com alto giro recebem mais quadrantes, reduzindo falta de estoque e perda de vendas."
         : "Fast-moving products get more facings, reducing stockouts and lost sales.",
     },
     {
@@ -132,7 +132,7 @@ export default function SmartLayout() {
     {
       title: language === 'pt' ? "Sistema Recomenda" : "System Recommends",
       description: language === 'pt'
-        ? "Kadeh Smart Layout calcula número ideal de frentes e posicionamento por zona de gôndola."
+        ? "Kadeh Smart Layout calcula número ideal de quadrantes e posicionamento por zona de gôndola."
         : "Kadeh Smart Layout calculates ideal number of facings and positioning by shelf zone.",
     },
     {
@@ -178,9 +178,9 @@ export default function SmartLayout() {
 
   const faqItems = [
     {
-      question: language === 'pt' ? "Como o sistema calcula o número de frentes recomendado?" : "How does the system calculate the recommended number of facings?",
+      question: language === 'pt' ? "Como o sistema calcula o número de quadrantes recomendado?" : "How does the system calculate the recommended number of facings?",
       answer: language === 'pt'
-        ? "O sistema usa uma matriz matemática que cruza Giro (Baixo/Médio/Alto) com Margem (Baixa/Média/Alta), recomendando de 1 a 5 frentes. Produtos com alto giro e alta margem recebem mais espaço."
+        ? "O sistema usa uma matriz matemática que cruza Giro (Baixo/Médio/Alto) com Margem (Baixa/Média/Alta), recomendando de 1 a 5 quadrantes. Produtos com alto giro e alta margem recebem mais espaço."
         : "The system uses a mathematical matrix that crosses Sales Velocity (Low/Medium/High) with Margin (Low/Medium/High), recommending 1 to 5 facings. Products with high velocity and high margin get more space.",
     },
     {
@@ -225,7 +225,7 @@ export default function SmartLayout() {
           ? "Kadeh Smart Layout: gerencie categorias com inteligência e maximize a lucratividade da loja."
           : "Kadeh Smart Layout: manage categories intelligently and maximize store profitability."}
         subtitle={language === 'pt'
-          ? "Recomendações automáticas de número de frentes, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
+          ? "Recomendações automáticas de número de quadrantes, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
           : "Automatic recommendations for number of facings, shelf positioning and category resizing based on product mix, profitability margin and sales velocity."}
         primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
         secondaryCTA={language === 'pt' ? "Ver funcionalidades" : "View Features"}
