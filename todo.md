@@ -31,3 +31,8 @@
 - [x] Implement PDF report export with charts and analytics
 - [x] Add additional enhancements and polish
 - [x] Test all new features in both languages
+- [x] Integrate dimension validation into SmartLayoutSimulator with real-time alerts
+- [x] Create scenario comparison component with visual charts and metrics
+- [x] Implement ERP integration module for data import (SAP, Omni, Totvs)
+- [x] Add import UI and data mapping functionality
+- [x] Test all new features in both languages
