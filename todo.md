@@ -21,3 +21,8 @@
 - [x] Refactor product recommendation algorithm based on ABC curves and strategic roles
 - [x] Test updated simulator with new categories and filters in both languages
 - [x] Add data sources section (ABRAS, NielsenIQ, Kantar, SA Varejo) to simulator
+- [x] Implement 3D shelf visualization with Three.js
+- [x] Create simulation history storage and comparison UI
+- [x] Implement intelligent automatic recommendations engine
+- [x] Integrate all new features into SmartLayoutEnhanced wrapper
+- [x] Test 3D visualization, history, and recommendations in both languages
