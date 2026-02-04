@@ -2,3 +2,4 @@
 - [x] Upload team image to S3 for FAQ page
 - [x] Add image to FAQ page layout
 - [x] Test FAQ page in Portuguese and English
+- [x] Fix Smart Layout page hero image - changed from missing smart-layout-hero.jpg to smart-layout-olive-oil.png

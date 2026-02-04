@@ -141,7 +141,7 @@ export default function SmartLayout() {
         subtitle={t.smartLayout.subtitle}
         primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
         secondaryCTA={language === 'pt' ? "Ver soluções" : "View Solutions"}
-        imageUrl="/images/smart-layout-hero.jpg"
+        imageUrl="/images/smart-layout-olive-oil.png"
         imageAlt="Smart Layout"
       />
 
