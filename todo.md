@@ -12,3 +12,6 @@
 - [x] Create product category presets (beverages, hygiene, electronics) for quick loading
 - [x] Implement PDF export functionality for shelf visualization and recommendations
 - [x] Test all new features in both Portuguese and English
+- [x] Add shelf height control (30-90 cm) to Smart Layout simulator with slider
+- [x] Update product capacity calculations to use shelf height
+- [x] Test shelf height control in both Portuguese and English

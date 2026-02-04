@@ -140,6 +140,7 @@ const TRANSLATIONS = {
     loadElectronicsPreset: "Carregar Eletrônicos",
     exportPlanogram: "Exportar Planograma",
     bulkImport: "Importar Produtos em Massa",
+    shelfHeight: "Altura entre Prateleiras (cm)",
   },
   en: {
     filterByCategory: "Filter by Category",
@@ -190,6 +191,7 @@ const TRANSLATIONS = {
     loadElectronicsPreset: "Load Electronics",
     exportPlanogram: "Export Planogram",
     bulkImport: "Bulk Import Products",
+    shelfHeight: "Shelf Height (cm)",
   }
 };
 
@@ -214,6 +216,7 @@ export default function SmartLayoutSimulator() {
   const [gondolaWidth, setGondolaWidth] = useState(280);
   const [shelves, setShelves] = useState(5);
   const [shelfDepth, setShelfDepth] = useState(40);
+  const [shelfHeight, setShelfHeight] = useState(60);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | "Todas">("Todas");
   const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory | "Todas">("Todas");
   const [newProductName, setNewProductName] = useState("");
@@ -258,6 +261,7 @@ export default function SmartLayoutSimulator() {
     setGondolaWidth(280);
     setShelves(5);
     setShelfDepth(40);
+    setShelfHeight(60);
     setSelectedCategory("Todas");
     setSelectedSubCategory("Todas");
   };
@@ -272,7 +276,8 @@ export default function SmartLayoutSimulator() {
     if (!product.largura || !product.comprimento) return 0;
     const rec = getRecommendation(product.giro, product.margem);
     const produtosPorQuadrante = Math.floor(shelfDepth / product.comprimento);
-    return rec.quadrantes * produtosPorQuadrante * shelves;
+    const produtosAltura = Math.floor(shelfHeight / (product.largura || 1));
+    return rec.quadrantes * produtosPorQuadrante * produtosAltura;
   };
 
   const calculatePromotionalCapacity = (product: Product): number => {
@@ -422,7 +427,7 @@ export default function SmartLayoutSimulator() {
       </div>
 
       {/* Configuração da Gôndola */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">{t.shelfWidth}</label>
           <input
@@ -458,6 +463,18 @@ export default function SmartLayoutSimulator() {
             className="w-full"
           />
           <p className="text-xs text-muted-foreground mt-1">{shelfDepth} cm</p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-2">{t.shelfHeight}</label>
+          <input
+            type="range"
+            min="30"
+            max="90"
+            value={shelfHeight}
+            onChange={(e) => setShelfHeight(Number(e.target.value))}
+            className="w-full"
+          />
+          <p className="text-xs text-muted-foreground mt-1">{shelfHeight} cm</p>
         </div>
         <div className="flex items-end">
           <Button onClick={resetSimulator} variant="outline" className="w-full flex items-center gap-2">
