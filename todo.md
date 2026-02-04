@@ -15,3 +15,9 @@
 - [x] Add shelf height control (30-90 cm) to Smart Layout simulator with slider
 - [x] Update product capacity calculations to use shelf height
 - [x] Test shelf height control in both Portuguese and English
+- [x] Integrate 50 food and 50 non-food categories into Smart Layout simulator
+- [x] Implement ABC curve classification (Faturamento and Lucratividade) in recommendation algorithm
+- [x] Update subcategory filter dropdown with all 100 categories
+- [x] Refactor product recommendation algorithm based on ABC curves and strategic roles
+- [x] Test updated simulator with new categories and filters in both languages
+- [x] Add data sources section (ABRAS, NielsenIQ, Kantar, SA Varejo) to simulator
