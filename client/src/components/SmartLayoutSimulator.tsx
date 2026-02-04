@@ -8,6 +8,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw, Download, Lightbulb, Save } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
+import ProductDescriptor, { type ProductDescriptor as ProductDescriptorType } from "@/components/ProductDescriptor";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CATEGORIES_DATABASE, getRecommendationByABCCurves, type Category } from "@/data/categories";
 import Shelf3DVisualization from "@/components/Shelf3DVisualization";
@@ -346,6 +347,33 @@ export default function SmartLayoutSimulator() {
           </Button>
         </div>
       </div>
+
+      {/* Product Descriptor */}
+      <ProductDescriptor onAddProduct={(product) => {
+        const matchingCategory = CATEGORIES_DATABASE.find(c => c.name === product.name);
+        const newProduct: Product = {
+          id: `desc_${Date.now()}`,
+          name: product.name,
+          categoryId: matchingCategory?.id || product.category,
+          category: matchingCategory || ({
+            id: product.category,
+            name: product.name,
+            type: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
+            mainCategory: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
+            papelEstrategico: product.velocity === "Alto" ? "Destaque" : "Complementar",
+            curvaFaturamento: product.velocity === "Alto" ? "A" : product.velocity === "Médio" ? "B" : "C",
+            curvaLucratividade: product.margin === "Alta" ? "A" : product.margin === "Média" ? "B" : "C",
+            defaultLargura: 10,
+            defaultComprimento: 5,
+            defaultGiro: product.velocity,
+            defaultMargem: product.margin,
+          } as unknown as Category),
+          largura: 10,
+          comprimento: 5,
+          promotionalPoints: [],
+        };
+        setProducts([...products, newProduct]);
+      }} language={language} />
 
       {/* Categorias Disponíveis */}
       <div className="bg-card p-6 rounded-md border border-border">

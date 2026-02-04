@@ -46,3 +46,7 @@
 - [x] Implement load/restore saved simulations
 - [x] Add simulation list and management UI
 - [x] Test simulator with save/load in both languages
+- [x] Restore product descriptor functionality with margin/velocity characteristics
+- [x] Integrate product descriptors into SmartLayoutSimulator
+- [x] Implement planogram generation based on product characteristics
+- [x] Test product descriptor functionality in both languages
