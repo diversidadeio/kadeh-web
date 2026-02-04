@@ -3,3 +3,4 @@
 - [x] Add image to FAQ page layout
 - [x] Test FAQ page in Portuguese and English
 - [x] Fix Smart Layout page hero image - changed from missing smart-layout-hero.jpg to smart-layout-olive-oil.png
+- [x] Restore Smart Layout page with all 5 shelf visualization images and multilingual support
