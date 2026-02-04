@@ -11,7 +11,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
-import SmartLayoutSimulator from "@/components/SmartLayoutSimulator";
+import SmartLayoutWithSaveFeature from "@/components/SmartLayoutWithSaveFeature";
 import ImageZoomModal from "@/components/ImageZoomModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
@@ -451,7 +451,7 @@ export default function SmartLayout() {
                 : "Configure your shelf, add products and see layout recommendations in real time."}
             </p>
           </div>
-          <SmartLayoutSimulator />
+          <SmartLayoutWithSaveFeature />
         </div>
       </section>
 
