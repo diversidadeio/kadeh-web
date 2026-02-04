@@ -4,6 +4,7 @@
  * SEO: Optimized for retail, category management, shelf optimization keywords
  */
 
+import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -11,6 +12,7 @@ import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import SmartLayoutSimulator from "@/components/SmartLayoutSimulator";
+import ImageZoomModal from "@/components/ImageZoomModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import {
@@ -28,6 +30,7 @@ import {
 export default function SmartLayout() {
   const { language } = useLanguage();
   const t = translations[language];
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
 
   const features = [
     {
@@ -300,7 +303,7 @@ export default function SmartLayout() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Gondola */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow">
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-gondola.png', alt: language === 'pt' ? "Visualização de Gôndola" : "Shelf Visualization" })}>
               <img src="/images/smart-layout-gondola.png" alt={language === 'pt' ? "Visualização de Gôndola" : "Shelf Visualization"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
@@ -315,7 +318,7 @@ export default function SmartLayout() {
             </div>
 
             {/* Retail */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow">
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-retail.png', alt: language === 'pt' ? "Cenário de Varejo" : "Retail Scenario" })}>
               <img src="/images/smart-layout-retail.png" alt={language === 'pt' ? "Cenário de Varejo" : "Retail Scenario"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
@@ -330,7 +333,7 @@ export default function SmartLayout() {
             </div>
 
             {/* Olive Oil */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow">
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil.png', alt: language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example" })}>
               <img src="/images/smart-layout-olive-oil.png" alt={language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
@@ -345,7 +348,7 @@ export default function SmartLayout() {
             </div>
 
             {/* Detailed */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow">
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-detailed.png', alt: language === 'pt' ? "Versão Detalhada" : "Detailed Version" })}>
               <img src="/images/smart-layout-olive-oil-detailed.png" alt={language === 'pt' ? "Versão Detalhada" : "Detailed Version"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
@@ -360,7 +363,7 @@ export default function SmartLayout() {
             </div>
 
             {/* 6 Shelves */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow">
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-6shelves.png', alt: language === 'pt' ? "Versão com 6 Prateleiras" : "6 Shelves Version" })}>
               <img src="/images/smart-layout-olive-oil-6shelves.png" alt={language === 'pt' ? "Versão com 6 Prateleiras" : "6 Shelves Version"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
@@ -472,6 +475,16 @@ export default function SmartLayout() {
       />
 
       <Footer />
+
+      {/* Image Zoom Modal */}
+      {zoomImage && (
+        <ImageZoomModal
+          isOpen={!!zoomImage}
+          imageSrc={zoomImage.src}
+          imageAlt={zoomImage.alt}
+          onClose={() => setZoomImage(null)}
+        />
+      )}
     </>
   );
 }
