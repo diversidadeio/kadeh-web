@@ -51,3 +51,4 @@
 - [x] Implement planogram generation based on product characteristics
 - [x] Test product descriptor functionality in both languages
 - [x] Fix missing add product buttons in Smart Layout simulator
+- [x] Fix image caption from "6 prateleiras" to "4 prateleiras" in Smart Layout

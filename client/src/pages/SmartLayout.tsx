@@ -363,16 +363,16 @@ export default function SmartLayout() {
             </div>
 
             {/* 6 Shelves */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-6shelves.png', alt: language === 'pt' ? "Versão com 6 Prateleiras" : "6 Shelves Version" })}>
-              <img src="/images/smart-layout-olive-oil-6shelves.png" alt={language === 'pt' ? "Versão com 6 Prateleiras" : "6 Shelves Version"} className="w-full h-64 object-cover" />
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-6shelves.png', alt: language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version" })}>
+              <img src="/images/smart-layout-olive-oil-6shelves.png" alt={language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
-                  {language === 'pt' ? "Versão com 6 Prateleiras" : "6 Shelves Version"}
+                  {language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version"}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {language === 'pt'
-                    ? "Otimização para gôndolas com 6 prateleiras e maior espaço disponível."
-                    : "Optimization for shelves with 6 shelves and more available space."}
+                    ? "Otimização para gôndolas com 4 prateleiras e maior espaço disponível."
+                    : "Optimization for shelves with 4 shelves and more available space."}
                 </p>
               </div>
             </div>
