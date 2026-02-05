@@ -50,3 +50,4 @@
 - [x] Integrate product descriptors into SmartLayoutSimulator
 - [x] Implement planogram generation based on product characteristics
 - [x] Test product descriptor functionality in both languages
+- [x] Fix missing add product buttons in Smart Layout simulator

@@ -378,20 +378,38 @@ export default function SmartLayoutSimulator() {
       {/* Categorias Disponíveis */}
       <div className="bg-card p-6 rounded-md border border-border">
         <h3 className="text-lg font-semibold text-foreground mb-4">{t.loadProductPresets}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
-          {filteredCategories.map((cat) => (
+        {filteredCategories && filteredCategories.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
+            {filteredCategories.map((cat) => (
+              <Button
+                key={cat.id}
+                onClick={() => addProduct(cat)}
+                variant="outline"
+                size="sm"
+                className="text-xs truncate hover:bg-accent"
+                title={cat.name}
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                {cat.name}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Nenhuma categoria encontrada. Verifique os filtros.</p>
             <Button
-              key={cat.id}
-              onClick={() => addProduct(cat)}
+              onClick={() => {
+                setSelectedMainCategory("Todas");
+                setSelectedSubCategory("Todas");
+              }}
               variant="outline"
               size="sm"
-              className="text-xs truncate"
-              title={cat.name}
+              className="mt-4"
             >
-              {cat.name}
+              {t.clearFilters}
             </Button>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Produtos Adicionados */}
