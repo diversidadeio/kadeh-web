@@ -59,3 +59,8 @@
 - [x] Exibir nome do produto e percentual em cada seção da gôndola
 - [x] Integrar visualização na simulação com cores e espaçamento proporcional
 - [x] Testar em português e inglês
+
+- [x] Testar visualização da gôndola com 10+ produtos
+- [x] Validar legibilidade de nomes e percentuais com muitos produtos
+- [x] Testar responsividade em diferentes tamanhos de tela
+- [x] Implementar melhorias de layout se necessário (ex: fonte menor, tooltips)
