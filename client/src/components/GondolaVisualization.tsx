@@ -60,14 +60,29 @@ export default function GondolaVisualization({
   const productAllocations = useMemo(() => {
     if (products.length === 0) return [];
 
+    // Calcular o espaço total disponível baseado nos produtos
+    const totalShare = products.reduce((sum, product) => {
+      const rec = getRecommendation(
+        product.category.curvaFaturamento as "A" | "B" | "C",
+        product.category.curvaLucratividade as "A" | "B" | "C"
+      );
+      const shareValue = typeof rec.share === 'number' ? rec.share : 15;
+      return sum + shareValue;
+    }, 0);
+
+    // Normalizar os percentuais se excederem 100%
+    const normalizer = totalShare > 100 ? 100 / totalShare : 1;
+
     return products.map((product) => {
       const rec = getRecommendation(
         product.category.curvaFaturamento as "A" | "B" | "C",
         product.category.curvaLucratividade as "A" | "B" | "C"
       );
-      const width = (rec.quadrantes * (product.largura || 0)) / gondolaWidth * 100;
+      const shareValue = typeof rec.share === 'number' ? rec.share : 15;
+      const normalizedShare = shareValue * normalizer;
+      const width = normalizedShare; // Usar o percentual normalizado diretamente
       const color = colorMap[rec.zone] || "bg-blue-500";
-      const shareStr = typeof rec.share === 'number' ? `${rec.share}%` : rec.share;
+      const shareStr = `${normalizedShare.toFixed(1)}%`;
 
       return {
         id: product.id,
@@ -126,19 +141,19 @@ export default function GondolaVisualization({
               title={`${alloc.name}: ${alloc.share} - ${alloc.quadrantes} quadrantes`}
             >
               {/* Product name and percentage - shown if space allows */}
-              {alloc.displayWidth > 8 && (
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="text-xs font-bold truncate px-1 max-w-full">
-                    {alloc.name.length > 15
-                      ? alloc.name.substring(0, 12) + "..."
+              {alloc.displayWidth > 5 && (
+                <div className="flex flex-col items-center gap-0.5 overflow-hidden">
+                  <span className="text-xs font-bold truncate px-1 max-w-full leading-tight">
+                    {alloc.name.length > 12
+                      ? alloc.name.substring(0, 10) + "..."
                       : alloc.name}
                   </span>
-                  <span className="text-xs font-semibold">{alloc.share}</span>
+                  <span className="text-xs font-semibold leading-tight">{alloc.share}</span>
                 </div>
               )}
 
               {/* Tooltip for small sections */}
-              {alloc.displayWidth <= 8 && (
+              {alloc.displayWidth <= 5 && (
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
                   {alloc.name}: {alloc.share}
                 </div>
