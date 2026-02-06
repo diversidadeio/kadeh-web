@@ -14,6 +14,7 @@ import { CATEGORIES_DATABASE, getRecommendationByABCCurves, type Category } from
 import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
+import GondolaVisualization from "@/components/GondolaVisualization";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -471,35 +472,12 @@ export default function SmartLayoutSimulator() {
 
       {/* Visualização da Gôndola */}
       {products.length > 0 && (
-        <div className="bg-card p-6 rounded-md border border-border">
-          <h3 className="text-lg font-semibold text-foreground mb-4">{t.shelfVisualization}</h3>
-          <p className="text-sm text-muted-foreground mb-2">
-            {t.totalSpace}: {gondolaWidth} cm | {t.usedSpace}: {spacePercentage.toFixed(0)}%
-          </p>
-          {spacePercentage > 100 && (
-            <p className="text-sm text-destructive mb-2">{t.spaceExceeded}</p>
-          )}
-          <div className="flex gap-1 h-12 bg-muted rounded-md overflow-hidden">
-            {products.map((product) => {
-              const rec = getRecommendationByABCCurves(
-                product.category.curvaFaturamento,
-                product.category.curvaLucratividade
-              );
-              const width = (rec.quadrantes * (product.largura || 0)) / gondolaWidth * 100;
-              const color = colorMap[rec.zone] || "bg-blue-500";
-              return (
-                <div
-                  key={product.id}
-                  style={{ width: `${Math.max(width, 2)}%` }}
-                  className={`${color} flex items-center justify-center text-xs font-bold text-white`}
-                  title={`${product.name}: ${rec.share}%`}
-                >
-                  {width > 5 && `${rec.share}%`}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <GondolaVisualization
+          products={products}
+          gondolaWidth={gondolaWidth}
+          getRecommendation={getRecommendationByABCCurves}
+          colorMap={colorMap}
+        />
       )}
 
       {/* Data Sources */}

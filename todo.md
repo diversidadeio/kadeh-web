@@ -53,3 +53,9 @@
 - [x] Fix missing add product buttons in Smart Layout simulator
 - [x] Fix image caption from "6 prateleiras" to "4 prateleiras" in Smart Layout
 - [x] Fix error when saving simulation data in Smart Layout
+- [x] Analisar estrutura atual da visualização da gôndola no SmartLayoutSimulator
+- [x] Implementar componente GondolaVisualization com produtos em layout horizontal
+- [x] Calcular percentuais de espaço para cada produto baseado em quantidade de itens
+- [x] Exibir nome do produto e percentual em cada seção da gôndola
+- [x] Integrar visualização na simulação com cores e espaçamento proporcional
+- [x] Testar em português e inglês
