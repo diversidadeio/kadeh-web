@@ -15,6 +15,9 @@ import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
 import GondolaVisualization from "@/components/GondolaVisualization";
+import ShelfZoneFilter from "@/components/ShelfZoneFilter";
+import ExposureAreaModal from "@/components/ExposureAreaModal";
+import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -88,6 +91,11 @@ const TRANSLATIONS = {
     view3D: "Visualizar 3D",
     history: "Histórico de Simulações",
     confidence: "Confiança",
+    filterByZone: "Filtrar por Zona de Prateleira",
+    eyes: "Altura dos olhos",
+    hands: "Altura das mãos",
+    bottom: "Parte de Baixo",
+    allZones: "Todas as Zonas",
   },
   en: {
     filterByCategory: "Filter by Category",
@@ -142,6 +150,11 @@ const TRANSLATIONS = {
     view3D: "View 3D",
     history: "Simulation History",
     confidence: "Confidence",
+    filterByZone: "Filter by Shelf Zone",
+    eyes: "Eye Level",
+    hands: "Hand Level",
+    bottom: "Bottom Shelf",
+    allZones: "All Zones",
   },
 };
 
@@ -161,6 +174,8 @@ export default function SmartLayoutSimulator() {
   const [show3D, setShow3D] = useState(false);
   const [simulationName, setSimulationName] = useState("");
   const [recommendation, setRecommendation] = useState<any>(null);
+  const [selectedZone, setSelectedZone] = useState<string | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Get available subcategories based on selected main category
   const availableSubCategories = useMemo(() => {
@@ -189,6 +204,30 @@ export default function SmartLayoutSimulator() {
     setShelfHeight(60);
     setSelectedMainCategory("Todas");
     setSelectedSubCategory("Todas");
+    setSelectedZone(null);
+  };
+
+  const filteredProductsByZone = useMemo(() => {
+    if (!selectedZone) return products;
+    return products.filter((product) => {
+      const rec = getRecommendationByABCCurves(
+        product.category.curvaFaturamento,
+        product.category.curvaLucratividade
+      );
+      return rec.zone === selectedZone;
+    });
+  }, [products, selectedZone]);
+
+  const handleExportPDF = (areaType: string) => {
+    const productsToExport = selectedZone ? filteredProductsByZone : products;
+    exportPlanogramToPDF(
+      productsToExport,
+      gondolaWidth,
+      areaType,
+      getRecommendationByABCCurves,
+      colorMap,
+      language
+    );
   };
 
   const calculateNaturalPointCapacity = (product: Product): number => {
@@ -417,7 +456,7 @@ export default function SmartLayoutSimulator() {
       {products.length > 0 && (
         <div className="bg-card p-6 rounded-md border border-border">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            {t.productsAdded} ({products.length})
+            {t.productsAdded} ({filteredProductsByZone.length})
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -434,7 +473,7 @@ export default function SmartLayoutSimulator() {
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => {
+                {filteredProductsByZone.map((product) => {
                   const rec = getRecommendationByABCCurves(
                     product.category.curvaFaturamento,
                     product.category.curvaLucratividade
@@ -470,10 +509,36 @@ export default function SmartLayoutSimulator() {
         </div>
       )}
 
+      {/* Filtro de Zona de Prateleira */}
+      {products.length > 0 && (
+        <ShelfZoneFilter selectedZone={selectedZone} onZoneChange={setSelectedZone} />
+      )}
+
+      {/* Botão de Exportação */}
+      {products.length > 0 && (
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowExportModal(true)}
+            variant="default"
+            className="flex items-center gap-2 flex-1"
+          >
+            <Download className="w-4 h-4" />
+            {t.exportPlanogram}
+          </Button>
+        </div>
+      )}
+
+      {/* Modal de Seleção de Área de Exposição */}
+      <ExposureAreaModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleExportPDF}
+      />
+
       {/* Visualização da Gôndola */}
       {products.length > 0 && (
         <GondolaVisualization
-          products={products}
+          products={filteredProductsByZone}
           gondolaWidth={gondolaWidth}
           getRecommendation={getRecommendationByABCCurves}
           colorMap={colorMap}

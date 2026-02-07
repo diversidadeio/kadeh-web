@@ -64,3 +64,12 @@
 - [x] Validar legibilidade de nomes e percentuais com muitos produtos
 - [x] Testar responsividade em diferentes tamanhos de tela
 - [x] Implementar melhorias de layout se necessário (ex: fonte menor, tooltips)
+
+- [x] Implementar filtros por zona de prateleira (Olhos, Mãos, Parte de Baixo)
+- [x] Substituir terminologia "Piso" por "Parte de Baixo" em todo o sistema
+- [x] Criar modal de seleção de tipo de área de exposição (Gôndola, Terminal, Freezer Vertical, Freezer Horizontal, Banca)
+- [x] Implementar funcionalidade de exportação de planograma em PDF
+- [x] Integrar biblioteca de PDF (html2pdf ou similar) para exportação
+- [x] Testar filtros de zona em português e inglês
+- [x] Testar exportação de planograma em PDF em português e inglês
+- [x] Validar layout e formatação do PDF exportado
