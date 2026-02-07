@@ -26,6 +26,7 @@ import { Link } from "wouter";
 import PresentationCarousel from "@/components/PresentationCarousel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
+import HelpButton from "@/components/HelpButton";
 
 export default function Home() {
   // The userAuth hooks provides authentication state
@@ -289,6 +290,14 @@ export default function Home() {
           onClose={() => setShowCarousel(false)}
         />
       )}
+
+      {/* Help Button */}
+      <HelpButton
+        section="smart-layout-intro"
+        title="Bem-vindo ao Kadeh"
+        content="Plataforma de navegação indoor com IA e analytics em tempo real"
+        position="bottom-left"
+      />
     </>
   );
 }

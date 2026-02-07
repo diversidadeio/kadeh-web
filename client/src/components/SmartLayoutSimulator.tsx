@@ -22,6 +22,7 @@ import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
+import HelpButton from "@/components/HelpButton";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -698,6 +699,14 @@ export default function SmartLayoutSimulator() {
           </li>
         </ul>
       </div>
+
+      {/* Help Button */}
+      <HelpButton
+        section="smart-layout-intro"
+        title="Smart Layout"
+        content="Simulador interativo para otimizar layouts"
+        position="bottom-right"
+      />
     </div>
   );
 }

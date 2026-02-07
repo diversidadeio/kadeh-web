@@ -113,3 +113,10 @@
 - [ ] Implementar lógica de posicionamento automático baseada em Margem e Giro
 - [ ] Integrar posicionamento inteligente no SmartLayoutSimulator
 - [ ] Testar posicionamento em português e inglês
+
+- [x] Criar componente HelpButton reutilizável com modal de ajuda
+- [x] Integrar HelpButton em Smart Layout com links contextuais
+- [x] Integrar HelpButton em páginas Home, Picking e Intelligence
+- [x] Criar sistema de âncoras para navegação no guia
+- [x] Testar integração em português e inglês
+- [x] Validar funcionamento dos botões de ajuda em todas as páginas
