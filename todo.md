@@ -126,3 +126,7 @@
 - [x] Exibir produtos com imagens, nomes e percentuais na visualização frontal
 - [x] Integrar GondolaFrontView no SmartLayoutSimulator
 - [x] Testar visualização em português e inglês
+
+- [ ] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
+- [ ] Corrigir problema de abertura de apresentação
+- [ ] Testar abertura em português e inglês

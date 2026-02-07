@@ -25,17 +25,17 @@ export default function PresentationCarousel({
 
   useEffect(() => {
     if (isOpen && presentationName) {
-      setCurrentPage(1);
+      setCurrentPage(2);
       setIsLoading(true);
       
       // Determine total pages based on presentation name
       const pageCount: Record<string, number> = {
-        'kadeh-varejo': 28,
-        'kadeh-shopping': 13,
+        'kadeh-varejo': 26,
+        'kadeh-shopping': 12,
         'kadeh-saude': 8,
         'kadeh-localiza': 14,
         'kadeh-eventos': 10,
-        'kadeh-picking': 10,
+        'kadeh-picking': 9,
       };
       
       const pages = pageCount[presentationName] || 0;
@@ -45,13 +45,13 @@ export default function PresentationCarousel({
   }, [isOpen, presentationName]);
 
   const goToPreviousPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 2) {
       setCurrentPage(currentPage - 1);
     }
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages + 1) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -100,7 +100,7 @@ export default function PresentationCarousel({
           <div className="flex gap-2 items-center">
             <button
               onClick={goToPreviousPage}
-              disabled={currentPage <= 1 || isLoading}
+              disabled={currentPage <= 2 || isLoading}
               className="p-2 hover:bg-secondary rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Página anterior"
             >
@@ -113,7 +113,7 @@ export default function PresentationCarousel({
 
             <button
               onClick={goToNextPage}
-              disabled={currentPage >= totalPages || isLoading}
+              disabled={currentPage >= totalPages + 1 || isLoading}
               className="p-2 hover:bg-secondary rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Próxima página"
             >
