@@ -18,6 +18,7 @@ interface Product {
   };
   largura?: number;
   comprimento?: number;
+  zone?: string;
 }
 
 interface StoreVisualizationGeneratorProps {
@@ -71,19 +72,36 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
-    // Build product list with details
-    const productList = products
-      .map((p) => `${p.name} (${p.category.name})`)
-      .join(", ");
+    // Organize products by zone
+    const productsByZone: Record<string, string[]> = {
+      eyes: [],
+      hands: [],
+      bottom: [],
+    };
 
-    // Determine zone description
-    let zoneDescription = "across all shelf zones";
-    if (selectedZone === "eyes") {
-      zoneDescription = "at eye level";
-    } else if (selectedZone === "hands") {
-      zoneDescription = "at hand level";
-    } else if (selectedZone === "bottom") {
-      zoneDescription = "at bottom shelf level";
+    products.forEach((p) => {
+      const zone = p.zone || "Altura das mãos";
+      const productName = `${p.name} (${p.category.name})`;
+      
+      if (zone === "Altura dos olhos" || zone === "eyes") {
+        productsByZone.eyes.push(productName);
+      } else if (zone === "Altura das mãos" || zone === "hands") {
+        productsByZone.hands.push(productName);
+      } else if (zone === "Parte de Baixo" || zone === "bottom") {
+        productsByZone.bottom.push(productName);
+      }
+    });
+
+    // Build detailed zone descriptions
+    let zoneDetails = "";
+    if (productsByZone.eyes.length > 0) {
+      zoneDetails += `\n- Eye level (premium placement): ${productsByZone.eyes.join(", ")}`;
+    }
+    if (productsByZone.hands.length > 0) {
+      zoneDetails += `\n- Hand level (convenient reach): ${productsByZone.hands.join(", ")}`;
+    }
+    if (productsByZone.bottom.length > 0) {
+      zoneDetails += `\n- Bottom shelf (bulk/heavy items): ${productsByZone.bottom.join(", ")}`;
     }
 
     // Build exposure type description
@@ -98,12 +116,15 @@ export default function StoreVisualizationGenerator({
       exposureDescription = "a fruit and vegetable stand";
     }
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with the following products displayed ${zoneDescription}: ${productList}. 
+    const prompt = `Professional retail store photograph showing ${exposureDescription} with products strategically positioned by shelf zone:${zoneDetails}
     
-The shelf is ${gondolaWidth}cm wide, ${shelfDepth}cm deep, and ${shelfHeight}cm tall between shelves. 
-The products are neatly organized and well-lit in a modern supermarket setting. 
+The shelf is ${gondolaWidth}cm wide, ${shelfDepth}cm deep, and ${shelfHeight}cm tall between shelves.
+Products at eye level are prominently displayed and well-lit.
+Products at hand level are easily accessible.
+Heavier or bulk items are positioned at the bottom shelf.
+The display is neatly organized in a modern supermarket setting with professional lighting.
 The image should be realistic, professional, and show how customers would see the products in a real store environment.
-High quality, detailed, professional retail photography style.`;
+High quality, detailed, professional retail photography style with clear shelf zones visible.`;
 
     return prompt;
   };
@@ -119,19 +140,22 @@ High quality, detailed, professional retail photography style.`;
 
     try {
       const prompt = generateStorePrompt();
+      console.log("Generated prompt:", prompt);
 
       // Call the tRPC endpoint to generate image using AI
       const result = await generateMutation.mutateAsync({
         prompt,
       });
 
+      console.log("Generation result:", result);
       if (result.success && result.url) {
         setGeneratedImage(result.url);
       } else {
         throw new Error("No image URL in response");
       }
     } catch (err) {
-      console.error("Error generating visualization:", err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error("Error generating visualization:", errorMessage);
       setError(t.error);
     } finally {
       setIsGenerating(false);

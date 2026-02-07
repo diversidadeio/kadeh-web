@@ -11,6 +11,7 @@ import CSVImporter from "@/components/CSVImporter";
 import ProductDescriptor, { type ProductDescriptor as ProductDescriptorType } from "@/components/ProductDescriptor";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CATEGORIES_DATABASE, getRecommendationByABCCurves, type Category } from "@/data/categories";
+import { calculateShelfZone } from "@/utils/shelfZoneCalculator";
 import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
@@ -20,6 +21,7 @@ import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
+import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -117,6 +119,8 @@ const TRANSLATIONS = {
     confirm: "Confirmar",
     validationError: "Por favor, preencha todos os campos com valores validos (maiores que 0)",
     requiredField: "Campo obrigatorio",
+    financialImpact: "Impacto Financeiro da Simulação",
+    storeLayout: "Layout da Loja",
   },
   en: {
     filterByCategory: "Filter by Category",
@@ -195,6 +199,8 @@ const TRANSLATIONS = {
     confirm: "Confirm",
     validationError: "Please fill in all fields with valid values (greater than 0)",
     requiredField: "Required field",
+    financialImpact: "Simulation Financial Impact",
+    storeLayout: "Store Layout",
   },
 };
 
@@ -289,6 +295,13 @@ export default function SmartLayoutSimulator() {
   };
 
   const addProduct = (category: Category) => {
+    // Calculate optimal shelf zone based on margin and giro
+    const optimalZone = calculateShelfZone(
+      category.curvaLucratividade as any,
+      category.curvaFaturamento as any,
+      language as 'pt' | 'en'
+    );
+    
     const newProduct: Product = {
       id: `prod_${Date.now()}`,
       name: category.name,
@@ -646,6 +659,17 @@ export default function SmartLayoutSimulator() {
         exposureType={medidasAreaExposicao.tipo}
         selectedZone={selectedZone}
       />
+
+      {/* Financial Impact Dashboard */}
+      <div className="bg-card p-6 rounded-md border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">{t.financialImpact}</h3>
+        <FinancialImpactDashboard
+          products={products}
+          gondolaWidth={gondolaWidth}
+          shelfHeight={shelfHeight}
+          shelfDepth={shelfDepth}
+        />
+      </div>
 
       {/* Data Sources */}
       <div className="bg-card p-6 rounded-md border border-border">

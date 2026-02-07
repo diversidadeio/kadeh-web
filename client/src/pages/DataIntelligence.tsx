@@ -278,7 +278,7 @@ export default function DataIntelligence() {
           : "Real-time reports on purchase intent, search patterns, navigation heat maps and detailed analysis of categories, brands and peak times."}
         primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
         secondaryCTA={language === 'pt' ? "Ver relatórios" : "View Reports"}
-        imageUrl="/images/data-analytics-retail.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GDnvMWkVAKEtiCUk.png"
         imageAlt={language === 'pt' ? "Inteligência de Dados - Dashboard Analytics" : "Data Intelligence - Analytics Dashboard"}
       />
 

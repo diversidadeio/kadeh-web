@@ -229,7 +229,7 @@ export default function SmartLayout() {
           : "Automatic recommendations for number of facings, shelf positioning and category resizing based on product mix, profitability margin and sales velocity."}
         primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
         secondaryCTA={language === 'pt' ? "Ver funcionalidades" : "View Features"}
-        imageUrl="/images/smart-layout-olive-oil.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png"
         imageAlt={language === 'pt' ? "Smart Layout - Otimização de Gôndolas" : "Smart Layout - Shelf Optimization"}
       />
 
@@ -333,8 +333,8 @@ export default function SmartLayout() {
             </div>
 
             {/* Olive Oil */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil.png', alt: language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example" })}>
-              <img src="/images/smart-layout-olive-oil.png" alt={language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example"} className="w-full h-64 object-cover" />
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png', alt: language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png" alt={language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
                   {language === 'pt' ? "Exemplo com Azeite" : "Olive Oil Example"}
@@ -348,8 +348,8 @@ export default function SmartLayout() {
             </div>
 
             {/* Detailed */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-detailed.png', alt: language === 'pt' ? "Versão Detalhada" : "Detailed Version" })}>
-              <img src="/images/smart-layout-olive-oil-detailed.png" alt={language === 'pt' ? "Versão Detalhada" : "Detailed Version"} className="w-full h-64 object-cover" />
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GPUaxCFmQgNVKOZv.png', alt: language === 'pt' ? "Versão Detalhada" : "Detailed Version" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GPUaxCFmQgNVKOZv.png" alt={language === 'pt' ? "Versão Detalhada" : "Detailed Version"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
                   {language === 'pt' ? "Versão Detalhada" : "Detailed Version"}
@@ -363,8 +363,8 @@ export default function SmartLayout() {
             </div>
 
             {/* 6 Shelves */}
-            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-olive-oil-6shelves.png', alt: language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version" })}>
-              <img src="/images/smart-layout-olive-oil-6shelves.png" alt={language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version"} className="w-full h-64 object-cover" />
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/wjSnHdHtumNCqHrQ.png', alt: language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/wjSnHdHtumNCqHrQ.png" alt={language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version"} className="w-full h-64 object-cover" />
               <div className="p-4 bg-card">
                 <h3 className="font-semibold text-foreground mb-2">
                   {language === 'pt' ? "Versão com 4 Prateleiras" : "4 Shelves Version"}

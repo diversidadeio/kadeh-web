@@ -81,7 +81,7 @@ export default function Video() {
               <div>
                 <p className="text-xs font-semibold text-muted-foreground mb-2">Instagram Reels</p>
                 <a
-                  href="/videos/kadeh-short-15s.mp4"
+                  href="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/HKzxdnraDbvFpTHo.mp4"
                   download="kadeh-short-15s.mp4"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
                 >
@@ -92,7 +92,7 @@ export default function Video() {
               <div>
                 <p className="text-xs font-semibold text-muted-foreground mb-2">TikTok</p>
                 <a
-                  href="/videos/kadeh-short-15s.mp4"
+                  href="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/HKzxdnraDbvFpTHo.mp4"
                   download="kadeh-short-15s.mp4"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
                 >
@@ -113,7 +113,7 @@ export default function Video() {
                 controls
                 poster="/images/kadeh_logo.png"
               >
-                <source src="/videos/kadeh-all-solutions.mp4" type="video/mp4" />
+                <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/tIomtiaDJuZmlYtx.mp4" type="video/mp4" />
                 Seu navegador não suporta o elemento de vídeo.
               </video>
               </div>

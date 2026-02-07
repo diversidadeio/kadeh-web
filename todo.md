@@ -90,3 +90,26 @@
 - [x] Integrar funcionalidade de geração de imagem no SmartLayoutSimulator
 - [x] Testar geração de imagem em português e inglês
 - [x] Validar qualidade das imagens geradas
+
+- [x] Analisar estrutura de dados da simulação para métricas financeiras
+- [x] Implementar cálculo de ROI estimado para cada simulação
+- [x] Implementar cálculo de impacto em ticket médio
+- [x] Implementar cálculo de redução de ruptura
+- [x] Implementar cálculo de impacto na lucratividade total
+- [x] Criar componente FinancialImpactDashboard com gráficos e métricas
+- [x] Integrar dashboard na página Smart Layout
+- [x] Testar dashboard em português e inglês
+- [x] Validar cálculos de métricas financeiras
+
+- [ ] Corrigir geração de imagem de IA para incluir zonas de exposição (Altura dos olhos, Altura das mãos, Parte Baixa)
+- [ ] Melhorar prompt de IA para descrever posicionamento de produtos por zona
+- [ ] Implementar organização de produtos por zona no StoreVisualizationGenerator
+- [ ] Testar geração de imagem com produtos em diferentes zonas
+- [ ] Validar visualização em português e inglês
+
+- [ ] Mover arquivos de mídia para /home/ubuntu/webdev-static-assets/
+- [ ] Atualizar referências de imagens e vídeos no código com URLs de CDN
+- [ ] Criar matriz de correlação Margem x Giro para determinar zonas de exposição
+- [ ] Implementar lógica de posicionamento automático baseada em Margem e Giro
+- [ ] Integrar posicionamento inteligente no SmartLayoutSimulator
+- [ ] Testar posicionamento em português e inglês
