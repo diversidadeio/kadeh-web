@@ -18,6 +18,7 @@ import GondolaVisualization from "@/components/GondolaVisualization";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
+import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -96,6 +97,25 @@ const TRANSLATIONS = {
     hands: "Altura das mãos",
     bottom: "Parte de Baixo",
     allZones: "Todas as Zonas",
+    configureExposureArea: "Configurar Area de Exposicao",
+    selectExposureType: "Selecione o tipo de area de exposicao para gerar o planograma",
+    exposureType: "Tipo de Area de Exposicao",
+    gondola: "Gondola",
+    terminalGondola: "Terminal de Gondola",
+    freezerVertical: "Freezer Vertical",
+    freezerHorizontal: "Freezer Horizontal",
+    bancaFrutas: "Banca de Frutas/Legumes/Verduras",
+    width: "Largura",
+    depth: "Profundidade",
+    shelfHeightBetween: "Altura entre Prateleiras",
+    length: "Comprimento",
+    widthHorizontal: "Largura",
+    depthHorizontal: "Profundidade",
+    cm: "cm",
+    cancel: "Cancelar",
+    confirm: "Confirmar",
+    validationError: "Por favor, preencha todos os campos com valores validos (maiores que 0)",
+    requiredField: "Campo obrigatorio",
   },
   en: {
     filterByCategory: "Filter by Category",
@@ -155,6 +175,25 @@ const TRANSLATIONS = {
     hands: "Hand Level",
     bottom: "Bottom Shelf",
     allZones: "All Zones",
+    configureExposureArea: "Configure Exposure Area",
+    selectExposureType: "Select the type of exposure area to generate the planogram",
+    exposureType: "Exposure Area Type",
+    gondola: "Shelf",
+    terminalGondola: "Shelf Terminal",
+    freezerVertical: "Vertical Freezer",
+    freezerHorizontal: "Horizontal Freezer",
+    bancaFrutas: "Fruit/Vegetable Stand",
+    width: "Width",
+    depth: "Depth",
+    shelfHeightBetween: "Shelf Height",
+    length: "Length",
+    widthHorizontal: "Width",
+    depthHorizontal: "Depth",
+    cm: "cm",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    validationError: "Please fill in all fields with valid values (greater than 0)",
+    requiredField: "Required field",
   },
 };
 
@@ -176,6 +215,13 @@ export default function SmartLayoutSimulator() {
   const [recommendation, setRecommendation] = useState<any>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showConfiguracao, setShowConfiguracao] = useState(false);
+  const [medidasAreaExposicao, setMedidasAreaExposicao] = useState<MedidasAreaExposicao>({
+    tipo: 'gondola',
+    largura: 280,
+    profundidade: 40,
+    alturaEntrePrateleiras: 60,
+  });
 
   // Get available subcategories based on selected main category
   const availableSubCategories = useMemo(() => {
@@ -514,9 +560,16 @@ export default function SmartLayoutSimulator() {
         <ShelfZoneFilter selectedZone={selectedZone} onZoneChange={setSelectedZone} />
       )}
 
-      {/* Botão de Exportação */}
+      {/* Botao de Configuracao de Area de Exposicao */}
       {products.length > 0 && (
         <div className="flex gap-2">
+          <Button
+            onClick={() => setShowConfiguracao(true)}
+            variant="outline"
+            className="flex items-center gap-2 flex-1"
+          >
+            {t.configureExposureArea}
+          </Button>
           <Button
             onClick={() => setShowExportModal(true)}
             variant="default"
@@ -528,11 +581,49 @@ export default function SmartLayoutSimulator() {
         </div>
       )}
 
-      {/* Modal de Seleção de Área de Exposição */}
+      {/* Modal de Selecao de Area de Exposicao */}
       <ExposureAreaModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
         onExport={handleExportPDF}
+      />
+
+      {/* Modal de Configuracao de Area de Exposicao */}
+      <ConfiguracaoAreaExposicao
+        isOpen={showConfiguracao}
+        onClose={() => setShowConfiguracao(false)}
+        onConfirm={(medidas) => {
+          setMedidasAreaExposicao(medidas);
+          if (medidas.tipo === 'gondola' || medidas.tipo === 'terminal_gondola' || medidas.tipo === 'freezer_vertical') {
+            setGondolaWidth(medidas.largura || 280);
+            setShelfDepth(medidas.profundidade || 40);
+            setShelfHeight(medidas.alturaEntrePrateleiras || 60);
+          } else if (medidas.tipo === 'freezer_horizontal' || medidas.tipo === 'banca_frutas') {
+            setGondolaWidth(medidas.comprimento || 300);
+            setShelfDepth(medidas.profundidadeHorizontal || 80);
+          }
+        }}
+        translations={{
+          titulo: t.configureExposureArea,
+          descricao: t.selectExposureType,
+          tipoExposicao: t.exposureType,
+          gondola: t.gondola,
+          terminalGondola: t.terminalGondola,
+          freezerVertical: t.freezerVertical,
+          freezerHorizontal: t.freezerHorizontal,
+          bancaFrutas: t.bancaFrutas,
+          largura: t.width,
+          profundidade: t.depth,
+          alturaEntrePrateleiras: t.shelfHeightBetween,
+          comprimento: t.length,
+          larguraHorizontal: t.widthHorizontal,
+          profundidadeHorizontal: t.depthHorizontal,
+          cm: t.cm,
+          cancelar: t.cancel,
+          confirmar: t.confirm,
+          erroValidacao: t.validationError,
+          campoObrigatorio: t.requiredField,
+        }}
       />
 
       {/* Visualização da Gôndola */}
