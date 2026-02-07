@@ -16,6 +16,7 @@ import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
 import GondolaVisualization from "@/components/GondolaVisualization";
+import GondolaFrontView from "@/components/GondolaFrontView";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
@@ -649,6 +650,21 @@ export default function SmartLayoutSimulator() {
           getRecommendation={getRecommendationByABCCurves}
           colorMap={colorMap}
         />
+      )}
+
+      {/* Visualização da Gôndola - Vista de Frente */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
+          </h3>
+          <GondolaFrontView
+            products={filteredProductsByZone as any}
+            totalWidth={gondolaWidth}
+            shelfHeight={shelfHeight}
+            language={language}
+          />
+        </div>
       )}
 
       {/* Visualização da Loja com IA */}

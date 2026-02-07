@@ -120,3 +120,9 @@
 - [x] Criar sistema de âncoras para navegação no guia
 - [x] Testar integração em português e inglês
 - [x] Validar funcionamento dos botões de ajuda em todas as páginas
+
+- [x] Criar componente GondolaFrontView com renderização realista vista de frente
+- [x] Implementar visualização 3D/2D de gôndola com zonas de exposição
+- [x] Exibir produtos com imagens, nomes e percentuais na visualização frontal
+- [x] Integrar GondolaFrontView no SmartLayoutSimulator
+- [x] Testar visualização em português e inglês
