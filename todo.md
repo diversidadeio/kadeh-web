@@ -74,13 +74,19 @@
 - [x] Testar exportação de planograma em PDF em português e inglês
 - [x] Validar layout e formatação do PDF exportado
 
-- [ ] Criar componente ConfiguracaoAreaExposicao com seleção de tipo e campos de medidas
-- [ ] Implementar campos de medidas específicos para Gôndola (largura, profundidade, altura entre prateleiras)
-- [ ] Implementar campos de medidas específicos para Terminal de Gôndola (largura, profundidade, altura entre prateleiras)
-- [ ] Implementar campos de medidas específicos para Freezer Vertical (largura, profundidade, altura entre prateleiras)
-- [ ] Implementar campos de medidas específicos para Freezer Horizontal (comprimento, largura, profundidade)
-- [ ] Implementar campos de medidas específicos para Banca de Frutas/Legumes/Verduras (comprimento, largura, profundidade)
-- [ ] Integrar validação de medidas com alertas de valores inválidos
-- [ ] Atualizar cálculo de espaço disponível baseado nas medidas configuradas
-- [ ] Atualizar visualização da gôndola para refletir as medidas reais
-- [ ] Testar sistema completo em português e inglês
+- [x] Criar componente ConfiguracaoAreaExposicao com seleção de tipo e campos de medidas
+- [x] Implementar campos de medidas específicos para Gôndola (largura, profundidade, altura entre prateleiras)
+- [x] Implementar campos de medidas específicos para Terminal de Gôndola (largura, profundidade, altura entre prateleiras)
+- [x] Implementar campos de medidas específicos para Freezer Vertical (largura, profundidade, altura entre prateleiras)
+- [x] Implementar campos de medidas específicos para Freezer Horizontal (comprimento, largura, profundidade)
+- [x] Implementar campos de medidas específicos para Banca de Frutas/Legumes/Verduras (comprimento, largura, profundidade)
+- [x] Integrar validação de medidas com alertas de valores inválidos
+- [x] Atualizar cálculo de espaço disponível baseado nas medidas configuradas
+- [x] Atualizar visualização da gôndola para refletir as medidas reais
+- [x] Testar sistema completo em português e inglês
+
+- [x] Implementar geração de imagem de IA representando a loja com base na simulação
+- [x] Criar componente para gerar prompt descritivo da simulação
+- [x] Integrar funcionalidade de geração de imagem no SmartLayoutSimulator
+- [x] Testar geração de imagem em português e inglês
+- [x] Validar qualidade das imagens geradas

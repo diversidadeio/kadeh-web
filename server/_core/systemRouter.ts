@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
+import { generateImage } from "./imageGeneration";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -25,5 +26,26 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
+    }),
+
+  generateStoreVisualization: publicProcedure
+    .input(
+      z.object({
+        prompt: z.string().min(1, "prompt is required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const result = await generateImage({
+          prompt: input.prompt,
+        });
+        return {
+          success: true,
+          url: result.url,
+        };
+      } catch (error) {
+        console.error("Error generating store visualization:", error);
+        throw new Error("Failed to generate store visualization");
+      }
     }),
 });

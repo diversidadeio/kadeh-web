@@ -19,6 +19,7 @@ import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
+import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -635,6 +636,16 @@ export default function SmartLayoutSimulator() {
           colorMap={colorMap}
         />
       )}
+
+      {/* Visualização da Loja com IA */}
+      <StoreVisualizationGenerator
+        products={products}
+        gondolaWidth={gondolaWidth}
+        shelfHeight={shelfHeight}
+        shelfDepth={shelfDepth}
+        exposureType={medidasAreaExposicao.tipo}
+        selectedZone={selectedZone}
+      />
 
       {/* Data Sources */}
       <div className="bg-card p-6 rounded-md border border-border">
