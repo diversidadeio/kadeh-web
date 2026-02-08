@@ -34,9 +34,6 @@ export default function Header() {
           <Link href={getLocalizedPath("/data-intelligence")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.intelligence}
           </Link>
-          <Link href={getLocalizedPath("/kadeh-ads")} className="text-sm text-foreground hover:text-primary transition-colors">
-            Kadeh Ads
-          </Link>
           <Link href={getLocalizedPath("/how-it-works")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.howItWorks}
           </Link>
