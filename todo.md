@@ -130,3 +130,18 @@
 - [ ] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
 - [ ] Corrigir problema de abertura de apresentação
 - [ ] Testar abertura em português e inglês
+
+- [x] KADEH ADS: Criar schema de banco de dados para anúncios, anunciantes e categorias correlacionadas
+- [x] KADEH ADS: Implementar modelo de anunciante com aprovação admin
+- [x] KADEH ADS: Criar tabela de preços configurável por dias e número de lojas/região
+- [x] KADEH ADS: Implementar painel admin para gerenciar preços e aprovar anunciantes
+- [x] KADEH ADS: Criar painel anunciante com cadastro e login
+- [x] KADEH ADS: Implementar criação de anúncios (imagem, produto, promoção)
+- [ ] KADEH ADS: Integrar seleção de categorias correlacionadas com IA
+- [ ] KADEH ADS: Implementar visualização de posição de prioridade antes do pagamento
+- [ ] KADEH ADS: Integrar pagamento Stripe com geração de recibo
+- [ ] KADEH ADS: Implementar sistema de pausa com aviso prévio de 24h
+- [ ] KADEH ADS: Criar dashboard de analytics (impressões, cliques, conversões)
+- [ ] KADEH ADS: Implementar exibição de anúncios no Kadeh Varejo
+- [ ] KADEH ADS: Implementar exibição de anúncios no Kadeh Shopping
+- [ ] KADEH ADS: Testar fluxo completo em português e inglês

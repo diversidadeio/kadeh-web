@@ -8,6 +8,13 @@
       "when": 1768349721378,
       "tag": "0000_parallel_dust",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1770513728793,
+      "tag": "0001_gray_caretaker",
+      "breakpoints": true
     }
   ]
 }

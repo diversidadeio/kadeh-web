@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Media from "./pages/Media";
 import Video from "./pages/Video";
 import FAQ from "./pages/FAQ";
+import KadehAds from "./pages/KadehAds";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/pt/media" component={Media} />
       <Route path="/pt/video" component={Video} />
       <Route path="/pt/faq" component={FAQ} />
+      <Route path="/pt/ads" component={KadehAds} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -39,6 +41,7 @@ function Router() {
       <Route path="/en/media" component={Media} />
       <Route path="/en/video" component={Video} />
       <Route path="/en/faq" component={FAQ} />
+      <Route path="/en/ads" component={KadehAds} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -50,6 +53,7 @@ function Router() {
       <Route path="/media" component={Media} />
       <Route path="/video" component={Video} />
       <Route path="/faq" component={FAQ} />
+      <Route path="/ads" component={KadehAds} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}

@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, advertisers, advertisements, pricingPlans, adAnalytics, adPayments, correlatedCategories } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,161 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ============================================================================
+// KADEH ADS - Advertising System Queries
+// ============================================================================
+
+export async function getAdvertiserByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(advertisers)
+    .where(eq(advertisers.userId, userId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAdvertiserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(advertisers)
+    .where(eq(advertisers.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPendingAdvertisers() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(advertisers)
+    .where(eq(advertisers.status, "pending"))
+    .orderBy(asc(advertisers.createdAt));
+}
+
+export async function getApprovedAdvertisers() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(advertisers)
+    .where(eq(advertisers.status, "approved"));
+}
+
+export async function getActiveAdsByCategory(category: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+  return db
+    .select()
+    .from(advertisements)
+    .where(
+      and(
+        eq(advertisements.status, "active"),
+        gte(advertisements.endDate, now)
+      )
+    )
+    .orderBy(asc(advertisements.priorityPosition));
+}
+
+export async function getAdvertisementById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(advertisements)
+    .where(eq(advertisements.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAdvertisementsByAdvertiserId(advertiserId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(advertisements)
+    .where(eq(advertisements.advertiserId, advertiserId))
+    .orderBy(desc(advertisements.createdAt));
+}
+
+export async function getPricingPlans() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(pricingPlans)
+    .where(eq(pricingPlans.isActive, true))
+    .orderBy(asc(pricingPlans.duration));
+}
+
+export async function getCorrelatedCategories(primaryCategory: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(correlatedCategories)
+    .where(eq(correlatedCategories.primaryCategory, primaryCategory))
+    .orderBy(desc(correlatedCategories.correlationScore));
+}
+
+export async function getAdAnalyticsByAdvertisementId(advertisementId: number, days: number = 30) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  return db
+    .select()
+    .from(adAnalytics)
+    .where(
+      and(
+        eq(adAnalytics.advertisementId, advertisementId),
+        gte(adAnalytics.date, startDate)
+      )
+    )
+    .orderBy(asc(adAnalytics.date));
+}
+
+export async function getPaymentByAdvertisementId(advertisementId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(adPayments)
+    .where(eq(adPayments.advertisementId, advertisementId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getNextPriorityPosition() {
+  const db = await getDb();
+  if (!db) return 1;
+
+  const result = await db
+    .select()
+    .from(advertisements)
+    .orderBy(desc(advertisements.priorityPosition))
+    .limit(1);
+
+  return result.length > 0 ? result[0].priorityPosition + 1 : 1;
+}
