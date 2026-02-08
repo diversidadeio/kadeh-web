@@ -158,3 +158,5 @@
 
 - [x] Converter apresentação PowerPoint do Kadeh Ads em imagens PNG
 - [x] Adicionar apresentação do Kadeh Ads ao carrossel de apresentações
+
+- [x] Substituir apresentação do Kadeh Ads pela nova versão em PDF
