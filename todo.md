@@ -155,3 +155,6 @@
 - [x] Atualizar texto principal do hero para incluir "Ads no PDV"
 
 - [x] Remover duplicação de "Kadeh Ads" no header
+
+- [x] Converter apresentação PowerPoint do Kadeh Ads em imagens PNG
+- [x] Adicionar apresentação do Kadeh Ads ao carrossel de apresentações

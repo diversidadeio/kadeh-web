@@ -57,6 +57,9 @@ export default function Home() {
     } else if (url.includes('picking')) {
       name = 'kadeh-picking';
       title = 'Kadeh Picking';
+    } else if (url.includes('ads')) {
+      name = 'kadeh-ads';
+      title = 'Kadeh Ads';
     }
     
     setPresentationName(name);
@@ -97,7 +100,7 @@ export default function Home() {
     { presentationUrl: "/presentation-images/kadeh-localiza" },
     { presentationUrl: "/presentation-images/kadeh-picking" },
     { externalUrl: "https://kadeh.io/smart-layout" },
-    { externalUrl: "/kadeh-ads" },
+    { presentationUrl: "/presentation-images/kadeh-ads" },
   ];
 
   const solutions = t.solutions.items.map((item, idx) => ({
