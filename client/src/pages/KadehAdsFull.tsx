@@ -8,8 +8,8 @@ export default function KadehAdsFull() {
   const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
 
-  const handleAccessAds = () => {
-    navigate("/ads");
+  const handleContactForm = () => {
+    navigate("/contact");
   };
 
   return (
@@ -29,7 +29,7 @@ export default function KadehAdsFull() {
                 <Button 
                   size="lg" 
                   className="bg-white text-blue-600 hover:bg-blue-50"
-                  onClick={handleAccessAds}
+                  onClick={handleContactForm}
                 >
                   Começar Agora <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
@@ -37,6 +37,7 @@ export default function KadehAdsFull() {
                   size="lg" 
                   variant="outline"
                   className="border-white text-white hover:bg-blue-700"
+                  onClick={handleContactForm}
                 >
                   Saiba Mais
                 </Button>
@@ -274,7 +275,7 @@ export default function KadehAdsFull() {
                 Exemplo: 7 dias × 10 lojas = R$ 500 × 1.5 = R$ 750
               </p>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleAccessAds}>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleContactForm}>
                 Começar a Anunciar
               </Button>
             </div>
@@ -377,7 +378,7 @@ export default function KadehAdsFull() {
           <Button 
             size="lg"
             className="bg-white text-blue-600 hover:bg-blue-50"
-            onClick={handleAccessAds}
+            onClick={handleContactForm}
           >
             Acessar Kadeh Ads <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
