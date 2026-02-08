@@ -4,13 +4,20 @@
  * Spacing: Generous padding, clear typography
  */
 
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
 
 export default function Footer() {
   const { language } = useLanguage();
+  const [, setLocation] = useLocation();
   const t = translations[language].footer;
+
+  const handleGoHome = () => {
+    setLocation("/");
+  };
 
   return (
     <footer className="bg-white border-t border-border py-16">
@@ -68,7 +75,18 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
           <p>{t.copyright}</p>
-          <p>{t.technology}</p>
+          <div className="flex items-center gap-4">
+            <p>{t.technology}</p>
+            <Button
+              onClick={handleGoHome}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              {language === 'pt' ? 'Voltar ao Início' : 'Back to Home'}
+            </Button>
+          </div>
         </div>
       </div>
     </footer>

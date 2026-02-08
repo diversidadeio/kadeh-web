@@ -166,3 +166,5 @@
 - [x] Verificar apresentação do Kadeh Ads na seção "Soluções desenhadas para cada ambiente"
 
 - [x] Corrigir erros de carregamento de imagens no carrossel do Kadeh Ads
+
+- [x] Adicionar botão de retorno à página principal em todas as páginas
