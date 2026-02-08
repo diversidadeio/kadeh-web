@@ -37,7 +37,7 @@ export default function HowItWorks() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-background/50">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-6 text-foreground">
-            {language === 'pt' ? 'Como Funciona' : 'How It'} <span className="text-orange-600">Works</span>
+            {language === 'pt' ? 'Como Funciona' : 'How It Works'}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             {language === 'pt'

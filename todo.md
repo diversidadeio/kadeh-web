@@ -147,3 +147,5 @@
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
+
+- [x] Remover palavra "works" da página Como Funciona em portugués
