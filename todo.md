@@ -151,3 +151,5 @@
 - [x] Remover palavra "works" da página Como Funciona em portugués
 
 - [x] Adicionar "+ads no PDV" e descrição de popup por aproximação no texto principal da seção de soluções
+
+- [x] Atualizar texto principal do hero para incluir "Ads no PDV"

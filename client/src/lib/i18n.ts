@@ -18,7 +18,7 @@ export const translations = {
 
     // Hero Section
     hero: {
-      mainTitle: 'Kadeh: navegação indoor + IA + analytics on-time para transformar espaços físicos em vendas e eficiência.',
+      mainTitle: 'Kadeh: navegação indoor + Ads no PDV + IA + analytics on-time para transformar espaços físicos em vendas e eficiência.',
       description: 'A plataforma que une experiência simples para qualquer público com otimização operacional e dados em tempo real de intenção de compra — com tecnologia registrada no INPI e Declaração de Exclusividade válida para todo o Brasil (setembro/2025).',
       features: ['IA de recomendações', 'Navegação precisa', 'Dashboard on-time', 'Integrações via API', 'LGPD-ready'],
       viewSolutions: 'Ver soluções',
@@ -298,7 +298,7 @@ export const translations = {
 
     // Hero Section
     hero: {
-      mainTitle: 'Kadeh: indoor navigation + AI + real-time analytics to transform physical spaces into sales and efficiency.',
+      mainTitle: 'Kadeh: indoor navigation + Ads at POS + AI + real-time analytics to transform physical spaces into sales and efficiency.',
       description: 'The platform that combines simple experience for everyone with operational optimization and real-time purchase intent data — with technology registered at INPI and Exclusivity Declaration valid throughout Brazil (September/2025).',
       features: ['AI recommendations', 'Precise navigation', 'Real-time dashboard', 'API integrations', 'LGPD-ready'],
       viewSolutions: 'View Solutions',
