@@ -162,3 +162,5 @@
 - [x] Substituir apresentação do Kadeh Ads pela nova versão em PDF
 
 - [x] Atualizar botão "Acessar Kadeh Ads" para redirecionar ao formulário de cadastro
+
+- [x] Verificar apresentação do Kadeh Ads na seção "Soluções desenhadas para cada ambiente"
