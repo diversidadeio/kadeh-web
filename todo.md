@@ -168,3 +168,5 @@
 - [x] Corrigir erros de carregamento de imagens no carrossel do Kadeh Ads
 
 - [x] Adicionar botão de retorno à página principal em todas as páginas
+
+- [x] Corrigir carregamento de imagem na página Kadeh Picking

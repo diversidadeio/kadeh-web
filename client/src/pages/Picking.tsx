@@ -195,7 +195,7 @@ export default function Picking() {
           : "Kadeh Picking optimizes the merchandise collection flow with intelligent routes, real-time validation and complete tracking — reducing time, errors and increasing productivity of delivery personnel and store employees."}
         primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
         secondaryCTA={language === 'pt' ? "Ver funcionalidades" : "View Features"}
-        imageUrl="/images/picking-delivery-app.png"
+        imageUrl="/images/picking-efficiency.png"
         imageAlt={language === 'pt' ? "Picking eficiente com Kadeh" : "Efficient picking with Kadeh"}
       />
 
