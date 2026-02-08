@@ -149,3 +149,5 @@
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 
 - [x] Remover palavra "works" da página Como Funciona em portugués
+
+- [x] Adicionar "+ads no PDV" e descrição de popup por aproximação no texto principal da seção de soluções
