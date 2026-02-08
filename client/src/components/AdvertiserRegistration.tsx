@@ -110,7 +110,7 @@ export function AdvertiserRegistration() {
       <CardHeader>
         <CardTitle>Cadastro de Anunciante</CardTitle>
         <CardDescription>
-          Preencha os dados da sua empresa para começar a anunciar no KADEH ADS
+          Preencha os dados da sua empresa para começar a anunciar no Kadeh Ads
         </CardDescription>
       </CardHeader>
       <CardContent>

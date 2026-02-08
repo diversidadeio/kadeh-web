@@ -35,7 +35,7 @@ export default function Header() {
             {t.header.intelligence}
           </Link>
           <Link href={getLocalizedPath("/kadeh-ads")} className="text-sm text-foreground hover:text-primary transition-colors">
-            KADEH ADS
+            Kadeh Ads
           </Link>
           <Link href={getLocalizedPath("/how-it-works")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.howItWorks}
@@ -50,7 +50,7 @@ export default function Header() {
             {t.header.faq}
           </Link>
           <Link href={getLocalizedPath("/kadeh-ads")} className="text-sm text-foreground hover:text-primary transition-colors font-semibold text-blue-600">
-            KADEH ADS
+            Kadeh Ads
           </Link>
         </div>
 

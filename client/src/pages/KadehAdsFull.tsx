@@ -23,7 +23,7 @@ export default function KadehAdsFull() {
                 Impacte o cliente no momento que mais importa
               </h1>
               <p className="text-xl text-blue-100">
-                KADEH ADS conecta seus anúncios com consumidores no ponto de venda, no exato momento da decisão de compra. Aumente vendas com publicidade contextualizada.
+                Kadeh Ads conecta seus anúncios com consumidores no ponto de venda, no exato momento da decisão de compra. Aumente vendas com publicidade contextualizada.
               </p>
               <div className="flex gap-4 pt-4">
                 <Button 
@@ -45,7 +45,7 @@ export default function KadehAdsFull() {
             <div className="rounded-lg overflow-hidden shadow-2xl">
               <img 
                 src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/RCUmLFKODhWZihQJ.jpg" 
-                alt="Família em supermercado usando KADEH ADS"
+                alt="Família em supermercado usando Kadeh Ads"
                 className="w-full h-auto object-cover"
               />
             </div>
@@ -57,7 +57,7 @@ export default function KadehAdsFull() {
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">
-            Por que KADEH ADS funciona
+            Por que Kadeh Ads funciona
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -379,7 +379,7 @@ export default function KadehAdsFull() {
             className="bg-white text-blue-600 hover:bg-blue-50"
             onClick={handleAccessAds}
           >
-            Acessar KADEH ADS <ArrowRight className="ml-2 w-5 h-5" />
+            Acessar Kadeh Ads <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </section>

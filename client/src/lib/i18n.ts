@@ -76,7 +76,7 @@ export const translations = {
           description: 'Gerenciamento inteligente de categorias com recomendações de frentes, posicionamento e redimensionamento de gôndolas.',
         },
         {
-          title: 'KADEH ADS',
+          title: 'Kadeh Ads',
           description: 'Publicidade contextualizada no ponto de venda que impacta o cliente no momento da decisão de compra.',
         },
       ],
@@ -356,7 +356,7 @@ export const translations = {
           description: 'Intelligent category management with recommendations for shelf layout, positioning and resizing.',
         },
         {
-          title: 'KADEH ADS',
+          title: 'Kadeh Ads',
           description: 'Contextual advertising at the point of sale that impacts customers at the moment of purchase decision.',
         },
       ],

@@ -15,7 +15,7 @@ export default function KadehAds() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>KADEH ADS</CardTitle>
+            <CardTitle>Kadeh Ads</CardTitle>
             <CardDescription>
               Sistema de publicidade contextualizada para pontos de venda
             </CardDescription>
@@ -53,7 +53,7 @@ export default function KadehAds() {
 
             <div className="border-t pt-4">
               <p className="text-sm text-muted-foreground mb-3">
-                Faça login para acessar o KADEH ADS e começar a anunciar
+                Faça login para acessar o Kadeh Ads e começar a anunciar
               </p>
               <Button className="w-full" asChild>
                 <a href="/login">Fazer Login</a>
@@ -71,7 +71,7 @@ export default function KadehAds() {
       <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold">KADEH ADS - Painel Administrativo</h1>
+            <h1 className="text-3xl font-bold">Kadeh Ads - Painel Administrativo</h1>
             <p className="text-muted-foreground mt-2">
               Gerencie anunciantes, preços e anúncios do sistema
             </p>
@@ -88,7 +88,7 @@ export default function KadehAds() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">KADEH ADS - Painel do Anunciante</h1>
+          <h1 className="text-3xl font-bold">Kadeh Ads - Painel do Anunciante</h1>
           <p className="text-muted-foreground mt-2">
             Crie e gerencie seus anúncios contextualizados
           </p>
