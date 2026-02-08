@@ -86,6 +86,7 @@ export default function Home() {
     4: <MapPin className="w-6 h-6" />,
     5: <CheckCircle className="w-6 h-6" />,
     6: <BarChart3 className="w-6 h-6" />,
+    7: <Zap className="w-6 h-6" />,
   };
 
   const solutionUrls = [
@@ -96,6 +97,7 @@ export default function Home() {
     { presentationUrl: "/presentation-images/kadeh-localiza" },
     { presentationUrl: "/presentation-images/kadeh-picking" },
     { externalUrl: "https://kadeh.io/smart-layout" },
+    { externalUrl: "/kadeh-ads" },
   ];
 
   const solutions = t.solutions.items.map((item, idx) => ({
