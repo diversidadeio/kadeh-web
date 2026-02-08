@@ -160,3 +160,5 @@
 - [x] Adicionar apresentação do Kadeh Ads ao carrossel de apresentações
 
 - [x] Substituir apresentação do Kadeh Ads pela nova versão em PDF
+
+- [x] Atualizar botão "Acessar Kadeh Ads" para redirecionar ao formulário de cadastro
