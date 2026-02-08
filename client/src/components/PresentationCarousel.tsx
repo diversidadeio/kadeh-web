@@ -25,34 +25,46 @@ export default function PresentationCarousel({
 
   useEffect(() => {
     if (isOpen && presentationName) {
-      setCurrentPage(2);
-      setIsLoading(true);
-      
-      // Determine total pages based on presentation name
-      const pageCount: Record<string, number> = {
-        'kadeh-varejo': 26,
-        'kadeh-shopping': 12,
-        'kadeh-saude': 8,
-        'kadeh-localiza': 14,
-        'kadeh-eventos': 10,
-        'kadeh-picking': 9,
-        'kadeh-ads': 12,
+      // Determine starting page and total pages based on presentation name
+      const pageConfig: Record<string, { start: number; total: number }> = {
+        'kadeh-varejo': { start: 2, total: 26 },
+        'kadeh-shopping': { start: 2, total: 12 },
+        'kadeh-saude': { start: 1, total: 8 },
+        'kadeh-localiza': { start: 1, total: 14 },
+        'kadeh-eventos': { start: 1, total: 10 },
+        'kadeh-picking': { start: 2, total: 9 },
+        'kadeh-ads': { start: 1, total: 12 },
       };
       
-      const pages = pageCount[presentationName] || 0;
-      setTotalPages(pages);
+      const config = pageConfig[presentationName] || { start: 1, total: 0 };
+      setCurrentPage(config.start);
+      setTotalPages(config.total);
       setIsLoading(false);
     }
   }, [isOpen, presentationName]);
 
+  const getStartPage = () => {
+    const pageConfig: Record<string, { start: number }> = {
+      'kadeh-varejo': { start: 2 },
+      'kadeh-shopping': { start: 2 },
+      'kadeh-saude': { start: 1 },
+      'kadeh-localiza': { start: 1 },
+      'kadeh-eventos': { start: 1 },
+      'kadeh-picking': { start: 2 },
+      'kadeh-ads': { start: 1 },
+    };
+    return pageConfig[presentationName]?.start || 1;
+  };
+
   const goToPreviousPage = () => {
-    if (currentPage > 2) {
+    const startPage = getStartPage();
+    if (currentPage > startPage) {
       setCurrentPage(currentPage - 1);
     }
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages + 1) {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -101,7 +113,7 @@ export default function PresentationCarousel({
           <div className="flex gap-2 items-center">
             <button
               onClick={goToPreviousPage}
-              disabled={currentPage <= 2 || isLoading}
+              disabled={currentPage <= getStartPage() || isLoading}
               className="p-2 hover:bg-secondary rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Página anterior"
             >
@@ -114,7 +126,7 @@ export default function PresentationCarousel({
 
             <button
               onClick={goToNextPage}
-              disabled={currentPage >= totalPages + 1 || isLoading}
+              disabled={currentPage >= totalPages || isLoading}
               className="p-2 hover:bg-secondary rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Próxima página"
             >

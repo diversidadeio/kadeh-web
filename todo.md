@@ -164,3 +164,5 @@
 - [x] Atualizar botão "Acessar Kadeh Ads" para redirecionar ao formulário de cadastro
 
 - [x] Verificar apresentação do Kadeh Ads na seção "Soluções desenhadas para cada ambiente"
+
+- [x] Corrigir erros de carregamento de imagens no carrossel do Kadeh Ads
