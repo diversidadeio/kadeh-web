@@ -170,3 +170,5 @@
 - [x] Adicionar botão de retorno à página principal em todas as páginas
 
 - [x] Corrigir carregamento de imagem na página Kadeh Picking
+
+- [x] Gerar imagem realista de picking/warehouse por IA para página Picking
