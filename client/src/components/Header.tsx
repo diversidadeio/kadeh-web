@@ -57,11 +57,6 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           <Link href={getLocalizedPath("/contact")}>
-            <Button variant="outline" className="hidden sm:inline-flex text-sm">
-              {t.header.talkToSpecialist}
-            </Button>
-          </Link>
-          <Link href={getLocalizedPath("/contact")}>
             <Button className="bg-primary hover:bg-primary/90 text-white text-sm">
               {t.header.requestDemo}
             </Button>
