@@ -172,3 +172,5 @@
 - [x] Corrigir carregamento de imagem na página Kadeh Picking
 
 - [x] Gerar imagem realista de picking/warehouse por IA para página Picking
+
+- [x] Implementar tradução para inglês na página Kadeh Ads

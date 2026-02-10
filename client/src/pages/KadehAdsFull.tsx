@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
@@ -7,6 +8,7 @@ import { useLocation } from "wouter";
 export default function KadehAdsFull() {
   const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const { language } = useLanguage();
 
   const handleContactForm = () => {
     navigate("/contact");
@@ -58,18 +60,21 @@ export default function KadehAdsFull() {
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">
-            Por que Kadeh Ads funciona
+            {language === 'pt' ? 'Por que Kadeh Ads funciona' : 'Why Kadeh Ads Works'}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="border-0 shadow-lg">
               <CardHeader className="text-center">
                 <div className="text-4xl font-bold text-blue-600 mb-2">73%</div>
-                <CardTitle className="text-lg">Influência do Mobile</CardTitle>
+                <CardTitle className="text-lg">{language === 'pt' ? 'Influência do Mobile' : 'Mobile Influence'}</CardTitle>
               </CardHeader>
               <CardContent className="text-center text-gray-600">
                 <p>
-                  73% dos consumidores usam smartphone para auxiliar decisões de compra no ponto de venda
+                  {language === 'pt'
+                    ? '73% dos consumidores usam smartphone para auxiliar decisões de compra no ponto de venda'
+                    : '73% of consumers use smartphones to assist purchase decisions at the point of sale'
+                  }
                 </p>
               </CardContent>
             </Card>
@@ -77,11 +82,14 @@ export default function KadehAdsFull() {
             <Card className="border-0 shadow-lg">
               <CardHeader className="text-center">
                 <div className="text-4xl font-bold text-blue-600 mb-2">84%</div>
-                <CardTitle className="text-lg">Compras por Impulso</CardTitle>
+                <CardTitle className="text-lg">{language === 'pt' ? 'Compras por Impulso' : 'Impulse Purchases'}</CardTitle>
               </CardHeader>
               <CardContent className="text-center text-gray-600">
                 <p>
-                  84% dos consumidores fazem compras por impulso, especialmente quando expostos a recomendações relevantes
+                  {language === 'pt'
+                    ? '84% dos consumidores fazem compras por impulso, especialmente quando expostos a recomendações relevantes'
+                    : '84% of consumers make impulse purchases, especially when exposed to relevant recommendations'
+                  }
                 </p>
               </CardContent>
             </Card>
@@ -89,11 +97,14 @@ export default function KadehAdsFull() {
             <Card className="border-0 shadow-lg">
               <CardHeader className="text-center">
                 <div className="text-4xl font-bold text-blue-600 mb-2">40%</div>
-                <CardTitle className="text-lg">Incremento de Vendas</CardTitle>
+                <CardTitle className="text-lg">{language === 'pt' ? 'Incremento de Vendas' : 'Sales Increase'}</CardTitle>
               </CardHeader>
               <CardContent className="text-center text-gray-600">
                 <p>
-                  Publicidade contextualizada no PDV pode aumentar vendas em até 40% em categorias relacionadas
+                  {language === 'pt'
+                    ? 'Publicidade contextualizada no PDV pode aumentar vendas em até 40% em categorias relacionadas'
+                    : 'Contextual advertising at POS can increase sales by up to 40% in related categories'
+                  }
                 </p>
               </CardContent>
             </Card>
@@ -105,7 +116,7 @@ export default function KadehAdsFull() {
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">
-            Experiência do Cliente
+            {language === 'pt' ? 'Experiência do Cliente' : 'Customer Experience'}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -113,9 +124,9 @@ export default function KadehAdsFull() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
                 <Target className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="font-bold text-lg">1. Busca</h3>
+              <h3 className="font-bold text-lg">{language === 'pt' ? '1. Busca' : '1. Search'}</h3>
               <p className="text-gray-600">
-                Cliente busca um produto no app KADEH
+                {language === 'pt' ? 'Cliente busca um produto no app KADEH' : 'Customer searches for a product in the KADEH app'}
               </p>
             </div>
 
@@ -123,9 +134,9 @@ export default function KadehAdsFull() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
                 <Zap className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="font-bold text-lg">2. Recomendação</h3>
+              <h3 className="font-bold text-lg">{language === 'pt' ? '2. Recomendação' : '2. Recommendation'}</h3>
               <p className="text-gray-600">
-                Recebe anúncios de produtos correlacionados
+                {language === 'pt' ? 'Recebe anúncios de produtos correlacionados' : 'Receives ads for correlated products'}
               </p>
             </div>
 
@@ -133,9 +144,9 @@ export default function KadehAdsFull() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
                 <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="font-bold text-lg">3. Conversão</h3>
+              <h3 className="font-bold text-lg">{language === 'pt' ? '3. Conversão' : '3. Conversion'}</h3>
               <p className="text-gray-600">
-                Compra produtos sugeridos no PDV
+                {language === 'pt' ? 'Compra produtos sugeridos no PDV' : 'Purchases suggested products at POS'}
               </p>
             </div>
 
@@ -143,9 +154,9 @@ export default function KadehAdsFull() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
                 <BarChart3 className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="font-bold text-lg">4. Resultado</h3>
+              <h3 className="font-bold text-lg">{language === 'pt' ? '4. Resultado' : '4. Result'}</h3>
               <p className="text-gray-600">
-                Ticket médio aumenta com cross-selling
+                {language === 'pt' ? 'Ticket médio aumenta com cross-selling' : 'Average ticket increases with cross-selling'}
               </p>
             </div>
           </div>
