@@ -185,3 +185,13 @@
 - [x] Corrigir split de pagamento para 20% loja e 80% Kadeh
 
 - [x] Corrigir rótulo "Duração da Campanha" para "Duração da Campanha (dias)" no simulador
+
+- [x] Implementar formulário de cadastro de anúncios com autenticação
+- [x] Criar dashboard de analytics com campanhas ativas e histórico
+- [x] Integrar Stripe Checkout para pagamento de campanhas
+- [x] Criar componentes AdvertisementForm e AdvertiserDashboard
+- [x] Criar página AdvertiserPortal com abas para Dashboard e Criar Anúncio
+- [x] Implementar endpoints tRPC para Stripe Checkout
+- [x] Criar componente StripeCheckout para integração de pagamentos
+- [x] Criar página PaymentCallback para sucesso/cancelamento de pagamento
+- [x] Adicionar rotas para AdvertiserPortal e PaymentCallback
