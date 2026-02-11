@@ -2,8 +2,10 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
+import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock, Home } from "lucide-react";
 import { useLocation } from "wouter";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default function KadehAdsFull() {
   const { user, isAuthenticated } = useAuth();
@@ -16,6 +18,7 @@ export default function KadehAdsFull() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -395,6 +398,7 @@ export default function KadehAdsFull() {
           </Button>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

@@ -174,3 +174,5 @@
 - [x] Gerar imagem realista de picking/warehouse por IA para página Picking
 
 - [x] Implementar tradução para inglês na página Kadeh Ads
+
+- [x] Adicionar header com navegação completa na página Kadeh Ads
