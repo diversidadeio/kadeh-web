@@ -183,3 +183,5 @@
 - [ ] Implementar formulário de cadastro de anúncios
 
 - [x] Corrigir split de pagamento para 20% loja e 80% Kadeh
+
+- [x] Corrigir rótulo "Duração da Campanha" para "Duração da Campanha (dias)" no simulador
