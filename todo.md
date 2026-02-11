@@ -199,3 +199,10 @@
 - [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" na tabela de pre\u00e7os da p\u00e1gina Kadeh Ads
 - [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" abaixo do simulador de investimento
 - [x] Implementar redirecionamento para portal do anunciante com aba de cria\u00e7\u00e3o de an\u00fancio
+
+- [x] Adicionar bot\u00e3o de Login no Header
+- [x] Adicionar bot\u00e3o de Cadastro no Header
+- [x] Implementar bot\u00e3o de Logout quando usu\u00e1rio autenticado
+- [x] Exibir nome/email do usu\u00e1rio quando autenticado
+- [x] Adicionar menu mobile com op\u00e7\u00f5es de autentica\u00e7\u00e3o
+- [x] Testar fluxo de login/logout em todas as p\u00e1ginas
