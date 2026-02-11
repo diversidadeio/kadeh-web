@@ -195,3 +195,7 @@
 - [x] Criar componente StripeCheckout para integração de pagamentos
 - [x] Criar página PaymentCallback para sucesso/cancelamento de pagamento
 - [x] Adicionar rotas para AdvertiserPortal e PaymentCallback
+
+- [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" na tabela de pre\u00e7os da p\u00e1gina Kadeh Ads
+- [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" abaixo do simulador de investimento
+- [x] Implementar redirecionamento para portal do anunciante com aba de cria\u00e7\u00e3o de an\u00fancio

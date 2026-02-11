@@ -17,6 +17,10 @@ export default function KadehAdsFull() {
     navigate("/contact");
   };
 
+  const handleStartAdvertising = () => {
+    navigate("/advertiser-portal?tab=create");
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -290,7 +294,7 @@ export default function KadehAdsFull() {
                 Exemplo: 7 dias × 10 lojas = R$ 500 × 1.5 = R$ 750
               </p>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleContactForm}>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleStartAdvertising}>
                 Começar a Anunciar
               </Button>
             </div>

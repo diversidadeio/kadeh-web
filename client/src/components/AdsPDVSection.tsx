@@ -2,8 +2,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { BarChart3, TrendingUp, Users, MapPin, Zap, Target } from "lucide-react";
 import AdsSimulator from "./AdsSimulator";
+import { useLocation } from "wouter";
 
 export default function AdsPDVSection({ language }: { language: string }) {
+  const [, navigate] = useLocation();
+
+  const handleStartAdvertising = () => {
+    navigate("/advertiser-portal?tab=create");
+  };
+
   const texts = {
     pt: {
       title: "Ads no PDV",
@@ -202,6 +209,15 @@ export default function AdsPDVSection({ language }: { language: string }) {
           <h2 className="text-4xl font-bold text-gray-900">{t.simulator}</h2>
         </div>
         <AdsSimulator language={language} />
+        <div className="flex justify-center pt-8">
+          <Button 
+            size="lg" 
+            className="bg-blue-600 hover:bg-blue-700 px-12"
+            onClick={handleStartAdvertising}
+          >
+            {t.cta}
+          </Button>
+        </div>
       </section>
     </div>
   );
