@@ -59,12 +59,10 @@
 - [x] Exibir nome do produto e percentual em cada seção da gôndola
 - [x] Integrar visualização na simulação com cores e espaçamento proporcional
 - [x] Testar em português e inglês
-
 - [x] Testar visualização da gôndola com 10+ produtos
 - [x] Validar legibilidade de nomes e percentuais com muitos produtos
 - [x] Testar responsividade em diferentes tamanhos de tela
 - [x] Implementar melhorias de layout se necessário (ex: fonte menor, tooltips)
-
 - [x] Implementar filtros por zona de prateleira (Olhos, Mãos, Parte de Baixo)
 - [x] Substituir terminologia "Piso" por "Parte de Baixo" em todo o sistema
 - [x] Criar modal de seleção de tipo de área de exposição (Gôndola, Terminal, Freezer Vertical, Freezer Horizontal, Banca)
@@ -73,7 +71,6 @@
 - [x] Testar filtros de zona em português e inglês
 - [x] Testar exportação de planograma em PDF em português e inglês
 - [x] Validar layout e formatação do PDF exportado
-
 - [x] Criar componente ConfiguracaoAreaExposicao com seleção de tipo e campos de medidas
 - [x] Implementar campos de medidas específicos para Gôndola (largura, profundidade, altura entre prateleiras)
 - [x] Implementar campos de medidas específicos para Terminal de Gôndola (largura, profundidade, altura entre prateleiras)
@@ -84,13 +81,11 @@
 - [x] Atualizar cálculo de espaço disponível baseado nas medidas configuradas
 - [x] Atualizar visualização da gôndola para refletir as medidas reais
 - [x] Testar sistema completo em português e inglês
-
 - [x] Implementar geração de imagem de IA representando a loja com base na simulação
 - [x] Criar componente para gerar prompt descritivo da simulação
 - [x] Integrar funcionalidade de geração de imagem no SmartLayoutSimulator
 - [x] Testar geração de imagem em português e inglês
 - [x] Validar qualidade das imagens geradas
-
 - [x] Analisar estrutura de dados da simulação para métricas financeiras
 - [x] Implementar cálculo de ROI estimado para cada simulação
 - [x] Implementar cálculo de impacto em ticket médio
@@ -100,37 +95,31 @@
 - [x] Integrar dashboard na página Smart Layout
 - [x] Testar dashboard em português e inglês
 - [x] Validar cálculos de métricas financeiras
-
 - [ ] Corrigir geração de imagem de IA para incluir zonas de exposição (Altura dos olhos, Altura das mãos, Parte Baixa)
 - [ ] Melhorar prompt de IA para descrever posicionamento de produtos por zona
 - [ ] Implementar organização de produtos por zona no StoreVisualizationGenerator
 - [ ] Testar geração de imagem com produtos em diferentes zonas
 - [ ] Validar visualização em português e inglês
-
 - [ ] Mover arquivos de mídia para /home/ubuntu/webdev-static-assets/
 - [ ] Atualizar referências de imagens e vídeos no código com URLs de CDN
 - [ ] Criar matriz de correlação Margem x Giro para determinar zonas de exposição
 - [ ] Implementar lógica de posicionamento automático baseada em Margem e Giro
 - [ ] Integrar posicionamento inteligente no SmartLayoutSimulator
 - [ ] Testar posicionamento em português e inglês
-
 - [x] Criar componente HelpButton reutilizável com modal de ajuda
 - [x] Integrar HelpButton em Smart Layout com links contextuais
 - [x] Integrar HelpButton em páginas Home, Picking e Intelligence
 - [x] Criar sistema de âncoras para navegação no guia
 - [x] Testar integração em português e inglês
 - [x] Validar funcionamento dos botões de ajuda em todas as páginas
-
 - [x] Criar componente GondolaFrontView com renderização realista vista de frente
 - [x] Implementar visualização 3D/2D de gôndola com zonas de exposição
 - [x] Exibir produtos com imagens, nomes e percentuais na visualização frontal
 - [x] Integrar GondolaFrontView no SmartLayoutSimulator
 - [x] Testar visualização em português e inglês
-
 - [ ] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
 - [ ] Corrigir problema de abertura de apresentação
 - [ ] Testar abertura em português e inglês
-
 - [x] Kadeh Ads: Criar schema de banco de dados para anúncios, anunciantes e categorias correlacionadas
 - [x] Kadeh Ads: Implementar modelo de anunciante com aprovação admin
 - [x] Kadeh Ads: Criar tabela de preços configurável por dias e número de lojas/região
@@ -145,47 +134,28 @@
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Varejo
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Shopping
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
-
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
-
 - [x] Remover palavra "works" da página Como Funciona em portugués
-
 - [x] Adicionar "+ads no PDV" e descrição de popup por aproximação no texto principal da seção de soluções
-
 - [x] Atualizar texto principal do hero para incluir "Ads no PDV"
-
 - [x] Remover duplicação de "Kadeh Ads" no header
-
 - [x] Converter apresentação PowerPoint do Kadeh Ads em imagens PNG
 - [x] Adicionar apresentação do Kadeh Ads ao carrossel de apresentações
-
 - [x] Substituir apresentação do Kadeh Ads pela nova versão em PDF
-
 - [x] Atualizar botão "Acessar Kadeh Ads" para redirecionar ao formulário de cadastro
-
 - [x] Verificar apresentação do Kadeh Ads na seção "Soluções desenhadas para cada ambiente"
-
 - [x] Corrigir erros de carregamento de imagens no carrossel do Kadeh Ads
-
 - [x] Adicionar botão de retorno à página principal em todas as páginas
-
 - [x] Corrigir carregamento de imagem na página Kadeh Picking
-
 - [x] Gerar imagem realista de picking/warehouse por IA para página Picking
-
 - [x] Implementar tradução para inglês na página Kadeh Ads
-
 - [x] Adicionar header com navegação completa na página Kadeh Ads
-
 - [x] Criar seção "Ads no PDV" com explicação de split de pagamento
 - [x] Implementar simulador interativo de investimento em ads
 - [x] Criar fluxo visual para anunciantes
-- [ ] Implementar formulário de cadastro de anúncios
-
+- [x] Implementar formulário de cadastro de anúncios
 - [x] Corrigir split de pagamento para 20% loja e 80% Kadeh
-
 - [x] Corrigir rótulo "Duração da Campanha" para "Duração da Campanha (dias)" no simulador
-
 - [x] Implementar formulário de cadastro de anúncios com autenticação
 - [x] Criar dashboard de analytics com campanhas ativas e histórico
 - [x] Integrar Stripe Checkout para pagamento de campanhas
@@ -195,14 +165,15 @@
 - [x] Criar componente StripeCheckout para integração de pagamentos
 - [x] Criar página PaymentCallback para sucesso/cancelamento de pagamento
 - [x] Adicionar rotas para AdvertiserPortal e PaymentCallback
-
-- [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" na tabela de pre\u00e7os da p\u00e1gina Kadeh Ads
-- [x] Adicionar bot\u00e3o "Come\u00e7ar a Anunciar" abaixo do simulador de investimento
-- [x] Implementar redirecionamento para portal do anunciante com aba de cria\u00e7\u00e3o de an\u00fancio
-
-- [x] Adicionar bot\u00e3o de Login no Header
-- [x] Adicionar bot\u00e3o de Cadastro no Header
-- [x] Implementar bot\u00e3o de Logout quando usu\u00e1rio autenticado
-- [x] Exibir nome/email do usu\u00e1rio quando autenticado
-- [x] Adicionar menu mobile com op\u00e7\u00f5es de autentica\u00e7\u00e3o
-- [x] Testar fluxo de login/logout em todas as p\u00e1ginas
+- [x] Adicionar botão "Começar a Anunciar" na tabela de preços da página Kadeh Ads
+- [x] Adicionar botão "Começar a Anunciar" abaixo do simulador de investimento
+- [x] Implementar redirecionamento para portal do anunciante com aba de criação de anúncio
+- [x] Adicionar botão de Login no Header
+- [x] Adicionar botão de Cadastro no Header
+- [x] Implementar botão de Logout quando usuário autenticado
+- [x] Exibir nome/email do usuário quando autenticado
+- [x] Adicionar menu mobile com opções de autenticação
+- [x] Testar fluxo de login/logout em todas as páginas
+- [x] Implementar webhook de Stripe para atualizar status de pagamento
+- [x] Implementar sistema de pausa de campanhas com aviso de 24h
+- [x] Integrar exibição de anúncios nas páginas Kadeh Varejo e Shopping
