@@ -81,18 +81,18 @@ export default function AdsPDVSection({ language }: { language: string }) {
                   </div>
                   <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
                     <span className="font-medium text-gray-700">{t.kadehKeeps}</span>
-                    <span className="text-2xl font-bold text-orange-600">R$ 300 (30%)</span>
+                    <span className="text-2xl font-bold text-orange-600">R$ 800 (80%)</span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
                     <span className="font-medium text-gray-700">{t.storeReceives}</span>
-                    <span className="text-2xl font-bold text-green-600">R$ 700 (70%)</span>
+                    <span className="text-2xl font-bold text-green-600">R$ 200 (20%)</span>
                   </div>
                 </div>
 
                 {/* Gráfico de Pizza */}
                 <div className="flex items-center justify-center h-48">
                   <svg viewBox="0 0 100 100" className="w-full h-full max-w-xs">
-                    {/* Kadeh 30% */}
+                    {/* Kadeh 80% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -100,10 +100,10 @@ export default function AdsPDVSection({ language }: { language: string }) {
                       fill="none"
                       stroke="#f97316"
                       strokeWidth="30"
-                      strokeDasharray="84.8 282.7"
+                      strokeDasharray="226.2 282.7"
                       transform="rotate(-90 50 50)"
                     />
-                    {/* Store 70% */}
+                    {/* Store 20% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -111,8 +111,8 @@ export default function AdsPDVSection({ language }: { language: string }) {
                       fill="none"
                       stroke="#22c55e"
                       strokeWidth="30"
-                      strokeDasharray="197.9 282.7"
-                      strokeDashoffset="-84.8"
+                      strokeDasharray="56.7 282.7"
+                      strokeDashoffset="-226.2"
                       transform="rotate(-90 50 50)"
                     />
                     <text x="50" y="55" textAnchor="middle" className="text-xs font-bold" fill="#333">

@@ -181,3 +181,5 @@
 - [x] Implementar simulador interativo de investimento em ads
 - [x] Criar fluxo visual para anunciantes
 - [ ] Implementar formulário de cadastro de anúncios
+
+- [x] Corrigir split de pagamento para 20% loja e 80% Kadeh
