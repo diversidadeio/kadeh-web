@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import AdsPDVSection from "@/components/AdsPDVSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock, Home } from "lucide-react";
@@ -377,6 +378,13 @@ export default function KadehAdsFull() {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </section>
+
+      {/* Ads no PDV Section */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <AdsPDVSection language={language} />
         </div>
       </section>
 

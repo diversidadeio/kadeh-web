@@ -176,3 +176,8 @@
 - [x] Implementar tradução para inglês na página Kadeh Ads
 
 - [x] Adicionar header com navegação completa na página Kadeh Ads
+
+- [x] Criar seção "Ads no PDV" com explicação de split de pagamento
+- [x] Implementar simulador interativo de investimento em ads
+- [x] Criar fluxo visual para anunciantes
+- [ ] Implementar formulário de cadastro de anúncios
