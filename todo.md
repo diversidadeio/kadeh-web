@@ -177,3 +177,7 @@
 - [x] Implementar webhook de Stripe para atualizar status de pagamento
 - [x] Implementar sistema de pausa de campanhas com aviso de 24h
 - [x] Integrar exibição de anúncios nas páginas Kadeh Varejo e Shopping
+
+- [x] Integrar AdsBanner na página Kadeh Varejo com filtro por categoria
+- [x] Integrar AdsBanner na página Kadeh Shopping com filtro por categoria
+- [x] Testar AdsBanner em ambas as páginas em português e inglês

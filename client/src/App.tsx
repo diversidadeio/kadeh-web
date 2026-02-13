@@ -17,6 +17,8 @@ import KadehAds from "./pages/KadehAds";
 import KadehAdsFull from "./pages/KadehAdsFull";
 import AdvertiserPortal from "./pages/AdvertiserPortal";
 import PaymentCallback from "./pages/PaymentCallback";
+import KadehVarejo from "./pages/KadehVarejo";
+import KadehShopping from "./pages/KadehShopping";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -34,6 +36,8 @@ function Router() {
       <Route path="/pt/faq" component={FAQ} />
       <Route path="/pt/ads" component={KadehAds} />
       <Route path="/pt/kadeh-ads" component={KadehAdsFull} />
+      <Route path="/pt/kadeh-varejo" component={KadehVarejo} />
+      <Route path="/pt/kadeh-shopping" component={KadehShopping} />
       <Route path="/pt/advertiser-portal" component={AdvertiserPortal} />
       <Route path="/pt/payment-callback" component={PaymentCallback} />
 
@@ -49,6 +53,8 @@ function Router() {
       <Route path="/en/faq" component={FAQ} />
       <Route path="/en/ads" component={KadehAds} />
       <Route path="/en/kadeh-ads" component={KadehAdsFull} />
+      <Route path="/en/kadeh-varejo" component={KadehVarejo} />
+      <Route path="/en/kadeh-shopping" component={KadehShopping} />
       <Route path="/en/advertiser-portal" component={AdvertiserPortal} />
       <Route path="/en/payment-callback" component={PaymentCallback} />
 
@@ -64,6 +70,8 @@ function Router() {
       <Route path="/faq" component={FAQ} />
       <Route path="/ads" component={KadehAds} />
       <Route path="/kadeh-ads" component={KadehAdsFull} />
+      <Route path="/kadeh-varejo" component={KadehVarejo} />
+      <Route path="/kadeh-shopping" component={KadehShopping} />
       <Route path="/advertiser-portal" component={AdvertiserPortal} />
       <Route path="/payment-callback" component={PaymentCallback} />
 
