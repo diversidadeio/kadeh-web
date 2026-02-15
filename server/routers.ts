@@ -262,6 +262,44 @@ ${input.message}
       .query(async ({ input }) => {
         return getActiveAdsByCategory(input.category);
       }),
+
+    recordClick: publicProcedure
+      .input(z.object({ advertisementId: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const existing = await db
+          .select()
+          .from(adAnalytics)
+          .where(
+            and(
+              eq(adAnalytics.advertisementId, input.advertisementId),
+              eq(adAnalytics.date, today)
+            )
+          )
+          .limit(1);
+
+        if (existing.length > 0) {
+          await db
+            .update(adAnalytics)
+            .set({ clicks: existing[0].clicks + 1 })
+            .where(eq(adAnalytics.id, existing[0].id));
+        } else {
+          await db.insert(adAnalytics).values({
+            advertisementId: input.advertisementId,
+            date: today,
+            clicks: 1,
+            impressions: 0,
+            conversions: 0,
+          });
+        }
+
+        return { success: true };
+      }),
   }),
   stripe: stripeRouter,
   campaigns: campaignsRouter,

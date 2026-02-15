@@ -181,3 +181,7 @@
 - [x] Integrar AdsBanner na página Kadeh Varejo com filtro por categoria
 - [x] Integrar AdsBanner na página Kadeh Shopping com filtro por categoria
 - [x] Testar AdsBanner em ambas as páginas em português e inglês
+
+- [x] Adicionar links nas apresentações de Kadeh Varejo e Shopping
+- [x] Implementar analytics de cliques em anúncios
+- [x] Adicionar filtros avançados por região, tipo de visitante e horário

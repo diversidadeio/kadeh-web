@@ -37,6 +37,9 @@ export default function AdsBanner({
     { enabled: !!category || !!region }
   );
 
+  // Mutation para registrar clique
+  const recordClickMutation = trpc.ads.recordClick.useMutation();
+
   // Auto-rotacionar anúncios a cada 5 segundos
   useEffect(() => {
     if (!autoRotate || !ads || ads.length === 0) return;
@@ -139,7 +142,14 @@ export default function AdsBanner({
 
         {/* CTA Button */}
         <div className="p-4 bg-blue-50 border-t">
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+          <Button
+            onClick={() => {
+              if (currentAd.id) {
+                recordClickMutation.mutate({ advertisementId: currentAd.id });
+              }
+            }}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
             {language === "pt" ? "Saiba Mais" : "Learn More"}
           </Button>
         </div>

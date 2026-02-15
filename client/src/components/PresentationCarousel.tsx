@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 interface PresentationCarouselProps {
   isOpen: boolean;
@@ -73,6 +74,32 @@ export default function PresentationCarousel({
     console.error(`Failed to load image for page ${currentPage}`);
   };
 
+  const getActionLink = () => {
+    const links: Record<string, string> = {
+      'kadeh-varejo': '/kadeh-varejo',
+      'kadeh-shopping': '/kadeh-shopping',
+    };
+    return links[presentationName] || null;
+  };
+
+  const getActionLabel = () => {
+    const labels: Record<string, string> = {
+      'kadeh-varejo': 'Ver Anuncios',
+      'kadeh-shopping': 'Ver Anuncios',
+    };
+    return labels[presentationName] || null;
+  };
+
+  const [, navigate] = useLocation();
+
+  const handleActionClick = () => {
+    const link = getActionLink();
+    if (link) {
+      onClose();
+      navigate(link);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -134,12 +161,23 @@ export default function PresentationCarousel({
             </button>
           </div>
 
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
-          >
-            Fechar
-          </button>
+          <div className="flex gap-3">
+            {getActionLink() && (
+              <button
+                onClick={handleActionClick}
+                className="px-6 py-2 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                {getActionLabel()}
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary/90 transition-colors"
+            >
+              Fechar
+            </button>
+          </div>
         </div>
       </div>
     </div>

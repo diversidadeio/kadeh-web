@@ -1,14 +1,17 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdsBanner from "@/components/AdsBanner";
+import AdFilters, { FilterOptions } from "@/components/AdFilters";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import { Link } from "wouter";
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 export default function KadehShopping() {
   const { language } = useLanguage();
   const t = translations[language];
+  const [filters, setFilters] = useState<FilterOptions>({});
 
   const zones = [
     { name: language === "pt" ? "Moda e Vestuário" : "Fashion & Apparel", id: "fashion" },
@@ -49,13 +52,20 @@ export default function KadehShopping() {
         </div>
       </section>
 
+      {/* Filters Section */}
+      <section className="py-8 bg-gray-50 border-b border-border">
+        <div className="container">
+          <AdFilters onFilterChange={setFilters} language={language} />
+        </div>
+      </section>
+
       {/* Featured Ads Section */}
       <section className="py-16 bg-white">
         <div className="container">
           <h2 className="text-3xl font-bold text-foreground mb-8">
             {language === "pt" ? "Anúncios em Destaque" : "Featured Ads"}
           </h2>
-          <AdsBanner category="all" language={language} />
+          <AdsBanner category={filters.category || "all"} language={language} />
         </div>
       </section>
 

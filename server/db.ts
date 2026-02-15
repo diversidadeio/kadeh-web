@@ -247,3 +247,102 @@ export async function getNextPriorityPosition() {
 
   return result.length > 0 ? result[0].priorityPosition + 1 : 1;
 }
+
+export async function recordAdClick(advertisementId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const existing = await db
+    .select()
+    .from(adAnalytics)
+    .where(
+      and(
+        eq(adAnalytics.advertisementId, advertisementId),
+        gte(adAnalytics.date, today)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(adAnalytics)
+      .set({ clicks: existing[0].clicks + 1 })
+      .where(eq(adAnalytics.id, existing[0].id));
+  } else {
+    await db.insert(adAnalytics).values({
+      advertisementId,
+      date: today,
+      clicks: 1,
+      impressions: 0,
+      conversions: 0,
+    });
+  }
+}
+
+export async function recordAdImpression(advertisementId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const existing = await db
+    .select()
+    .from(adAnalytics)
+    .where(
+      and(
+        eq(adAnalytics.advertisementId, advertisementId),
+        gte(adAnalytics.date, today)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(adAnalytics)
+      .set({ impressions: existing[0].impressions + 1 })
+      .where(eq(adAnalytics.id, existing[0].id));
+  } else {
+    await db.insert(adAnalytics).values({
+      advertisementId,
+      date: today,
+      impressions: 1,
+      clicks: 0,
+      conversions: 0,
+    });
+  }
+}
+
+export async function getAdAnalyticsSummary(advertisementId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const analytics = await db
+    .select()
+    .from(adAnalytics)
+    .where(eq(adAnalytics.advertisementId, advertisementId));
+
+  if (analytics.length === 0) return null;
+
+  const totalImpressions = analytics.reduce((sum, a) => sum + a.impressions, 0);
+  const totalClicks = analytics.reduce((sum, a) => sum + a.clicks, 0);
+  const totalConversions = analytics.reduce((sum, a) => sum + a.conversions, 0);
+  const totalConversionValue = analytics.reduce((sum, a) => sum + parseFloat(a.conversionValue?.toString() || "0"), 0);
+
+  const ctr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+  const conversionRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
+  const roi = totalConversionValue > 0 ? ((totalConversionValue - parseFloat(analytics[0].conversionValue?.toString() || "0")) / parseFloat(analytics[0].conversionValue?.toString() || "1")) * 100 : 0;
+
+  return {
+    totalImpressions,
+    totalClicks,
+    totalConversions,
+    totalConversionValue,
+    ctr: parseFloat(ctr.toFixed(2)),
+    conversionRate: parseFloat(conversionRate.toFixed(2)),
+    roi: parseFloat(roi.toFixed(2)),
+  };
+}
