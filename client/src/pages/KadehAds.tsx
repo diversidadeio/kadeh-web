@@ -1,18 +1,19 @@
-// import { useAuth } from "@/_core/hooks/useAuth";
+import { useState } from "react";
 import Header from "@/components/Header";
+import ContactModal from "@/components/ContactModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
-import { useLocation } from "wouter";
 
 export default function KadehAds() {
-  // Placeholder - implementação de autenticação em desenvolvimento
-  const isAuthenticated = false;
-  const user = null;
-  const [, navigate] = useLocation();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
-  const handleAccessAds = () => {
-    navigate("/ads");
+  const handleOpenContact = () => {
+    setIsContactModalOpen(true);
+  };
+
+  const handleCloseContact = () => {
+    setIsContactModalOpen(false);
   };
 
   return (
@@ -33,7 +34,7 @@ export default function KadehAds() {
                 <Button 
                   size="lg" 
                   className="bg-white text-blue-600 hover:bg-blue-50"
-                  onClick={handleAccessAds}
+                  onClick={handleOpenContact}
                 >
                   Começar Agora <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
@@ -41,6 +42,7 @@ export default function KadehAds() {
                   size="lg" 
                   variant="outline"
                   className="border-white text-white hover:bg-blue-700"
+                  onClick={handleOpenContact}
                 >
                   Saiba Mais
                 </Button>
@@ -283,7 +285,7 @@ export default function KadehAds() {
               <Button 
                 size="lg" 
                 className="w-full bg-blue-600 hover:bg-blue-700"
-                onClick={handleAccessAds}
+                onClick={handleOpenContact}
               >
                 Começar a Anunciar
               </Button>
@@ -351,12 +353,19 @@ export default function KadehAds() {
           <Button 
             size="lg" 
             className="bg-white text-blue-600 hover:bg-blue-50"
-            onClick={handleAccessAds}
+            onClick={handleOpenContact}
           >
             Acessar KADEH ADS <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </section>
+
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={handleCloseContact}
+        title="Comece a Anunciar no KADEH ADS"
+        description="Preencha o formulário abaixo e nossa equipe entrará em contato para ajudar você a começar."
+      />
     </div>
   );
 }
