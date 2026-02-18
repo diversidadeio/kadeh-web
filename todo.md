@@ -203,3 +203,5 @@
 - [x] Adicionar campos de largura, altura e profundidade no formulário de produtos
 - [x] Implementar cálculo automático de frentes baseado em dimensões
 - [x] Atualizar visualização frontal com dimensões dos produtos
+
+- [x] Corrigir geração de visualização da loja para mostrar gôndola de frente

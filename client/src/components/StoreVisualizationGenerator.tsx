@@ -81,13 +81,13 @@ export default function StoreVisualizationGenerator({
 
     products.forEach((p) => {
       const zone = p.zone || "Altura das mãos";
-      const productName = `${p.name} (${p.category.name})`;
+      const productName = `${p.name}`;
       
-      if (zone === "Altura dos olhos" || zone === "eyes") {
+      if (zone === "Altura dos olhos" || zone === "Eye Level") {
         productsByZone.eyes.push(productName);
-      } else if (zone === "Altura das mãos" || zone === "hands") {
+      } else if (zone === "Altura das mãos" || zone === "Hand Level") {
         productsByZone.hands.push(productName);
-      } else if (zone === "Parte de Baixo" || zone === "bottom") {
+      } else if (zone === "Lugar baixo" || zone === "Bottom Shelf") {
         productsByZone.bottom.push(productName);
       }
     });
@@ -95,36 +95,48 @@ export default function StoreVisualizationGenerator({
     // Build detailed zone descriptions
     let zoneDetails = "";
     if (productsByZone.eyes.length > 0) {
-      zoneDetails += `\n- Eye level (premium placement): ${productsByZone.eyes.join(", ")}`;
+      zoneDetails += `\n- TOP SHELF (Eye Level - Premium): ${productsByZone.eyes.join(", ")}`;
     }
     if (productsByZone.hands.length > 0) {
-      zoneDetails += `\n- Hand level (convenient reach): ${productsByZone.hands.join(", ")}`;
+      zoneDetails += `\n- MIDDLE SHELF (Hand Level - Convenient): ${productsByZone.hands.join(", ")}`;
     }
     if (productsByZone.bottom.length > 0) {
-      zoneDetails += `\n- Bottom shelf (bulk/heavy items): ${productsByZone.bottom.join(", ")}`;
+      zoneDetails += `\n- BOTTOM SHELF (Heavy/Bulk): ${productsByZone.bottom.join(", ")}`;
     }
 
     // Build exposure type description
-    let exposureDescription = "a retail shelf";
+    let exposureDescription = "retail shelf/gondola";
     if (exposureType === "terminalGondola") {
-      exposureDescription = "a shelf terminal";
+      exposureDescription = "shelf terminal/end cap";
     } else if (exposureType === "freezerVertical") {
-      exposureDescription = "a vertical freezer";
+      exposureDescription = "vertical freezer";
     } else if (exposureType === "freezerHorizontal") {
-      exposureDescription = "a horizontal freezer";
+      exposureDescription = "horizontal freezer";
     } else if (exposureType === "bancaFrutas") {
-      exposureDescription = "a fruit and vegetable stand";
+      exposureDescription = "fruit and vegetable stand";
     }
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with products strategically positioned by shelf zone:${zoneDetails}
-    
-The shelf is ${gondolaWidth}cm wide, ${shelfDepth}cm deep, and ${shelfHeight}cm tall between shelves.
-Products at eye level are prominently displayed and well-lit.
-Products at hand level are easily accessible.
-Heavier or bulk items are positioned at the bottom shelf.
-The display is neatly organized in a modern supermarket setting with professional lighting.
-The image should be realistic, professional, and show how customers would see the products in a real store environment.
-High quality, detailed, professional retail photography style with clear shelf zones visible.`;
+    const prompt = `CRITICAL INSTRUCTION: Generate a FRONT-FACING photograph of a retail shelf/gondola. The shelf MUST be viewed directly from the customer's perspective - looking straight at the shelf face. The shelf should be the main focus filling most of the frame.
+
+VIEWPOINT: Straight-on front view ONLY. Customer eye-level perspective looking directly at the shelf. NOT a side view. NOT an angled view. FRONT FACING ONLY.
+
+Retail shelf/gondola with products arranged in three shelf levels:${zoneDetails}
+
+Shelf specifications:
+- Width: ${gondolaWidth}cm
+- Depth: ${shelfDepth}cm  
+- Height between shelves: ${shelfHeight}cm
+
+Product arrangement:
+- TOP SHELF: Premium products at eye level, prominently displayed and well-lit
+- MIDDLE SHELF: Popular items at convenient hand level, easily accessible
+- BOTTOM SHELF: Heavier items, bulk products
+
+Setting: Modern supermarket with professional lighting, clean and organized.
+Photography style: Professional retail photography, realistic, high quality, detailed.
+Lighting: Bright professional supermarket lighting highlighting all shelf zones clearly.
+
+IMPORTANT: The image must show the shelf from a FRONT-FACING perspective as a customer would see it in a store. The shelf fills the frame. All products are visible and readable.`;
 
     return prompt;
   };
@@ -189,13 +201,13 @@ High quality, detailed, professional retail photography style with clear shelf z
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {error}
           <Button
-            variant="outline"
-            size="sm"
             onClick={handleGenerateVisualization}
-            className="mt-2"
+            variant="ghost"
+            size="sm"
+            className="ml-2 text-red-700 hover:text-red-800"
           >
             {t.retry}
           </Button>
@@ -203,22 +215,16 @@ High quality, detailed, professional retail photography style with clear shelf z
       )}
 
       {generatedImage && (
-        <div className="mt-4 space-y-2">
+        <div className="space-y-2">
           <img
             src={generatedImage}
-            alt="Store Visualization"
-            className="w-full rounded-lg border border-gray-200 object-cover"
+            alt={t.storeLayout}
+            className="w-full rounded-lg border border-gray-200 object-contain"
           />
           <p className="text-xs text-gray-500">
-            Generated AI visualization based on simulation configuration
-          </p>
-        </div>
-      )}
-
-      {!generatedImage && !error && products.length > 0 && (
-        <div className="rounded-lg bg-gray-50 p-4 text-center">
-          <p className="text-sm text-gray-600">
-            Click the button above to generate an AI visualization of your store layout
+            {language === "pt"
+              ? "Visualização gerada por IA. Clique no botão acima para gerar uma nova imagem."
+              : "AI-generated visualization. Click the button above to generate a new image."}
           </p>
         </div>
       )}
