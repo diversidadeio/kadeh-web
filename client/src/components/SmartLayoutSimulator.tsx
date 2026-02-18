@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
 import GondolaFrontView from "@/components/GondolaFrontView";
+import ProductFormModal from "@/components/ProductFormModal";
 import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
@@ -82,22 +83,35 @@ export default function SmartLayoutSimulator() {
   const [newProductSubCategory, setNewProductSubCategory] = useState<SubCategory>("Alimentos");
   const [promotionalPointType, setPromotionalPointType] = useState<"Ilha Promocional" | "Terminal de Gôndola" | "Outro">("Ilha Promocional");
   const [promotionalPointCapacity, setPromotionalPointCapacity] = useState(0);
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
 
   const addProduct = () => {
-    if (newProductName.trim()) {
-      const newProduct: Product = {
-        id: Date.now().toString(),
-        name: newProductName,
-        giro: newProductGiro,
-        margem: newProductMargem,
-        category: newProductCategory,
-        subCategory: newProductSubCategory,
-      };
-      setProducts([...products, newProduct]);
-      setNewProductName("");
-      setNewProductGiro("Médio");
-      setNewProductMargem("Média");
-    }
+    setIsProductFormOpen(true);
+  };
+
+  const handleProductFormSubmit = (productData: {
+    name: string;
+    largura: number;
+    altura: number;
+    profundidade: number;
+    margem: number;
+    giro: number;
+  }) => {
+    const giroCategory = numericToCategory(productData.giro, "giro");
+    const margemCategory = numericToCategory(productData.margem, "margem");
+    
+    const newProduct: Product = {
+      id: Date.now().toString(),
+      name: productData.name,
+      giro: giroCategory as "Baixo" | "Médio" | "Alto",
+      margem: margemCategory as "Baixa" | "Média" | "Alta",
+      category: newProductCategory,
+      subCategory: newProductSubCategory,
+      largura: productData.largura,
+      comprimento: productData.profundidade,
+    };
+    setProducts([...products, newProduct]);
+    setIsProductFormOpen(false);
   };
 
   const removeProduct = (id: string) => {
@@ -518,6 +532,13 @@ export default function SmartLayoutSimulator() {
           })}
         </div>
       </div>
+
+      {/* ProductFormModal */}
+      <ProductFormModal
+        isOpen={isProductFormOpen}
+        onClose={() => setIsProductFormOpen(false)}
+        onSubmit={handleProductFormSubmit}
+      />
     </div>
   );
 }
