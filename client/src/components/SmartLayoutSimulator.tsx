@@ -4,7 +4,7 @@
  * Design: Tech-Forward Minimalism with interactive elements
  */
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw, Download, Lightbulb, Save } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
@@ -163,7 +163,7 @@ const TRANSLATIONS = {
   },
 };
 
-export default function SmartLayoutSimulator() {
+const SmartLayoutSimulatorComponent = forwardRef<any, {}>(function SmartLayoutSimulator(props, ref) {
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
 
@@ -518,7 +518,9 @@ export default function SmartLayoutSimulator() {
       )}
     </div>
   );
-}
+});
+
+export default SmartLayoutSimulatorComponent;
 
 // Export for PDF
 function exportPlanogramToPDF(
