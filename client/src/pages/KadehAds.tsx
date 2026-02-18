@@ -1,4 +1,5 @@
 // import { useAuth } from "@/_core/hooks/useAuth";
+import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
@@ -16,6 +17,7 @@ export default function KadehAds() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 px-4">
         <div className="max-w-6xl mx-auto">
