@@ -222,3 +222,5 @@
 - [x] CRÍTICO: Garantir distribuição correta na prateleira conforme frentes calculadas
 
 - [x] Adicionar seletores de níveis (Alta, Média, Baixa) para Margem e Giro no ProductFormModal
+
+- [x] Implementar edição inline na tabela de produtos com atualização em tempo real

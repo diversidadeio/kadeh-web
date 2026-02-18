@@ -25,6 +25,7 @@ import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerato
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
 import ProductFormModal from "@/components/ProductFormModal";
+import EditableProductRow from "@/components/EditableProductRow";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -264,6 +265,14 @@ export default function SmartLayoutSimulator() {
     setProducts([...products, newProduct]);
   };
 
+  const updateProduct = (updatedProduct: any) => {
+    setProducts(
+      products.map((p) =>
+        p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p
+      )
+    );
+  };
+
   const removeProduct = (id: string) => {
     setProducts(products.filter((p) => p.id !== id));
   };
@@ -470,7 +479,9 @@ export default function SmartLayoutSimulator() {
                 <tr className="border-b border-border">
                   <th className="text-left py-2 px-2">{t.product}</th>
                   <th className="text-left py-2 px-2">{t.dimensions}</th>
-                  <th className="text-left py-2 px-2">{t.quadrantes}</th>
+                  <th className="text-left py-2 px-2">Prof (cm)</th>
+                  <th className="text-left py-2 px-2">{t.margin}</th>
+                  <th className="text-left py-2 px-2">{t.velocity}</th>
                   <th className="text-left py-2 px-2">{t.zone}</th>
                   <th className="text-left py-2 px-2">{t.action}</th>
                 </tr>
@@ -482,24 +493,13 @@ export default function SmartLayoutSimulator() {
                     product.category.curvaLucratividade
                   );
                   return (
-                    <tr key={product.id} className="border-b border-border hover:bg-muted">
-                      <td className="py-2 px-2 text-xs font-medium">{product.name}</td>
-                      <td className="py-2 px-2 text-xs">
-                        {product.largura}×{product.comprimento}cm
-                      </td>
-                      <td className="py-2 px-2 text-xs">{rec.quadrantes}</td>
-                      <td className="py-2 px-2 text-xs">{product.zone}</td>
-                      <td className="py-2 px-2">
-                        <Button
-                          onClick={() => removeProduct(product.id)}
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
+                    <EditableProductRow
+                      key={product.id}
+                      product={product}
+                      onUpdate={updateProduct}
+                      onDelete={removeProduct}
+                      quadrantes={rec.quadrantes}
+                    />
                   );
                 })}
               </tbody>
