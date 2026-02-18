@@ -465,13 +465,13 @@ export default function SmartLayoutSimulator() {
             papelEstrategico: product.velocity === "Alto" ? "Destaque" : "Complementar",
             curvaFaturamento: product.velocity === "Alto" ? "A" : product.velocity === "Médio" ? "B" : "C",
             curvaLucratividade: product.margin === "Alta" ? "A" : product.margin === "Média" ? "B" : "C",
-            defaultLargura: 10,
-            defaultComprimento: 5,
+            defaultLargura: product.largura || 10,
+            defaultComprimento: product.profundidade || 5,
             defaultGiro: product.velocity,
             defaultMargem: product.margin,
           } as unknown as Category),
-          largura: 10,
-          comprimento: 5,
+          largura: product.largura || 10,
+          comprimento: product.profundidade || 5,
           promotionalPoints: [],
         };
         setProducts([...products, newProduct]);

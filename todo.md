@@ -199,3 +199,7 @@
 - [x] Corrigir GondolaFrontView para mostrar produtos reais em cada faixa
 - [x] Integrar dados do simulador no painel de visualização frontal
 - [x] Implementar layout horizontal com produtos em cada zona
+
+- [x] Adicionar campos de largura, altura e profundidade no formulário de produtos
+- [x] Implementar cálculo automático de frentes baseado em dimensões
+- [x] Atualizar visualização frontal com dimensões dos produtos
