@@ -7,6 +7,7 @@ import { useState, useRef, forwardRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import SmartLayoutSimulator from "./SmartLayoutSimulator";
 import SavedSimulationsList from "./SavedSimulationsList";
+import GondolaVisualization3D from "./GondolaVisualization3D";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { simulationStorage, SavedSimulation } from "@/data/simulationStorage";
@@ -113,6 +114,24 @@ const SmartLayoutWithSaveFeature = forwardRef<any, {}>(function SmartLayoutWithS
 
       {/* Smart Layout Simulator */}
       <SmartLayoutSimulator />
+
+      {/* 3D Gondola Visualization */}
+      <GondolaVisualization3D
+        width={280}
+        depth={40}
+        shelfHeight={60}
+        numberOfShelves={5}
+        products={[
+          { id: "1", name: "Bebidas", color: "#FF6B6B", price: 5.99 },
+          { id: "2", name: "Snacks", color: "#4ECDC4", price: 3.99 },
+          { id: "3", name: "Higiene", color: "#45B7D1", price: 8.99 },
+          { id: "4", name: "Alimentos", color: "#FFA07A", price: 12.99 },
+          { id: "5", name: "Limpeza", color: "#98D8C8", price: 6.99 },
+          { id: "6", name: "Congelados", color: "#6C5CE7", price: 9.99 },
+        ]}
+        language={language}
+        imageUrl="/smart-layout-gondola.png"
+      />
 
       {/* Save Dialog */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>

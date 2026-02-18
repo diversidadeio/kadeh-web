@@ -185,3 +185,8 @@
 - [x] Adicionar links nas apresentações de Kadeh Varejo e Shopping
 - [x] Implementar analytics de cliques em anúncios
 - [x] Adicionar filtros avançados por região, tipo de visitante e horário
+
+- [x] Gerar imagem de IA da loja com gôndola e produtos
+- [x] Criar componente de visualização 3D/perspectiva da gôndola
+- [x] Integrar visualização na página Smart Layout
+- [x] Testar visualização em diferentes resoluções
