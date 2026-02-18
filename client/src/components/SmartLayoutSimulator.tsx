@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
+import GondolaFrontView from "@/components/GondolaFrontView";
 import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
@@ -430,6 +431,13 @@ export default function SmartLayoutSimulator() {
           </div>
         </div>
       </div>
+
+      {/* Visualização Frontal da Gôndola */}
+      <GondolaFrontView
+        products={filteredProducts}
+        gondolaWidth={gondolaWidth}
+        getRecommendation={getRecommendation}
+      />
 
       {/* Pontos Promocionais */}
       <div className="bg-card p-6 rounded-md border border-border">

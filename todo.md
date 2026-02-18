@@ -1,1 +1,3 @@
 - [x] Trocar "Soluções" por "Home" no Header e configurar navegação para página inicial
+- [x] Restaurar visualização frontal da gôndola (GondolaFrontView) com distribuição de produtos por zonas
+- [x] Fazer upload de imagens para S3 e atualizar URLs
