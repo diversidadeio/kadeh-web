@@ -10,6 +10,7 @@ interface Feature {
   title: string;
   description: string;
   icon?: React.ReactNode;
+  presentationUrl?: string;
 }
 
 interface FeaturesSectionProps {
@@ -18,6 +19,7 @@ interface FeaturesSectionProps {
   subtitle?: string;
   features: Feature[];
   columns?: 2 | 3 | 4;
+  onPresentationClick?: (url: string) => void;
 }
 
 export default function FeaturesSection({
@@ -26,6 +28,7 @@ export default function FeaturesSection({
   subtitle,
   features,
   columns = 3,
+  onPresentationClick,
 }: FeaturesSectionProps) {
   const gridClass = {
     2: "grid-cols-1 md:grid-cols-2",
@@ -54,6 +57,8 @@ export default function FeaturesSection({
               title={feature.title}
               description={feature.description}
               icon={feature.icon}
+              presentationUrl={feature.presentationUrl}
+              onPresentationClick={onPresentationClick}
             />
           ))}
         </div>
