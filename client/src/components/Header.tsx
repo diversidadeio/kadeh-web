@@ -28,6 +28,9 @@ export default function Header() {
           <Link href="/data-intelligence" className="text-sm text-foreground hover:text-primary transition-colors">
             Intelligence
           </Link>
+          <Link href="/ads" className="text-sm text-foreground hover:text-primary transition-colors">
+            Kadeh Ads
+          </Link>
           <Link href="/how-it-works" className="text-sm text-foreground hover:text-primary transition-colors">
             Como Funciona
           </Link>
