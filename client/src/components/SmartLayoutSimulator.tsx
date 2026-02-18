@@ -24,6 +24,7 @@ import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExpo
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
+import ProductFormModal from "@/components/ProductFormModal";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -177,6 +178,7 @@ export default function SmartLayoutSimulator() {
   const [numberOfShelves, setNumberOfShelves] = useState(5);
   const [showExposureModal, setShowExposureModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showProductFormModal, setShowProductFormModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPromotionalModal, setShowPromotionalModal] = useState(false);
 
@@ -231,6 +233,32 @@ export default function SmartLayoutSimulator() {
       largura: category.defaultLargura,
       comprimento: category.defaultComprimento,
       zone: optimalZone, // Store the calculated zone
+      promotionalPoints: [],
+    };
+    setProducts([...products, newProduct]);
+  };
+
+  const addCustomProduct = (productData: any) => {
+    const newProduct: Product = {
+      id: `prod_${Date.now()}`,
+      name: productData.name,
+      categoryId: `custom_${Date.now()}`,
+      category: {
+        id: `custom_${Date.now()}`,
+        name: productData.name,
+        papelEstrategico: 'Customizado',
+        curvaFaturamento: 'B',
+        curvaLucratividade: 'B',
+        defaultLargura: productData.largura,
+        defaultComprimento: productData.profundidade,
+        categoryType: 'Nao-Alimentar',
+        mainCategory: 'Nao-Alimentar',
+        defaultGiro: productData.giro,
+        defaultMargem: productData.margem,
+      } as unknown as Category,
+      largura: productData.largura,
+      comprimento: productData.profundidade,
+      zone: 'Altura das maos' as any,
       promotionalPoints: [],
     };
     setProducts([...products, newProduct]);
@@ -385,7 +413,17 @@ export default function SmartLayoutSimulator() {
 
       {/* Adicionar Produtos */}
       <div className="bg-card p-6 rounded-md border border-border">
-        <h3 className="text-lg font-semibold text-foreground mb-4">{t.addProduct}</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-foreground">{t.addProduct}</h3>
+          <Button
+            onClick={() => setShowProductFormModal(true)}
+            variant="default"
+            size="sm"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {language === 'pt' ? 'Produto Customizado' : 'Custom Product'}
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
           {filteredCategories.map((category) => (
             <Button
@@ -400,6 +438,13 @@ export default function SmartLayoutSimulator() {
           ))}
         </div>
       </div>
+
+      {/* Modal de Adicionar Produto Customizado */}
+      <ProductFormModal
+        isOpen={showProductFormModal}
+        onClose={() => setShowProductFormModal(false)}
+        onSubmit={addCustomProduct}
+      />
 
       {/* Produtos Adicionados */}
       {products.length > 0 && (

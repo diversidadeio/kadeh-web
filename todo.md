@@ -216,3 +216,7 @@
 - [x] CRÍTICO: Atualizar imagem para mostrar apenas produtos adicionados na simulação
 
 - [x] Mudar nome "Soluções" para "Home" no header
+
+- [x] CRÍTICO: Restaurar campo de adicionar produtos com nome, largura, altura, profundidade
+- [x] CRÍTICO: Implementar cálculo automático de frentes baseado em dimensões
+- [x] CRÍTICO: Garantir distribuição correta na prateleira conforme frentes calculadas
