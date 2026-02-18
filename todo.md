@@ -209,16 +209,3 @@
 - [x] Implementar botão para visualizar e editar prompt antes de gerar imagem
 
 - [x] CRÍTICO: Corrigir distribuição de produtos no painel frontal conforme margem e giro
-
-- [x] CRÍTICO: Restaurar botão de adicionar produtos no SmartLayoutSimulator
-- [x] CRÍTICO: Restaurar funcionamento de categorias e subcategorias
-- [x] CRÍTICO: Implementar distribuição gráfica com giro, margem e exposição vertical
-- [x] CRÍTICO: Atualizar imagem para mostrar apenas produtos adicionados na simulação
-
-- [x] Mudar nome "Soluções" para "Home" no header
-
-- [x] CRÍTICO: Restaurar campo de adicionar produtos com nome, largura, altura, profundidade
-- [x] CRÍTICO: Implementar cálculo automático de frentes baseado em dimensões
-- [x] CRÍTICO: Garantir distribuição correta na prateleira conforme frentes calculadas
-
-- [x] Adicionar seletores de níveis (Alta, Média, Baixa) para Margem e Giro no ProductFormModal
