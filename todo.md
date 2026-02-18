@@ -195,3 +195,7 @@
 - [x] Posicionar produtos por zona (olhos, mãos, piso) nas prateleiras corretas
 - [x] Mostrar nomes reais dos produtos na visualização frontal
 - [x] Adicionar nota informativa sobre dimensões dos produtos
+
+- [x] Corrigir GondolaFrontView para mostrar produtos reais em cada faixa
+- [x] Integrar dados do simulador no painel de visualização frontal
+- [x] Implementar layout horizontal com produtos em cada zona
