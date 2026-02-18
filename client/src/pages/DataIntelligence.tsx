@@ -226,7 +226,7 @@ export default function DataIntelligence() {
         subtitle="Relatórios em tempo real de intenção de compra, padrões de busca, heat maps de navegação e análises detalhadas de categorias, marcas e horários de pico."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver relatórios"
-        imageUrl="/images/data-analytics-retail.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/sKkVMrOOlOAyaDrg.png"
         imageAlt="Inteligência de Dados - Dashboard Analytics"
       />
 

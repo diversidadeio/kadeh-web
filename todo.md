@@ -1,0 +1,1 @@
+- [x] Trocar "Soluções" por "Home" no Header e configurar navegação para página inicial

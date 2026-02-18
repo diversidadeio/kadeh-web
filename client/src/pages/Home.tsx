@@ -149,7 +149,7 @@ export default function Home() {
         subtitle="A plataforma que une experiência simples para qualquer público com otimização operacional e dados em tempo real de intenção de compra — com tecnologia registrada no INPI e Declaração de Exclusividade válida para todo o Brasil (setembro/2025)."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver soluções"
-        imageUrl="/images/hero-couple-shopping.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/gRqmaLVQUpXSRVmj.png"
         imageAlt="Navegação indoor com IA"
       />
 

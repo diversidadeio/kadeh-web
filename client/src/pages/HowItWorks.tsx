@@ -45,7 +45,7 @@ export default function HowItWorks() {
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <img
-            src="/images/kadeh-app-users.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/hbVkrOJdZAohsaTu.png"
             alt="Kadeh App Users"
             className="w-full h-auto rounded-lg shadow-lg object-cover"
           />

@@ -16,8 +16,8 @@ export default function Header() {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/#solucoes" className="text-sm text-foreground hover:text-primary transition-colors">
-            Soluções
+          <Link href="/" className="text-sm text-foreground hover:text-primary transition-colors">
+            Home
           </Link>
           <Link href="/picking" className="text-sm text-foreground hover:text-primary transition-colors">
             Picking

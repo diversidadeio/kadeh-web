@@ -274,7 +274,7 @@ export default function SmartLayout() {
         subtitle="Recomendações automáticas de número de frentes, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver funcionalidades"
-        imageUrl="/images/smart-layout-olive-oil.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/VgkYvznRPZEfbxYH.png"
         imageAlt="Smart Layout - Otimização de Gôndolas"
       />
 
@@ -421,7 +421,7 @@ export default function SmartLayout() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="rounded-md overflow-hidden border border-border">
-              <img src="/images/smart-layout-olive-oil-detailed.png" alt="Exemplo de otimização de gôndola de azeites" className="w-full h-auto" />
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/jdTHdlzsCxpTiPIw.png" alt="Exemplo de otimização de gôndola de azeites" className="w-full h-auto" />
             </div>
 
             <div className="space-y-6">
