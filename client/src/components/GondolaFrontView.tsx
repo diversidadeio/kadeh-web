@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 interface Product {
   id: string;
   name: string;
-  zone: 'Altura dos olhos' | 'Altura das mãos' | 'Lugar baixo' | 'Eye Level' | 'Hand Level' | 'Bottom Shelf';
+  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Lugar baixo' | 'Parte de Baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Eye Level' | 'Hand Level' | 'Bottom Shelf';
   quadrantes?: number;
   largura?: number;
   comprimento?: number;
@@ -51,15 +51,15 @@ export default function GondolaFrontView({
 
   const productsByZone = {
     eyeLevel: products.filter(p => {
-      const normalized = normalizeZone(p.zone);
+      const normalized = normalizeZone(p.zone || "");
       return normalized === eyeLevelZone;
     }),
     handLevel: products.filter(p => {
-      const normalized = normalizeZone(p.zone);
+      const normalized = normalizeZone(p.zone || "");
       return normalized === handLevelZone;
     }),
     bottomLevel: products.filter(p => {
-      const normalized = normalizeZone(p.zone);
+      const normalized = normalizeZone(p.zone || "");
       return normalized === bottomLevelZone;
     }),
   };

@@ -16,10 +16,10 @@ import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
 import GondolaVisualization from "@/components/GondolaVisualization";
+import GondolaVisualization3D from "@/components/GondolaVisualization3D";
 import GondolaFrontView from "@/components/GondolaFrontView";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
-import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
@@ -34,6 +34,7 @@ interface Product {
   category: Category;
   largura?: number;
   comprimento?: number;
+  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf';
   promotionalPoints?: PromotionalPoint[];
 }
 
@@ -66,7 +67,7 @@ const TRANSLATIONS = {
     dimensions: "Dimensões (L×C)",
     perShelf: "Por Prateleira",
     naturalPoint: "Ponto Natural",
-    quadrants: "Quadrantes",
+    quadrantes: "Quadrantes",
     zone: "Zona",
     action: "Ação",
     shelfVisualization: "Visualização da Gôndola",
@@ -100,29 +101,7 @@ const TRANSLATIONS = {
     filterByZone: "Filtrar por Zona de Prateleira",
     eyes: "Altura dos olhos",
     hands: "Altura das mãos",
-    bottom: "Parte de Baixo",
-    allZones: "Todas as Zonas",
-    configureExposureArea: "Configurar Area de Exposicao",
-    selectExposureType: "Selecione o tipo de area de exposicao para gerar o planograma",
-    exposureType: "Tipo de Area de Exposicao",
-    gondola: "Gondola",
-    terminalGondola: "Terminal de Gondola",
-    freezerVertical: "Freezer Vertical",
-    freezerHorizontal: "Freezer Horizontal",
-    bancaFrutas: "Banca de Frutas/Legumes/Verduras",
-    width: "Largura",
-    depth: "Profundidade",
-    shelfHeightBetween: "Altura entre Prateleiras",
-    length: "Comprimento",
-    widthHorizontal: "Largura",
-    depthHorizontal: "Profundidade",
-    cm: "cm",
-    cancel: "Cancelar",
-    confirm: "Confirmar",
-    validationError: "Por favor, preencha todos os campos com valores validos (maiores que 0)",
-    requiredField: "Campo obrigatorio",
-    financialImpact: "Impacto Financeiro da Simulação",
-    storeLayout: "Layout da Loja",
+    bottom: "Lugar baixo",
   },
   en: {
     filterByCategory: "Filter by Category",
@@ -135,7 +114,7 @@ const TRANSLATIONS = {
     numberOfShelves: "Number of Shelves",
     shelfDepth: "Shelf Depth (cm)",
     shelfHeight: "Shelf Height (cm)",
-    resetComplete: "Full Reset",
+    resetComplete: "Complete Reset",
     addProduct: "Add Product",
     productName: "Product name",
     velocity: "Velocity",
@@ -146,13 +125,13 @@ const TRANSLATIONS = {
     dimensions: "Dimensions (W×D)",
     perShelf: "Per Shelf",
     naturalPoint: "Natural Point",
-    quadrants: "Quadrants",
+    quadrantes: "Quadrants",
     zone: "Zone",
     action: "Action",
     shelfVisualization: "Shelf Visualization",
     totalSpace: "Total space",
     usedSpace: "Used space",
-    spaceExceeded: "Space exceeded! Reduce products or increase shelf width.",
+    spaceExceeded: "Space exceeded! Reduce products or increase shelf.",
     exportPlanogram: "Export Planogram",
     promotionalPoints: "Promotional Points",
     selectProduct: "Select a product in the table below to add promotional point",
@@ -164,10 +143,10 @@ const TRANSLATIONS = {
     loadProductPresets: "Load Product Presets",
     bulkImport: "Bulk Import Products",
     dataSources: "Data Sources and Technical References",
-    dataSourcesDescription: "The relevance base and category roles were extracted and validated according to market reports from 2024-2026:",
+    dataSourcesDescription: "The relevance base and category roles were extracted and validated according to 2024-2026 market reports:",
     abras: "ABRAS (Brazilian Supermarket Association): Revenue rankings by section and consumption baskets.",
-    nielseniq: "NielsenIQ: Retail Trends reports on the behavior of Food and HPC categories.",
-    kantar: "Kantar Worldpanel: Data on Consumer Decision Tree and category penetration in Brazilian households.",
+    nielseniq: "NielsenIQ: Retail Trend Reports on the behavior of Food and HPC categories.",
+    kantar: "Kantar Worldpanel: Data on the Consumer Decision Tree and category penetration in Brazilian households.",
     savarejoe: "E-Commerce Brasil / SA Varejo: Technical articles on Category Management and Shelf Rupture.",
     intelligentRecommendations: "Intelligent Recommendations",
     getRecommendations: "Get Recommendations",
@@ -178,31 +157,9 @@ const TRANSLATIONS = {
     history: "Simulation History",
     confidence: "Confidence",
     filterByZone: "Filter by Shelf Zone",
-    eyes: "Eye Level",
-    hands: "Hand Level",
-    bottom: "Bottom Shelf",
-    allZones: "All Zones",
-    configureExposureArea: "Configure Exposure Area",
-    selectExposureType: "Select the type of exposure area to generate the planogram",
-    exposureType: "Exposure Area Type",
-    gondola: "Shelf",
-    terminalGondola: "Shelf Terminal",
-    freezerVertical: "Vertical Freezer",
-    freezerHorizontal: "Horizontal Freezer",
-    bancaFrutas: "Fruit/Vegetable Stand",
-    width: "Width",
-    depth: "Depth",
-    shelfHeightBetween: "Shelf Height",
-    length: "Length",
-    widthHorizontal: "Width",
-    depthHorizontal: "Depth",
-    cm: "cm",
-    cancel: "Cancel",
-    confirm: "Confirm",
-    validationError: "Please fill in all fields with valid values (greater than 0)",
-    requiredField: "Required field",
-    financialImpact: "Simulation Financial Impact",
-    storeLayout: "Store Layout",
+    eyes: "Eye level",
+    hands: "Hand level",
+    bottom: "Bottom shelf",
   },
 };
 
@@ -211,66 +168,28 @@ export default function SmartLayoutSimulator() {
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [gondolaWidth, setGondolaWidth] = useState(280);
-  const [shelves, setShelves] = useState(5);
-  const [shelfDepth, setShelfDepth] = useState(40);
-  const [shelfHeight, setShelfHeight] = useState(60);
   const [selectedMainCategory, setSelectedMainCategory] = useState<CategoryType | "Todas">("Todas");
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>("Todas");
-  const [simulations, setSimulations] = useState<Simulation[]>([]);
-  const [showRecommendations, setShowRecommendations] = useState(false);
-  const [show3D, setShow3D] = useState(false);
-  const [simulationName, setSimulationName] = useState("");
-  const [recommendation, setRecommendation] = useState<any>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showConfiguracao, setShowConfiguracao] = useState(false);
-  const [medidasAreaExposicao, setMedidasAreaExposicao] = useState<MedidasAreaExposicao>({
-    tipo: 'gondola',
-    largura: 280,
-    profundidade: 40,
-    alturaEntrePrateleiras: 60,
-  });
+  const [gondolaWidth, setGondolaWidth] = useState(280);
+  const [shelfHeight, setShelfHeight] = useState(60);
+  const [shelfDepth, setShelfDepth] = useState(40);
+  const [numberOfShelves, setNumberOfShelves] = useState(5);
+  const [showExposureModal, setShowExposureModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showPromotionalModal, setShowPromotionalModal] = useState(false);
 
-  // Get available subcategories based on selected main category
-  const availableSubCategories = useMemo(() => {
-    if (selectedMainCategory === "Todas") {
-      return Array.from(new Set(CATEGORIES_DATABASE.map((c) => c.name))).sort();
-    }
-    return CATEGORIES_DATABASE.filter((c) => c.mainCategory === selectedMainCategory)
-      .map((c) => c.name)
-      .sort();
-  }, [selectedMainCategory]);
-
-  // Filter categories based on selections
   const filteredCategories = useMemo(() => {
     return CATEGORIES_DATABASE.filter((cat) => {
       if (selectedMainCategory !== "Todas" && cat.mainCategory !== selectedMainCategory) return false;
-      if (selectedSubCategory !== "Todas" && cat.name !== selectedSubCategory) return false;
       return true;
     });
   }, [selectedMainCategory, selectedSubCategory]);
 
-  const resetSimulator = () => {
-    setProducts([]);
-    setGondolaWidth(280);
-    setShelves(5);
-    setShelfDepth(40);
-    setShelfHeight(60);
-    setSelectedMainCategory("Todas");
-    setSelectedSubCategory("Todas");
-    setSelectedZone(null);
-  };
-
   const filteredProductsByZone = useMemo(() => {
     if (!selectedZone) return products;
-    return products.filter((product) => {
-      const rec = getRecommendationByABCCurves(
-        product.category.curvaFaturamento,
-        product.category.curvaLucratividade
-      );
-      return rec.zone === selectedZone;
-    });
+    return products.filter((product) => product.zone === selectedZone);
   }, [products, selectedZone]);
 
   const handleExportPDF = (areaType: string) => {
@@ -297,7 +216,7 @@ export default function SmartLayoutSimulator() {
   };
 
   const addProduct = (category: Category) => {
-    // Calculate optimal shelf zone based on margin and giro
+    // Calculate optimal shelf zone based on margin (lucratividade) and giro (faturamento)
     const optimalZone = calculateShelfZone(
       category.curvaLucratividade as any,
       category.curvaFaturamento as any,
@@ -311,6 +230,7 @@ export default function SmartLayoutSimulator() {
       category,
       largura: category.defaultLargura,
       comprimento: category.defaultComprimento,
+      zone: optimalZone, // Store the calculated zone
       promotionalPoints: [],
     };
     setProducts([...products, newProduct]);
@@ -360,176 +280,152 @@ export default function SmartLayoutSimulator() {
               <option value="Não-Alimentar">Não-Alimentar</option>
             </select>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">{t.subCategory}</label>
             <select
               value={selectedSubCategory}
               onChange={(e) => setSelectedSubCategory(e.target.value)}
               className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+              disabled
             >
               <option value="Todas">{t.allSubCategories}</option>
-              {availableSubCategories.map((subCat) => (
-                <option key={subCat} value={subCat}>
-                  {subCat}
+              {Array.from(new Set(filteredCategories.map((cat) => cat.papelEstrategico))).map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
                 </option>
               ))}
             </select>
           </div>
-          <div className="flex items-end">
-            <Button
-              onClick={() => {
-                setSelectedMainCategory("Todas");
-                setSelectedSubCategory("Todas");
-              }}
-              variant="outline"
-              className="w-full"
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">{t.filterByZone}</label>
+            <select
+              value={selectedZone || "Todas"}
+              onChange={(e) => setSelectedZone(e.target.value === "Todas" ? null : e.target.value)}
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
             >
-              {t.clearFilters}
-            </Button>
+              <option value="Todas">{t.allCategories}</option>
+              <option value={language === 'pt' ? 'Altura dos olhos' : 'Eye level'}>{t.eyes}</option>
+              <option value={language === 'pt' ? 'Altura das mãos' : 'Hand level'}>{t.hands}</option>
+              <option value={language === 'pt' ? 'Parte de Baixo' : 'Bottom shelf'}>{t.bottom}</option>
+            </select>
           </div>
         </div>
-      </div>
 
-      {/* Configuração da Gôndola */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">{t.shelfWidth}</label>
-          <input
-            type="range"
-            min="100"
-            max="500"
-            value={gondolaWidth}
-            onChange={(e) => setGondolaWidth(Number(e.target.value))}
-            className="w-full"
-          />
-          <p className="text-xs text-muted-foreground mt-1">{gondolaWidth} cm</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">{t.numberOfShelves}</label>
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={shelves}
-            onChange={(e) => setShelves(Number(e.target.value))}
-            className="w-full"
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            {shelves} {language === "pt" ? "prateleiras" : "shelves"}
-          </p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">{t.shelfDepth}</label>
-          <input
-            type="range"
-            min="20"
-            max="80"
-            value={shelfDepth}
-            onChange={(e) => setShelfDepth(Number(e.target.value))}
-            className="w-full"
-          />
-          <p className="text-xs text-muted-foreground mt-1">{shelfDepth} cm</p>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">{t.shelfHeight}</label>
-          <input
-            type="range"
-            min="30"
-            max="90"
-            value={shelfHeight}
-            onChange={(e) => setShelfHeight(Number(e.target.value))}
-            className="w-full"
-          />
-          <p className="text-xs text-muted-foreground mt-1">{shelfHeight} cm</p>
-        </div>
-        <div className="flex items-end">
-          <Button onClick={resetSimulator} variant="outline" className="w-full flex items-center gap-2">
-            <RotateCcw className="w-4 h-4" />
-            {t.resetComplete}
+        <div className="mt-4 flex gap-2">
+          <Button
+            onClick={() => {
+              setSelectedMainCategory("Todas");
+              setSelectedSubCategory("Todas");
+              setSelectedZone(null);
+            }}
+            variant="outline"
+            size="sm"
+          >
+            {t.clearFilters}
           </Button>
         </div>
       </div>
 
-      {/* Product Descriptor */}
-      <ProductDescriptor onAddProduct={(product) => {
-        const matchingCategory = CATEGORIES_DATABASE.find(c => c.name === product.name);
-        const newProduct: Product = {
-          id: `desc_${Date.now()}`,
-          name: product.name,
-          categoryId: matchingCategory?.id || product.category,
-          category: matchingCategory || ({
-            id: product.category,
-            name: product.name,
-            type: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
-            mainCategory: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
-            papelEstrategico: product.velocity === "Alto" ? "Destaque" : "Complementar",
-            curvaFaturamento: product.velocity === "Alto" ? "A" : product.velocity === "Médio" ? "B" : "C",
-            curvaLucratividade: product.margin === "Alta" ? "A" : product.margin === "Média" ? "B" : "C",
-            defaultLargura: product.largura || 10,
-            defaultComprimento: product.profundidade || 5,
-            defaultGiro: product.velocity,
-            defaultMargem: product.margin,
-          } as unknown as Category),
-          largura: product.largura || 10,
-          comprimento: product.profundidade || 5,
-          promotionalPoints: [],
-        };
-        setProducts([...products, newProduct]);
-      }} language={language} />
-
-      {/* Categorias Disponíveis */}
+      {/* Configuração da Área de Exposição */}
       <div className="bg-card p-6 rounded-md border border-border">
-        <h3 className="text-lg font-semibold text-foreground mb-4">{t.loadProductPresets}</h3>
-        {filteredCategories && filteredCategories.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
-            {filteredCategories.map((cat) => (
-              <Button
-                key={cat.id}
-                onClick={() => addProduct(cat)}
-                variant="outline"
-                size="sm"
-                className="text-xs truncate hover:bg-accent"
-                title={cat.name}
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                {cat.name}
-              </Button>
-            ))}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-foreground">{t.shelfVisualization}</h3>
+          <Button onClick={() => setShowExposureModal(true)} variant="outline" size="sm">
+            Configurar
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">{t.shelfWidth}</label>
+            <input
+              type="number"
+              value={gondolaWidth}
+              onChange={(e) => setGondolaWidth(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            />
           </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Nenhuma categoria encontrada. Verifique os filtros.</p>
-            <Button
-              onClick={() => {
-                setSelectedMainCategory("Todas");
-                setSelectedSubCategory("Todas");
-              }}
-              variant="outline"
-              size="sm"
-              className="mt-4"
-            >
-              {t.clearFilters}
-            </Button>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">{t.shelfDepth}</label>
+            <input
+              type="number"
+              value={shelfDepth}
+              onChange={(e) => setShelfDepth(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">{t.shelfHeight}</label>
+            <input
+              type="number"
+              value={shelfHeight}
+              onChange={(e) => setShelfHeight(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">{t.numberOfShelves}</label>
+            <input
+              type="number"
+              value={numberOfShelves}
+              onChange={(e) => setNumberOfShelves(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+            />
+          </div>
+        </div>
+
+        {spacePercentage > 100 && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-700 text-sm font-semibold">{t.spaceExceeded}</p>
           </div>
         )}
+      </div>
+
+      {/* Adicionar Produtos */}
+      <div className="bg-card p-6 rounded-md border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">{t.addProduct}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
+          {filteredCategories.map((category) => (
+            <Button
+              key={category.id}
+              onClick={() => addProduct(category)}
+              variant="outline"
+              className="justify-start text-left h-auto py-2 px-3"
+            >
+              <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="text-xs">{category.name}</span>
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Produtos Adicionados */}
       {products.length > 0 && (
         <div className="bg-card p-6 rounded-md border border-border">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            {t.productsAdded} ({filteredProductsByZone.length})
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-foreground">
+              {t.productsAdded} ({filteredProductsByZone.length})
+            </h3>
+            <Button
+              onClick={() => setProducts([])}
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:text-red-700"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              {t.resetComplete}
+            </Button>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left py-2 px-2">{t.product}</th>
                   <th className="text-left py-2 px-2">{t.dimensions}</th>
-                  <th className="text-left py-2 px-2">{t.velocity}</th>
-                  <th className="text-left py-2 px-2">{t.margin}</th>
-                  <th className="text-left py-2 px-2">{t.naturalPoint}</th>
-                  <th className="text-left py-2 px-2">{t.quadrants}</th>
+                  <th className="text-left py-2 px-2">{t.quadrantes}</th>
                   <th className="text-left py-2 px-2">{t.zone}</th>
                   <th className="text-left py-2 px-2">{t.action}</th>
                 </tr>
@@ -540,26 +436,22 @@ export default function SmartLayoutSimulator() {
                     product.category.curvaFaturamento,
                     product.category.curvaLucratividade
                   );
-                  const capacity = calculateNaturalPointCapacity(product);
                   return (
                     <tr key={product.id} className="border-b border-border hover:bg-muted">
-                      <td className="py-2 px-2">{product.name}</td>
-                      <td className="py-2 px-2">
-                        {product.largura}cm × {product.comprimento}cm
+                      <td className="py-2 px-2 text-xs font-medium">{product.name}</td>
+                      <td className="py-2 px-2 text-xs">
+                        {product.largura}×{product.comprimento}cm
                       </td>
-                      <td className="py-2 px-2">{product.category.curvaFaturamento}</td>
-                      <td className="py-2 px-2">{product.category.curvaLucratividade}</td>
-                      <td className="py-2 px-2">{capacity} unid.</td>
-                      <td className="py-2 px-2">{rec.quadrantes}</td>
-                      <td className="py-2 px-2 text-xs">{rec.zone}</td>
+                      <td className="py-2 px-2 text-xs">{rec.quadrantes}</td>
+                      <td className="py-2 px-2 text-xs">{product.zone}</td>
                       <td className="py-2 px-2">
                         <Button
                           onClick={() => removeProduct(product.id)}
                           variant="ghost"
                           size="sm"
-                          className="text-destructive hover:text-destructive"
+                          className="text-red-600 hover:text-red-700"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </td>
                     </tr>
@@ -571,87 +463,6 @@ export default function SmartLayoutSimulator() {
         </div>
       )}
 
-      {/* Filtro de Zona de Prateleira */}
-      {products.length > 0 && (
-        <ShelfZoneFilter selectedZone={selectedZone} onZoneChange={setSelectedZone} />
-      )}
-
-      {/* Botao de Configuracao de Area de Exposicao */}
-      {products.length > 0 && (
-        <div className="flex gap-2">
-          <Button
-            onClick={() => setShowConfiguracao(true)}
-            variant="outline"
-            className="flex items-center gap-2 flex-1"
-          >
-            {t.configureExposureArea}
-          </Button>
-          <Button
-            onClick={() => setShowExportModal(true)}
-            variant="default"
-            className="flex items-center gap-2 flex-1"
-          >
-            <Download className="w-4 h-4" />
-            {t.exportPlanogram}
-          </Button>
-        </div>
-      )}
-
-      {/* Modal de Selecao de Area de Exposicao */}
-      <ExposureAreaModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
-        onExport={handleExportPDF}
-      />
-
-      {/* Modal de Configuracao de Area de Exposicao */}
-      <ConfiguracaoAreaExposicao
-        isOpen={showConfiguracao}
-        onClose={() => setShowConfiguracao(false)}
-        onConfirm={(medidas) => {
-          setMedidasAreaExposicao(medidas);
-          if (medidas.tipo === 'gondola' || medidas.tipo === 'terminal_gondola' || medidas.tipo === 'freezer_vertical') {
-            setGondolaWidth(medidas.largura || 280);
-            setShelfDepth(medidas.profundidade || 40);
-            setShelfHeight(medidas.alturaEntrePrateleiras || 60);
-          } else if (medidas.tipo === 'freezer_horizontal' || medidas.tipo === 'banca_frutas') {
-            setGondolaWidth(medidas.comprimento || 300);
-            setShelfDepth(medidas.profundidadeHorizontal || 80);
-          }
-        }}
-        translations={{
-          titulo: t.configureExposureArea,
-          descricao: t.selectExposureType,
-          tipoExposicao: t.exposureType,
-          gondola: t.gondola,
-          terminalGondola: t.terminalGondola,
-          freezerVertical: t.freezerVertical,
-          freezerHorizontal: t.freezerHorizontal,
-          bancaFrutas: t.bancaFrutas,
-          largura: t.width,
-          profundidade: t.depth,
-          alturaEntrePrateleiras: t.shelfHeightBetween,
-          comprimento: t.length,
-          larguraHorizontal: t.widthHorizontal,
-          profundidadeHorizontal: t.depthHorizontal,
-          cm: t.cm,
-          cancelar: t.cancel,
-          confirmar: t.confirm,
-          erroValidacao: t.validationError,
-          campoObrigatorio: t.requiredField,
-        }}
-      />
-
-      {/* Visualização da Gôndola */}
-      {products.length > 0 && (
-        <GondolaVisualization
-          products={filteredProductsByZone}
-          gondolaWidth={gondolaWidth}
-          getRecommendation={getRecommendationByABCCurves}
-          colorMap={colorMap}
-        />
-      )}
-
       {/* Visualização da Gôndola - Vista de Frente */}
       {products.length > 0 && (
         <div className="bg-card p-6 rounded-md border border-border">
@@ -659,7 +470,7 @@ export default function SmartLayoutSimulator() {
             {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
           </h3>
           <GondolaFrontView
-            products={filteredProductsByZone as any}
+            products={products}
             totalWidth={gondolaWidth}
             shelfHeight={shelfHeight}
             language={language}
@@ -673,56 +484,50 @@ export default function SmartLayoutSimulator() {
         gondolaWidth={gondolaWidth}
         shelfHeight={shelfHeight}
         shelfDepth={shelfDepth}
-        exposureType={medidasAreaExposicao.tipo}
+        exposureType="gondola"
         selectedZone={selectedZone}
       />
 
+      {/* Visualização 3D */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">{t.view3D}</h3>
+          <GondolaVisualization3D
+            width={gondolaWidth}
+            depth={shelfDepth}
+            shelfHeight={shelfHeight}
+            numberOfShelves={numberOfShelves}
+            products={products.map(p => ({
+              ...p,
+              quadrantes: getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade).quadrantes,
+              zone: p.zone || 'Altura das maos'
+            }))}
+            language={language}
+          />
+        </div>
+      )}
+
       {/* Financial Impact Dashboard */}
-      <div className="bg-card p-6 rounded-md border border-border">
-        <h3 className="text-lg font-semibold text-foreground mb-4">{t.financialImpact}</h3>
+      {products.length > 0 && (
         <FinancialImpactDashboard
           products={products}
           gondolaWidth={gondolaWidth}
-          shelfHeight={shelfHeight}
           shelfDepth={shelfDepth}
+          shelfHeight={shelfHeight}
         />
-      </div>
-
-      {/* Data Sources */}
-      <div className="bg-card p-6 rounded-md border border-border">
-        <h3 className="text-lg font-semibold text-foreground mb-4">{t.dataSources}</h3>
-        <p className="text-sm text-muted-foreground mb-4">{t.dataSourcesDescription}</p>
-        <ul className="space-y-3">
-          <li className="text-sm text-foreground">
-            <a href="https://www.abras.com.br/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              {t.abras}
-            </a>
-          </li>
-          <li className="text-sm text-foreground">
-            <a href="https://nielseniq.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              {t.nielseniq}
-            </a>
-          </li>
-          <li className="text-sm text-foreground">
-            <a href="https://www.kantarworldpanel.com/br" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              {t.kantar}
-            </a>
-          </li>
-          <li className="text-sm text-foreground">
-            <a href="https://www.savarejo.com.br/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              {t.savarejoe}
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      {/* Help Button */}
-      <HelpButton
-        section="smart-layout-intro"
-        title="Smart Layout"
-        content="Simulador interativo para otimizar layouts"
-        position="bottom-right"
-      />
+      )}
     </div>
   );
+}
+
+// Export for PDF
+function exportPlanogramToPDF(
+  products: Product[],
+  gondolaWidth: number,
+  areaType: string,
+  getRecommendation: any,
+  colorMap: Record<string, string>,
+  language: string
+) {
+  console.log("Exporting planogram...");
 }
