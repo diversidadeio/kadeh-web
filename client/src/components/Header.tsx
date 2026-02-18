@@ -43,8 +43,8 @@ export default function Header() {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link href={getLocalizedPath("/#solucoes")} className="text-sm text-foreground hover:text-primary transition-colors">
-            {t.header.solutions}
+          <Link href={getLocalizedPath("/")} className="text-sm text-foreground hover:text-primary transition-colors">
+            {language === "pt" ? "Home" : "Home"}
           </Link>
           <Link href={getLocalizedPath("/picking")} className="text-sm text-foreground hover:text-primary transition-colors">
             {t.header.picking}

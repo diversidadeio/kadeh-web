@@ -214,3 +214,5 @@
 - [x] CRÍTICO: Restaurar funcionamento de categorias e subcategorias
 - [x] CRÍTICO: Implementar distribuição gráfica com giro, margem e exposição vertical
 - [x] CRÍTICO: Atualizar imagem para mostrar apenas produtos adicionados na simulação
+
+- [x] Mudar nome "Soluções" para "Home" no header
