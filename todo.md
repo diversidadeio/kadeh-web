@@ -190,3 +190,8 @@
 - [x] Criar componente de visualização 3D/perspectiva da gôndola
 - [x] Integrar visualização na página Smart Layout
 - [x] Testar visualização em diferentes resoluções
+
+- [x] Integrar dados reais do simulador na visualização 3D da gôndola
+- [x] Posicionar produtos por zona (olhos, mãos, piso) nas prateleiras corretas
+- [x] Mostrar nomes reais dos produtos na visualização frontal
+- [x] Adicionar nota informativa sobre dimensões dos produtos

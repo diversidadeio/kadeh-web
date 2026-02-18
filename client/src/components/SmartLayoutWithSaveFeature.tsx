@@ -122,12 +122,12 @@ const SmartLayoutWithSaveFeature = forwardRef<any, {}>(function SmartLayoutWithS
         shelfHeight={60}
         numberOfShelves={5}
         products={[
-          { id: "1", name: "Bebidas", color: "#FF6B6B", price: 5.99 },
-          { id: "2", name: "Snacks", color: "#4ECDC4", price: 3.99 },
-          { id: "3", name: "Higiene", color: "#45B7D1", price: 8.99 },
-          { id: "4", name: "Alimentos", color: "#FFA07A", price: 12.99 },
-          { id: "5", name: "Limpeza", color: "#98D8C8", price: 6.99 },
-          { id: "6", name: "Congelados", color: "#6C5CE7", price: 9.99 },
+          { id: "1", name: "Bebidas", zone: "Altura dos olhos", quadrantes: 3, color: "#FF6B6B", largura: 5, comprimento: 10 },
+          { id: "2", name: "Snacks", zone: "Altura dos olhos", quadrantes: 2, color: "#4ECDC4", largura: 4, comprimento: 8 },
+          { id: "3", name: "Higiene", zone: "Altura das mãos", quadrantes: 2, color: "#45B7D1", largura: 6, comprimento: 12 },
+          { id: "4", name: "Alimentos", zone: "Altura das mãos", quadrantes: 3, color: "#FFA07A", largura: 5, comprimento: 10 },
+          { id: "5", name: "Limpeza", zone: "Lugar baixo", quadrantes: 2, color: "#98D8C8", largura: 7, comprimento: 14 },
+          { id: "6", name: "Congelados", zone: "Lugar baixo", quadrantes: 1, color: "#6C5CE7", largura: 8, comprimento: 16 },
         ]}
         language={language}
         imageUrl="/smart-layout-gondola.png"
