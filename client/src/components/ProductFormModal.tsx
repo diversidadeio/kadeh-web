@@ -16,12 +16,26 @@ interface ProductFormModalProps {
   }) => void;
 }
 
+// Mapeamento de níveis para valores numéricos
+const NIVEL_MAPPING = {
+  baixa: 15,
+  media: 35,
+  alta: 60,
+};
+
+const GIRO_MAPPING = {
+  baixo: 20,
+  medio: 50,
+  alto: 100,
+};
+
 export default function ProductFormModal({
   isOpen,
   onClose,
   onSubmit,
 }: ProductFormModalProps) {
   const { language } = useLanguage();
+  const [inputMode, setInputMode] = useState<"numeric" | "levels">("numeric");
   const [formData, setFormData] = useState({
     name: "",
     largura: 10,
@@ -30,6 +44,8 @@ export default function ProductFormModal({
     margem: 30,
     giro: 50,
   });
+  const [margemNivel, setMargemNivel] = useState<"baixa" | "media" | "alta">("media");
+  const [giroNivel, setGiroNivel] = useState<"baixo" | "medio" | "alto">("medio");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +53,21 @@ export default function ProductFormModal({
       alert(language === "pt" ? "Nome do produto é obrigatório" : "Product name is required");
       return;
     }
-    onSubmit(formData);
+
+    let finalMargem = formData.margem;
+    let finalGiro = formData.giro;
+
+    if (inputMode === "levels") {
+      finalMargem = NIVEL_MAPPING[margemNivel];
+      finalGiro = GIRO_MAPPING[giroNivel];
+    }
+
+    onSubmit({
+      ...formData,
+      margem: finalMargem,
+      giro: finalGiro,
+    });
+
     setFormData({
       name: "",
       largura: 10,
@@ -46,6 +76,9 @@ export default function ProductFormModal({
       margem: 30,
       giro: 50,
     });
+    setMargemNivel("media");
+    setGiroNivel("medio");
+    setInputMode("numeric");
     onClose();
   };
 
@@ -129,38 +162,100 @@ export default function ProductFormModal({
             </div>
           </div>
 
-          {/* Margem e Giro */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                {language === "pt" ? "Margem (%)" : "Margin (%)"}
-              </label>
-              <input
-                type="number"
-                value={formData.margem}
-                onChange={(e) =>
-                  setFormData({ ...formData, margem: Number(e.target.value) })
-                }
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                min="0"
-                max="100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                {language === "pt" ? "Giro (unid/mês)" : "Velocity (units/month)"}
-              </label>
-              <input
-                type="number"
-                value={formData.giro}
-                onChange={(e) =>
-                  setFormData({ ...formData, giro: Number(e.target.value) })
-                }
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                min="0"
-              />
-            </div>
+          {/* Toggle entre Níveis e Valores Numéricos */}
+          <div className="flex gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => setInputMode("numeric")}
+              className={`flex-1 py-2 px-3 rounded-md font-medium text-sm transition-colors ${
+                inputMode === "numeric"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {language === "pt" ? "Valores Numéricos" : "Numeric Values"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setInputMode("levels")}
+              className={`flex-1 py-2 px-3 rounded-md font-medium text-sm transition-colors ${
+                inputMode === "levels"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {language === "pt" ? "Níveis" : "Levels"}
+            </button>
           </div>
+
+          {/* Margem e Giro - Modo Numérico */}
+          {inputMode === "numeric" && (
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {language === "pt" ? "Margem (%)" : "Margin (%)"}
+                </label>
+                <input
+                  type="number"
+                  value={formData.margem}
+                  onChange={(e) =>
+                    setFormData({ ...formData, margem: Number(e.target.value) })
+                  }
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                  min="0"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {language === "pt" ? "Giro (unid/mês)" : "Velocity (units/month)"}
+                </label>
+                <input
+                  type="number"
+                  value={formData.giro}
+                  onChange={(e) =>
+                    setFormData({ ...formData, giro: Number(e.target.value) })
+                  }
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                  min="0"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Margem e Giro - Modo Níveis */}
+          {inputMode === "levels" && (
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {language === "pt" ? "Margem" : "Margin"}
+                </label>
+                <select
+                  value={margemNivel}
+                  onChange={(e) => setMargemNivel(e.target.value as "baixa" | "media" | "alta")}
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                >
+                  <option value="baixa">{language === "pt" ? "Baixa (15%)" : "Low (15%)"}</option>
+                  <option value="media">{language === "pt" ? "Média (35%)" : "Medium (35%)"}</option>
+                  <option value="alta">{language === "pt" ? "Alta (60%)" : "High (60%)"}</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  {language === "pt" ? "Giro" : "Velocity"}
+                </label>
+                <select
+                  value={giroNivel}
+                  onChange={(e) => setGiroNivel(e.target.value as "baixo" | "medio" | "alto")}
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                >
+                  <option value="baixo">{language === "pt" ? "Baixo (20)" : "Low (20)"}</option>
+                  <option value="medio">{language === "pt" ? "Médio (50)" : "Medium (50)"}</option>
+                  <option value="alto">{language === "pt" ? "Alto (100)" : "High (100)"}</option>
+                </select>
+              </div>
+            </div>
+          )}
 
           {/* Botões */}
           <div className="flex gap-2 pt-4">

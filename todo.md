@@ -220,3 +220,5 @@
 - [x] CRÍTICO: Restaurar campo de adicionar produtos com nome, largura, altura, profundidade
 - [x] CRÍTICO: Implementar cálculo automático de frentes baseado em dimensões
 - [x] CRÍTICO: Garantir distribuição correta na prateleira conforme frentes calculadas
+
+- [x] Adicionar seletores de níveis (Alta, Média, Baixa) para Margem e Giro no ProductFormModal
