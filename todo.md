@@ -209,3 +209,8 @@
 - [x] Implementar botão para visualizar e editar prompt antes de gerar imagem
 
 - [x] CRÍTICO: Corrigir distribuição de produtos no painel frontal conforme margem e giro
+
+- [x] CRÍTICO: Restaurar botão de adicionar produtos no SmartLayoutSimulator
+- [x] CRÍTICO: Restaurar funcionamento de categorias e subcategorias
+- [x] CRÍTICO: Implementar distribuição gráfica com giro, margem e exposição vertical
+- [x] CRÍTICO: Atualizar imagem para mostrar apenas produtos adicionados na simulação
