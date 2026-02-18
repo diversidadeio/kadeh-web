@@ -5,9 +5,10 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Image as ImageIcon, Eye } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+import PromptPreviewModal from "./PromptPreviewModal";
 
 interface Product {
   id: string;
@@ -33,6 +34,7 @@ interface StoreVisualizationGeneratorProps {
 const TRANSLATIONS = {
   pt: {
     generateVisualization: "Gerar Visualização da Loja",
+    previewPrompt: "Visualizar Prompt",
     generating: "Gerando imagem...",
     storeLayout: "Layout da Loja",
     description: "Visualização em IA de como a loja ficaria com essa configuração",
@@ -42,6 +44,7 @@ const TRANSLATIONS = {
   },
   en: {
     generateVisualization: "Generate Store Visualization",
+    previewPrompt: "Preview Prompt",
     generating: "Generating image...",
     storeLayout: "Store Layout",
     description: "AI visualization of how the store would look with this configuration",
@@ -65,6 +68,8 @@ export default function StoreVisualizationGenerator({
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showPromptPreview, setShowPromptPreview] = useState(false);
+  const [currentPrompt, setCurrentPrompt] = useState("");
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
 
   const generateStorePrompt = (): string => {
@@ -141,17 +146,23 @@ IMPORTANT: The image must show the shelf from a FRONT-FACING perspective as a cu
     return prompt;
   };
 
-  const handleGenerateVisualization = async () => {
+  const handlePreviewPrompt = () => {
     if (products.length === 0) {
       setError(t.noProducts);
       return;
     }
+    const prompt = generateStorePrompt();
+    setCurrentPrompt(prompt);
+    setShowPromptPreview(true);
+  };
 
+  const handleGenerateVisualization = async (editedPrompt?: string) => {
     setIsGenerating(true);
     setError(null);
+    setShowPromptPreview(false);
 
     try {
-      const prompt = generateStorePrompt();
+      const prompt = editedPrompt || generateStorePrompt();
       console.log("Generated prompt:", prompt);
 
       // Call the tRPC endpoint to generate image using AI
@@ -181,30 +192,41 @@ IMPORTANT: The image must show the shelf from a FRONT-FACING perspective as a cu
           <h3 className="text-lg font-semibold text-gray-900">{t.storeLayout}</h3>
           <p className="text-sm text-gray-600">{t.description}</p>
         </div>
-        <Button
-          onClick={handleGenerateVisualization}
-          disabled={isGenerating || products.length === 0}
-          className="flex items-center gap-2"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t.generating}
-            </>
-          ) : (
-            <>
-              <ImageIcon className="h-4 w-4" />
-              {t.generateVisualization}
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handlePreviewPrompt}
+            disabled={isGenerating || products.length === 0}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Eye className="h-4 w-4" />
+            {t.previewPrompt}
+          </Button>
+          <Button
+            onClick={() => handleGenerateVisualization()}
+            disabled={isGenerating || products.length === 0}
+            className="flex items-center gap-2"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t.generating}
+              </>
+            ) : (
+              <>
+                <ImageIcon className="h-4 w-4" />
+                {t.generateVisualization}
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       {error && (
         <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
           {error}
           <Button
-            onClick={handleGenerateVisualization}
+            onClick={() => handleGenerateVisualization()}
             variant="ghost"
             size="sm"
             className="ml-2 text-red-700 hover:text-red-800"
@@ -228,6 +250,15 @@ IMPORTANT: The image must show the shelf from a FRONT-FACING perspective as a cu
           </p>
         </div>
       )}
+
+      <PromptPreviewModal
+        isOpen={showPromptPreview}
+        prompt={currentPrompt}
+        onClose={() => setShowPromptPreview(false)}
+        onConfirm={handleGenerateVisualization}
+        isLoading={isGenerating}
+        language={language as "pt" | "en"}
+      />
     </div>
   );
 }

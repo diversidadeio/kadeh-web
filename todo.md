@@ -205,3 +205,5 @@
 - [x] Atualizar visualização frontal com dimensões dos produtos
 
 - [x] Corrigir geração de visualização da loja para mostrar gôndola de frente
+
+- [x] Implementar botão para visualizar e editar prompt antes de gerar imagem
