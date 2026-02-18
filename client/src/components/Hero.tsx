@@ -5,7 +5,6 @@
  */
 
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
 
 interface HeroProps {
   title: string;
@@ -14,8 +13,6 @@ interface HeroProps {
   secondaryCTA: string;
   imageUrl: string;
   imageAlt: string;
-  primaryLink?: string;
-  secondaryLink?: string;
 }
 
 export default function Hero({
@@ -25,8 +22,6 @@ export default function Hero({
   secondaryCTA,
   imageUrl,
   imageAlt,
-  primaryLink = "/contact",
-  secondaryLink,
 }: HeroProps) {
   return (
     <section className="bg-white py-20 lg:py-32">
@@ -69,16 +64,12 @@ export default function Hero({
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href={primaryLink}>
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">
-                  {primaryCTA}
-                </Button>
-              </Link>
-              <Link href={secondaryLink || "/contact"}>
-                <Button size="lg" variant="outline">
-                  {secondaryCTA}
-                </Button>
-              </Link>
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">
+                {primaryCTA}
+              </Button>
+              <Button size="lg" variant="outline">
+                {secondaryCTA}
+              </Button>
             </div>
           </div>
 
