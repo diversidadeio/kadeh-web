@@ -209,5 +209,3 @@
 - [x] Implementar botão para visualizar e editar prompt antes de gerar imagem
 
 - [x] CRÍTICO: Corrigir distribuição de produtos no painel frontal conforme margem e giro
-
-- [x] Corrigir funcionalidade de carregar simulações salvas no Smart Layout

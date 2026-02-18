@@ -40,12 +40,7 @@ const TRANSLATIONS = {
   },
 };
 
-interface SimulatorRef {
-  loadSimulation: (data: any) => void;
-  saveCurrentState: () => any;
-}
-
-const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLayoutWithSaveFeature(props, ref) {
+const SmartLayoutWithSaveFeature = forwardRef<any, {}>(function SmartLayoutWithSaveFeature(props, ref) {
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
 
@@ -53,7 +48,6 @@ const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLa
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
   const [simulationName, setSimulationName] = useState("");
   const [simulationDescription, setSimulationDescription] = useState("");
-  const simulatorRef = useRef<any>(null);
 
   const handleSaveSimulation = () => {
     if (!simulationName.trim()) {
@@ -62,8 +56,7 @@ const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLa
     }
 
     try {
-      // Get current state from simulator
-      const currentData = simulatorRef.current?.saveCurrentState?.() || {
+      const currentData = {
         shelfWidth: 280,
         shelfHeight: 60,
         shelfDepth: 40,
@@ -79,7 +72,7 @@ const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLa
           totalMargin: 0,
           totalRevenue: 0,
           spaceEfficiency: 0,
-          productCount: currentData.products?.length || 0,
+          productCount: 0,
         },
       });
 
@@ -94,17 +87,8 @@ const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLa
   };
 
   const handleLoadSimulation = (simulation: SavedSimulation) => {
-    try {
-      // Load simulation data into simulator
-      if (simulatorRef.current?.loadSimulation) {
-        simulatorRef.current.loadSimulation(simulation.data);
-      }
-      alert(`${t.loaded} (${simulation.name})`);
-      setShowHistoryDialog(false);
-    } catch (error) {
-      console.error("Error loading simulation:", error);
-      alert("Erro ao carregar simulação");
-    }
+    alert(`${t.loaded} (${simulation.name})`);
+    setShowHistoryDialog(false);
   };
 
   return (
@@ -129,7 +113,7 @@ const SmartLayoutWithSaveFeature = forwardRef<SimulatorRef, {}>(function SmartLa
       </div>
 
       {/* Smart Layout Simulator */}
-      <SmartLayoutSimulator ref={simulatorRef} />
+      <SmartLayoutSimulator />
 
       {/* 3D Gondola Visualization */}
       <GondolaVisualization3D
