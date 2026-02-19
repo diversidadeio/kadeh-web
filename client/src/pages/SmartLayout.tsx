@@ -131,7 +131,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Alta",
-      posicoes: 1,
+      quadrantes: 1,
       zone: "Altura dos olhos",
       share: "35%",
       color: "bg-green-600",
@@ -140,7 +140,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Média",
-      posicoes: 2,
+      quadrantes: 2,
       zone: "Altura dos olhos",
       share: "25%",
       color: "bg-green-500",
@@ -149,7 +149,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Baixa",
-      posicoes: 2,
+      quadrantes: 2,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -158,7 +158,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Alta",
-      posicoes: 2,
+      quadrantes: 2,
       zone: "Altura dos olhos",
       share: "25%",
       color: "bg-green-500",
@@ -167,7 +167,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Média",
-      posicoes: 3,
+      quadrantes: 3,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -176,7 +176,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Baixa",
-      posicoes: 4,
+      quadrantes: 4,
       zone: "Altura das mãos",
       share: "15%",
       color: "bg-orange-400",
@@ -185,7 +185,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Alta",
-      posicoes: 3,
+      quadrantes: 3,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -194,7 +194,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Média",
-      posicoes: 4,
+      quadrantes: 4,
       zone: "Altura das mãos",
       share: "15%",
       color: "bg-orange-400",
@@ -203,7 +203,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Baixa",
-      posicoes: 5,
+      quadrantes: 5,
       zone: "Lugar baixo",
       share: "5%",
       color: "bg-red-400",
@@ -415,7 +415,7 @@ export default function SmartLayout() {
             Matriz de Recomendação Inteligente
           </h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl">
-            Sistema recomenda número de posições e posicionamento baseado em Giro × Margem de Lucratividade.
+            Sistema recomenda número de quadrantes e posicionamento baseado em Giro × Margem de Lucratividade.
           </p>
 
           <div className="overflow-x-auto">
@@ -424,7 +424,7 @@ export default function SmartLayout() {
                 <tr className="bg-card border-b border-border">
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Giro</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Margem</th>
-                  <th className="px-4 py-3 text-left font-semibold text-foreground">Posições</th>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">Quadrante</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Posição</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">% Espaço</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Categoria</th>
@@ -437,7 +437,7 @@ export default function SmartLayout() {
                     <td className="px-4 py-3 text-foreground font-medium">{row.margem}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${row.color} text-white font-bold text-sm`}>
-                        {row.posicoes}
+                        {row.quadrantes}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{row.zone}</td>
