@@ -12,6 +12,7 @@ import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import SmartLayoutSimulator from "@/components/SmartLayoutSimulator";
+import TopCategoriesSection from "@/components/TopCategoriesSection";
 import {
   BarChart3,
   Zap,
@@ -26,6 +27,16 @@ import {
 
 export default function SmartLayout() {
   const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
+
+  const handleCategorySelect = (categoryId: string, categoryName: string) => {
+    // Scroll to simulator
+    const simulatorSection = document.querySelector('[data-simulator-section]');
+    if (simulatorSection) {
+      simulatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    // Trigger add product in simulator (will be handled by SmartLayoutSimulator)
+    window.dispatchEvent(new CustomEvent('addCategoryToSimulator', { detail: { categoryId, categoryName } }));
+  };
 
   const features = [
     {
@@ -539,8 +550,15 @@ export default function SmartLayout() {
         </div>
       </section>
 
+      {/* Top Categorias */}
+      <section className="bg-card py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <TopCategoriesSection onCategorySelect={handleCategorySelect} />
+        </div>
+      </section>
+
       {/* Simulador Interativo */}
-      <section className="bg-white py-20 lg:py-32 border-t border-border">
+      <section className="bg-white py-20 lg:py-32 border-t border-border" data-simulator-section>
         <div className="container">
           <div className="mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">

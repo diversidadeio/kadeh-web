@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
@@ -71,6 +72,31 @@ export default function SmartLayoutSimulator() {
     { id: "2", name: "Refrigerante 2L", giro: "Alto", margem: "Média", category: "Alimentar", subCategory: "Bebidas" },
     { id: "3", name: "Brinquedo Premium", giro: "Baixo", margem: "Alta", category: "Não-Alimentar", subCategory: "Brinquedos" },
   ]);
+
+  // Listen for category selection from TopCategoriesSection
+  React.useEffect(() => {
+    const handleAddCategory = (event: any) => {
+      const { categoryId, categoryName } = event.detail;
+      // Find category in database and add it
+      const { CATEGORIES_DATABASE } = require('@/data/categories');
+      const category = CATEGORIES_DATABASE.find((c: any) => c.id === categoryId);
+      if (category) {
+        const newProduct: Product = {
+          id: Date.now().toString(),
+          name: category.name,
+          giro: category.defaultGiro,
+          margem: category.defaultMargem,
+          category: category.mainCategory,
+          subCategory: 'Outro',
+          largura: category.defaultLargura,
+          comprimento: category.defaultComprimento,
+        };
+        setProducts(prev => [...prev, newProduct]);
+      }
+    };
+    window.addEventListener('addCategoryToSimulator', handleAddCategory);
+    return () => window.removeEventListener('addCategoryToSimulator', handleAddCategory);
+  }, []);
 
   const [gondolaWidth, setGondolaWidth] = useState(280);
   const [shelves, setShelves] = useState(5);
