@@ -15,8 +15,6 @@ import Video from "./pages/Video";
 import FAQ from "./pages/FAQ";
 import KadehAds from "./pages/KadehAds";
 import KadehAdsFull from "./pages/KadehAdsFull";
-import AdvertiserPortal from "./pages/AdvertiserPortal";
-import PaymentCallback from "./pages/PaymentCallback";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -34,8 +32,6 @@ function Router() {
       <Route path="/pt/faq" component={FAQ} />
       <Route path="/pt/ads" component={KadehAds} />
       <Route path="/pt/kadeh-ads" component={KadehAdsFull} />
-      <Route path="/pt/advertiser-portal" component={AdvertiserPortal} />
-      <Route path="/pt/payment-callback" component={PaymentCallback} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -49,8 +45,6 @@ function Router() {
       <Route path="/en/faq" component={FAQ} />
       <Route path="/en/ads" component={KadehAds} />
       <Route path="/en/kadeh-ads" component={KadehAdsFull} />
-      <Route path="/en/advertiser-portal" component={AdvertiserPortal} />
-      <Route path="/en/payment-callback" component={PaymentCallback} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -64,8 +58,6 @@ function Router() {
       <Route path="/faq" component={FAQ} />
       <Route path="/ads" component={KadehAds} />
       <Route path="/kadeh-ads" component={KadehAdsFull} />
-      <Route path="/advertiser-portal" component={AdvertiserPortal} />
-      <Route path="/payment-callback" component={PaymentCallback} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}

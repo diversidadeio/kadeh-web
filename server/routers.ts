@@ -9,8 +9,6 @@ import { getDb } from "./db";
 import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
 import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition } from "./db";
 import { eq, and } from "drizzle-orm";
-import { stripeRouter } from "./routers/stripe";
-import { campaignsRouter } from "./routers/campaigns";
 
 export const appRouter = router({
   system: systemRouter,
@@ -256,15 +254,7 @@ ${input.message}
 
         return getAdAnalyticsByAdvertisementId(input.advertisementId, input.days);
       }),
-
-    getActiveByCategory: publicProcedure
-      .input(z.object({ category: z.string(), region: z.string().optional() }))
-      .query(async ({ input }) => {
-        return getActiveAdsByCategory(input.category);
-      }),
   }),
-  stripe: stripeRouter,
-  campaigns: campaignsRouter,
 });
 
 export type AppRouter = typeof appRouter;

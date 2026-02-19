@@ -1,12 +1,9 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import AdsPDVSection from "@/components/AdsPDVSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock, Home } from "lucide-react";
+import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
 import { useLocation } from "wouter";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 export default function KadehAdsFull() {
   const { user, isAuthenticated } = useAuth();
@@ -17,13 +14,8 @@ export default function KadehAdsFull() {
     navigate("/contact");
   };
 
-  const handleStartAdvertising = () => {
-    navigate("/advertiser-portal?tab=create");
-  };
-
   return (
     <div className="min-h-screen bg-white">
-      <Header />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -294,7 +286,7 @@ export default function KadehAdsFull() {
                 Exemplo: 7 dias × 10 lojas = R$ 500 × 1.5 = R$ 750
               </p>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleStartAdvertising}>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleContactForm}>
                 Começar a Anunciar
               </Button>
             </div>
@@ -385,13 +377,6 @@ export default function KadehAdsFull() {
         </div>
       </section>
 
-      {/* Ads no PDV Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <AdsPDVSection language={language} />
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-16 px-4 bg-blue-600 text-white">
         <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -410,7 +395,6 @@ export default function KadehAdsFull() {
           </Button>
         </div>
       </section>
-      <Footer />
     </div>
   );
 }
