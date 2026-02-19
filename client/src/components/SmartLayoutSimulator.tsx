@@ -11,6 +11,7 @@ import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
 import GondolaFrontView from "@/components/GondolaFrontView";
 import ProductFormModal from "@/components/ProductFormModal";
+import GondolaAIImageGenerator from "@/components/GondolaAIImageGenerator";
 import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
@@ -566,6 +567,14 @@ export default function SmartLayoutSimulator() {
           })}
         </div>
       </div>
+
+      {/* Visualização por IA */}
+      <GondolaAIImageGenerator
+        products={filteredProducts}
+        gondolaWidth={gondolaWidth}
+        shelves={shelves}
+        shelfDepth={shelfDepth}
+      />
 
       {/* ProductFormModal */}
       <ProductFormModal
