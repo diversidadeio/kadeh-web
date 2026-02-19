@@ -10,6 +10,7 @@ import SmartLayout from "./pages/SmartLayout";
 import DataIntelligence from "./pages/DataIntelligence";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
+import KadehAds from "./pages/KadehAds";
 
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/picking" component={Picking} />
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
+      <Route path="/ads" component={KadehAds} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
