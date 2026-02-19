@@ -42,23 +42,18 @@ export function categoryToNumeric(
 
 /**
  * Converte valor numérico em categoria
- * Mapeamento específico para os valores do ProductFormModal:
- * Margem: 15 (Baixa), 35 (Média), 60 (Alta)
- * Giro: 20 (Baixo), 50 (Médio), 100 (Alto)
  */
 export function numericToCategory(
   value: number,
   type: "margem" | "giro"
 ): string {
   if (type === "margem") {
-    // Mapeamento específico para os valores do modal
-    if (value <= 15) return "Baixa";
-    if (value <= 35) return "Média";
+    if (value < 15) return "Baixa";
+    if (value < 30) return "Média";
     return "Alta";
   } else {
-    // Mapeamento específico para os valores do modal
-    if (value <= 20) return "Baixo";
-    if (value <= 50) return "Médio";
+    if (value < 1) return "Baixo";
+    if (value < 3) return "Médio";
     return "Alto";
   }
 }
