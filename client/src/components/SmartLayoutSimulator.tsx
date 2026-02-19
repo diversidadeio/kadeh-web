@@ -577,6 +577,30 @@ export default function SmartLayoutSimulator() {
         shelfDepth={shelfDepth}
       />
 
+      {/* Data Sources */}
+      <div className="bg-card p-6 rounded-md border border-border">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Fontes de Dados e Referências Técnicas</h3>
+        <p className="text-muted-foreground mb-4">A base de relevância e os papéis de categoria foram extraídos e validados conforme os relatórios de mercado de 2024-2026:</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 bg-muted rounded-md">
+            <h4 className="font-semibold text-foreground mb-2">ABRAS (Associação Brasileira de Supermercados)</h4>
+            <p className="text-sm text-muted-foreground">Rankings de faturamento por seção e cestas de consumo.</p>
+          </div>
+          <div className="p-4 bg-muted rounded-md">
+            <h4 className="font-semibold text-foreground mb-2">NielsenIQ</h4>
+            <p className="text-sm text-muted-foreground">Relatórios de Tendências do Varejo sobre o comportamento das categorias Alimentar e HPC.</p>
+          </div>
+          <div className="p-4 bg-muted rounded-md">
+            <h4 className="font-semibold text-foreground mb-2">Kantar Worldpanel</h4>
+            <p className="text-sm text-muted-foreground">Dados sobre a Árvore de Decisão do Consumidor e penetração de categorias nos lares brasileiros.</p>
+          </div>
+          <div className="p-4 bg-muted rounded-md">
+            <h4 className="font-semibold text-foreground mb-2">E-Commerce Brasil / SA Varejo</h4>
+            <p className="text-sm text-muted-foreground">Artigos técnicos sobre Gerenciamento de Categorias e Ruptura de Gôndola.</p>
+          </div>
+        </div>
+      </div>
+
       {/* ProductFormModal */}
       <ProductFormModal
         isOpen={isProductFormOpen}
