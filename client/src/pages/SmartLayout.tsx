@@ -4,6 +4,7 @@
  * SEO: Optimized for retail, category management, shelf optimization keywords
  */
 
+import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -24,6 +25,8 @@ import {
 } from "lucide-react";
 
 export default function SmartLayout() {
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
+
   const features = [
     {
       title: "Análise de Mix de Produtos",
@@ -32,9 +35,9 @@ export default function SmartLayout() {
       icon: <Package className="w-6 h-6" />,
     },
     {
-      title: "Recomendação Inteligente de Frentes",
+      title: "Recomendação Inteligente de Posições",
       description:
-        "Sistema recomenda o número ideal de frentes por produto baseado em giro e margem de lucratividade.",
+        "Sistema recomenda o número ideal de posições por produto baseado em giro e margem de lucratividade.",
       icon: <Target className="w-6 h-6" />,
     },
     {
@@ -77,7 +80,7 @@ export default function SmartLayout() {
     {
       title: "Redução de Ruptura",
       description:
-        "Produtos com alto giro recebem mais frentes, reduzindo falta de estoque e perda de vendas.",
+        "Produtos com alto giro recebem mais posições, reduzindo falta de estoque e perda de vendas.",
     },
     {
       title: "Melhor Experiência do Cliente",
@@ -110,7 +113,7 @@ export default function SmartLayout() {
     {
       title: "Sistema Recomenda",
       description:
-        "Kadeh Smart Layout calcula número ideal de frentes e posicionamento por zona de gôndola.",
+        "Kadeh Smart Layout calcula número ideal de posições e posicionamento por zona de gôndola.",
     },
     {
       title: "Implemente",
@@ -128,7 +131,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Alta",
-      frentes: 1,
+      posicoes: 1,
       zone: "Altura dos olhos",
       share: "35%",
       color: "bg-green-600",
@@ -137,7 +140,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Média",
-      frentes: 2,
+      posicoes: 2,
       zone: "Altura dos olhos",
       share: "25%",
       color: "bg-green-500",
@@ -146,7 +149,7 @@ export default function SmartLayout() {
     {
       giro: "Alto",
       margem: "Baixa",
-      frentes: 2,
+      posicoes: 2,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -155,7 +158,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Alta",
-      frentes: 2,
+      posicoes: 2,
       zone: "Altura dos olhos",
       share: "25%",
       color: "bg-green-500",
@@ -164,7 +167,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Média",
-      frentes: 3,
+      posicoes: 3,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -173,7 +176,7 @@ export default function SmartLayout() {
     {
       giro: "Médio",
       margem: "Baixa",
-      frentes: 4,
+      posicoes: 4,
       zone: "Altura das mãos",
       share: "15%",
       color: "bg-orange-400",
@@ -182,7 +185,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Alta",
-      frentes: 3,
+      posicoes: 3,
       zone: "Altura das mãos",
       share: "20%",
       color: "bg-yellow-500",
@@ -191,7 +194,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Média",
-      frentes: 4,
+      posicoes: 4,
       zone: "Altura das mãos",
       share: "15%",
       color: "bg-orange-400",
@@ -200,7 +203,7 @@ export default function SmartLayout() {
     {
       giro: "Baixo",
       margem: "Baixa",
-      frentes: 5,
+      posicoes: 5,
       zone: "Lugar baixo",
       share: "5%",
       color: "bg-red-400",
@@ -233,9 +236,9 @@ export default function SmartLayout() {
 
   const faqItems = [
     {
-      question: "Como o sistema calcula o número de frentes recomendado?",
+      question: "Como o sistema calcula o número de posições recomendado?",
       answer:
-        "O sistema usa uma matriz matemática que cruza Giro (Baixo/Médio/Alto) com Margem (Baixa/Média/Alta), recomendando de 1 a 5 frentes. Produtos com alto giro e alta margem recebem mais espaço.",
+        "O sistema usa uma matriz matemática que cruza Giro (Baixo/Médio/Alto) com Margem (Baixa/Média/Alta), recomendando de 1 a 5 posições. Produtos com alto giro e alta margem recebem mais espaço.",
     },
     {
       question: "Posso customizar as recomendações?",
@@ -271,10 +274,10 @@ export default function SmartLayout() {
       {/* Hero */}
       <Hero
         title="Kadeh Smart Layout: gerencie categorias com inteligência e maximize a lucratividade da loja."
-        subtitle="Recomendações automáticas de número de frentes, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
+        subtitle="Recomendações automáticas de número de posições, posicionamento em gôndola e redimensionamento de categorias baseadas em mix de produtos, margem de lucratividade e giro de mercadoria."
         primaryCTA="Solicitar demonstração"
         secondaryCTA="Ver funcionalidades"
-        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/VgkYvznRPZEfbxYH.png"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png"
         imageAlt="Smart Layout - Otimização de Gôndolas"
       />
 
@@ -326,6 +329,85 @@ export default function SmartLayout() {
         </div>
       </section>
 
+      {/* Exemplos de Gôndolas */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            Exemplos Práticos de Otimização
+          </h2>
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl">
+            Veja como o Kadeh Smart Layout otimiza diferentes cenários de gôndola.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Gondola */}
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-gondola.png', alt: "Visualização de Gôndola" })}>
+              <img src="/images/smart-layout-gondola.png" alt="Visualização de Gôndola" className="w-full h-64 object-cover" />
+              <div className="p-4 bg-card">
+                <h3 className="font-semibold text-foreground mb-2">
+                  Visualização de Gôndola
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Estrutura básica de gôndola com distribuição de espaço por categoria.
+                </p>
+              </div>
+            </div>
+
+            {/* Retail */}
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: '/images/smart-layout-retail.png', alt: "Cenário de Varejo" })}>
+              <img src="/images/smart-layout-retail.png" alt="Cenário de Varejo" className="w-full h-64 object-cover" />
+              <div className="p-4 bg-card">
+                <h3 className="font-semibold text-foreground mb-2">
+                  Cenário de Varejo
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Otimização completa de gôndola em ambiente de varejo real.
+                </p>
+              </div>
+            </div>
+
+            {/* Olive Oil */}
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png', alt: "Exemplo com Azeite" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/avplhLfFmhYRDhTs.png" alt="Exemplo com Azeite" className="w-full h-64 object-cover" />
+              <div className="p-4 bg-card">
+                <h3 className="font-semibold text-foreground mb-2">
+                  Exemplo com Azeite
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Otimização de categoria de azeites com 4 variações de margem e giro.
+                </p>
+              </div>
+            </div>
+
+            {/* Detailed */}
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GPUaxCFmQgNVKOZv.png', alt: "Versão Detalhada" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GPUaxCFmQgNVKOZv.png" alt="Versão Detalhada" className="w-full h-64 object-cover" />
+              <div className="p-4 bg-card">
+                <h3 className="font-semibold text-foreground mb-2">
+                  Versão Detalhada
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Análise detalhada com informações de preço, giro e posicionamento.
+                </p>
+              </div>
+            </div>
+
+            {/* 6 Shelves */}
+            <div className="rounded-md overflow-hidden border border-border hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setZoomImage({ src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/wjSnHdHtumNCqHrQ.png', alt: "Versão com 4 Prateleiras" })}>
+              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/wjSnHdHtumNCqHrQ.png" alt="Versão com 4 Prateleiras" className="w-full h-64 object-cover" />
+              <div className="p-4 bg-card">
+                <h3 className="font-semibold text-foreground mb-2">
+                  Versão com 4 Prateleiras
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Otimização para gôndolas com 4 prateleiras e maior espaço disponível.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Matriz de Recomendação */}
       <section className="bg-white py-20 lg:py-32 border-t border-border">
         <div className="container">
@@ -333,7 +415,7 @@ export default function SmartLayout() {
             Matriz de Recomendação Inteligente
           </h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl">
-            Sistema recomenda número de frentes e posicionamento baseado em Giro × Margem de Lucratividade.
+            Sistema recomenda número de posições e posicionamento baseado em Giro × Margem de Lucratividade.
           </p>
 
           <div className="overflow-x-auto">
@@ -342,8 +424,8 @@ export default function SmartLayout() {
                 <tr className="bg-card border-b border-border">
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Giro</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Margem</th>
-                  <th className="px-4 py-3 text-left font-semibold text-foreground">Frentes</th>
-                  <th className="px-4 py-3 text-left font-semibold text-foreground">Posicionamento</th>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">Posições</th>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">Posição</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">% Espaço</th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Categoria</th>
                 </tr>
@@ -355,7 +437,7 @@ export default function SmartLayout() {
                     <td className="px-4 py-3 text-foreground font-medium">{row.margem}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${row.color} text-white font-bold text-sm`}>
-                        {row.frentes}
+                        {row.posicoes}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{row.zone}</td>
@@ -407,71 +489,7 @@ export default function SmartLayout() {
         </div>
       </section>
 
-      {/* Exemplo Prático: Azeites */}
-      <section className="bg-white py-20 lg:py-32 border-t border-border">
-        <div className="container">
-          <div className="mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Exemplo Prático: Otimização de Categoria de Azeites
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Veja como o Kadeh Smart Layout recomenda o posicionamento estratégico de produtos de azeite baseado em giro e margem de lucratividade.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <div className="rounded-md overflow-hidden border border-border">
-              <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/jdTHdlzsCxpTiPIw.png" alt="Exemplo de otimização de gôndola de azeites" className="w-full h-auto" />
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-6 bg-green-50 border-l-4 border-green-600 rounded-md">
-                <h3 className="text-lg font-semibold text-green-900 mb-2 flex items-center gap-2">
-                  <span className="text-2xl">🏆</span>
-                  Azeite Extra Virgem Premium
-                </h3>
-                <p className="text-green-800 mb-3"><strong>Características:</strong> Alto Giro + Alta Margem</p>
-                <p className="text-green-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura dos olhos (TOP SHELF) - Melhor posição da gôndola</p>
-                <p className="text-green-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 40% da categoria (2 frentes)</p>
-                <p className="text-green-700 text-sm"><strong>Preço:</strong> R$ 89.90 - Margem: 35% | Giro: 8 unidades/semana</p>
-              </div>
-
-              <div className="p-6 bg-yellow-50 border-l-4 border-yellow-600 rounded-md">
-                <h3 className="text-lg font-semibold text-yellow-900 mb-2 flex items-center gap-2">
-                  <span className="text-2xl">⚖️</span>
-                  Azeite Extra Virgem
-                </h3>
-                <p className="text-yellow-800 mb-3"><strong>Características:</strong> Médio Giro + Média Margem</p>
-                <p className="text-yellow-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura das mãos (SECOND SHELF) - Posição balanceada</p>
-                <p className="text-yellow-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 35% da categoria (3 frentes)</p>
-                <p className="text-yellow-700 text-sm"><strong>Preço:</strong> R$ 45.50 - Margem: 22% | Giro: 12 unidades/semana</p>
-              </div>
-
-              <div className="p-6 bg-blue-50 border-l-4 border-blue-600 rounded-md">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                  <span className="text-2xl">📦</span>
-                  Azeite Virgem + Óleo Composto
-                </h3>
-                <p className="text-blue-800 mb-3"><strong>Características:</strong> Alto Giro + Baixa Margem</p>
-                <p className="text-blue-700 text-sm mb-2"><strong>Posicionamento:</strong> Altura das mãos e piso (THIRD/BOTTOM SHELF) - Posições secundárias</p>
-                <p className="text-blue-700 text-sm mb-2"><strong>Espaço Alocado:</strong> 25% da categoria (6 frentes combinadas)</p>
-                <p className="text-blue-700 text-sm"><strong>Preço:</strong> R$ 22.90 / R$ 12.50 - Margem: 12-15% | Giro: 20+ unidades/semana</p>
-              </div>
-
-              <div className="p-4 bg-card border border-border rounded-md">
-                <h3 className="font-semibold text-foreground mb-2">📊 Resultado Esperado:</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>✓ <strong>+12% de lucratividade</strong> ao dar mais espaço para azeites premium</li>
-                  <li>✓ <strong>-15% de ruptura</strong> ao posicionar produtos de alto giro adequadamente</li>
-                  <li>✓ <strong>+8% de ticket médio</strong> ao destacar produtos de maior valor</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-            {/* Casos de Uso */}
+      {/* Casos de Uso */}
       <section className="bg-card py-20 lg:py-32 border-t border-border">
         <div className="container">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-12">

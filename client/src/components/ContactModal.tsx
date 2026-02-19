@@ -42,11 +42,21 @@ export default function ContactModal({
     setIsSubmitting(true);
 
     try {
-      // Aqui você pode integrar com uma API de envio de emails
-      // Por enquanto, apenas simulamos o envio
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      console.log("Formulário enviado:", formData);
+      // Enviar dados para o servidor
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar formulário");
+      }
+
+      const data = await response.json();
+      console.log("Formulário enviado com sucesso:", data);
       setSubmitSuccess(true);
       
       // Limpar formulário após 2 segundos
@@ -63,6 +73,7 @@ export default function ContactModal({
       }, 2000);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
+      alert("Erro ao enviar formulário. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }

@@ -1,3 +1,8 @@
 - [x] Trocar "Soluções" por "Home" no Header e configurar navegação para página inicial
 - [x] Restaurar visualização frontal da gôndola (GondolaFrontView) com distribuição de produtos por zonas
 - [x] Fazer upload de imagens para S3 e atualizar URLs
+- [ ] Criar tabela de leads no banco de dados
+- [ ] Criar API tRPC para salvar leads
+- [ ] Atualizar ContactModal para enviar dados ao servidor
+- [ ] Testar salvamento de leads no banco de dados
+- [ ] Criar dashboard de gerenciamento de leads
