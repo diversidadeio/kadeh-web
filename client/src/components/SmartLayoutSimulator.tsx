@@ -485,6 +485,7 @@ export default function SmartLayoutSimulator() {
       <GondolaFrontView
         products={filteredProducts}
         gondolaWidth={gondolaWidth}
+        numShelves={shelves}
         getRecommendation={getRecommendation}
       />
 

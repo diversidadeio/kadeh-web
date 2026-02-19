@@ -17,14 +17,48 @@ interface GondolaAIImageGeneratorProps {
   gondolaWidth: number;
   shelves: number;
   shelfDepth: number;
+  getRecommendation?: (giro: string, margem: string) => { frentes: number; zone: string; share: number; color: string };
 }
 
 interface ProductPlacement {
   name: string;
+  frentes: number;
   shelf: number;
   zone: string;
   width: number;
   color: string;
+  giro: string;
+  margem: string;
+}
+
+// Matriz de recomendações padrão
+const RECOMMENDATION_MATRIX: Record<string, { frentes: number; zone: string; share: number; color: string }> = {
+  "Alto-Alta": { frentes: 1, zone: "Altura dos olhos", share: 35, color: "#10b981" },
+  "Alto-Média": { frentes: 2, zone: "Altura dos olhos", share: 25, color: "#10b981" },
+  "Alto-Baixa": { frentes: 2, zone: "Altura das mãos", share: 20, color: "#eab308" },
+  "Médio-Alta": { frentes: 2, zone: "Altura dos olhos", share: 25, color: "#10b981" },
+  "Médio-Média": { frentes: 3, zone: "Altura das mãos", share: 20, color: "#eab308" },
+  "Médio-Baixa": { frentes: 4, zone: "Altura das mãos", share: 15, color: "#f97316" },
+  "Baixo-Alta": { frentes: 3, zone: "Altura das mãos", share: 20, color: "#eab308" },
+  "Baixo-Média": { frentes: 4, zone: "Altura das mãos", share: 15, color: "#f97316" },
+  "Baixo-Baixa": { frentes: 5, zone: "Lugar baixo", share: 5, color: "#ef4444" },
+};
+
+// Map shelf index to zone
+function mapShelfToZone(shelfIndex: number, totalShelves: number): string {
+  const topThird = Math.ceil(totalShelves / 3);
+  const middleThird = Math.ceil((totalShelves * 2) / 3);
+
+  if (shelfIndex < topThird) return "Altura dos olhos";
+  if (shelfIndex < middleThird) return "Altura das mãos";
+  return "Lugar baixo";
+}
+
+// Calculate product score for vertical distribution
+function calculateProductScore(giro: string, margem: string): number {
+  const giroScore = giro === "Alto" ? 3 : giro === "Médio" ? 2 : 1;
+  const margemScore = margem === "Alta" ? 3 : margem === "Média" ? 2 : 1;
+  return giroScore + margemScore;
 }
 
 export default function GondolaAIImageGenerator({
@@ -32,70 +66,107 @@ export default function GondolaAIImageGenerator({
   gondolaWidth,
   shelves,
   shelfDepth,
+  getRecommendation,
 }: GondolaAIImageGeneratorProps) {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
 
-  // Matriz de recomendações
-  const RECOMMENDATION_MATRIX: Record<string, { frentes: number; zone: string; share: number; color: string }> = {
-    "Alto-Alta": { frentes: 1, zone: "Altura dos olhos", share: 35, color: "#10b981" },
-    "Alto-Média": { frentes: 2, zone: "Altura dos olhos", share: 25, color: "#10b981" },
-    "Alto-Baixa": { frentes: 2, zone: "Altura das mãos", share: 20, color: "#eab308" },
-    "Médio-Alta": { frentes: 2, zone: "Altura dos olhos", share: 25, color: "#10b981" },
-    "Médio-Média": { frentes: 3, zone: "Altura das mãos", share: 20, color: "#eab308" },
-    "Médio-Baixa": { frentes: 4, zone: "Altura das mãos", share: 15, color: "#f97316" },
-    "Baixo-Alta": { frentes: 3, zone: "Altura das mãos", share: 20, color: "#eab308" },
-    "Baixo-Média": { frentes: 4, zone: "Altura das mãos", share: 15, color: "#f97316" },
-    "Baixo-Baixa": { frentes: 5, zone: "Lugar baixo", share: 5, color: "#ef4444" },
-  };
+  // Get recommendation function
+  const getRecFunc = getRecommendation || ((giro: string, margem: string) => {
+    const key = `${giro}-${margem}`;
+    return RECOMMENDATION_MATRIX[key] || { frentes: 1, zone: "Altura das mãos", share: 15, color: "#6b7280" };
+  });
 
-  // Calcular posicionamento dos produtos
+  // Calcular posicionamento dos produtos respeitando a matriz
   const calculateProductPlacements = (): ProductPlacement[] => {
-    const placements: ProductPlacement[] = [];
-    let currentWidth = 0;
-    const totalWidth = gondolaWidth;
+    // Get zones available
+    const zonesAvailable = new Set<string>();
+    for (let i = 0; i < shelves; i++) {
+      zonesAvailable.add(mapShelfToZone(i, shelves));
+    }
 
-    // Definir zonas de prateleira
-    const shelfZones = {
-      "Altura dos olhos": Math.floor(shelves * 0.4), // 40% das prateleiras no meio
-      "Altura das mãos": Math.floor(shelves * 0.4), // 40% das prateleiras
-      "Lugar baixo": Math.ceil(shelves * 0.2), // 20% das prateleiras na base
+    // Group products by recommended zone
+    const productsByZone: { [key: string]: Product[] } = {
+      "Altura dos olhos": [],
+      "Altura das mãos": [],
+      "Lugar baixo": [],
     };
 
-    let eyeLevelShelf = Math.floor(shelves / 2);
-    let handLevelShelf = Math.floor(shelves / 3);
-    let lowLevelShelf = 0;
-
     products.forEach((product) => {
-      const key = `${product.giro}-${product.margem}`;
-      const recommendation = RECOMMENDATION_MATRIX[key] || { frentes: 1, zone: "Altura das mãos", share: 15, color: "#6b7280" };
-
-      // Calcular largura proporcional baseado no share
-      const productWidth = (recommendation.share / 100) * totalWidth;
-
-      // Determinar prateleira baseado na zona
-      let shelf = eyeLevelShelf;
-      if (recommendation.zone === "Altura das mãos") {
-        shelf = handLevelShelf;
-        handLevelShelf = Math.max(0, handLevelShelf - 1);
-      } else if (recommendation.zone === "Lugar baixo") {
-        shelf = lowLevelShelf;
-        lowLevelShelf = Math.min(shelves - 1, lowLevelShelf + 1);
-      } else {
-        eyeLevelShelf = Math.max(0, eyeLevelShelf - 1);
+      const rec = getRecFunc(product.giro, product.margem);
+      if (!productsByZone[rec.zone]) {
+        productsByZone[rec.zone] = [];
       }
+      productsByZone[rec.zone].push(product);
+    });
 
-      placements.push({
-        name: product.name,
-        shelf: shelf,
-        zone: recommendation.zone,
-        width: productWidth,
-        color: recommendation.color,
+    const placements: ProductPlacement[] = [];
+
+    // If all zones available, use recommended zones
+    if (zonesAvailable.size === 3) {
+      Object.entries(productsByZone).forEach(([zone, zoneProducts]) => {
+        zoneProducts.forEach((product) => {
+          const rec = getRecFunc(product.giro, product.margem);
+          
+          // Find shelf for this zone
+          for (let i = 0; i < shelves; i++) {
+            if (mapShelfToZone(i, shelves) === zone) {
+              placements.push({
+                name: product.name,
+                frentes: rec.frentes,
+                shelf: i,
+                zone: zone,
+                width: (rec.share / 100) * gondolaWidth,
+                color: rec.color,
+                giro: product.giro,
+                margem: product.margem,
+              });
+              break;
+            }
+          }
+        });
+      });
+    } else {
+      // Distribute vertically - better products to upper shelves
+      const sortedProducts = products.sort((a, b) => {
+        const scoreA = calculateProductScore(a.giro, a.margem);
+        const scoreB = calculateProductScore(b.giro, b.margem);
+        return scoreB - scoreA;
       });
 
-      currentWidth += productWidth;
-    });
+      // Create shelf assignments
+      const shelfAssignments: { [key: number]: Product[] } = {};
+      for (let i = 0; i < shelves; i++) {
+        shelfAssignments[i] = [];
+      }
+
+      // Assign products to shelves (better products to upper shelves)
+      sortedProducts.forEach((product, index) => {
+        const shelfIndex = index % shelves;
+        shelfAssignments[shelfIndex].push(product);
+      });
+
+      // Create placements
+      Object.entries(shelfAssignments).forEach(([shelfStr, shelfProducts]) => {
+        const shelfIndex = parseInt(shelfStr);
+        const zone = mapShelfToZone(shelfIndex, shelves);
+
+        shelfProducts.forEach((product) => {
+          const rec = getRecFunc(product.giro, product.margem);
+          placements.push({
+            name: product.name,
+            frentes: rec.frentes,
+            shelf: shelfIndex,
+            zone: zone,
+            width: (rec.share / 100) * gondolaWidth,
+            color: rec.color,
+            giro: product.giro,
+            margem: product.margem,
+          });
+        });
+      });
+    }
 
     return placements;
   };
@@ -106,20 +177,21 @@ export default function GondolaAIImageGenerator({
 
     const productDescriptions = placements.map((p) => {
       const zoneHeight = p.zone === "Altura dos olhos" ? "eye level" : p.zone === "Altura das mãos" ? "hand level" : "low level";
-      return `${p.name} on shelf ${p.shelf + 1} at ${zoneHeight}, occupying ${Math.round(p.width)}cm width`;
-    }).join(", ");
+      return `${p.name} (${p.frentes} frente(s), Giro: ${p.giro}, Margem: ${p.margem}) on shelf ${shelves - p.shelf} at ${zoneHeight}, occupying ${Math.round(p.width)}cm width`;
+    }).join("; ");
 
     return `Create a photorealistic front view of a retail shelf display (gondola) with the following specifications:
 - Shelf width: ${gondolaWidth}cm
-- Number of shelves: ${shelves}
+- Number of shelves: ${shelves} (numbered from top to bottom)
 - Shelf depth: ${shelfDepth}cm
 - Product placement: ${productDescriptions}
+- Product positioning: Respect the number of frentes (front facing units) for each product
 - Style: Professional retail photography, well-lit supermarket environment
 - Perspective: Direct front view, straight angle
 - Lighting: Bright, professional retail lighting
 - Background: Clean supermarket environment
-- Include shelf edges and metal frame
-- Make it look like a real supermarket display`;
+- Include shelf edges, metal frame, and shelf numbers
+- Make it look like a real supermarket display with proper product arrangement`;
   };
 
   const handleGenerateImage = async () => {
@@ -151,16 +223,22 @@ export default function GondolaAIImageGenerator({
   const generateSVGPreview = (placements: ProductPlacement[]): string => {
     const height = 400;
     const shelfHeight = height / shelves;
-    const padding = 20;
+    const padding = 40;
+    const svgWidth = 900;
 
-    let svg = `<svg width="800" height="${height + padding * 2}" xmlns="http://www.w3.org/2000/svg">`;
+    let svg = `<svg width="${svgWidth}" height="${height + padding * 2}" xmlns="http://www.w3.org/2000/svg">`;
 
     // Fundo
-    svg += `<rect width="800" height="${height + padding * 2}" fill="#f5f5f5"/>`;
+    svg += `<rect width="${svgWidth}" height="${height + padding * 2}" fill="#f5f5f5"/>`;
 
-    // Desenhar prateleiras
+    // Desenhar prateleiras com números
     for (let i = 0; i < shelves; i++) {
       const y = padding + i * shelfHeight;
+      
+      // Número da prateleira
+      svg += `<text x="${padding - 20}" y="${y + shelfHeight / 2}" font-size="14" font-weight="bold" text-anchor="end" dominant-baseline="middle" fill="#333">Prat. ${shelves - i}</text>`;
+      
+      // Linha da prateleira
       svg += `<line x1="${padding}" y1="${y + shelfHeight}" x2="${padding + gondolaWidth}" y2="${y + shelfHeight}" stroke="#333" stroke-width="2"/>`;
     }
 
@@ -175,18 +253,21 @@ export default function GondolaAIImageGenerator({
       const width = product.width;
 
       // Retângulo do produto
-      svg += `<rect x="${x}" y="${y}" width="${width}" height="${shelfHeight - 2}" fill="${product.color}" stroke="#333" stroke-width="1" opacity="0.8"/>`;
+      svg += `<rect x="${x}" y="${y}" width="${width}" height="${shelfHeight - 2}" fill="${product.color}" stroke="#333" stroke-width="1" opacity="0.85"/>`;
 
       // Texto do produto
-      const fontSize = Math.min(12, width / product.name.length);
-      svg += `<text x="${x + width / 2}" y="${y + shelfHeight / 2}" font-size="${fontSize}" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="bold">${product.name.substring(0, 15)}</text>`;
+      const fontSize = Math.min(11, width / product.name.length);
+      svg += `<text x="${x + width / 2}" y="${y + shelfHeight / 3}" font-size="${fontSize}" text-anchor="middle" fill="#000" font-weight="bold">${product.name.substring(0, 20)}</text>`;
+
+      // Frentes
+      svg += `<text x="${x + width / 2}" y="${y + shelfHeight / 2 + 5}" font-size="10" text-anchor="middle" fill="#333" font-weight="bold">${product.frentes} frente(s)</text>`;
 
       // Zona
-      svg += `<text x="${x + width / 2}" y="${y + shelfHeight - 5}" font-size="10" text-anchor="middle" fill="#666">${product.zone}</text>`;
+      svg += `<text x="${x + width / 2}" y="${y + shelfHeight - 5}" font-size="9" text-anchor="middle" fill="#666">${product.zone}</text>`;
     });
 
     // Dimensões
-    svg += `<text x="${padding + gondolaWidth / 2}" y="${height + padding + 15}" font-size="12" text-anchor="middle" fill="#333">Largura: ${gondolaWidth}cm | Profundidade: ${shelfDepth}cm | Prateleiras: ${shelves}</text>`;
+    svg += `<text x="${padding + gondolaWidth / 2}" y="${height + padding + 15}" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Largura: ${gondolaWidth}cm | Profundidade: ${shelfDepth}cm | Prateleiras: ${shelves}</text>`;
 
     svg += `</svg>`;
     return `data:image/svg+xml;base64,${btoa(svg)}`;
@@ -200,7 +281,7 @@ export default function GondolaAIImageGenerator({
           Visualização Realista por IA
         </CardTitle>
         <CardDescription>
-          Gere uma visualização realista da gôndola com os produtos posicionados de acordo com as recomendações de margem e giro
+          Gere uma visualização realista da gôndola respeitando a Matriz de Recomendação com posicionamento inteligente de produtos
         </CardDescription>
       </CardHeader>
 
@@ -252,14 +333,14 @@ export default function GondolaAIImageGenerator({
         {/* Imagem Gerada */}
         {generatedImage && (
           <div className="space-y-4">
-            <h3 className="font-bold text-lg">Prévia da Gôndola</h3>
+            <h3 className="font-bold text-lg">Prévia da Gôndola com Números de Prateleiras</h3>
             <img
               src={generatedImage}
               alt="Prévia da gôndola"
               className="w-full border rounded-lg bg-white"
             />
             <p className="text-sm text-gray-600">
-              Esta é uma prévia do posicionamento dos produtos. A versão final por IA será mais realista e detalhada.
+              Esta prévia mostra o posicionamento exato dos produtos respeitando o número de frentes recomendado pela Matriz. A versão final por IA será fotorrealista e detalhada.
             </p>
           </div>
         )}
