@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
 import GondolaFrontView from "@/components/GondolaFrontView";
+import GondolaImageGenerator from "@/components/GondolaImageGenerator";
 import ProductFormModal from "@/components/ProductFormModal";
 import { numericToCategory, formatMetricValue } from "@/lib/marginGiroCalculator";
 
@@ -450,6 +451,17 @@ export default function SmartLayoutSimulator() {
       <GondolaFrontView
         products={filteredProducts}
         gondolaWidth={gondolaWidth}
+        shelves={shelves}
+        shelfDepth={shelfDepth}
+        getRecommendation={getRecommendation}
+      />
+
+      {/* Visualização Renderizada por IA */}
+      <GondolaImageGenerator
+        products={filteredProducts}
+        gondolaWidth={gondolaWidth}
+        shelves={shelves}
+        shelfDepth={shelfDepth}
         getRecommendation={getRecommendation}
       />
 
