@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
 import { useLocation } from "wouter";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ContactFormAds from "@/components/ContactFormAds";
 
 export default function KadehAds() {
   // Placeholder - implementação de autenticação em desenvolvimento
@@ -16,6 +19,7 @@ export default function KadehAds() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -337,6 +341,17 @@ export default function KadehAds() {
         </div>
       </section>
 
+      {/* Contact Form Section */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-2">Quer conhecer mais sobre KADEH ADS?</h2>
+          <p className="text-gray-600 mb-8">
+            Preencha o formulario abaixo e um especialista entrara em contato para apresentar como KADEH ADS pode aumentar suas vendas
+          </p>
+          <ContactFormAds />
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
         <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -355,6 +370,8 @@ export default function KadehAds() {
           </Button>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }
