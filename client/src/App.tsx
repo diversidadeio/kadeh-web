@@ -12,6 +12,7 @@ import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import KadehAds from "./pages/KadehAds";
 import AdsAdvertiserDashboard from "./pages/AdsAdvertiserDashboard";
+import ImpactAnalysisDashboard from "./pages/ImpactAnalysisDashboard";
 
 
 function Router() {
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/ads" component={KadehAds} />
       <Route path="/ads/dashboard" component={AdsAdvertiserDashboard} />
+      <Route path="/impact-analysis" component={ImpactAnalysisDashboard} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

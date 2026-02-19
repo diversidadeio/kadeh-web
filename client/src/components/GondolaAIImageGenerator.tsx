@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Zap, AlertCircle } from "lucide-react";
-
+import { Loader2, Zap, AlertCircle, Download } from "lucide-react";
 interface Product {
   id: string;
   name: string;
@@ -71,6 +70,8 @@ export default function GondolaAIImageGenerator({
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [userName, setUserName] = useState<string | null>(null);
+  const isAuthenticated = !!userName;
 
   // Get recommendation function
   const getRecFunc = getRecommendation || ((giro: string, margem: string) => {
@@ -205,17 +206,68 @@ export default function GondolaAIImageGenerator({
 
     try {
       const prompt = generatePrompt();
+      
+      // Chamar API de geração de imagem
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
-      // Simular geração de imagem (em produção, isso chamaria a API de IA)
-      // Por enquanto, vamos criar uma representação visual SVG
+      if (!response.ok) {
+        throw new Error("Erro ao gerar imagem");
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        setGeneratedImage(data.url);
+      } else {
+        // Fallback para prévia SVG
+        const placements = calculateProductPlacements();
+        const svgImage = generateSVGPreview(placements);
+        setGeneratedImage(svgImage);
+      }
+    } catch (err) {
+      // Fallback para prévia SVG se houver erro
       const placements = calculateProductPlacements();
       const svgImage = generateSVGPreview(placements);
       setGeneratedImage(svgImage);
-    } catch (err) {
-      setError("Erro ao gerar visualização. Tente novamente.");
-      console.error(err);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    // Verificar se usuário está autenticado via localStorage
+    const userEmail = localStorage.getItem("userEmail");
+    const userName = localStorage.getItem("userName");
+    
+    if (!userEmail || !userName) {
+      setError("Você precisa estar cadastrado e logado para exportar o planograma em PDF. Por favor, faça login.");
+      return;
+    }
+
+    try {
+      // Exportar como PDF
+      const placements = calculateProductPlacements();
+      const pdfContent = generatePDFContent(placements);
+      
+      // Criar blob e download
+      const blob = new Blob([pdfContent], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `planograma-gondola-${new Date().getTime()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError("Erro ao exportar PDF. Tente novamente.");
+      console.error(err);
     }
   };
 
@@ -273,6 +325,26 @@ export default function GondolaAIImageGenerator({
     return `data:image/svg+xml;base64,${btoa(svg)}`;
   };
 
+  // Gerar conteúdo PDF (simplificado)
+  const generatePDFContent = (placements: ProductPlacement[]): string => {
+    let content = "PLANOGRAMA DE GÔNDOLA\n";
+    content += `Data: ${new Date().toLocaleDateString("pt-BR")}\n`;
+    content += `Usuário: ${userName || "Sem nome"}\n`;
+    content += `Dimensões da Gôndola:\n`;
+    content += `- Largura: ${gondolaWidth}cm\n`;
+    content += `- Profundidade: ${shelfDepth}cm\n`;
+    content += `- Prateleiras: ${shelves}\n\n`;
+    content += `Produtos Posicionados:\n`;
+    content += `${"Prateleira".padEnd(12)} | ${"Produto".padEnd(30)} | ${"Frentes".padEnd(8)} | ${"Zona".padEnd(20)} | ${"Giro".padEnd(8)} | ${"Margem"}\n`;
+    content += "-".repeat(100) + "\n";
+    
+    placements.forEach((p) => {
+      content += `${(shelves - p.shelf).toString().padEnd(12)} | ${p.name.substring(0, 30).padEnd(30)} | ${p.frentes.toString().padEnd(8)} | ${p.zone.padEnd(20)} | ${p.giro.padEnd(8)} | ${p.margem}\n`;
+    });
+
+    return content;
+  };
+
   return (
     <Card className="mt-8">
       <CardHeader>
@@ -302,31 +374,44 @@ export default function GondolaAIImageGenerator({
           </div>
         </div>
 
-        {/* Botão de Geração */}
-        <Button
-          onClick={handleGenerateImage}
-          disabled={isGenerating || products.length === 0}
-          className="w-full"
-          size="lg"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Gerando visualização...
-            </>
-          ) : (
-            <>
-              <Zap className="w-4 h-4 mr-2" />
-              Gerar Visualização por IA
-            </>
-          )}
-        </Button>
+        {/* Botões de Ação */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            onClick={handleGenerateImage}
+            disabled={isGenerating || products.length === 0}
+            className="w-full"
+            size="lg"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Gerando...
+              </>
+            ) : (
+              <>
+                <Zap className="w-4 h-4 mr-2" />
+                Gerar por IA
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={handleExportPDF}
+            disabled={products.length === 0}
+            variant="outline"
+            className="w-full"
+            size="lg"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Exportar PDF
+          </Button>
+        </div>
 
         {/* Mensagem de Erro */}
         {error && (
           <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
             <AlertCircle className="w-5 h-5 text-red-600" />
-            <p className="text-red-800">{error}</p>
+            <p className="text-red-800 text-sm">{error}</p>
           </div>
         )}
 
