@@ -1,208 +1,236 @@
-/**
- * GondolaFrontView Component
- * Displays front view of shelf with products distributed across zones and prateleiras
- * Respects matrix recommendations for frentes and implements intelligent vertical distribution
- */
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
 interface Product {
   id: string;
   name: string;
-  giro: "Baixo" | "Médio" | "Alto";
-  margem: "Baixa" | "Média" | "Alta";
-  category: string;
-  subCategory: string;
-}
-
-interface Recommendation {
-  frentes: number;
-  zone: string;
-  share: number;
-  label: string;
-  color: string;
+  zona: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo';
+  quadrantes: number;
+  largura?: number;
+  share?: number;
 }
 
 interface GondolaFrontViewProps {
   products: Product[];
-  gondolaWidth: number;
-  numShelves: number;
-  getRecommendation: (giro: string, margem: string) => Recommendation;
+  totalWidth?: number;
+  shelfHeight?: number;
+  language?: 'pt' | 'en';
 }
 
-const ZONE_COLORS = {
-  "Altura dos olhos": "bg-green-100 border-green-300",
-  "Altura das mãos": "bg-yellow-100 border-yellow-300",
-  "Lugar baixo": "bg-orange-100 border-orange-300",
+const zoneColors = {
+  'Altura dos olhos': { bg: '#FEF3C7', border: '#FBBF24', label: 'Altura dos olhos' },
+  'Altura das mãos': { bg: '#DBEAFE', border: '#3B82F6', label: 'Altura das mãos' },
+  'Parte de Baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Parte de Baixo' },
 };
 
-const ZONE_LABEL_COLORS = {
-  "Altura dos olhos": "text-green-700",
-  "Altura das mãos": "text-yellow-700",
-  "Lugar baixo": "text-orange-700",
+const zoneColorsEn = {
+  'Altura dos olhos': { bg: '#FEF3C7', border: '#FBBF24', label: 'Eye Level' },
+  'Altura das mãos': { bg: '#DBEAFE', border: '#3B82F6', label: 'Hand Level' },
+  'Parte de Baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Bottom Shelf' },
 };
-
-// Map prateleiras to zones
-function mapShelfToZone(shelfIndex: number, totalShelves: number): string {
-  const topThird = Math.ceil(totalShelves / 3);
-  const middleThird = Math.ceil((totalShelves * 2) / 3);
-
-  if (shelfIndex < topThird) return "Altura dos olhos";
-  if (shelfIndex < middleThird) return "Altura das mãos";
-  return "Lugar baixo";
-}
-
-// Calculate product score for vertical distribution (higher = better placement)
-function calculateProductScore(giro: string, margem: string): number {
-  const giroScore = giro === "Alto" ? 3 : giro === "Médio" ? 2 : 1;
-  const margemScore = margem === "Alta" ? 3 : margem === "Média" ? 2 : 1;
-  return giroScore + margemScore;
-}
 
 export default function GondolaFrontView({
   products,
-  gondolaWidth,
-  numShelves,
-  getRecommendation,
+  totalWidth = 280,
+  shelfHeight = 60,
+  language = 'pt',
 }: GondolaFrontViewProps) {
-  // Get zones available based on number of shelves
-  const zonesAvailable = new Set<string>();
-  for (let i = 0; i < numShelves; i++) {
-    zonesAvailable.add(mapShelfToZone(i, numShelves));
+  if (products.length === 0) {
+    return (
+      <div className="w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <p className="text-gray-500 text-sm">
+          {language === 'pt'
+            ? 'Nenhum produto adicionado à simulação'
+            : 'No products added to the simulation'}
+        </p>
+      </div>
+    );
   }
 
-  // Group products by their recommended zone
-  const productsByZone: { [key: string]: Product[] } = {
-    "Altura dos olhos": [],
-    "Altura das mãos": [],
-    "Lugar baixo": [],
+  // Group products by zone
+  const productsByZone = {
+    'Altura dos olhos': products.filter(p => p.zona === 'Altura dos olhos'),
+    'Altura das mãos': products.filter(p => p.zona === 'Altura das mãos'),
+    'Parte de Baixo': products.filter(p => p.zona === 'Parte de Baixo'),
   };
 
-  products.forEach((product) => {
-    const rec = getRecommendation(product.giro, product.margem);
-    if (!productsByZone[rec.zone]) {
-      productsByZone[rec.zone] = [];
-    }
-    productsByZone[rec.zone].push(product);
-  });
+  const colors = language === 'pt' ? zoneColors : zoneColorsEn;
 
-  // If not all zones are available, redistribute products vertically
-  // Privileging better products (higher margin + giro) to upper shelves
-  let redistributedProducts: { [key: number]: Product[] } = {};
-
-  if (zonesAvailable.size < 3) {
-    // Sort all products by score (descending) - best products first
-    const sortedProducts = products.sort((a, b) => {
-      const scoreA = calculateProductScore(a.giro, a.margem);
-      const scoreB = calculateProductScore(b.giro, b.margem);
-      return scoreB - scoreA;
-    });
-
-    // Distribute products across available shelves
-    // Upper shelves get better products
-    for (let i = 0; i < numShelves; i++) {
-      redistributedProducts[i] = [];
-    }
-
-    sortedProducts.forEach((product, index) => {
-      const shelfIndex = index % numShelves;
-      redistributedProducts[shelfIndex].push(product);
-    });
-  }
-
-  // Create shelf view
-  const shelves = Array.from({ length: numShelves }, (_, i) => i);
+  // Calculate total share for normalization
+  const totalShare = products.reduce((sum, p) => sum + (p.share || 0), 0);
 
   return (
-    <div className="bg-card p-6 rounded-md border border-border">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Visualização Frontal da Gôndola</h3>
-
-      {/* Shelf Display */}
-      <div className="space-y-3 mb-6 border border-border rounded-md overflow-hidden">
-        {shelves.map((shelfIndex) => {
-          const zone = mapShelfToZone(shelfIndex, numShelves);
-          const shelfProducts = zonesAvailable.size < 3
-            ? redistributedProducts[shelfIndex] || []
-            : productsByZone[zone] || [];
-
-          return (
-            <div key={shelfIndex} className="flex items-stretch border-b border-border last:border-b-0">
-              {/* Shelf Number */}
-              <div className="w-16 bg-gray-200 flex items-center justify-center font-bold text-sm text-gray-700 border-r border-border">
-                Prat. {numShelves - shelfIndex}
-              </div>
-
-              {/* Zone Indicator */}
-              <div className={`w-32 flex items-center justify-center text-xs font-semibold border-r border-border ${ZONE_COLORS[zone as keyof typeof ZONE_COLORS]}`}>
-                <span className={ZONE_LABEL_COLORS[zone as keyof typeof ZONE_LABEL_COLORS]}>
-                  {zone}
-                </span>
-              </div>
-
-              {/* Products on Shelf */}
-              <div className="flex-1 p-3 bg-white flex gap-2 overflow-x-auto">
-                {shelfProducts.length > 0 ? (
-                  shelfProducts.map((product) => {
-                    const rec = getRecommendation(product.giro, product.margem);
-                    const productWidth = (rec.frentes / 10) * 100; // Assume max 10 frentes per shelf
-
-                    return (
-                      <div
-                        key={product.id}
-                        className={`${rec.color} p-2 rounded border-l-4 border-l-current flex-shrink-0`}
-                        style={{ minWidth: `${Math.max(80, productWidth)}px` }}
-                      >
-                        <div className="font-medium text-xs text-foreground truncate">{product.name}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          <div className="truncate">{product.giro} | {product.margem}</div>
-                          <div className="text-blue-600 font-bold">{rec.frentes} frente(s)</div>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="text-xs text-muted-foreground italic">Sem produtos</p>
-                )}
-              </div>
+    <div className="w-full space-y-6">
+      {/* Front View Visualization */}
+      <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
+        {/* Shelf Structure */}
+        <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4">
+          {/* Top Shelf (Altura dos olhos) */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: colors['Altura dos olhos'].bg }}
+              />
+              <span className="text-sm font-semibold text-gray-700">
+                {colors['Altura dos olhos'].label}
+              </span>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Zone Legend */}
-      <div className="p-4 bg-muted rounded-md border border-border">
-        <h4 className="font-semibold text-sm text-foreground mb-3">Legenda de Zonas:</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-green-100 border border-green-300 rounded mt-0.5 flex-shrink-0"></div>
-            <div className="text-xs">
-              <div className="font-medium text-green-700">Altura dos olhos</div>
-              <div className="text-muted-foreground">Melhor visibilidade</div>
+            <div
+              className="flex border-2 rounded-md overflow-hidden"
+              style={{
+                borderColor: colors['Altura dos olhos'].border,
+                height: `${shelfHeight}px`,
+              }}
+            >
+              {productsByZone['Altura dos olhos'].map((product) => {
+                const widthPercent = totalShare > 0 ? ((product.share || 0) / totalShare) * 100 : 0;
+                return (
+                  <div
+                    key={product.id}
+                    className="flex flex-col items-center justify-center border-r border-gray-300 last:border-r-0 bg-gradient-to-b from-yellow-100 to-yellow-50 p-2 overflow-hidden"
+                    style={{ width: `${widthPercent}%` }}
+                    title={`${product.name} - ${(widthPercent).toFixed(1)}%`}
+                  >
+                    <span className="text-xs font-bold text-gray-800 text-center truncate">
+                      {product.name.substring(0, 12)}
+                    </span>
+                    <span className="text-xs text-gray-600">
+                      {(widthPercent).toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
+              {productsByZone['Altura dos olhos'].length === 0 && (
+                <div className="w-full flex items-center justify-center text-gray-400 text-xs">
+                  {language === 'pt' ? 'Sem produtos' : 'No products'}
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded mt-0.5 flex-shrink-0"></div>
-            <div className="text-xs">
-              <div className="font-medium text-yellow-700">Altura das mãos</div>
-              <div className="text-muted-foreground">Acesso fácil</div>
+
+          {/* Middle Shelf (Altura das mãos) */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: colors['Altura das mãos'].bg }}
+              />
+              <span className="text-sm font-semibold text-gray-700">
+                {colors['Altura das mãos'].label}
+              </span>
+            </div>
+            <div
+              className="flex border-2 rounded-md overflow-hidden"
+              style={{
+                borderColor: colors['Altura das mãos'].border,
+                height: `${shelfHeight}px`,
+              }}
+            >
+              {productsByZone['Altura das mãos'].map((product) => {
+                const widthPercent = totalShare > 0 ? ((product.share || 0) / totalShare) * 100 : 0;
+                return (
+                  <div
+                    key={product.id}
+                    className="flex flex-col items-center justify-center border-r border-gray-300 last:border-r-0 bg-gradient-to-b from-blue-100 to-blue-50 p-2 overflow-hidden"
+                    style={{ width: `${widthPercent}%` }}
+                    title={`${product.name} - ${(widthPercent).toFixed(1)}%`}
+                  >
+                    <span className="text-xs font-bold text-gray-800 text-center truncate">
+                      {product.name.substring(0, 12)}
+                    </span>
+                    <span className="text-xs text-gray-600">
+                      {(widthPercent).toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
+              {productsByZone['Altura das mãos'].length === 0 && (
+                <div className="w-full flex items-center justify-center text-gray-400 text-xs">
+                  {language === 'pt' ? 'Sem produtos' : 'No products'}
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded mt-0.5 flex-shrink-0"></div>
-            <div className="text-xs">
-              <div className="font-medium text-orange-700">Lugar baixo</div>
-              <div className="text-muted-foreground">Menor visibilidade</div>
+
+          {/* Bottom Shelf (Parte de Baixo) */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="w-4 h-4 rounded"
+                style={{ backgroundColor: colors['Parte de Baixo'].bg }}
+              />
+              <span className="text-sm font-semibold text-gray-700">
+                {colors['Parte de Baixo'].label}
+              </span>
+            </div>
+            <div
+              className="flex border-2 rounded-md overflow-hidden"
+              style={{
+                borderColor: colors['Parte de Baixo'].border,
+                height: `${shelfHeight}px`,
+              }}
+            >
+              {productsByZone['Parte de Baixo'].map((product) => {
+                const widthPercent = totalShare > 0 ? ((product.share || 0) / totalShare) * 100 : 0;
+                return (
+                  <div
+                    key={product.id}
+                    className="flex flex-col items-center justify-center border-r border-gray-300 last:border-r-0 bg-gradient-to-b from-green-100 to-green-50 p-2 overflow-hidden"
+                    style={{ width: `${widthPercent}%` }}
+                    title={`${product.name} - ${(widthPercent).toFixed(1)}%`}
+                  >
+                    <span className="text-xs font-bold text-gray-800 text-center truncate">
+                      {product.name.substring(0, 12)}
+                    </span>
+                    <span className="text-xs text-gray-600">
+                      {(widthPercent).toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
+              {productsByZone['Parte de Baixo'].length === 0 && (
+                <div className="w-full flex items-center justify-center text-gray-400 text-xs">
+                  {language === 'pt' ? 'Sem produtos' : 'No products'}
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Shelf Base */}
+        <div className="h-3 bg-gradient-to-r from-gray-400 to-gray-500" />
       </div>
 
-      {/* Distribution Info */}
-      {zonesAvailable.size < 3 && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-          <p className="text-xs text-blue-700">
-            <strong>Distribuição Vertical Inteligente:</strong> Como nem todas as zonas estão disponíveis, os produtos com melhor margem e giro foram priorizados nas prateleiras superiores.
-          </p>
-        </div>
-      )}
+      {/* Legend */}
+      <div className="grid grid-cols-3 gap-4">
+        {Object.entries(colors).map(([zone, config]) => (
+          <div key={zone} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+            <div
+              className="w-6 h-6 rounded border-2"
+              style={{ backgroundColor: config.bg, borderColor: config.border }}
+            />
+            <span className="text-xs font-medium text-gray-700">{config.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Statistics */}
+      <div className="grid grid-cols-3 gap-4">
+        {Object.entries(productsByZone).map(([zone, zoneProducts]) => (
+          <div key={zone} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <p className="text-xs font-semibold text-gray-600 mb-2">
+              {colors[zone as keyof typeof colors].label}
+            </p>
+            <p className="text-2xl font-bold text-gray-900">
+              {zoneProducts.length}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {language === 'pt' ? 'produtos' : 'products'}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
