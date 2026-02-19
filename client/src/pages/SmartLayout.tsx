@@ -11,6 +11,7 @@ import CTASection from "@/components/CTASection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import SmartLayoutSimulator from "@/components/SmartLayoutSimulator";
+import TopCategoriesSection from "@/components/TopCategoriesSection";
 import {
   BarChart3,
   Zap,
@@ -532,7 +533,16 @@ export default function SmartLayout() {
               Configure sua gôndola, adicione produtos e veja as recomendações de layout em tempo real.
             </p>
           </div>
-          <SmartLayoutSimulator />
+          <TopCategoriesSection onCategorySelect={(categoryId, categoryName) => {
+            // Scroll to simulator
+            const simulator = document.getElementById('smart-layout-simulator');
+            if (simulator) {
+              simulator.scrollIntoView({ behavior: 'smooth' });
+            }
+          }} />
+          <div id="smart-layout-simulator" className="mt-8">
+            <SmartLayoutSimulator />
+          </div>
         </div>
       </section>
 

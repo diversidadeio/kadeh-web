@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 import CSVImporter from "@/components/CSVImporter";
@@ -64,6 +65,16 @@ function getRecommendation(giro: string, margem: string): Recommendation {
     { frentes: 1, zone: "N/A", share: 0, label: "N/A", color: "bg-gray-300" };
 }
 
+// Global function to add category products from TopCategoriesSection
+if (typeof window !== 'undefined') {
+  (window as any).addCategoryToSimulator = (categoryName: string, giro: string, margem: string, category: string, subCategory: string) => {
+    const event = new CustomEvent('addCategoryProduct', {
+      detail: { categoryName, giro, margem, category, subCategory }
+    });
+    document.dispatchEvent(event);
+  };
+}
+
 export default function SmartLayoutSimulator() {
   const [products, setProducts] = useState<Product[]>([
     { id: "1", name: "Arroz 5kg", giro: "Alto", margem: "Baixa", category: "Alimentar", subCategory: "Alimentos" },
@@ -84,6 +95,17 @@ export default function SmartLayoutSimulator() {
   const [promotionalPointType, setPromotionalPointType] = useState<"Ilha Promocional" | "Terminal de Gôndola" | "Outro">("Ilha Promocional");
   const [promotionalPointCapacity, setPromotionalPointCapacity] = useState(0);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+
+  // Listen for category product additions
+  React.useEffect(() => {
+    const handleAddCategoryProduct = (event: any) => {
+      const { categoryName, giro, margem, category, subCategory } = event.detail;
+      addCategoryProduct(categoryName, giro, margem, category as CategoryType, subCategory as SubCategory);
+    };
+
+    document.addEventListener('addCategoryProduct', handleAddCategoryProduct);
+    return () => document.removeEventListener('addCategoryProduct', handleAddCategoryProduct);
+  }, []);
 
   const addProduct = () => {
     setIsProductFormOpen(true);
@@ -112,6 +134,18 @@ export default function SmartLayoutSimulator() {
     };
     setProducts([...products, newProduct]);
     setIsProductFormOpen(false);
+  };
+
+  const addCategoryProduct = (categoryName: string, giro: string, margem: string, category: CategoryType, subCategory: SubCategory) => {
+    const newProduct: Product = {
+      id: Date.now().toString(),
+      name: categoryName,
+      giro: giro as "Baixo" | "Médio" | "Alto",
+      margem: margem as "Baixa" | "Média" | "Alta",
+      category: category,
+      subCategory: subCategory,
+    };
+    setProducts([...products, newProduct]);
   };
 
   const removeProduct = (id: string) => {
