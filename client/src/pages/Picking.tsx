@@ -4,6 +4,8 @@
  * SEO: Optimized for picking, warehouse, e-commerce keywords
  */
 
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -20,136 +22,162 @@ import {
 } from "lucide-react";
 
 export default function Picking() {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   const pickingFeatures = [
     {
-      title: "Picking List Inteligente",
-      description:
-        "Listas de picking otimizadas por rota, reduzindo tempo de deslocamento e aumentando produtividade.",
+      title: language === 'pt' ? "Picking List Inteligente" : "Intelligent Picking List",
+      description: language === 'pt' 
+        ? "Listas de picking otimizadas por rota, reduzindo tempo de deslocamento e aumentando produtividade."
+        : "Picking lists optimized by route, reducing travel time and increasing productivity.",
       icon: <CheckCircle className="w-6 h-6" />,
     },
     {
-      title: "Navegação em Tempo Real",
-      description:
-        "Guia passo a passo dentro do armazém com indicação precisa de localização de produtos.",
+      title: language === 'pt' ? "Navegação em Tempo Real" : "Real-time Navigation",
+      description: language === 'pt'
+        ? "Guia passo a passo dentro do armazém com indicação precisa de localização de produtos."
+        : "Step-by-step guidance inside the warehouse with precise product location indication.",
       icon: <Map className="w-6 h-6" />,
     },
     {
-      title: "Código de Barras & QR",
-      description:
-        "Validação instantânea de produtos com leitura de código de barras ou QR code integrada.",
+      title: language === 'pt' ? "Código de Barras & QR" : "Barcode & QR Code",
+      description: language === 'pt'
+        ? "Validação instantânea de produtos com leitura de código de barras ou QR code integrada."
+        : "Instant product validation with integrated barcode or QR code reading.",
       icon: <Zap className="w-6 h-6" />,
     },
     {
-      title: "Rastreamento em Tempo Real",
-      description:
-        "Acompanhamento live de cada picking, com status de conclusão e alertas de anomalias.",
+      title: language === 'pt' ? "Rastreamento em Tempo Real" : "Real-time Tracking",
+      description: language === 'pt'
+        ? "Acompanhamento live de cada picking, com status de conclusão e alertas de anomalias."
+        : "Live tracking of each picking with completion status and anomaly alerts.",
       icon: <Clock className="w-6 h-6" />,
     },
     {
-      title: "Relatórios de Produtividade",
-      description:
-        "Dashboard com métricas de picking por funcionário, turno e produto para otimização contínua.",
+      title: language === 'pt' ? "Relatórios de Produtividade" : "Productivity Reports",
+      description: language === 'pt'
+        ? "Dashboard com métricas de picking por funcionário, turno e produto para otimização contínua."
+        : "Dashboard with picking metrics by employee, shift and product for continuous optimization.",
       icon: <BarChart3 className="w-6 h-6" />,
     },
     {
-      title: "Integração com Sistemas",
-      description:
-        "Conexão com ERP, WMS e plataformas de e-commerce para sincronização automática de pedidos.",
+      title: language === 'pt' ? "Integração com Sistemas" : "System Integration",
+      description: language === 'pt'
+        ? "Conexão com ERP, WMS e plataformas de e-commerce para sincronização automática de pedidos."
+        : "Connection with ERP, WMS and e-commerce platforms for automatic order synchronization.",
       icon: <Users className="w-6 h-6" />,
     },
   ];
 
   const benefits = [
     {
-      title: "Redução de Tempo de Picking",
-      description:
-        "Rotas otimizadas reduzem tempo de coleta em até 40%, aumentando volume processado.",
+      title: language === 'pt' ? "Redução de Tempo de Picking" : "Picking Time Reduction",
+      description: language === 'pt'
+        ? "Rotas otimizadas reduzem tempo de coleta em até 40%, aumentando volume processado."
+        : "Optimized routes reduce collection time by up to 40%, increasing processed volume.",
     },
     {
-      title: "Redução de Erros",
-      description:
-        "Validação em tempo real com código de barras elimina picking incorreto e devoluções.",
+      title: language === 'pt' ? "Redução de Erros" : "Error Reduction",
+      description: language === 'pt'
+        ? "Validação em tempo real com código de barras elimina picking incorreto e devoluções."
+        : "Real-time validation with barcode eliminates incorrect picking and returns.",
     },
     {
-      title: "Melhor Experiência do Entregador",
-      description:
-        "Interface intuitiva e clara reduz necessidade de treinamento e aumenta satisfação.",
+      title: language === 'pt' ? "Melhor Experiência do Entregador" : "Better Delivery Experience",
+      description: language === 'pt'
+        ? "Interface intuitiva e clara reduz necessidade de treinamento e aumenta satisfação."
+        : "Intuitive and clear interface reduces training needs and increases satisfaction.",
     },
     {
-      title: "Visibilidade Operacional",
-      description:
-        "Gerentes acompanham picking em tempo real e identificam gargalos imediatamente.",
+      title: language === 'pt' ? "Visibilidade Operacional" : "Operational Visibility",
+      description: language === 'pt'
+        ? "Gerentes acompanham picking em tempo real e identificam gargalos imediatamente."
+        : "Managers track picking in real-time and identify bottlenecks immediately.",
     },
     {
-      title: "Escalabilidade",
-      description:
-        "Sistema suporta múltiplos armazéns, turnos e volumes crescentes sem perda de eficiência.",
+      title: language === 'pt' ? "Escalabilidade" : "Scalability",
+      description: language === 'pt'
+        ? "Sistema suporta múltiplos armazéns, turnos e volumes crescentes sem perda de eficiência."
+        : "System supports multiple warehouses, shifts and growing volumes without efficiency loss.",
     },
     {
-      title: "Conformidade LGPD",
-      description:
-        "Dados de funcionários e rastreamento implementados com premissas de privacidade.",
+      title: language === 'pt' ? "Conformidade LGPD" : "LGPD Compliance",
+      description: language === 'pt'
+        ? "Dados de funcionários e rastreamento implementados com premissas de privacidade."
+        : "Employee data and tracking implemented with privacy premises.",
     },
   ];
 
   const howItWorks = [
     {
-      title: "Pedido Recebido",
-      description:
-        "Pedido chega no sistema e é automaticamente adicionado à fila de picking.",
+      title: language === 'pt' ? "Pedido Recebido" : "Order Received",
+      description: language === 'pt'
+        ? "Pedido chega no sistema e é automaticamente adicionado à fila de picking."
+        : "Order arrives in the system and is automatically added to the picking queue.",
     },
     {
-      title: "Rota Otimizada",
-      description:
-        "Sistema calcula a rota mais eficiente no armazém para coletar todos os itens.",
+      title: language === 'pt' ? "Rota Otimizada" : "Optimized Route",
+      description: language === 'pt'
+        ? "Sistema calcula a rota mais eficiente no armazém para coletar todos os itens."
+        : "System calculates the most efficient route in the warehouse to collect all items.",
     },
     {
-      title: "Picking com Validação",
-      description:
-        "Funcionário segue rota e valida cada item com código de barras ou QR code.",
+      title: language === 'pt' ? "Picking com Validação" : "Picking with Validation",
+      description: language === 'pt'
+        ? "Funcionário segue rota e valida cada item com código de barras ou QR code."
+        : "Employee follows route and validates each item with barcode or QR code.",
     },
     {
-      title: "Consolidação",
-      description:
-        "Itens são consolidados e preparados para embalagem e envio.",
+      title: language === 'pt' ? "Consolidação" : "Consolidation",
+      description: language === 'pt'
+        ? "Itens são consolidados e preparados para embalagem e envio."
+        : "Items are consolidated and prepared for packaging and shipment.",
     },
     {
-      title: "Rastreamento",
-      description:
-        "Dados de picking são registrados para análise de produtividade e otimização.",
+      title: language === 'pt' ? "Rastreamento" : "Tracking",
+      description: language === 'pt'
+        ? "Dados de picking são registrados para análise de produtividade e otimização."
+        : "Picking data is recorded for productivity analysis and optimization.",
     },
   ];
 
   const faqItems = [
     {
-      question: "Qual é o tempo médio de implementação?",
-      answer:
-        "Tipicamente 2-4 semanas, dependendo do tamanho do armazém e complexidade da integração com sistemas existentes.",
+      question: language === 'pt' ? "Qual é o tempo médio de implementação?" : "What is the average implementation time?",
+      answer: language === 'pt'
+        ? "Tipicamente 2-4 semanas, dependendo do tamanho do armazém e complexidade da integração com sistemas existentes."
+        : "Typically 2-4 weeks, depending on warehouse size and complexity of integration with existing systems.",
     },
     {
-      question: "É necessário hardware especial?",
-      answer:
-        "Não. Funciona em smartphones e tablets com Android ou iOS, aproveitando equipamentos que você já possui.",
+      question: language === 'pt' ? "É necessário hardware especial?" : "Is special hardware necessary?",
+      answer: language === 'pt'
+        ? "Não. Funciona em smartphones e tablets com Android ou iOS, aproveitando equipamentos que você já possui."
+        : "No. It works on smartphones and tablets with Android or iOS, leveraging equipment you already have.",
     },
     {
-      question: "Como funciona a integração com ERP/WMS?",
-      answer:
-        "Integramos via API com seus sistemas existentes, sincronizando pedidos, inventário e dados de picking em tempo real.",
+      question: language === 'pt' ? "Como funciona a integração com ERP/WMS?" : "How does ERP/WMS integration work?",
+      answer: language === 'pt'
+        ? "Integramos via API com seus sistemas existentes, sincronizando pedidos, inventário e dados de picking em tempo real."
+        : "We integrate via API with your existing systems, synchronizing orders, inventory and picking data in real-time.",
     },
     {
-      question: "Posso usar em múltiplos armazéns?",
-      answer:
-        "Sim. O sistema é escalável e suporta múltiplos armazéns, turnos e equipes com relatórios consolidados.",
+      question: language === 'pt' ? "Posso usar em múltiplos armazéns?" : "Can I use it in multiple warehouses?",
+      answer: language === 'pt'
+        ? "Sim. O sistema é escalável e suporta múltiplos armazéns, turnos e equipes com relatórios consolidados."
+        : "Yes. The system is scalable and supports multiple warehouses, shifts and teams with consolidated reports.",
     },
     {
-      question: "Qual é o ROI esperado?",
-      answer:
-        "Redução de 30-40% no tempo de picking, redução de 80%+ em erros, e aumento de satisfação do cliente compensam o investimento em 3-6 meses.",
+      question: language === 'pt' ? "Qual é o ROI esperado?" : "What is the expected ROI?",
+      answer: language === 'pt'
+        ? "Redução de 30-40% no tempo de picking, redução de 80%+ em erros, e aumento de satisfação do cliente compensam o investimento em 3-6 meses."
+        : "30-40% reduction in picking time, 80%+ reduction in errors, and increased customer satisfaction offset the investment in 3-6 months.",
     },
     {
-      question: "Como é feita a segurança dos dados?",
-      answer:
-        "Todos os dados são criptografados em trânsito e em repouso, com conformidade LGPD e backup automático.",
+      question: language === 'pt' ? "Como é feita a segurança dos dados?" : "How is data security handled?",
+      answer: language === 'pt'
+        ? "Todos os dados são criptografados em trânsito e em repouso, com conformidade LGPD e backup automático."
+        : "All data is encrypted in transit and at rest, with LGPD compliance and automatic backup.",
     },
   ];
 
@@ -159,26 +187,34 @@ export default function Picking() {
 
       {/* Hero */}
       <Hero
-        title="Picking eficiente para e-commerce: da lista ao envio, sem erros."
-        subtitle="Kadeh Picking otimiza o fluxo de coleta de mercadorias com rotas inteligentes, validação em tempo real e rastreamento completo — reduzindo tempo, erros e aumentando produtividade de entregadores e funcionários de loja."
-        primaryCTA="Solicitar demonstração"
-        secondaryCTA="Ver funcionalidades"
-        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/eXzJUBxluzLPXQIA.png"
-        imageAlt="Picking eficiente com Kadeh"
+        title={language === 'pt' 
+          ? "Picking eficiente para e-commerce: da lista ao envio, sem erros."
+          : "Efficient picking for e-commerce: from list to shipment, error-free."}
+        subtitle={language === 'pt'
+          ? "Kadeh Picking otimiza o fluxo de coleta de mercadorias com rotas inteligentes, validação em tempo real e rastreamento completo — reduzindo tempo, erros e aumentando produtividade de entregadores e funcionários de loja."
+          : "Kadeh Picking optimizes the merchandise collection flow with intelligent routes, real-time validation and complete tracking — reducing time, errors and increasing productivity of delivery personnel and store employees."}
+        primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
+        secondaryCTA={language === 'pt' ? "Ver funcionalidades" : "View Features"}
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/GNSBltnJHqUwvOJv.png"
+        imageAlt={language === 'pt' ? "Picking eficiente com Kadeh" : "Efficient picking with Kadeh"}
       />
 
       {/* Funcionalidades */}
       <FeaturesSection
-        title="Funcionalidades Kadeh Picking"
-        subtitle="Tudo que você precisa para picking rápido, preciso e rastreável."
+        title={language === 'pt' ? "Funcionalidades Kadeh Picking" : "Kadeh Picking Features"}
+        subtitle={language === 'pt' 
+          ? "Tudo que você precisa para picking rápido, preciso e rastreável."
+          : "Everything you need for fast, accurate and trackable picking."}
         features={pickingFeatures}
         columns={3}
       />
 
       {/* Benefícios */}
       <FeaturesSection
-        title="Benefícios Comprovados"
-        subtitle="Resultados mensuráveis para sua operação de e-commerce."
+        title={language === 'pt' ? "Benefícios Comprovados" : "Proven Benefits"}
+        subtitle={language === 'pt'
+          ? "Resultados mensuráveis para sua operação de e-commerce."
+          : "Measurable results for your e-commerce operation."}
         features={benefits}
         columns={3}
       />
@@ -188,10 +224,12 @@ export default function Picking() {
         <div className="container">
           <div className="mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Do pedido ao envio: fluxo otimizado
+              {language === 'pt' ? "Do pedido ao envio: fluxo otimizado" : "From order to shipment: optimized flow"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Cada etapa do picking é otimizada para máxima eficiência e precisão.
+              {language === 'pt'
+                ? "Cada etapa do picking é otimizada para máxima eficiência e precisão."
+                : "Each picking stage is optimized for maximum efficiency and accuracy."}
             </p>
           </div>
 
@@ -219,31 +257,31 @@ export default function Picking() {
       <section className="bg-white py-20 lg:py-32 border-t border-border">
         <div className="container">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-12">
-            Adaptado para diferentes operações
+            {language === 'pt' ? "Adaptado para diferentes operações" : "Adapted for different operations"}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* E-commerce */}
             <div className="p-8 border border-border rounded-md hover:border-primary transition-colors">
               <h3 className="text-xl font-semibold text-foreground mb-4">
-                E-commerce Puro
+                {language === 'pt' ? "E-commerce Puro" : "Pure E-commerce"}
               </h3>
               <ul className="space-y-3 text-muted-foreground text-sm">
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Picking de múltiplos canais (site, marketplace, app)</span>
+                  <span>{language === 'pt' ? "Picking de múltiplos canais (site, marketplace, app)" : "Picking from multiple channels (website, marketplace, app)"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Consolidação de pedidos por transportadora</span>
+                  <span>{language === 'pt' ? "Consolidação de pedidos por transportadora" : "Order consolidation by carrier"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Integração com plataformas de envio</span>
+                  <span>{language === 'pt' ? "Integração com plataformas de envio" : "Integration with shipping platforms"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Rastreamento até entrega</span>
+                  <span>{language === 'pt' ? "Rastreamento até entrega" : "Tracking until delivery"}</span>
                 </li>
               </ul>
             </div>
@@ -251,24 +289,24 @@ export default function Picking() {
             {/* Varejo com Entrega */}
             <div className="p-8 border border-border rounded-md hover:border-primary transition-colors">
               <h3 className="text-xl font-semibold text-foreground mb-4">
-                Varejo com Entrega
+                {language === 'pt' ? "Varejo com Entrega" : "Retail with Delivery"}
               </h3>
               <ul className="space-y-3 text-muted-foreground text-sm">
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Picking de pedidos online em loja física</span>
+                  <span>{language === 'pt' ? "Picking de pedidos online em loja física" : "Picking online orders in physical store"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Retirada em loja (click and collect)</span>
+                  <span>{language === 'pt' ? "Retirada em loja (click and collect)" : "Store pickup (click and collect)"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Entrega por funcionários ou parceiros</span>
+                  <span>{language === 'pt' ? "Entrega por funcionários ou parceiros" : "Delivery by employees or partners"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Gestão de estoque integrada</span>
+                  <span>{language === 'pt' ? "Gestão de estoque integrada" : "Integrated inventory management"}</span>
                 </li>
               </ul>
             </div>
@@ -276,24 +314,24 @@ export default function Picking() {
             {/* Marketplace */}
             <div className="p-8 border border-border rounded-md hover:border-primary transition-colors">
               <h3 className="text-xl font-semibold text-foreground mb-4">
-                Marketplace & Dropshipping
+                {language === 'pt' ? "Marketplace & Dropshipping" : "Marketplace & Dropshipping"}
               </h3>
               <ul className="space-y-3 text-muted-foreground text-sm">
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Picking de múltiplos vendedores</span>
+                  <span>{language === 'pt' ? "Picking de múltiplos vendedores" : "Picking from multiple sellers"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Separação automática por loja/fornecedor</span>
+                  <span>{language === 'pt' ? "Separação automática por loja/fornecedor" : "Automatic separation by store/supplier"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Relatórios por vendedor</span>
+                  <span>{language === 'pt' ? "Relatórios por vendedor" : "Reports by seller"}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
-                  <span>Comissões e pagamentos automatizados</span>
+                  <span>{language === 'pt' ? "Comissões e pagamentos automatizados" : "Automated commissions and payments"}</span>
                 </li>
               </ul>
             </div>
@@ -305,21 +343,21 @@ export default function Picking() {
       <section className="bg-card py-20 lg:py-32 border-t border-border">
         <div className="container">
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-12 text-center">
-            Resultados Mensuráveis
+            {language === 'pt' ? "Resultados Mensuráveis" : "Measurable Results"}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">-40%</div>
-              <p className="text-muted-foreground">Tempo de Picking</p>
+              <p className="text-muted-foreground">{language === 'pt' ? "Tempo de Picking" : "Picking Time"}</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">-80%</div>
-              <p className="text-muted-foreground">Erros de Picking</p>
+              <p className="text-muted-foreground">{language === 'pt' ? "Erros de Picking" : "Picking Errors"}</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">+60%</div>
-              <p className="text-muted-foreground">Produtividade</p>
+              <p className="text-muted-foreground">{language === 'pt' ? "Produtividade" : "Productivity"}</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">3-6m</div>
@@ -332,16 +370,20 @@ export default function Picking() {
       {/* FAQ */}
       <FAQSection
         id="faq"
-        title="Perguntas Frequentes"
+        title={language === 'pt' ? "Perguntas Frequentes" : "Frequently Asked Questions"}
         items={faqItems}
       />
 
       {/* CTA Final */}
       <CTASection
-        title="Transforme seu picking em vantagem competitiva."
-        subtitle="Reduza tempo, elimine erros e aumente satisfação do cliente com Kadeh Picking."
-        primaryCTA="Solicitar demonstração"
-        secondaryCTA="Falar com especialista"
+        title={language === 'pt'
+          ? "Transforme seu picking em vantagem competitiva."
+          : "Transform your picking into a competitive advantage."}
+        subtitle={language === 'pt'
+          ? "Reduza tempo, elimine erros e aumente satisfação do cliente com Kadeh Picking."
+          : "Reduce time, eliminate errors and increase customer satisfaction with Kadeh Picking."}
+        primaryCTA={language === 'pt' ? "Solicitar demonstração" : "Request Demo"}
+        secondaryCTA={language === 'pt' ? "Falar com especialista" : "Talk to Specialist"}
       />
 
       <Footer />

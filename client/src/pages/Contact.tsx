@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,30 @@ export default function Contact() {
     message: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const submitMutation = trpc.contact.submit.useMutation({
+    onSuccess: () => {
+      setSubmitted(true);
+      toast.success("Formulário enviado com sucesso! Entraremos em contato em breve.");
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          type: "",
+          companyName: "",
+          cnpj: "",
+          contactPreference: "",
+          message: "",
+        });
+        setSubmitted(false);
+      }, 3000);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erro ao enviar formulário. Tente novamente.");
+    },
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -98,37 +121,16 @@ export default function Contact() {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      // Simulate form submission
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Here you would typically send the data to your backend
-      console.log("Form data:", formData);
-
-      setSubmitted(true);
-      toast.success("Formulário enviado com sucesso! Entraremos em contato em breve.");
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          phone: "",
-          email: "",
-          type: "",
-          companyName: "",
-          cnpj: "",
-          contactPreference: "",
-          message: "",
-        });
-        setSubmitted(false);
-      }, 3000);
-    } catch (error) {
-      toast.error("Erro ao enviar formulário. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    submitMutation.mutate({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      type: formData.type as "consumer" | "business",
+      companyName: formData.companyName || undefined,
+      cnpj: formData.cnpj || undefined,
+      contactPreference: formData.contactPreference as "whatsapp" | "email" | "phone",
+      message: formData.message || undefined,
+    });
   };
 
   if (submitted) {
@@ -377,10 +379,10 @@ export default function Contact() {
             <div className="flex gap-4">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={submitMutation.isPending}
                 className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 text-lg"
               >
-                {isSubmitting ? "Enviando..." : "Enviar Formulário"}
+                {submitMutation.isPending ? "Enviando..." : "Enviar Formulário"}
               </Button>
             </div>
 
@@ -388,6 +390,42 @@ export default function Contact() {
               * Campos obrigatórios
             </p>
           </form>
+        </div>
+      </section>
+
+      {/* App Download Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-orange-50 to-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-foreground">
+            Baixe o App Kadeh
+          </h2>
+          <p className="text-lg text-muted-foreground mb-12">
+            Acesse a navegação inteligente diretamente do seu smartphone
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <a
+              href="https://apps.apple.com/br/app/kadeh-shopping/id6747453355"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-4 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
+            >
+              <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.05 13.5c-.91 0-1.82.55-2.25 1.51.5.89 1.86 1.99 4.25 1.99 1.5 0 2.89-.6 3.63-1.5-.74-.9-2.23-1.99-3.63-1.99zm-4.3 0c-.91 0-1.82.55-2.25 1.51.5.89 1.86 1.99 4.25 1.99 1.5 0 2.89-.6 3.63-1.5-.74-.9-2.23-1.99-3.63-1.99z"/>
+              </svg>
+              Apple Store
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.br.kadeheventos.lusa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 13.5v8.75c0 .41.34.75.75.75h16.5c.41 0 .75-.34.75-.75V13.5M3.75 3h16.5c.41 0 .75.34.75.75v9h-18v-9c0-.41.34-.75.75-.75z"/>
+              </svg>
+              Google Play
+            </a>
+          </div>
         </div>
       </section>
 

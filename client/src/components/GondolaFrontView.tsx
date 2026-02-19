@@ -1,278 +1,207 @@
-/**
- * GondolaFrontView Component
- * Displays front view of shelf with products distributed across zones
- * Respects gondola width, number of shelves, and shelf depth parameters
- * Zones: Altura dos olhos (top), Altura das mãos (middle), Lugar baixo (bottom)
- */
+import { Badge } from '@/components/ui/badge';
 
 interface Product {
   id: string;
   name: string;
-  giro: "Baixo" | "Médio" | "Alto";
-  margem: "Baixa" | "Média" | "Alta";
-  category: string;
-  subCategory: string;
+  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Lugar baixo' | 'Parte de Baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Eye Level' | 'Hand Level' | 'Bottom Shelf';
+  quadrantes?: number;
   largura?: number;
   comprimento?: number;
-}
-
-interface Recommendation {
-  frentes: number;
-  zone: string;
-  share: number;
-  label: string;
-  color: string;
+  color?: string;
 }
 
 interface GondolaFrontViewProps {
   products: Product[];
-  gondolaWidth: number;
-  shelves: number;
-  shelfDepth: number;
-  getRecommendation: (giro: string, margem: string) => Recommendation;
+  totalWidth?: number;
+  shelfHeight?: number;
+  language?: 'pt' | 'en';
 }
 
-const ZONE_COLORS = {
-  "Altura dos olhos": "bg-green-100 border-green-300",
-  "Altura das mãos": "bg-yellow-100 border-yellow-300",
-  "Lugar baixo": "bg-orange-100 border-orange-300",
-};
-
-const ZONE_LABEL_COLORS = {
-  "Altura dos olhos": "text-green-700",
-  "Altura das mãos": "text-yellow-700",
-  "Lugar baixo": "text-orange-700",
-};
-
-const ZONE_ORDER = {
-  "Altura dos olhos": 0,
-  "Altura das mãos": 1,
-  "Lugar baixo": 2,
+const zoneConfig = {
+  pt: {
+    'Altura dos olhos': { bg: '#FEF3C7', border: '#FBBF24', label: 'Altura dos olhos', textColor: '#92400E' },
+    'Altura das mãos': { bg: '#DBEAFE', border: '#3B82F6', label: 'Altura das mãos', textColor: '#1E40AF' },
+    'Lugar baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Parte de Baixo', textColor: '#15803D' },
+  },
+  en: {
+    'Eye Level': { bg: '#FEF3C7', border: '#FBBF24', label: 'Eye Level', textColor: '#92400E' },
+    'Hand Level': { bg: '#DBEAFE', border: '#3B82F6', label: 'Hand Level', textColor: '#1E40AF' },
+    'Bottom Shelf': { bg: '#DCFCE7', border: '#22C55E', label: 'Bottom Shelf', textColor: '#15803D' },
+  },
 };
 
 export default function GondolaFrontView({
   products,
-  gondolaWidth,
-  shelves,
-  shelfDepth,
-  getRecommendation,
+  totalWidth = 280,
+  shelfHeight = 60,
+  language = 'pt',
 }: GondolaFrontViewProps) {
+  // Map zones to standard names
+  const normalizeZone = (zone: string): string => {
+    if (zone === 'Altura dos olhos' || zone === 'Eye Level') return language === 'pt' ? 'Altura dos olhos' : 'Eye Level';
+    if (zone === 'Altura das mãos' || zone === 'Hand Level') return language === 'pt' ? 'Altura das mãos' : 'Hand Level';
+    if (zone === 'Lugar baixo' || zone === 'Bottom Shelf') return language === 'pt' ? 'Lugar baixo' : 'Bottom Shelf';
+    return zone;
+  };
+
   // Group products by zone
-  const productsByZone: { [key: string]: Product[] } = {
-    "Altura dos olhos": [],
-    "Altura das mãos": [],
-    "Lugar baixo": [],
+  const eyeLevelZone = language === 'pt' ? 'Altura dos olhos' : 'Eye Level';
+  const handLevelZone = language === 'pt' ? 'Altura das mãos' : 'Hand Level';
+  const bottomLevelZone = language === 'pt' ? 'Lugar baixo' : 'Bottom Shelf';
+
+  const productsByZone = {
+    eyeLevel: products.filter(p => {
+      const normalized = normalizeZone(p.zone || "");
+      return normalized === eyeLevelZone;
+    }),
+    handLevel: products.filter(p => {
+      const normalized = normalizeZone(p.zone || "");
+      return normalized === handLevelZone;
+    }),
+    bottomLevel: products.filter(p => {
+      const normalized = normalizeZone(p.zone || "");
+      return normalized === bottomLevelZone;
+    }),
   };
 
-  products.forEach((product) => {
-    const rec = getRecommendation(product.giro, product.margem);
-    if (!productsByZone[rec.zone]) {
-      productsByZone[rec.zone] = [];
-    }
-    productsByZone[rec.zone].push(product);
-  });
+  const config = zoneConfig[language as keyof typeof zoneConfig] || zoneConfig.pt;
 
-  const zones = ["Altura dos olhos", "Altura das mãos", "Lugar baixo"];
+  // Cores padrão para produtos
+  const defaultColors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+    '#6C5CE7', '#A29BFE', '#74B9FF', '#81ECEC', '#55EFC4',
+  ];
 
-  // Calculate shelf height based on number of shelves
-  const SHELF_HEIGHT = 60; // pixels per shelf
-  const SHELF_SPACING = 8; // pixels between shelves
-  const totalGondolaHeight = shelves * SHELF_HEIGHT + (shelves - 1) * SHELF_SPACING;
-
-  // Calculate width per cm for visual representation
-  const PIXELS_PER_CM = (gondolaWidth > 0) ? 2 : 0; // 2 pixels per cm
-  const visualGondolaWidth = gondolaWidth * PIXELS_PER_CM;
-
-  // Determine zone heights based on number of shelves
-  const getZoneShelfIndices = () => {
-    if (shelves === 1) return { "Altura dos olhos": [0], "Altura das mãos": [], "Lugar baixo": [] };
-    if (shelves === 2) return { "Altura dos olhos": [0], "Altura das mãos": [1], "Lugar baixo": [] };
-    if (shelves === 3) return { "Altura dos olhos": [0], "Altura das mãos": [1], "Lugar baixo": [2] };
-    if (shelves === 4) return { "Altura dos olhos": [0, 1], "Altura das mãos": [2], "Lugar baixo": [3] };
-    if (shelves === 5) return { "Altura dos olhos": [0, 1], "Altura das mãos": [2, 3], "Lugar baixo": [4] };
-    // For 6+ shelves
-    const eyeLevel = Math.floor(shelves * 0.4);
-    const handLevel = Math.floor(shelves * 0.4);
-    const lowLevel = shelves - eyeLevel - handLevel;
-    const eyeIndices = Array.from({ length: eyeLevel }, (_, i) => i);
-    const handIndices = Array.from({ length: handLevel }, (_, i) => eyeLevel + i);
-    const lowIndices = Array.from({ length: lowLevel }, (_, i) => eyeLevel + handLevel + i);
-    return { "Altura dos olhos": eyeIndices, "Altura das mãos": handIndices, "Lugar baixo": lowIndices };
+  const getProductColor = (index: number) => {
+    return defaultColors[index % defaultColors.length];
   };
 
-  const zoneShelfIndices = getZoneShelfIndices();
+  const renderShelf = (zoneProducts: Product[], zoneKey: 'eyeLevel' | 'handLevel' | 'bottomLevel', zoneLabel: string) => {
+    const zoneConfig = config[zoneLabel as keyof typeof config] || { bg: '#F3F4F6', border: '#9CA3AF', label: zoneLabel, textColor: '#374151' };
+    
+    return (
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <div
+            className="w-5 h-5 rounded-sm border-2"
+            style={{
+              backgroundColor: (zoneConfig as any).bg,
+              borderColor: (zoneConfig as any).border,
+            }}
+          />
+          <span className="text-sm font-bold" style={{ color: (zoneConfig as any).textColor }}>
+            {(zoneConfig as any).label}
+          </span>
+          <span className="text-xs text-gray-500 ml-auto">
+            ({zoneProducts.length} {language === 'pt' ? 'produtos' : 'products'})
+          </span>
+        </div>
+        
+        <div
+          className="flex border-4 rounded-lg overflow-hidden bg-white shadow-md"
+          style={{
+            borderColor: (zoneConfig as any).border,
+            minHeight: `${shelfHeight + 20}px`,
+          }}
+        >
+          {zoneProducts.length > 0 ? (
+            zoneProducts.map((product, idx) => {
+              const productWidth = Math.max(40, (product.largura || 5) * 2);
+              const backgroundColor = product.color || getProductColor(idx);
+              
+              return (
+                <div
+                  key={product.id}
+                  className="flex flex-col items-center justify-center flex-shrink-0 border-r border-gray-200 last:border-r-0 p-2 text-white font-semibold text-center transition-transform hover:scale-105"
+                  style={{
+                    width: `${productWidth}px`,
+                    minHeight: `${shelfHeight}px`,
+                    backgroundColor: backgroundColor,
+                    opacity: 0.9,
+                  }}
+                  title={`${product.name}${product.quadrantes ? ` - ${product.quadrantes} quadrantes` : ''}${product.largura && product.comprimento ? ` - ${product.largura}×${product.comprimento}cm` : ''}`}
+                >
+                  <span className="text-xs font-bold leading-tight truncate max-w-[90%]">
+                    {product.name.substring(0, 10)}
+                  </span>
+                  {product.quadrantes && (
+                    <span className="text-[10px] leading-tight mt-1">
+                      {product.quadrantes}x
+                    </span>
+                  )}
+                  {product.largura && product.comprimento && (
+                    <span className="text-[9px] leading-tight mt-1 opacity-80">
+                      {product.largura}×{product.comprimento}cm
+                    </span>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="w-full flex items-center justify-center text-gray-400 text-sm">
+              {language === 'pt' ? 'Sem produtos' : 'No products'}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Check if there are any products
+  const hasProducts = products.length > 0;
+
+  if (!hasProducts) {
+    return (
+      <div className="w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <p className="text-gray-500 text-sm">
+          {language === 'pt'
+            ? 'Nenhum produto adicionado à simulação'
+            : 'No products added to the simulation'}
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-card p-6 rounded-md border border-border">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Visualização Frontal da Gôndola</h3>
-      
-      {/* Gondola Specifications */}
-      <div className="mb-6 p-4 bg-muted rounded-md border border-border">
-        <p className="text-xs text-muted-foreground">
-          <strong>Dimensões da Gôndola:</strong> {gondolaWidth}cm (largura) × {shelfDepth}cm (profundidade) × {shelves} prateleira(s)
+    <div className="w-full space-y-6">
+      {/* Title */}
+      <div className="mb-6">
+        <h3 className="text-lg font-bold text-foreground">
+          {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Gondola Visualization - Front View'}
+        </h3>
+        <p className="text-sm text-gray-600 mt-1">
+          {language === 'pt'
+            ? 'Disposição dos produtos por zona de exposição'
+            : 'Product arrangement by exposure zone'}
         </p>
       </div>
 
-      {/* Visual Gondola Representation */}
-      <div className="mb-8 overflow-x-auto">
-        <div className="inline-block" style={{ minWidth: `${Math.max(visualGondolaWidth, 400)}px` }}>
-          {/* Shelves */}
-          <div style={{ width: `${visualGondolaWidth}px`, position: "relative" }}>
-            {Array.from({ length: shelves }).map((_, shelfIndex) => {
-              const shelfTop = shelfIndex * (SHELF_HEIGHT + SHELF_SPACING);
-              
-              // Determine which zone this shelf belongs to
-              let zoneColor = "bg-gray-200";
-              let zoneLabel = "";
-              for (const [zone, indices] of Object.entries(zoneShelfIndices)) {
-                if (indices.includes(shelfIndex)) {
-                  zoneColor = ZONE_COLORS[zone as keyof typeof ZONE_COLORS];
-                  zoneLabel = zone;
-                  break;
-                }
-              }
+      {/* Front View Visualization */}
+      <div className="bg-white border-4 border-gray-300 rounded-lg overflow-hidden shadow-xl p-6 space-y-6">
+        {/* Eye Level Shelf */}
+        {renderShelf(productsByZone.eyeLevel, 'eyeLevel', eyeLevelZone)}
 
-              return (
-                <div
-                  key={shelfIndex}
-                  className={`${zoneColor} border border-border rounded`}
-                  style={{
-                    position: "absolute",
-                    top: `${shelfTop}px`,
-                    left: 0,
-                    width: "100%",
-                    height: `${SHELF_HEIGHT}px`,
-                    display: "flex",
-                    alignItems: "center",
-                    paddingLeft: "8px",
-                    paddingRight: "8px",
-                    overflow: "hidden",
-                  }}
-                >
-                  {/* Products on this shelf */}
-                  <div style={{ display: "flex", gap: "4px", width: "100%", height: "100%" }}>
-                    {products
-                      .filter((product) => {
-                        const rec = getRecommendation(product.giro, product.margem);
-                        return zoneShelfIndices[rec.zone]?.includes(shelfIndex);
-                      })
-                      .map((product, idx) => {
-                        const rec = getRecommendation(product.giro, product.margem);
-                        const productWidth = product.largura || 10;
-                        const visualProductWidth = Math.max(productWidth * PIXELS_PER_CM, 20);
-                        
-                        return (
-                          <div
-                            key={`${product.id}-${shelfIndex}-${idx}`}
-                            className={`${rec.color} border border-current rounded flex items-center justify-center text-xs font-medium text-foreground`}
-                            style={{
-                              width: `${visualProductWidth}px`,
-                              minWidth: `${visualProductWidth}px`,
-                              height: "100%",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              padding: "2px",
-                            }}
-                            title={`${product.name} (${rec.frentes} quadrante(s))`}
-                          >
-                            <span style={{ fontSize: "10px" }}>{rec.frentes}q</span>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{ height: `${totalGondolaHeight}px` }}></div>
+        {/* Hand Level Shelf */}
+        {renderShelf(productsByZone.handLevel, 'handLevel', handLevelZone)}
+
+        {/* Bottom Level Shelf */}
+        {renderShelf(productsByZone.bottomLevel, 'bottomLevel', bottomLevelZone)}
+      </div>
+
+      {/* Summary */}
+      {hasProducts && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-900">
+            <span className="font-semibold">
+              {language === 'pt' ? 'Total de produtos: ' : 'Total products: '}
+            </span>
+            {products.length}
+            {language === 'pt' ? ' produtos distribuídos em ' : ' products distributed across '}
+            {productsByZone.eyeLevel.length > 0 ? 1 : 0 + productsByZone.handLevel.length > 0 ? 1 : 0 + productsByZone.bottomLevel.length > 0 ? 1 : 0}
+            {language === 'pt' ? ' zonas' : ' zones'}
+          </p>
         </div>
-      </div>
-
-      {/* Zone Details */}
-      <div className="space-y-4 mb-6">
-        {zones.map((zone) => {
-          const shelfIndices = zoneShelfIndices[zone as keyof typeof zoneShelfIndices] || [];
-          return (
-            <div key={zone} className="border border-border rounded-md overflow-hidden">
-              {/* Zone Header */}
-              <div className={`${ZONE_COLORS[zone as keyof typeof ZONE_COLORS]} px-4 py-2 border-b border-border`}>
-                <h4 className={`font-semibold text-sm ${ZONE_LABEL_COLORS[zone as keyof typeof ZONE_LABEL_COLORS]}`}>
-                  {zone} (Prateleira(s): {shelfIndices.map(i => i + 1).join(", ")})
-                </h4>
-              </div>
-
-              {/* Products in Zone */}
-              <div className="p-4 bg-white">
-                {productsByZone[zone] && productsByZone[zone].length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {productsByZone[zone].map((product) => {
-                      const rec = getRecommendation(product.giro, product.margem);
-                      const productsPerShelf = product.comprimento && shelfDepth 
-                        ? Math.floor(shelfDepth / product.comprimento) 
-                        : 0;
-                      const totalCapacity = rec.frentes * productsPerShelf * shelfIndices.length;
-                      
-                      return (
-                        <div
-                          key={product.id}
-                          className={`${rec.color} p-3 rounded border-l-4 border-l-current`}
-                        >
-                          <div className="font-medium text-sm text-foreground">{product.name}</div>
-                          <div className="text-xs text-muted-foreground mt-1">
-                            <div>Giro: {product.giro} | Margem: {product.margem}</div>
-                            <div className="text-blue-600 font-medium mt-1">{rec.frentes} quadrante(s)</div>
-                            {product.largura && product.comprimento && (
-                              <div className="text-gray-600 mt-1">
-                                Dimensões: {product.largura}cm × {product.comprimento}cm
-                              </div>
-                            )}
-                            {productsPerShelf > 0 && (
-                              <div className="text-green-600 font-medium mt-1">
-                                Capacidade: {totalCapacity} unid. ({productsPerShelf} por quadrante)
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">Nenhum produto nesta zona</p>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="mt-6 p-4 bg-muted rounded-md border border-border">
-        <h4 className="font-semibold text-sm text-foreground mb-3">Legenda de Zonas:</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-green-100 border border-green-300 rounded mt-0.5"></div>
-            <div className="text-xs">
-              <div className="font-medium text-green-700">Altura dos olhos</div>
-              <div className="text-muted-foreground">Melhor visibilidade</div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded mt-0.5"></div>
-            <div className="text-xs">
-              <div className="font-medium text-yellow-700">Altura das mãos</div>
-              <div className="text-muted-foreground">Acesso fácil</div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded mt-0.5"></div>
-            <div className="text-xs">
-              <div className="font-medium text-orange-700">Lugar baixo</div>
-              <div className="text-muted-foreground">Menor visibilidade</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
