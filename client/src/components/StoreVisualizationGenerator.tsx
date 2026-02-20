@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+import { generateShelfDescription, calculateZonePercentages } from "@/utils/gondolaDistribution";
 
 interface Product {
   id: string;
@@ -74,7 +75,28 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
-    // Organize products by zone
+    // Calculate zone percentages and shelf distribution
+    const zonePercentages = calculateZonePercentages(
+      products.map(p => ({
+        zone: p.zone || "Altura das mãos",
+        share: 1, // Equal weight for all products
+      }))
+    );
+
+    // Generate detailed shelf description
+    const shelfDescription = generateShelfDescription(
+      products.map(p => ({
+        id: p.id,
+        name: p.name,
+        zone: p.zone || "Altura das mãos",
+        share: 1,
+        category: p.category,
+      })),
+      numberOfShelves,
+      language as 'pt' | 'en'
+    );
+
+    // Organize products by zone for additional context
     const productsByZone: Record<string, string[]> = {
       eyes: [],
       hands: [],
@@ -100,13 +122,13 @@ export default function StoreVisualizationGenerator({
     let bottomLevelDesc = "";
 
     if (productsByZone.eyes.length > 0) {
-      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productsByZone.eyes.join(", ")}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility and premium placement.`;
+      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productsByZone.eyes.join(", ")}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility and premium placement. This zone represents ${zonePercentages.eyeLevel.toFixed(1)}% of total shelf space.`;
     }
     if (productsByZone.hands.length > 0) {
-      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productsByZone.hands.join(", ")}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access and frequent purchase.`;
+      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productsByZone.hands.join(", ")}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access and frequent purchase. This zone represents ${zonePercentages.handLevel.toFixed(1)}% of total shelf space.`;
     }
     if (productsByZone.bottom.length > 0) {
-      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Heavy/Bulk Items):**\n${productsByZone.bottom.join(", ")}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high) for bulk items, heavy products, and promotional displays.`;
+      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Heavy/Bulk Items):**\n${productsByZone.bottom.join(", ")}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high) for bulk items, heavy products, and promotional displays. This zone represents ${zonePercentages.bottomLevel.toFixed(1)}% of total shelf space.`;
     }
 
     const zoneDetails = eyeLevelDesc + handLevelDesc + bottomLevelDesc;
@@ -132,24 +154,31 @@ export default function StoreVisualizationGenerator({
 
     const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying products strategically positioned by exposure zones.${zoneDetails}
 
+**Detailed Shelf Distribution:**
+${shelfDescription}
+
 **Shelf Specifications:**
 - Width: ${gondolaWidth}cm
 - Depth: ${shelfDepth}cm
 - Height between shelves: ${shelfHeight}cm
 - Total shelves: ${numberOfShelves}
+- Shelf 1 (Top): Altura dos Olhos (Eye Level) - Premium placement zone
+- Shelves 2-3 (Middle): Altura das Mãos (Hand Level) - Convenient reach zone
+- Shelves 4+ (Bottom): Parte de Baixo (Bottom Shelf) - Bulk and heavy items zone
 
 ${exposureTypeDetail}
 
 **Visual Requirements:**
-- Products at eye level (Altura dos Olhos) are prominently displayed with excellent lighting and visibility
-- Products at hand level (Altura das Mãos) are easily accessible and well-organized
-- Products at bottom shelf (Parte de Baixo) are clearly visible and properly arranged
+- Products at eye level (Altura dos Olhos) are prominently displayed with excellent lighting and visibility - representing ${zonePercentages.eyeLevel.toFixed(1)}% of shelf space
+- Products at hand level (Altura das Mãos) are easily accessible and well-organized - representing ${zonePercentages.handLevel.toFixed(1)}% of shelf space
+- Products at bottom shelf (Parte de Baixo) are clearly visible and properly arranged - representing ${zonePercentages.bottomLevel.toFixed(1)}% of shelf space
 - The display is neatly organized in a modern supermarket setting with professional, warm lighting
 - Clear shelf dividers and zone markers visible
 - Realistic product placement showing actual retail merchandising standards
 - High quality, detailed, professional retail photography style
 - Show how customers would naturally see and interact with the products in a real store environment
-- Each shelf zone should be clearly distinguishable with proper lighting and organization`;
+- Each shelf zone should be clearly distinguishable with proper lighting and organization
+- Product distribution across shelves should match the percentages specified above`;
 
     return prompt;
   };

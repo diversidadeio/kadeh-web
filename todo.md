@@ -109,8 +109,8 @@
 
 - [ ] Mover arquivos de mídia para /home/ubuntu/webdev-static-assets/
 - [ ] Atualizar referências de imagens e vídeos no código com URLs de CDN
-- [ ] Criar matriz de correlação Margem x Giro para determinar zonas de exposição
-- [ ] Implementar lógica de posicionamento automático baseada em Margem e Giro
+- [x] Criar matriz de correlação Margem x Giro para determinar zonas de exposição
+- [x] Implementar lógica de posicionamento automático baseada em Margem e Giro
 - [ ] Integrar posicionamento inteligente no SmartLayoutSimulator
 - [ ] Testar posicionamento em português e inglês
 
@@ -127,9 +127,9 @@
 - [x] Integrar GondolaFrontView no SmartLayoutSimulator
 - [x] Testar visualização em português e inglês
 
-- [ ] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
-- [ ] Corrigir problema de abertura de apresentação
-- [ ] Testar abertura em português e inglês
+- [x] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
+- [x] Corrigir problema de abertura de apresentação (TODAS ESTÃO FUNCIONANDO!)
+- [x] Testar abertura em português e inglês
 
 - [x] Kadeh Ads: Criar schema de banco de dados para anúncios, anunciantes e categorias correlacionadas
 - [x] Kadeh Ads: Implementar modelo de anunciante com aprovação admin
