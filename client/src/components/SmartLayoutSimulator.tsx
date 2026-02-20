@@ -24,6 +24,7 @@ import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExpo
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
+import ProductFormModal, { type ProductFormData } from "@/components/ProductFormModal";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -225,6 +226,7 @@ export default function SmartLayoutSimulator() {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showConfiguracao, setShowConfiguracao] = useState(false);
+  const [showProductFormModal, setShowProductFormModal] = useState(false);
   const [medidasAreaExposicao, setMedidasAreaExposicao] = useState<MedidasAreaExposicao>({
     tipo: 'gondola',
     largura: 280,
@@ -313,6 +315,24 @@ export default function SmartLayoutSimulator() {
       comprimento: category.defaultComprimento,
       promotionalPoints: [],
     };
+    setProducts([...products, newProduct]);
+  };
+
+  const handleAddProductFromForm = (formData: ProductFormData) => {
+    // Convert ProductFormData to Product format
+    const category = CATEGORIES_DATABASE.find(
+      (c) => c.mainCategory === formData.category
+    ) || CATEGORIES_DATABASE[0];
+
+    const newProduct: Product = {
+      id: formData.id,
+      name: formData.name,
+      categoryId: category.id,
+      category: category,
+      largura: formData.width,
+      comprimento: formData.depth,
+    };
+
     setProducts([...products, newProduct]);
   };
 
@@ -456,6 +476,25 @@ export default function SmartLayoutSimulator() {
           </Button>
         </div>
       </div>
+
+      {/* Botão para abrir formulário avançado */}
+      <div className="flex justify-end mb-4">
+        <Button
+          onClick={() => setShowProductFormModal(true)}
+          className="gap-2 bg-blue-600 hover:bg-blue-700"
+        >
+          <Plus className="w-4 h-4" />
+          {language === "pt" ? "Adicionar Produto Avançado" : "Add Advanced Product"}
+        </Button>
+      </div>
+
+      {/* Product Form Modal */}
+      <ProductFormModal
+        isOpen={showProductFormModal}
+        onClose={() => setShowProductFormModal(false)}
+        onAddProduct={handleAddProductFromForm}
+        language={language}
+      />
 
       {/* Product Descriptor */}
       <ProductDescriptor onAddProduct={(product) => {

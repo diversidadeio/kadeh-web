@@ -107,6 +107,9 @@
 - [x] Testar geração de imagem com produtos em diferentes zonas
 - [x] Validar visualização em português e inglês
 
+- [x] Recuperar pop-up de adição de produtos com campos de dimensões (largura, comprimento, altura)
+- [x] Implementar opção de percentual numérico para Margem e Giro
+- [x] Testar ProductFormModal com diferentes combinações de dados
 - [ ] Mover arquivos de mídia para /home/ubuntu/webdev-static-assets/
 - [ ] Atualizar referências de imagens e vídeos no código com URLs de CDN
 - [x] Criar matriz de correlação Margem x Giro para determinar zonas de exposição
