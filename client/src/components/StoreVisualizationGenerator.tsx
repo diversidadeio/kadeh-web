@@ -28,6 +28,7 @@ interface StoreVisualizationGeneratorProps {
   shelfDepth: number;
   exposureType: string;
   selectedZone?: string | null;
+  numberOfShelves?: number;
 }
 
 const TRANSLATIONS = {
@@ -58,6 +59,7 @@ export default function StoreVisualizationGenerator({
   shelfDepth,
   exposureType,
   selectedZone,
+  numberOfShelves = 5,
 }: StoreVisualizationGeneratorProps) {
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
@@ -92,39 +94,62 @@ export default function StoreVisualizationGenerator({
       }
     });
 
-    // Build detailed zone descriptions
-    let zoneDetails = "";
+    // Build detailed zone descriptions with Portuguese and English
+    let eyeLevelDesc = "";
+    let handLevelDesc = "";
+    let bottomLevelDesc = "";
+
     if (productsByZone.eyes.length > 0) {
-      zoneDetails += `\n- Eye level (premium placement): ${productsByZone.eyes.join(", ")}`;
+      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productsByZone.eyes.join(", ")}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility and premium placement.`;
     }
     if (productsByZone.hands.length > 0) {
-      zoneDetails += `\n- Hand level (convenient reach): ${productsByZone.hands.join(", ")}`;
+      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productsByZone.hands.join(", ")}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access and frequent purchase.`;
     }
     if (productsByZone.bottom.length > 0) {
-      zoneDetails += `\n- Bottom shelf (bulk/heavy items): ${productsByZone.bottom.join(", ")}`;
+      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Heavy/Bulk Items):**\n${productsByZone.bottom.join(", ")}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high) for bulk items, heavy products, and promotional displays.`;
     }
+
+    const zoneDetails = eyeLevelDesc + handLevelDesc + bottomLevelDesc;
 
     // Build exposure type description
     let exposureDescription = "a retail shelf";
+    let exposureTypeDetail = "";
     if (exposureType === "terminalGondola") {
-      exposureDescription = "a shelf terminal";
+      exposureDescription = "a shelf terminal (end-cap display)";
+      exposureTypeDetail = "This is a high-traffic end-cap display at the end of an aisle.";
     } else if (exposureType === "freezerVertical") {
       exposureDescription = "a vertical freezer";
+      exposureTypeDetail = "This is a vertical freezer display with multiple shelves.";
     } else if (exposureType === "freezerHorizontal") {
       exposureDescription = "a horizontal freezer";
+      exposureTypeDetail = "This is a horizontal freezer display with top-opening access.";
     } else if (exposureType === "bancaFrutas") {
       exposureDescription = "a fruit and vegetable stand";
+      exposureTypeDetail = "This is a fresh produce display stand with tiered presentation.";
+    } else {
+      exposureTypeDetail = "This is a standard retail shelf display.";
     }
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with products strategically positioned by shelf zone:${zoneDetails}
-    
-The shelf is ${gondolaWidth}cm wide, ${shelfDepth}cm deep, and ${shelfHeight}cm tall between shelves.
-Products at eye level are prominently displayed and well-lit.
-Products at hand level are easily accessible.
-Heavier or bulk items are positioned at the bottom shelf.
-The display is neatly organized in a modern supermarket setting with professional lighting.
-The image should be realistic, professional, and show how customers would see the products in a real store environment.
-High quality, detailed, professional retail photography style with clear shelf zones visible.`;
+    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying products strategically positioned by exposure zones.${zoneDetails}
+
+**Shelf Specifications:**
+- Width: ${gondolaWidth}cm
+- Depth: ${shelfDepth}cm
+- Height between shelves: ${shelfHeight}cm
+- Total shelves: ${numberOfShelves}
+
+${exposureTypeDetail}
+
+**Visual Requirements:**
+- Products at eye level (Altura dos Olhos) are prominently displayed with excellent lighting and visibility
+- Products at hand level (Altura das Mãos) are easily accessible and well-organized
+- Products at bottom shelf (Parte de Baixo) are clearly visible and properly arranged
+- The display is neatly organized in a modern supermarket setting with professional, warm lighting
+- Clear shelf dividers and zone markers visible
+- Realistic product placement showing actual retail merchandising standards
+- High quality, detailed, professional retail photography style
+- Show how customers would naturally see and interact with the products in a real store environment
+- Each shelf zone should be clearly distinguishable with proper lighting and organization`;
 
     return prompt;
   };

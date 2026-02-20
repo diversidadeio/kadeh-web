@@ -101,11 +101,11 @@
 - [x] Testar dashboard em português e inglês
 - [x] Validar cálculos de métricas financeiras
 
-- [ ] Corrigir geração de imagem de IA para incluir zonas de exposição (Altura dos olhos, Altura das mãos, Parte Baixa)
-- [ ] Melhorar prompt de IA para descrever posicionamento de produtos por zona
-- [ ] Implementar organização de produtos por zona no StoreVisualizationGenerator
-- [ ] Testar geração de imagem com produtos em diferentes zonas
-- [ ] Validar visualização em português e inglês
+- [x] Corrigir geração de imagem de IA para incluir zonas de exposição (Altura dos olhos, Altura das mãos, Parte Baixa)
+- [x] Melhorar prompt de IA para descrever posicionamento de produtos por zona
+- [x] Implementar organização de produtos por zona no StoreVisualizationGenerator
+- [x] Testar geração de imagem com produtos em diferentes zonas
+- [x] Validar visualização em português e inglês
 
 - [ ] Mover arquivos de mídia para /home/ubuntu/webdev-static-assets/
 - [ ] Atualizar referências de imagens e vídeos no código com URLs de CDN

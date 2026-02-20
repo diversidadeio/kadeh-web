@@ -316,6 +316,13 @@ export default function SmartLayoutSimulator() {
     setProducts([...products, newProduct]);
   };
 
+  // Helper function to convert margin/giro strings to ABC curves
+  const convertToABCCurves = (margin: string, giro: string) => {
+    const curvaLucratividade = margin === "Alta" ? "A" : margin === "Média" ? "B" : "C";
+    const curvaFaturamento = giro === "Alto" ? "A" : giro === "Médio" ? "B" : "C";
+    return { curvaLucratividade, curvaFaturamento };
+  };
+
   const removeProduct = (id: string) => {
     setProducts(products.filter((p) => p.id !== id));
   };
@@ -453,6 +460,7 @@ export default function SmartLayoutSimulator() {
       {/* Product Descriptor */}
       <ProductDescriptor onAddProduct={(product) => {
         const matchingCategory = CATEGORIES_DATABASE.find(c => c.name === product.name);
+        const { curvaLucratividade, curvaFaturamento } = convertToABCCurves(product.margin, product.velocity);
         const newProduct: Product = {
           id: `desc_${Date.now()}`,
           name: product.name,
@@ -463,8 +471,8 @@ export default function SmartLayoutSimulator() {
             type: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
             mainCategory: product.category === "Alimentar" ? "Alimentar" : "Não-Alimentar",
             papelEstrategico: product.velocity === "Alto" ? "Destaque" : "Complementar",
-            curvaFaturamento: product.velocity === "Alto" ? "A" : product.velocity === "Médio" ? "B" : "C",
-            curvaLucratividade: product.margin === "Alta" ? "A" : product.margin === "Média" ? "B" : "C",
+            curvaFaturamento: curvaFaturamento,
+            curvaLucratividade: curvaLucratividade,
             defaultLargura: 10,
             defaultComprimento: 5,
             defaultGiro: product.velocity,
@@ -675,6 +683,7 @@ export default function SmartLayoutSimulator() {
         shelfDepth={shelfDepth}
         exposureType={medidasAreaExposicao.tipo}
         selectedZone={selectedZone}
+        numberOfShelves={shelves}
       />
 
       {/* Financial Impact Dashboard */}
