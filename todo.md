@@ -177,3 +177,9 @@
 - [x] Gerar imagem realista de picking/warehouse por IA para página Picking
 
 - [x] Implementar tradução para inglês na página Kadeh Ads
+
+- [ ] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
+- [ ] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
+- [ ] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
+- [ ] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
+- [ ] CRÍTICA: Validar em português e inglês

@@ -18,7 +18,9 @@ import { generateRecommendation, getRecommendationExplanation } from "@/data/rec
 import GondolaVisualization from "@/components/GondolaVisualization";
 import GondolaFrontView from "@/components/GondolaFrontView";
 import GondolaVisualizationWithShelves from "@/components/GondolaVisualizationWithShelves";
+import GondolaShelvesVisualization from "@/components/GondolaShelvesVisualization";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
+import { type ProductForDistribution } from "@/utils/shelfDistributor";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
@@ -706,18 +708,16 @@ export default function SmartLayoutSimulator() {
           <h3 className="text-lg font-semibold text-foreground mb-4">
             {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
           </h3>
-          <GondolaVisualizationWithShelves
+          <GondolaShelvesVisualization
             products={filteredProductsByZone.map((p: any) => ({
               id: p.id,
               name: p.name,
-              width: p.largura || 10,
-              percentage: p.share || 0,
-              zone: p.zona,
-              quadrantes: p.quadrantes,
-            }))}
-            totalWidth={gondolaWidth}
+              largura: p.largura || 10,
+              comprimento: p.comprimento || 5,
+              zone: getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade).zone,
+            })) as ProductForDistribution[]}
+            gondolaWidth={gondolaWidth}
             numberOfShelves={shelves}
-            shelfHeight={shelfHeight}
             language={language}
           />
         </div>
