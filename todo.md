@@ -178,6 +178,12 @@
 
 - [x] Implementar tradução para inglês na página Kadeh Ads
 
+- [x] Corrigir bug de carregamento de simulações no Smart Layout Simulator
+- [x] Implementar localStorage para persistência de simulações
+- [x] Adicionar funções de salvar, restaurar e deletar simulações
+- [x] Criar testes vitest para validar save/load de simulações
+- [x] Testar carregamento de simulações em português e inglês
+
 - [ ] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
 - [ ] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
 - [ ] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos

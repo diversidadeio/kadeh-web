@@ -237,6 +237,27 @@ export default function SmartLayoutSimulator() {
     alturaEntrePrateleiras: 60,
   });
 
+  // Load simulations from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('kadeh_simulations');
+      if (saved) {
+        setSimulations(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.error('Error loading simulations:', error);
+    }
+  }, []);
+
+  // Save simulations to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('kadeh_simulations', JSON.stringify(simulations));
+    } catch (error) {
+      console.error('Error saving simulations:', error);
+    }
+  }, [simulations]);
+
   // Get available subcategories based on selected main category
   const availableSubCategories = useMemo(() => {
     if (selectedMainCategory === "Todas") {
@@ -265,6 +286,91 @@ export default function SmartLayoutSimulator() {
     setSelectedMainCategory("Todas");
     setSelectedSubCategory("Todas");
     setSelectedZone(null);
+  };
+
+  // Calculate total margin and revenue for a simulation
+  const calculateSimulationMetrics = (prods: Product[]) => {
+    let totalMargin = 0;
+    let totalRevenue = 0;
+    prods.forEach((prod) => {
+      const margin = prod.category.curvaLucratividade === 'A' ? 60 : prod.category.curvaLucratividade === 'B' ? 35 : 15;
+      const velocity = prod.category.curvaFaturamento === 'A' ? 100 : prod.category.curvaFaturamento === 'B' ? 50 : 20;
+      totalMargin += margin * velocity;
+      totalRevenue += velocity * 100;
+    });
+    return { totalMargin, totalRevenue };
+  };
+
+  // Save current simulation
+  const handleSaveSimulation = () => {
+    if (!simulationName.trim()) {
+      alert(language === 'pt' ? 'Por favor, digite um nome para a simulação' : 'Please enter a simulation name');
+      return;
+    }
+
+    const { totalMargin, totalRevenue } = calculateSimulationMetrics(products);
+    const newSimulation: Simulation = {
+      id: `sim_${Date.now()}`,
+      name: simulationName,
+      timestamp: Date.now(),
+      gondolaWidth,
+      shelves,
+      shelfDepth,
+      shelfHeight,
+      products: products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        categoryId: p.categoryId,
+        largura: p.largura,
+        comprimento: p.comprimento,
+      })),
+      totalUsedSpace: calculateTotalUsedSpace(),
+      spacePercentage: (calculateTotalUsedSpace() / gondolaWidth) * 100,
+      totalMargin,
+      totalRevenue,
+    };
+
+    setSimulations([...simulations, newSimulation]);
+    setSimulationName('');
+    alert(language === 'pt' ? 'Simulação salva com sucesso!' : 'Simulation saved successfully!');
+  };
+
+  // Restore a simulation
+  const handleRestoreSimulation = (simulation: Simulation) => {
+    setGondolaWidth(simulation.gondolaWidth);
+    setShelves(simulation.shelves);
+    setShelfDepth(simulation.shelfDepth);
+    setShelfHeight(simulation.shelfHeight);
+
+    // Reconstruct products from simulation
+    const restoredProducts = simulation.products.map((p) => {
+      const category = CATEGORIES_DATABASE.find((c) => c.id === p.categoryId) || CATEGORIES_DATABASE[0];
+      return {
+        id: p.id,
+        name: p.name,
+        categoryId: p.categoryId,
+        category,
+        largura: p.largura,
+        comprimento: p.comprimento,
+        promotionalPoints: [],
+      };
+    });
+
+    setProducts(restoredProducts);
+    alert(language === 'pt' ? 'Simulação restaurada com sucesso!' : 'Simulation restored successfully!');
+  };
+
+  // Delete a simulation
+  const handleDeleteSimulation = (id: string) => {
+    if (confirm(language === 'pt' ? 'Tem certeza que deseja deletar esta simulação?' : 'Are you sure you want to delete this simulation?')) {
+      setSimulations(simulations.filter((s) => s.id !== id));
+    }
+  };
+
+  // Compare simulations
+  const handleCompareSimulations = (ids: string[]) => {
+    // This can be extended to show a comparison view
+    console.log('Comparing simulations:', ids);
   };
 
   const filteredProductsByZone = useMemo(() => {
@@ -744,6 +850,40 @@ export default function SmartLayoutSimulator() {
           shelfDepth={shelfDepth}
         />
       </div>
+
+      {/* Save Simulation Section */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <h3 className="text-lg font-semibold text-foreground mb-4">{t.saveSimulation}</h3>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={simulationName}
+              onChange={(e) => setSimulationName(e.target.value)}
+              placeholder={t.simulationName}
+              className="flex-1 px-3 py-2 border border-border rounded-md bg-background text-foreground"
+              onKeyPress={(e) => e.key === 'Enter' && handleSaveSimulation()}
+            />
+            <Button
+              onClick={handleSaveSimulation}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            >
+              <Save className="w-4 h-4" />
+              {t.saveSimulation}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Simulation History */}
+      {simulations.length > 0 && (
+        <SimulationHistory
+          simulations={simulations}
+          onRestore={handleRestoreSimulation}
+          onDelete={handleDeleteSimulation}
+          onCompare={handleCompareSimulations}
+        />
+      )}
 
       {/* Data Sources */}
       <div className="bg-card p-6 rounded-md border border-border">
