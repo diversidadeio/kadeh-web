@@ -159,8 +159,72 @@ export const previewAdPosition = protectedProcedure
 
 /**
  * Procedimento para criar Payment Intent do Stripe
+ * TODO: Configurar Stripe API key via webdev_request_secrets
  */
-export const createPaymentIntent = protectedProcedure
+// export const createPaymentIntent = protectedProcedure
+//   .input(
+//     z.object({
+//       advertisementId: z.number().min(1),
+//       amount: z.number().min(0.01),
+//       currency: z.string().default("BRL"),
+//     })
+//   )
+//   .mutation(async ({ input, ctx }) => {
+//     try {
+//       const db = await getDb();
+//       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+//
+//       // Verificar se o anúncio pertence ao usuário
+//       const ad = await db
+//         .select()
+//         .from(advertisements)
+//         .innerJoin(advertisers, eq(advertisements.advertiserId, advertisers.id))
+//         .where(
+//           and(
+//             eq(advertisements.id, input.advertisementId),
+//             eq(advertisers.userId, ctx.user!.id)
+//           )
+//         )
+//         .limit(1);
+//
+//       if (ad.length === 0) {
+//         throw new TRPCError({ code: "FORBIDDEN", message: "Advertisement not found or unauthorized" });
+//       }
+//
+//       // Criar Payment Intent no Stripe
+//       // const paymentIntent = await stripe.paymentIntents.create({
+//       //   amount: Math.round(input.amount * 100), // Converter para centavos
+//       //   currency: input.currency.toLowerCase(),
+//       //   metadata: {
+//       //     advertisementId: input.advertisementId.toString(),
+//       //     userId: ctx.user!.id.toString(),
+//       //   },
+//       // });
+//
+//       // Atualizar anúncio com Payment Intent ID
+//       // await db
+//       //   .update(advertisements)
+//       //   .set({
+//       //     paymentIntentId: paymentIntent.id,
+//       //     status: "pending_payment",
+//       //   })
+//       //   .where(eq(advertisements.id, input.advertisementId));
+//
+//       // return {
+//       //   success: true,
+//       //   clientSecret: paymentIntent.client_secret,
+//       //   paymentIntentId: paymentIntent.id,
+//       // };
+//     } catch (error) {
+//       console.error("Error creating payment intent:", error);
+//       throw new TRPCError({
+//         code: "INTERNAL_SERVER_ERROR",
+//         message: "Failed to create payment intent",
+//       });
+//     }
+//   });
+
+const createPaymentIntent = protectedProcedure
   .input(
     z.object({
       advertisementId: z.number().min(1),
@@ -168,118 +232,85 @@ export const createPaymentIntent = protectedProcedure
       currency: z.string().default("BRL"),
     })
   )
-  .mutation(async ({ input, ctx }) => {
-    try {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
-      // Verificar se o anúncio pertence ao usuário
-      const ad = await db
-        .select()
-        .from(advertisements)
-        .innerJoin(advertisers, eq(advertisements.advertiserId, advertisers.id))
-        .where(
-          and(
-            eq(advertisements.id, input.advertisementId),
-            eq(advertisers.userId, ctx.user!.id)
-          )
-        )
-        .limit(1);
-
-      if (ad.length === 0) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Advertisement not found or unauthorized" });
-      }
-
-      // Criar Payment Intent no Stripe
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(input.amount * 100), // Converter para centavos
-        currency: input.currency.toLowerCase(),
-        metadata: {
-          advertisementId: input.advertisementId.toString(),
-          userId: ctx.user!.id.toString(),
-        },
-      });
-
-      // Atualizar anúncio com Payment Intent ID
-      await db
-        .update(advertisements)
-        .set({
-          paymentIntentId: paymentIntent.id,
-          status: "pending_payment",
-        })
-        .where(eq(advertisements.id, input.advertisementId));
-
-      return {
-        success: true,
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
-      };
-    } catch (error) {
-      console.error("Error creating payment intent:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to create payment intent",
-      });
-    }
+  .mutation(async () => {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Stripe not configured. Please contact support.",
+    });
   });
 
 /**
  * Procedimento para confirmar pagamento e gerar recibo
+ * TODO: Configurar Stripe API key via webdev_request_secrets
  */
-export const confirmPayment = protectedProcedure
+// export const confirmPayment = protectedProcedure
+//   .input(
+//     z.object({
+//       paymentIntentId: z.string().min(1),
+//       advertisementId: z.number().min(1),
+//     })
+//   )
+//   .mutation(async ({ input, ctx }) => {
+//     try {
+//       const db = await getDb();
+//       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+//
+//       // Verificar status do Payment Intent no Stripe
+//       // const paymentIntent = await stripe.paymentIntents.retrieve(input.paymentIntentId);
+//
+//       if (paymentIntent.status !== "succeeded") {
+//         throw new TRPCError({ code: "BAD_REQUEST", message: "Payment not completed" });
+//       }
+//
+//       // Atualizar status do anúncio para ativo
+//       const now = new Date();
+//       await db
+//         .update(advertisements)
+//         .set({
+//           status: "active",
+//           startDate: now,
+//           totalCost: (paymentIntent.amount / 100).toString(),
+//         })
+//         .where(eq(advertisements.id, input.advertisementId));
+//
+//       // Registrar pagamento
+//       const invoiceNumber = `INV-${Date.now()}-${input.advertisementId}`;
+//       await db.insert(adPayments).values({
+//         advertisementId: input.advertisementId,
+//         stripePaymentIntentId: input.paymentIntentId,
+//         amount: (paymentIntent.amount / 100).toString(),
+//         currency: paymentIntent.currency.toUpperCase(),
+//         status: "succeeded",
+//         invoiceNumber,
+//         paidAt: new Date(),
+//       });
+//
+//       return {
+//         success: true,
+//         invoiceNumber,
+//         message: "Pagamento confirmado! Seu anúncio está ativo.",
+//       };
+//     } catch (error) {
+//       console.error("Error confirming payment:", error);
+//       throw new TRPCError({
+//         code: "INTERNAL_SERVER_ERROR",
+//         message: "Failed to confirm payment",
+//       });
+//     }
+//   });
+
+const confirmPayment = protectedProcedure
   .input(
     z.object({
       paymentIntentId: z.string().min(1),
       advertisementId: z.number().min(1),
     })
   )
-  .mutation(async ({ input, ctx }) => {
-    try {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
-      // Verificar status do Payment Intent no Stripe
-      const paymentIntent = await stripe.paymentIntents.retrieve(input.paymentIntentId);
-
-      if (paymentIntent.status !== "succeeded") {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Payment not completed" });
-      }
-
-      // Atualizar status do anúncio para ativo
-      const now = new Date();
-      await db
-        .update(advertisements)
-        .set({
-          status: "active",
-          startDate: now,
-          totalCost: (paymentIntent.amount / 100).toString(),
-        })
-        .where(eq(advertisements.id, input.advertisementId));
-
-      // Registrar pagamento
-      const invoiceNumber = `INV-${Date.now()}-${input.advertisementId}`;
-      await db.insert(adPayments).values({
-        advertisementId: input.advertisementId,
-        stripePaymentIntentId: input.paymentIntentId,
-        amount: (paymentIntent.amount / 100).toString(),
-        currency: paymentIntent.currency.toUpperCase(),
-        status: "succeeded",
-        invoiceNumber,
-        paidAt: new Date(),
-      });
-
-      return {
-        success: true,
-        invoiceNumber,
-        message: "Pagamento confirmado! Seu anúncio está ativo.",
-      };
-    } catch (error) {
-      console.error("Error confirming payment:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to confirm payment",
-      });
-    }
+  .mutation(async () => {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Stripe not configured. Please contact support.",
+    });
   });
 
 /**
@@ -432,8 +463,8 @@ export const requestAdPause = protectedProcedure
 export const adsRouter = router({
   suggestCorrelatedCategories,
   previewAdPosition,
-  createPaymentIntent,
-  confirmPayment,
+  // createPaymentIntent, // TODO: Enable after Stripe configuration
+  // confirmPayment, // TODO: Enable after Stripe configuration
   getAdAnalytics,
   requestAdPause,
 });
