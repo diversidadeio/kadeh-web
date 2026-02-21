@@ -309,6 +309,7 @@ export default function SmartLayoutSimulator() {
     }
 
     const { totalMargin, totalRevenue } = calculateSimulationMetrics(products);
+    const totalUsedSpace = calculateTotalUsedSpace();
     const newSimulation: Simulation = {
       id: `sim_${Date.now()}`,
       name: simulationName,
@@ -324,8 +325,8 @@ export default function SmartLayoutSimulator() {
         largura: p.largura,
         comprimento: p.comprimento,
       })),
-      totalUsedSpace: calculateTotalUsedSpace(),
-      spacePercentage: (calculateTotalUsedSpace() / gondolaWidth) * 100,
+      totalUsedSpace,
+      spacePercentage: (totalUsedSpace / gondolaWidth) * 100,
       totalMargin,
       totalRevenue,
     };
@@ -350,8 +351,8 @@ export default function SmartLayoutSimulator() {
         name: p.name,
         categoryId: p.categoryId,
         category,
-        largura: p.largura,
-        comprimento: p.comprimento,
+        largura: p.largura || category.defaultLargura || 10,
+        comprimento: p.comprimento || category.defaultComprimento || 10,
         promotionalPoints: [],
       };
     });

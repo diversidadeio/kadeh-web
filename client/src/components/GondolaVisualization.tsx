@@ -38,6 +38,17 @@ const TRANSLATIONS = {
     spaceExceeded: "Espaço excedido! Reduza produtos ou aumente a gôndola.",
     shelfVisualization: "Visualização da Gôndola",
     percentage: "%",
+    productDetails: "Detalhamento dos Produtos",
+    product: "Produto",
+    quadrants: "Quadrantes",
+    space: "Espaço",
+    percentage2: "% Gôndola",
+    zone: "Zona",
+    zoneSummary: "Resumo de Zonas",
+    eyeLevel: "Altura dos olhos",
+    handLevel: "Altura das mãos",
+    lowLevel: "Lugar baixo",
+    products: "produtos",
   },
   en: {
     totalSpace: "Total space",
@@ -45,6 +56,17 @@ const TRANSLATIONS = {
     spaceExceeded: "Space exceeded! Reduce products or increase shelf.",
     shelfVisualization: "Shelf Visualization",
     percentage: "%",
+    productDetails: "Product Details",
+    product: "Product",
+    quadrants: "Quadrants",
+    space: "Space",
+    percentage2: "% Shelf",
+    zone: "Zone",
+    zoneSummary: "Zone Summary",
+    eyeLevel: "Eye Level",
+    handLevel: "Hand Level",
+    lowLevel: "Low Level",
+    products: "products",
   },
 };
 
@@ -97,6 +119,15 @@ export default function GondolaVisualization({
     });
   }, [products, gondolaWidth, getRecommendation, colorMap]);
 
+  // Calculate zone summary
+  const zoneSummary = useMemo(() => {
+    const summary: Record<string, number> = {};
+    productAllocations.forEach((alloc) => {
+      summary[alloc.zone] = (summary[alloc.zone] || 0) + 1;
+    });
+    return summary;
+  }, [productAllocations]);
+
   const totalUsedSpace = useMemo(() => {
     return productAllocations.reduce((sum, alloc) => sum + alloc.displayWidth, 0);
   }, [productAllocations]);
@@ -138,7 +169,7 @@ export default function GondolaVisualization({
               key={alloc.id}
               style={{ width: `${alloc.width}%` }}
               className={`${alloc.color} flex flex-col items-center justify-center text-xs font-bold text-white relative group cursor-pointer transition-opacity hover:opacity-80`}
-              title={`${alloc.name}: ${alloc.share} - ${alloc.quadrantes} quadrantes`}
+              title={`${alloc.name}: ${alloc.share} - ${alloc.quadrantes} quadrantes - ${alloc.zone}`}
             >
               {/* Product name and percentage - shown if space allows */}
               {alloc.displayWidth > 5 && (
@@ -163,21 +194,43 @@ export default function GondolaVisualization({
         </div>
       </div>
 
+      {/* Zone Summary */}
+      {Object.keys(zoneSummary).length > 0 && (
+        <div className="mb-6 p-4 bg-muted rounded-md border border-border">
+          <h4 className="text-sm font-semibold text-foreground mb-3">{t.zoneSummary}</h4>
+          <div className="grid grid-cols-3 gap-3">
+            {["Altura dos olhos", "Altura das mãos", "Lugar baixo"].map((zone) => (
+              <div key={zone} className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded ${colorMap[zone] || "bg-gray-400"}`}></div>
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    {zone === "Altura dos olhos" ? t.eyeLevel : zone === "Altura das mãos" ? t.handLevel : t.lowLevel}
+                  </p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {zoneSummary[zone] || 0} {t.products}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Product Details Table */}
       {products.length > 0 && (
         <div className="mt-6">
           <h4 className="text-sm font-semibold text-foreground mb-3">
-            Detalhamento dos Produtos ({products.length})
+            {t.productDetails} ({products.length})
           </h4>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border bg-muted">
-                  <th className="text-left py-2 px-2">Produto</th>
-                  <th className="text-center py-2 px-2">Quadrantes</th>
-                  <th className="text-center py-2 px-2">Espaço</th>
-                  <th className="text-center py-2 px-2">% Gôndola</th>
-                  <th className="text-center py-2 px-2">Zona</th>
+                  <th className="text-left py-2 px-2">{t.product}</th>
+                  <th className="text-center py-2 px-2">{t.quadrants}</th>
+                  <th className="text-center py-2 px-2">{t.space}</th>
+                  <th className="text-center py-2 px-2">{t.percentage2}</th>
+                  <th className="text-center py-2 px-2">{t.zone}</th>
                 </tr>
               </thead>
               <tbody>
@@ -197,7 +250,7 @@ export default function GondolaVisualization({
                       <span
                         className={`px-2 py-1 rounded text-xs font-semibold text-white ${alloc.color}`}
                       >
-                        {alloc.zone}
+                        {alloc.zone === "Altura dos olhos" ? t.eyeLevel : alloc.zone === "Altura das mãos" ? t.handLevel : t.lowLevel}
                       </span>
                     </td>
                   </tr>

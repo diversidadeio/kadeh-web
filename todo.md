@@ -183,6 +183,10 @@
 - [x] Adicionar funções de salvar, restaurar e deletar simulações
 - [x] Criar testes vitest para validar save/load de simulações
 - [x] Testar carregamento de simulações em português e inglês
+- [x] Corrigir restauração de simulações com largura/comprimento padrão
+- [x] Adicionar resumo visual de zonas (Altura dos olhos, Mãos, Lugar baixo)
+- [x] Implementar suporte multilíngue completo no GondolaVisualization
+- [x] Testar visualização de zonas em português e inglês
 
 - [ ] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
 - [ ] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
