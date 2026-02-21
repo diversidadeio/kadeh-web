@@ -17,6 +17,7 @@ import SimulationHistory, { type Simulation } from "@/components/SimulationHisto
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
 import GondolaVisualization from "@/components/GondolaVisualization";
 import GondolaFrontView from "@/components/GondolaFrontView";
+import GondolaVisualizationWithShelves from "@/components/GondolaVisualizationWithShelves";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
@@ -705,9 +706,17 @@ export default function SmartLayoutSimulator() {
           <h3 className="text-lg font-semibold text-foreground mb-4">
             {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
           </h3>
-          <GondolaFrontView
-            products={filteredProductsByZone as any}
+          <GondolaVisualizationWithShelves
+            products={filteredProductsByZone.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              width: p.largura || 10,
+              percentage: p.share || 0,
+              zone: p.zona,
+              quadrantes: p.quadrantes,
+            }))}
             totalWidth={gondolaWidth}
+            numberOfShelves={shelves}
             shelfHeight={shelfHeight}
             language={language}
           />

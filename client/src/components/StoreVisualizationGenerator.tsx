@@ -152,19 +152,37 @@ export default function StoreVisualizationGenerator({
       exposureTypeDetail = "This is a standard retail shelf display.";
     }
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying products strategically positioned by exposure zones.${zoneDetails}
+    // Calculate number of fronts per shelf
+    const productsPerZone = {
+      eyes: productsByZone.eyes.length,
+      hands: productsByZone.hands.length,
+      bottom: productsByZone.bottom.length,
+    };
+    
+    const frontsPerShelf = Math.ceil(products.length / numberOfShelves);
+    const shelfDistribution = [
+      `Shelf 1 (Top - Eye Level): ${Math.ceil(productsPerZone.eyes / 1)} fronts`,
+      `Shelves 2-3 (Middle - Hand Level): ${Math.ceil(productsPerZone.hands / 2)} fronts each`,
+      `Shelves 4+ (Bottom): ${Math.ceil(productsPerZone.bottom / (numberOfShelves - 3))} fronts each`,
+    ].join('\n');
+
+    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying products strategically positioned by exposure zones. Total of ${products.length} products distributed across ${frontsPerShelf} average fronts per shelf.${zoneDetails}
 
 **Detailed Shelf Distribution:**
 ${shelfDescription}
+
+**Product Front Distribution:**
+${shelfDistribution}
 
 **Shelf Specifications:**
 - Width: ${gondolaWidth}cm
 - Depth: ${shelfDepth}cm
 - Height between shelves: ${shelfHeight}cm
 - Total shelves: ${numberOfShelves}
-- Shelf 1 (Top): Altura dos Olhos (Eye Level) - Premium placement zone
-- Shelves 2-3 (Middle): Altura das Mãos (Hand Level) - Convenient reach zone
-- Shelves 4+ (Bottom): Parte de Baixo (Bottom Shelf) - Bulk and heavy items zone
+- Average fronts per shelf: ${frontsPerShelf}
+- Shelf 1 (Top): Altura dos Olhos (Eye Level) - Premium placement zone - ${productsPerZone.eyes} product fronts
+- Shelves 2-3 (Middle): Altura das Mãos (Hand Level) - Convenient reach zone - ${productsPerZone.hands} product fronts
+- Shelves 4+ (Bottom): Parte de Baixo (Bottom Shelf) - Bulk and heavy items zone - ${productsPerZone.bottom} product fronts
 
 ${exposureTypeDetail}
 

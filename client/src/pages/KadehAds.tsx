@@ -2,9 +2,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AdminAdsPanel } from "@/components/AdminAdsPanel";
-import { AdvertiserRegistration } from "@/components/AdvertiserRegistration";
-import { CreateAdvertisement } from "@/components/CreateAdvertisement";
+// import { AdminAdsPanel } from "@/components/AdminAdsPanel";
+// import { AdvertiserRegistration } from "@/components/AdvertiserRegistration";
+// import { CreateAdvertisement } from "@/components/CreateAdvertisement";
 import { AlertCircle, BarChart3, DollarSign, Zap } from "lucide-react";
 
 export default function KadehAds() {
@@ -77,7 +77,14 @@ export default function KadehAds() {
             </p>
           </div>
 
-          <AdminAdsPanel />
+          <Card>
+            <CardHeader>
+              <CardTitle>Painel Administrativo</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -102,7 +109,14 @@ export default function KadehAds() {
           </TabsList>
 
           <TabsContent value="registration" className="space-y-4">
-            <AdvertiserRegistration />
+            <Card>
+              <CardHeader>
+                <CardTitle>Cadastro de Anunciante</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="create" className="space-y-4">
@@ -114,7 +128,7 @@ export default function KadehAds() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <CreateAdvertisement />
+                <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
               </CardContent>
             </Card>
           </TabsContent>

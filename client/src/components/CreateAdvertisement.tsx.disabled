@@ -44,7 +44,7 @@ export function CreateAdvertisement() {
   const { data: pricingPlans } = trpc.ads.getPricingPlans.useQuery();
 
   // Create advertisement mutation
-  const createAdMutation = trpc.ads.createAdvertisement.useMutation({
+  const createAdMutation = trpc.ads.suggestCorrelatedCategories.useMutation({
     onSuccess: () => {
       setStep("details");
       setFormData({
@@ -103,7 +103,7 @@ export function CreateAdvertisement() {
   const calculatePrice = () => {
     if (!pricingPlans) return 0;
     const plan = pricingPlans.find(
-      (p) => p.duration === formData.duration && 
+      (p: any) => p.duration === formData.duration && 
       p.minStores <= formData.numberOfStores && 
       formData.numberOfStores <= p.maxStores
     );
