@@ -239,3 +239,9 @@
 - [x] Corrigir erro Chart.js "doughnut is not a registered controller"
   - [x] Adicionar DoughnutController ao registro
   - [x] Testar se o gráfico renderiza corretamente
+
+- [x] Corrigir visualização de gôndola com prateleira 5 vazia
+  - [x] Investigar por que prateleira 5 ficava vazia
+  - [x] Corrigir lógica de getShelvesForZone() para garantir 100% ocupação
+  - [x] Usar Math.ceil() em vez de Math.round() para arredondamento
+  - [x] Testar com 5 prateleiras (2-2-1 distribuição)
