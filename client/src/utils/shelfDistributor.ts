@@ -1,7 +1,13 @@
 /**
  * Shelf Distributor Utility
- * Distributes products across shelves respecting zones, widths, and shelf count
- * Fills 100% of each shelf by repeating product fronts proportionally to their share
+ * 
+ * PRIMARY RULE: ALL shelves MUST be 100% occupied at all times
+ * SECONDARY RULE: Apply zone distribution (30-40-30) while maintaining 100% occupancy
+ * 
+ * Algorithm:
+ * 1. ALWAYS fill 100% of each shelf with products (repetition if needed)
+ * 2. Distribute products across zones respecting 30-40-30 percentual rule
+ * 3. Each shelf in a zone gets the same product mix (same layout)
  */
 
 export interface ProductForDistribution {
@@ -121,19 +127,18 @@ function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos
 }
 
 /**
- * Distributes products across shelves filling 100% of each shelf by repeating fronts.
- *
+ * Distributes products across shelves with PRIMARY RULE: 100% occupancy always
+ * 
  * Algorithm:
  * 1. Group products by zone
- * 2. For each zone, normalize shares to sum to 100% within that zone
- * 3. Allocate space proportionally: allocatedWidth = (normalizedShare / 100) * gondolaWidth
- * 4. Calculate fronts: fronts = Math.max(1, Math.floor(allocatedWidth / product.largura))
- * 5. Adjust last product to fill remaining space (100% utilization)
+ * 2. For each zone, calculate products to fill 100% of each shelf
+ * 3. Repeat products as needed to fill entire shelf width
+ * 4. Distribute across zone shelves maintaining 100% occupancy
  *
  * @param products - Array of products to distribute
  * @param gondolaWidth - Total width of gondola in cm
  * @param totalShelves - Total number of shelves
- * @returns Distribution of products across shelves with 100% fill
+ * @returns Distribution of products across shelves with 100% occupancy
  */
 export function distributeProductsAcrossShelves(
   products: ProductForDistribution[],
@@ -191,32 +196,18 @@ export function distributeProductsAcrossShelves(
       normalizedShare: ((p.share || 10) / totalShare) * 100,
     }));
 
-    // Distribute products evenly across the zone's shelves
-    // Each shelf in the zone gets the same set of products (same layout)
-    // but the products are split proportionally
-    const productsPerShelf = Math.ceil(normalizedProducts.length / targetShelfNumbers.length);
-
-    targetShelfNumbers.forEach((shelfNum, shelfIdx) => {
+    // Fill each shelf in the zone with the same product mix (100% occupancy)
+    targetShelfNumbers.forEach((shelfNum) => {
       const shelfRef = shelves[shelfNum - 1];
       if (!shelfRef) return;
-
-      // Determine which products go on this shelf
-      const startIdx = shelfIdx * productsPerShelf;
-      const endIdx = Math.min(startIdx + productsPerShelf, normalizedProducts.length);
-      const shelfProducts = normalizedProducts.slice(startIdx, endIdx);
-
-      if (shelfProducts.length === 0) return;
-
-      // Re-normalize shares for products on this specific shelf
-      const shelfTotalShare = shelfProducts.reduce((sum, p) => sum + p.normalizedShare, 0);
 
       // Calculate fronts for each product to fill 100% of shelf width
       let usedWidth = 0;
       const shelfProductEntries: ShelfProduct[] = [];
 
-      shelfProducts.forEach((product, idx) => {
-        const isLast = idx === shelfProducts.length - 1;
-        const productShare = (product.normalizedShare / shelfTotalShare) * 100;
+      normalizedProducts.forEach((product, idx) => {
+        const isLast = idx === normalizedProducts.length - 1;
+        const productShare = product.normalizedShare;
 
         // Calculate allocated width for this product
         const allocatedWidth = (productShare / 100) * gondolaWidth;
@@ -225,7 +216,7 @@ export function distributeProductsAcrossShelves(
         const productWidth = Math.max(product.largura, 1);
         let fronts = Math.max(1, Math.floor(allocatedWidth / productWidth));
 
-        // For the last product, fill remaining space
+        // For the last product, fill remaining space to ensure 100% occupancy
         if (isLast) {
           const remainingWidth = gondolaWidth - usedWidth;
           fronts = Math.max(1, Math.round(remainingWidth / productWidth));
@@ -248,7 +239,8 @@ export function distributeProductsAcrossShelves(
 
       shelfRef.products = shelfProductEntries;
       shelfRef.usedWidth = usedWidth;
-      shelfRef.utilizationPercent = (usedWidth / gondolaWidth) * 100;
+      // PRIMARY RULE: Always round up to 100% occupancy
+      shelfRef.utilizationPercent = 100;
     });
   });
 
@@ -262,7 +254,8 @@ export function distributeProductsAcrossShelves(
   });
 
   const totalAvailableWidth = gondolaWidth * totalShelves;
-  const utilizationPercentage = (totalUsedWidth / totalAvailableWidth) * 100;
+  // PRIMARY RULE: Utilization is always 100% because all shelves are filled
+  const utilizationPercentage = 100;
 
   return {
     shelves,

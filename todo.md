@@ -211,3 +211,10 @@
   - [x] Testar com 1, 2, 3, 4, 5, 6, 10, 20 prateleiras
   - [x] Atualizar GondolaShelvesVisualization (já usa getShelvesForZone)
   - [x] Atualizar GondolaFrontView (já usa getShelvesForZone)
+
+- [x] REFAZER: Distribuição com regra principal de 100% ocupação
+  - [x] Regra principal: TODAS as prateleiras sempre 100% ocupadas
+  - [x] Regra secundária: Aplicar distribuição por zona (30-40-30) APÓS garantir 100%
+  - [x] Atualizar shelfDistributor.ts com novo algoritmo
+  - [x] Recriar testes vitest com novo conceito
+  - [x] Testar com 1, 2, 3, 5, 10, 20 produtos em diferentes cenários
