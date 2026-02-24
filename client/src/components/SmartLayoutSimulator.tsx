@@ -816,13 +816,17 @@ export default function SmartLayoutSimulator() {
             {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
           </h3>
           <GondolaShelvesVisualization
-            products={filteredProductsByZone.map((p: any) => ({
-              id: p.id,
-              name: p.name,
-              largura: p.largura || 10,
-              comprimento: p.comprimento || 5,
-              zone: getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade).zone,
-            })) as ProductForDistribution[]}
+            products={filteredProductsByZone.map((p: any) => {
+              const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+              return {
+                id: p.id,
+                name: p.name,
+                largura: p.largura || 10,
+                comprimento: p.comprimento || 5,
+                zone: rec.zone,
+                share: typeof rec.share === 'number' ? rec.share : 15,
+              };
+            }) as ProductForDistribution[]}
             gondolaWidth={gondolaWidth}
             numberOfShelves={shelves}
             language={language}
