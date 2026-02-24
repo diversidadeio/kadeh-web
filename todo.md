@@ -257,3 +257,11 @@
   - [x] Criar testes vitest validando 100% ocupação em todos os cenários
   - [x] Testar com 1, 3, 5, 10 prateleiras
   - [x] Validar no navegador: prateleira 5 agora preenchida ✅
+
+- [ ] CRÍTICA: Implementar posicionamento correto de produtos por zona (Margem × Giro)
+  - [ ] Criar função getZoneByProductCharacteristics() com matriz de posicionamento
+  - [ ] Modificar distributor para respeitar zona de cada produto (sem repetição)
+  - [ ] Alocar espaço proporcional à prioridade dentro da zona
+  - [ ] Criar testes vitest para validar posicionamento correto
+  - [ ] Testar com múltiplos produtos em navegador
+  - [ ] Validar em português e inglês
