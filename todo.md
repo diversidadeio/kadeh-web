@@ -193,3 +193,13 @@
 - [ ] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
 - [ ] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
 - [ ] CRÍTICA: Validar em português e inglês
+
+- [x] Corrigir GondolaFrontView com as 3 regras de distribuição
+  - [x] Regra 1: Um produto ocupa todo o espaço em todas as prateleiras
+  - [x] Regra 2: Múltiplos produtos distribuídos por zona
+  - [x] Regra 3: Produtos repetidos por largura para preencher 100%
+- [x] Criar testes vitest para GondolaFrontView
+- [ ] Aplicar as 3 regras em GondolaShelvesVisualization
+- [ ] Aplicar as 3 regras na geração de imagem da gôndola (IA)
+- [ ] Testar visualização com 1, 2 e múltiplos produtos
+- [ ] Testar em português e inglês
