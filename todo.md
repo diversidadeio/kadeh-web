@@ -203,3 +203,11 @@
 - [ ] Aplicar as 3 regras na geração de imagem da gôndola (IA)
 - [ ] Testar visualização com 1, 2 e múltiplos produtos
 - [ ] Testar em português e inglês
+
+- [x] Corrigir distribuição de prateleiras por zona com percentuais (30-40-30)
+  - [x] Atualizar função getShelvesForZone em shelfDistributor.ts
+  - [x] Implementar cálculo com aproximação em números naturais
+  - [x] Criar testes vitest para validar distribuição
+  - [x] Testar com 1, 2, 3, 4, 5, 6, 10, 20 prateleiras
+  - [x] Atualizar GondolaShelvesVisualization (já usa getShelvesForZone)
+  - [x] Atualizar GondolaFrontView (já usa getShelvesForZone)

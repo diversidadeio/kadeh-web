@@ -43,42 +43,58 @@ export interface GondolaDistribution {
 
 /**
  * Calculates which shelf a product should be placed on based on its zone
+ * Uses percentual distribution: 30% Eye level, 40% Hand level, 30% Bottom
+ * 
+ * Distribution from top to bottom:
+ * - First 30% of shelves: Altura dos olhos (Eye level)
+ * - Next 40% of shelves: Altura das mãos (Hand level)
+ * - Last 30% of shelves: Parte de Baixo (Bottom)
+ * 
  * @param zone - Product zone (Altura dos olhos, Altura das mãos, Parte de Baixo)
  * @param totalShelves - Total number of shelves in the gondola
  * @returns Array of shelf numbers where this zone should be placed
  */
 export function getShelvesForZone(zone: string, totalShelves: number): number[] {
-  if (totalShelves === 1) return [1];
-  if (totalShelves === 2) {
-    // 2 shelves: Eye level (top), Bottom
-    return zone === "Altura dos olhos" ? [1] : [2];
-  }
-  if (totalShelves === 3) {
-    // 3 shelves: Eye level (middle), Hand level (top/bottom), Bottom
-    return zone === "Altura dos olhos" ? [2] : zone === "Altura das mãos" ? [1, 3] : [3];
-  }
-  if (totalShelves === 4) {
-    // 4 shelves: Eye level (2nd), Hand level (1st/3rd), Bottom (4th)
-    return zone === "Altura dos olhos" ? [2] : zone === "Altura das mãos" ? [1, 3] : [4];
-  }
-  if (totalShelves === 5) {
-    // 5 shelves: Eye level (2nd/3rd), Hand level (1st/4th), Bottom (5th)
-    return zone === "Altura dos olhos" ? [2, 3] : zone === "Altura das mãos" ? [1, 4] : [5];
-  }
+  // Calculate shelf counts for each zone using percentuals
+  const eyeLevelCount = Math.round(totalShelves * 0.30); // 30%
+  const handLevelCount = Math.round(totalShelves * 0.40); // 40%
+  const bottomLevelCount = totalShelves - eyeLevelCount - handLevelCount; // 30% (remaining)
 
-  // For 6+ shelves: Eye level (middle 2), Hand level (surrounding), Bottom
-  const middleStart = Math.floor(totalShelves / 2) - 1;
-  const middleEnd = Math.ceil(totalShelves / 2);
+  // Ensure minimum 1 shelf per zone
+  const eyeLevelShelfCount = Math.max(1, eyeLevelCount);
+  const handLevelShelfCount = Math.max(1, handLevelCount);
+  const bottomLevelShelfCount = Math.max(1, bottomLevelCount);
 
+  // Calculate shelf ranges
+  const eyeLevelStart = 1;
+  const eyeLevelEnd = eyeLevelStart + eyeLevelShelfCount - 1;
+
+  const handLevelStart = eyeLevelEnd + 1;
+  const handLevelEnd = handLevelStart + handLevelShelfCount - 1;
+
+  const bottomLevelStart = handLevelEnd + 1;
+  const bottomLevelEnd = totalShelves;
+
+  // Return shelves for the requested zone
   if (zone === "Altura dos olhos") {
-    return [middleStart, middleEnd];
+    const result: number[] = [];
+    for (let i = eyeLevelStart; i <= eyeLevelEnd; i++) {
+      result.push(i);
+    }
+    return result.length > 0 ? result : [1];
   } else if (zone === "Altura das mãos") {
     const result: number[] = [];
-    if (middleStart > 1) result.push(middleStart - 1);
-    if (middleEnd < totalShelves) result.push(middleEnd + 1);
-    return result.length > 0 ? result : [1, totalShelves];
+    for (let i = handLevelStart; i <= handLevelEnd; i++) {
+      result.push(i);
+    }
+    return result.length > 0 ? result : [Math.ceil(totalShelves / 2)];
   } else {
-    return [totalShelves];
+    // Parte de Baixo
+    const result: number[] = [];
+    for (let i = bottomLevelStart; i <= bottomLevelEnd; i++) {
+      result.push(i);
+    }
+    return result.length > 0 ? result : [totalShelves];
   }
 }
 
@@ -89,33 +105,15 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
  * @returns Zone name
  */
 function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo" {
-  if (totalShelves === 1) return "Altura dos olhos";
-  if (totalShelves === 2) {
-    return shelfNumber === 1 ? "Altura dos olhos" : "Parte de Baixo";
-  }
-  if (totalShelves === 3) {
-    if (shelfNumber === 2) return "Altura dos olhos";
-    if (shelfNumber === 1 || shelfNumber === 3) return "Altura das mãos";
-    return "Parte de Baixo";
-  }
-  if (totalShelves === 4) {
-    if (shelfNumber === 2) return "Altura dos olhos";
-    if (shelfNumber === 1 || shelfNumber === 3) return "Altura das mãos";
-    return "Parte de Baixo";
-  }
-  if (totalShelves === 5) {
-    if (shelfNumber === 2 || shelfNumber === 3) return "Altura dos olhos";
-    if (shelfNumber === 1 || shelfNumber === 4) return "Altura das mãos";
-    return "Parte de Baixo";
-  }
+  const eyeLevelCount = Math.round(totalShelves * 0.30);
+  const handLevelCount = Math.round(totalShelves * 0.40);
+  
+  const eyeLevelEnd = eyeLevelCount;
+  const handLevelEnd = eyeLevelEnd + handLevelCount;
 
-  // For 6+ shelves
-  const middleStart = Math.floor(totalShelves / 2);
-  const middleEnd = Math.ceil(totalShelves / 2);
-
-  if (shelfNumber === middleStart || shelfNumber === middleEnd) {
+  if (shelfNumber <= eyeLevelEnd) {
     return "Altura dos olhos";
-  } else if (shelfNumber === middleStart - 1 || shelfNumber === middleEnd + 1) {
+  } else if (shelfNumber <= handLevelEnd) {
     return "Altura das mãos";
   } else {
     return "Parte de Baixo";
@@ -248,91 +246,29 @@ export function distributeProductsAcrossShelves(
         });
       });
 
-      // Update shelf
       shelfRef.products = shelfProductEntries;
       shelfRef.usedWidth = usedWidth;
-      shelfRef.utilizationPercent = gondolaWidth > 0 ? (usedWidth / gondolaWidth) * 100 : 0;
+      shelfRef.utilizationPercent = (usedWidth / gondolaWidth) * 100;
     });
   });
 
   // Calculate totals
-  const totalUsedWidth = shelves.reduce((sum, shelf) => sum + shelf.usedWidth, 0);
+  let totalUsedWidth = 0;
+  let totalProducts = 0;
+
+  shelves.forEach((shelf) => {
+    totalUsedWidth += shelf.usedWidth;
+    totalProducts += shelf.products.length;
+  });
+
   const totalAvailableWidth = gondolaWidth * totalShelves;
-  const utilizationPercentage = totalAvailableWidth > 0 ? (totalUsedWidth / totalAvailableWidth) * 100 : 0;
+  const utilizationPercentage = (totalUsedWidth / totalAvailableWidth) * 100;
 
   return {
     shelves,
     totalUsedWidth,
     totalAvailableWidth,
-    totalProducts: products.length,
+    totalProducts,
     utilizationPercentage,
   };
-}
-
-/**
- * Calculates the number of product fronts (frentes) that can fit on a shelf
- * @param products - Products on the shelf
- * @param gondolaWidth - Width of gondola in cm
- * @returns Number of fronts
- */
-export function calculateFronts(products: ProductForDistribution[], gondolaWidth: number): number {
-  if (products.length === 0) return 0;
-
-  // Count how many products fit horizontally
-  let fronts = 0;
-  let currentWidth = 0;
-
-  for (const product of products) {
-    if (currentWidth + product.largura <= gondolaWidth) {
-      fronts++;
-      currentWidth += product.largura;
-    }
-  }
-
-  return fronts;
-}
-
-/**
- * Generates a text description of the shelf distribution
- * @param distribution - Shelf distribution
- * @param language - Language (pt or en)
- * @returns Text description
- */
-export function generateDistributionDescription(
-  distribution: GondolaDistribution,
-  language: "pt" | "en" = "pt"
-): string {
-  const translations = {
-    pt: {
-      shelf: "Prateleira",
-      products: "produtos",
-      zone: "Zona",
-      width: "Largura utilizada",
-      utilization: "Utilização",
-      total: "Total",
-      fronts: "frentes",
-    },
-    en: {
-      shelf: "Shelf",
-      products: "products",
-      zone: "Zone",
-      width: "Used width",
-      utilization: "Utilization",
-      total: "Total",
-      fronts: "fronts",
-    },
-  };
-
-  const t = translations[language];
-  let description = `${t.total}: ${distribution.totalProducts} ${t.products}\n`;
-  description += `${t.utilization}: ${distribution.utilizationPercentage.toFixed(1)}%\n\n`;
-
-  for (const shelf of distribution.shelves) {
-    if (shelf.products.length > 0) {
-      const totalFronts = shelf.products.reduce((sum, p) => sum + p.fronts, 0);
-      description += `${t.shelf} ${shelf.shelfNumber} (${shelf.zone}): ${shelf.products.length} ${t.products}, ${totalFronts} ${t.fronts}, ${shelf.usedWidth.toFixed(0)}cm/${shelf.availableWidth}cm (${shelf.utilizationPercent.toFixed(0)}%)\n`;
-    }
-  }
-
-  return description;
 }
