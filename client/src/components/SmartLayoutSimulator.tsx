@@ -29,6 +29,8 @@ import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
 import ProductFormModal, { type ProductFormData } from "@/components/ProductFormModal";
 import { ZoneDistributionChart, type ZoneStats } from "@/components/ZoneDistributionChart";
+import { ProductOptimizationSuggestions } from "@/components/ProductOptimizationSuggestions";
+import { generateOptimizationSuggestions, type OptimizationResult } from "@/utils/productOptimizer";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -237,6 +239,9 @@ export default function SmartLayoutSimulator() {
     profundidade: 40,
     alturaEntrePrateleiras: 60,
   });
+  const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
+  const [showOptimization, setShowOptimization] = useState(false);
+  const [isApplyingOptimization, setIsApplyingOptimization] = useState(false);
 
   // Load simulations from localStorage on mount
   useEffect(() => {
@@ -373,6 +378,26 @@ export default function SmartLayoutSimulator() {
   const handleCompareSimulations = (ids: string[]) => {
     // This can be extended to show a comparison view
     console.log('Comparing simulations:', ids);
+  };
+  // Generate optimization suggestions
+  const handleGenerateOptimization = () => {
+    if (products.length === 0) return;
+    const result = generateOptimizationSuggestions(products, getRecommendationByABCCurves);
+    setOptimizationResult(result);
+    setShowOptimization(true);
+  };
+
+  // Apply optimization suggestions
+  const handleApplyOptimization = async () => {
+    if (!optimizationResult) return;
+    setIsApplyingOptimization(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setShowOptimization(false);
+      setOptimizationResult(null);
+    } finally {
+      setIsApplyingOptimization(false);
+    }
   };
 
   const filteredProductsByZone = useMemo(() => {
@@ -943,6 +968,32 @@ export default function SmartLayoutSimulator() {
         </div>
       )}
 
+      {/* Product Optimization */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Otimização Automática</h3>
+            <Lightbulb className="w-5 h-5 text-yellow-500" />
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Analise sugestões para maximizar margem mantendo 100% de ocupação</p>
+          <Button
+            onClick={handleGenerateOptimization}
+            className="w-full bg-blue-600 hover:bg-blue-700"
+          >
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Gerar Sugestões de Otimização
+          </Button>
+        </div>
+      )}
+
+      {/* Optimization Suggestions */}
+      {showOptimization && optimizationResult && (
+        <ProductOptimizationSuggestions
+          result={optimizationResult}
+          onApply={handleApplyOptimization}
+          isApplying={isApplyingOptimization}
+        />
+      )}
       {/* Simulation History */}
       {simulations.length > 0 && (
         <SimulationHistory

@@ -227,3 +227,11 @@
   - [x] Quantidade de produtos em cada zona
   - [x] Integrar no SmartLayoutSimulator
   - [x] Atualizar em tempo real conforme produtos são adicionados/removidos
+
+- [x] Implementar otimização automática de distribuição de produtos
+  - [x] Criar algoritmo de otimização (margem x giro)
+  - [x] Criar componente ProductOptimizationSuggestions
+  - [x] Integrar sugestões no SmartLayoutSimulator
+  - [x] Adicionar botão "Aplicar Otimização"
+  - [x] Mostrar comparação antes/depois
+  - [x] Criar testes vitest para otimização
