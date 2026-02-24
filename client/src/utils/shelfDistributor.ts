@@ -155,6 +155,7 @@ function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos
  * 2. For each zone, calculate products to fill 100% of each shelf
  * 3. Repeat products as needed to fill entire shelf width
  * 4. Distribute across zone shelves maintaining 100% occupancy
+ * 5. If a zone has no products, fill its shelves with products from other zones
  *
  * @param products - Array of products to distribute
  * @param gondolaWidth - Total width of gondola in cm
@@ -203,15 +204,12 @@ export function distributeProductsAcrossShelves(
     }
   });
 
+  // CRITICAL FIX: If a zone has no products, use ALL products to fill it
+  // This ensures PRIMARY RULE: 100% occupancy on EVERY shelf
+  const allProducts = products;
+
   // For each zone, distribute products across the zone's shelves filling 100%
   Object.entries(productsByZone).forEach(([zone, zoneProducts]) => {
-    if (zoneProducts.length === 0) {
-      if (totalShelves === 5) {
-        console.log(`[DEBUG] Zone "${zone}" has NO products, skipping`);
-      }
-      return;
-    }
-
     const targetShelfNumbers = getShelvesForZone(zone, totalShelves);
     
     if (totalShelves === 5) {
@@ -226,9 +224,12 @@ export function distributeProductsAcrossShelves(
       return;
     }
 
+    // Use all products if this zone has no products (PRIMARY RULE: 100% occupancy)
+    const productsToUse = zoneProducts.length > 0 ? zoneProducts : allProducts;
+
     // Normalize shares within this zone to sum to 100%
-    const totalShare = zoneProducts.reduce((sum, p) => sum + (p.share || 10), 0);
-    const normalizedProducts = zoneProducts.map((p) => ({
+    const totalShare = productsToUse.reduce((sum, p) => sum + (p.share || 10), 0);
+    const normalizedProducts = productsToUse.map((p) => ({
       ...p,
       normalizedShare: ((p.share || 10) / totalShare) * 100,
     }));

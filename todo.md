@@ -249,3 +249,11 @@
 - [x] Corrigir GondolaFrontView para aceitar propriedade zone ou zona
   - [x] Atualizar interface Product para aceitar ambas as propriedades
   - [x] Corrigir filtro de produtos por zona
+
+- [x] CRÍTICA: Corrigir bug onde prateleira 5 ficava vazia
+  - [x] Identificar causa: double filtering de produtos por zona
+  - [x] Implementar fallback: quando zona não tem produtos, usar todos os produtos
+  - [x] Garantir que TODAS as prateleiras sempre 100% ocupadas
+  - [x] Criar testes vitest validando 100% ocupação em todos os cenários
+  - [x] Testar com 1, 3, 5, 10 prateleiras
+  - [x] Validar no navegador: prateleira 5 agora preenchida ✅

@@ -895,7 +895,7 @@ export default function SmartLayoutSimulator() {
             {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
           </h3>
           <GondolaShelvesVisualization
-            products={filteredProductsByZone.map((p: any) => {
+            products={products.map((p: any) => {
               const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
               return {
                 id: p.id,
