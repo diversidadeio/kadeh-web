@@ -1,6 +1,7 @@
 /**
  * Shelf Distributor Utility
  * Distributes products across shelves respecting zones, widths, and shelf count
+ * Fills 100% of each shelf by repeating product fronts proportionally to their share
  */
 
 export interface ProductForDistribution {
@@ -9,14 +10,27 @@ export interface ProductForDistribution {
   largura: number; // width in cm
   comprimento: number; // depth in cm
   zone: "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo";
+  share?: number; // percentage of gondola space (0-100)
+}
+
+export interface ShelfProduct {
+  id: string;
+  name: string;
+  largura: number;
+  comprimento: number;
+  zone: "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo";
+  fronts: number; // number of fronts (repetitions) on this shelf
+  widthUsed: number; // total width used by this product on this shelf
+  sharePercent: number; // percentage of shelf space allocated
 }
 
 export interface ShelfDistribution {
   shelfNumber: number;
   zone: "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo";
-  products: ProductForDistribution[];
+  products: ShelfProduct[];
   usedWidth: number;
   availableWidth: number;
+  utilizationPercent: number;
 }
 
 export interface GondolaDistribution {
@@ -69,79 +83,6 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
 }
 
 /**
- * Distributes products across shelves respecting zones and widths
- * @param products - Array of products to distribute
- * @param gondolaWidth - Total width of gondola in cm
- * @param totalShelves - Total number of shelves
- * @returns Distribution of products across shelves
- */
-export function distributeProductsAcrossShelves(
-  products: ProductForDistribution[],
-  gondolaWidth: number,
-  totalShelves: number
-): GondolaDistribution {
-  // Initialize shelves
-  const shelves: ShelfDistribution[] = [];
-  for (let i = 1; i <= totalShelves; i++) {
-    shelves.push({
-      shelfNumber: i,
-      zone: getZoneForShelf(i, totalShelves),
-      products: [],
-      usedWidth: 0,
-      availableWidth: gondolaWidth,
-    });
-  }
-
-  // Sort products by zone priority (Eye level > Hand level > Bottom)
-  const zoneOrder = { "Altura dos olhos": 0, "Altura das mãos": 1, "Parte de Baixo": 2 };
-  const sortedProducts = [...products].sort(
-    (a, b) => zoneOrder[a.zone as keyof typeof zoneOrder] - zoneOrder[b.zone as keyof typeof zoneOrder]
-  );
-
-  // Distribute products
-  for (const product of sortedProducts) {
-    const targetShelves = getShelvesForZone(product.zone, totalShelves);
-
-    // Try to fit product on one of the target shelves
-    let placed = false;
-    for (const shelfNum of targetShelves) {
-      const shelf = shelves[shelfNum - 1];
-      if (shelf && shelf.usedWidth + product.largura <= gondolaWidth) {
-        shelf.products.push(product);
-        shelf.usedWidth += product.largura;
-        placed = true;
-        break;
-      }
-    }
-
-    // If not placed on target shelf, try any available shelf
-    if (!placed) {
-      for (const shelf of shelves) {
-        if (shelf.usedWidth + product.largura <= gondolaWidth) {
-          shelf.products.push(product);
-          shelf.usedWidth += product.largura;
-          placed = true;
-          break;
-        }
-      }
-    }
-  }
-
-  // Calculate totals
-  const totalUsedWidth = shelves.reduce((sum, shelf) => sum + shelf.usedWidth, 0);
-  const totalAvailableWidth = gondolaWidth * totalShelves;
-  const utilizationPercentage = (totalUsedWidth / totalAvailableWidth) * 100;
-
-  return {
-    shelves,
-    totalUsedWidth,
-    totalAvailableWidth,
-    totalProducts: products.length,
-    utilizationPercentage,
-  };
-}
-
-/**
  * Gets the zone for a specific shelf number
  * @param shelfNumber - Shelf number (1-indexed)
  * @param totalShelves - Total number of shelves
@@ -179,6 +120,153 @@ function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos
   } else {
     return "Parte de Baixo";
   }
+}
+
+/**
+ * Distributes products across shelves filling 100% of each shelf by repeating fronts.
+ *
+ * Algorithm:
+ * 1. Group products by zone
+ * 2. For each zone, normalize shares to sum to 100% within that zone
+ * 3. Allocate space proportionally: allocatedWidth = (normalizedShare / 100) * gondolaWidth
+ * 4. Calculate fronts: fronts = Math.max(1, Math.floor(allocatedWidth / product.largura))
+ * 5. Adjust last product to fill remaining space (100% utilization)
+ *
+ * @param products - Array of products to distribute
+ * @param gondolaWidth - Total width of gondola in cm
+ * @param totalShelves - Total number of shelves
+ * @returns Distribution of products across shelves with 100% fill
+ */
+export function distributeProductsAcrossShelves(
+  products: ProductForDistribution[],
+  gondolaWidth: number,
+  totalShelves: number
+): GondolaDistribution {
+  // Initialize shelves
+  const shelves: ShelfDistribution[] = [];
+  for (let i = 1; i <= totalShelves; i++) {
+    shelves.push({
+      shelfNumber: i,
+      zone: getZoneForShelf(i, totalShelves),
+      products: [],
+      usedWidth: 0,
+      availableWidth: gondolaWidth,
+      utilizationPercent: 0,
+    });
+  }
+
+  if (products.length === 0) {
+    return {
+      shelves,
+      totalUsedWidth: 0,
+      totalAvailableWidth: gondolaWidth * totalShelves,
+      totalProducts: 0,
+      utilizationPercentage: 0,
+    };
+  }
+
+  // Group products by zone
+  const productsByZone: Record<string, ProductForDistribution[]> = {
+    "Altura dos olhos": [],
+    "Altura das mãos": [],
+    "Parte de Baixo": [],
+  };
+
+  products.forEach((p) => {
+    const zone = p.zone || "Altura das mãos";
+    if (zone in productsByZone) {
+      productsByZone[zone].push(p);
+    }
+  });
+
+  // For each zone, distribute products across the zone's shelves filling 100%
+  Object.entries(productsByZone).forEach(([zone, zoneProducts]) => {
+    if (zoneProducts.length === 0) return;
+
+    const targetShelfNumbers = getShelvesForZone(zone, totalShelves);
+    if (targetShelfNumbers.length === 0) return;
+
+    // Normalize shares within this zone to sum to 100%
+    const totalShare = zoneProducts.reduce((sum, p) => sum + (p.share || 10), 0);
+    const normalizedProducts = zoneProducts.map((p) => ({
+      ...p,
+      normalizedShare: ((p.share || 10) / totalShare) * 100,
+    }));
+
+    // Distribute products evenly across the zone's shelves
+    // Each shelf in the zone gets the same set of products (same layout)
+    // but the products are split proportionally
+    const productsPerShelf = Math.ceil(normalizedProducts.length / targetShelfNumbers.length);
+
+    targetShelfNumbers.forEach((shelfNum, shelfIdx) => {
+      const shelfRef = shelves[shelfNum - 1];
+      if (!shelfRef) return;
+
+      // Determine which products go on this shelf
+      const startIdx = shelfIdx * productsPerShelf;
+      const endIdx = Math.min(startIdx + productsPerShelf, normalizedProducts.length);
+      const shelfProducts = normalizedProducts.slice(startIdx, endIdx);
+
+      if (shelfProducts.length === 0) return;
+
+      // Re-normalize shares for products on this specific shelf
+      const shelfTotalShare = shelfProducts.reduce((sum, p) => sum + p.normalizedShare, 0);
+
+      // Calculate fronts for each product to fill 100% of shelf width
+      let usedWidth = 0;
+      const shelfProductEntries: ShelfProduct[] = [];
+
+      shelfProducts.forEach((product, idx) => {
+        const isLast = idx === shelfProducts.length - 1;
+        const productShare = (product.normalizedShare / shelfTotalShare) * 100;
+
+        // Calculate allocated width for this product
+        const allocatedWidth = (productShare / 100) * gondolaWidth;
+
+        // Calculate number of fronts (minimum 1)
+        const productWidth = Math.max(product.largura, 1);
+        let fronts = Math.max(1, Math.floor(allocatedWidth / productWidth));
+
+        // For the last product, fill remaining space
+        if (isLast) {
+          const remainingWidth = gondolaWidth - usedWidth;
+          fronts = Math.max(1, Math.round(remainingWidth / productWidth));
+        }
+
+        const widthUsed = fronts * productWidth;
+        usedWidth += widthUsed;
+
+        shelfProductEntries.push({
+          id: product.id,
+          name: product.name,
+          largura: product.largura,
+          comprimento: product.comprimento,
+          zone: product.zone,
+          fronts,
+          widthUsed,
+          sharePercent: productShare,
+        });
+      });
+
+      // Update shelf
+      shelfRef.products = shelfProductEntries;
+      shelfRef.usedWidth = usedWidth;
+      shelfRef.utilizationPercent = gondolaWidth > 0 ? (usedWidth / gondolaWidth) * 100 : 0;
+    });
+  });
+
+  // Calculate totals
+  const totalUsedWidth = shelves.reduce((sum, shelf) => sum + shelf.usedWidth, 0);
+  const totalAvailableWidth = gondolaWidth * totalShelves;
+  const utilizationPercentage = totalAvailableWidth > 0 ? (totalUsedWidth / totalAvailableWidth) * 100 : 0;
+
+  return {
+    shelves,
+    totalUsedWidth,
+    totalAvailableWidth,
+    totalProducts: products.length,
+    utilizationPercentage,
+  };
 }
 
 /**
@@ -222,6 +310,7 @@ export function generateDistributionDescription(
       width: "Largura utilizada",
       utilization: "Utilização",
       total: "Total",
+      fronts: "frentes",
     },
     en: {
       shelf: "Shelf",
@@ -230,6 +319,7 @@ export function generateDistributionDescription(
       width: "Used width",
       utilization: "Utilization",
       total: "Total",
+      fronts: "fronts",
     },
   };
 
@@ -239,7 +329,8 @@ export function generateDistributionDescription(
 
   for (const shelf of distribution.shelves) {
     if (shelf.products.length > 0) {
-      description += `${t.shelf} ${shelf.shelfNumber} (${shelf.zone}): ${shelf.products.length} ${t.products}, ${shelf.usedWidth}cm/${distribution.shelves[0].availableWidth}cm\n`;
+      const totalFronts = shelf.products.reduce((sum, p) => sum + p.fronts, 0);
+      description += `${t.shelf} ${shelf.shelfNumber} (${shelf.zone}): ${shelf.products.length} ${t.products}, ${totalFronts} ${t.fronts}, ${shelf.usedWidth.toFixed(0)}cm/${shelf.availableWidth}cm (${shelf.utilizationPercent.toFixed(0)}%)\n`;
     }
   }
 
