@@ -62,68 +62,36 @@ export interface GondolaDistribution {
  */
 export function getShelvesForZone(zone: string, totalShelves: number): number[] {
   // Calculate shelf counts for each zone using percentuals
-  // Always ensure ALL shelves are allocated (no shelf left empty)
+  // IMPORTANT: Calculate eye and hand level first, then assign remaining to bottom
   const eyeLevelCount = Math.ceil(totalShelves * 0.30); // 30% (round up)
   const handLevelCount = Math.ceil(totalShelves * 0.40); // 40% (round up)
-  const bottomLevelCount = totalShelves - eyeLevelCount - handLevelCount; // Remaining (ensures total = totalShelves)
+  const bottomLevelCount = totalShelves - eyeLevelCount - handLevelCount; // Remaining
 
-  // Ensure minimum 1 shelf per zone and no negative values
-  const eyeLevelShelfCount = Math.max(1, Math.min(eyeLevelCount, totalShelves - 2));
-  const handLevelShelfCount = Math.max(1, Math.min(handLevelCount, totalShelves - eyeLevelShelfCount - 1));
-  const bottomLevelShelfCount = Math.max(1, totalShelves - eyeLevelShelfCount - handLevelShelfCount);
-
-  // Verify total equals totalShelves
-  const totalAllocated = eyeLevelShelfCount + handLevelShelfCount + bottomLevelShelfCount;
-  if (totalAllocated !== totalShelves) {
-    // Adjust to ensure exact total
-    const difference = totalShelves - totalAllocated;
-    if (difference > 0) {
-      // Add remaining shelves to bottom level
-      const adjustedBottomCount = bottomLevelShelfCount + difference;
-      const adjustedEyeCount = eyeLevelShelfCount;
-      const adjustedHandCount = handLevelShelfCount;
-      
-      // Calculate shelf ranges with adjusted counts
-      const eyeLevelStart = 1;
-      const eyeLevelEnd = eyeLevelStart + adjustedEyeCount - 1;
-      const handLevelStart = eyeLevelEnd + 1;
-      const handLevelEnd = handLevelStart + adjustedHandCount - 1;
-      const bottomLevelStart = handLevelEnd + 1;
-      const bottomLevelEnd = totalShelves;
-
-      // Return shelves for the requested zone
-      if (zone === "Altura dos olhos") {
-        const result: number[] = [];
-        for (let i = eyeLevelStart; i <= eyeLevelEnd; i++) {
-          result.push(i);
-        }
-        return result.length > 0 ? result : [1];
-      } else if (zone === "Altura das mãos") {
-        const result: number[] = [];
-        for (let i = handLevelStart; i <= handLevelEnd; i++) {
-          result.push(i);
-        }
-        return result.length > 0 ? result : [Math.ceil(totalShelves / 2)];
-      } else {
-        // Parte de Baixo
-        const result: number[] = [];
-        for (let i = bottomLevelStart; i <= bottomLevelEnd; i++) {
-          result.push(i);
-        }
-        return result.length > 0 ? result : [totalShelves];
-      }
-    }
+  // DEBUG: Log calculations for 5 shelves
+  if (totalShelves === 5) {
+    console.log(`[DEBUG] Total shelves: ${totalShelves}`);
+    console.log(`[DEBUG] Eye level: ${eyeLevelCount} (30%)`);
+    console.log(`[DEBUG] Hand level: ${handLevelCount} (40%)`);
+    console.log(`[DEBUG] Bottom level: ${bottomLevelCount} (30%)`);
+    console.log(`[DEBUG] Total allocated: ${eyeLevelCount + handLevelCount + bottomLevelCount}`);
   }
 
-  // Calculate shelf ranges
+  // Calculate shelf ranges (1-indexed)
   const eyeLevelStart = 1;
-  const eyeLevelEnd = eyeLevelStart + eyeLevelShelfCount - 1;
+  const eyeLevelEnd = eyeLevelStart + eyeLevelCount - 1;
 
   const handLevelStart = eyeLevelEnd + 1;
-  const handLevelEnd = handLevelStart + handLevelShelfCount - 1;
+  const handLevelEnd = handLevelStart + handLevelCount - 1;
 
   const bottomLevelStart = handLevelEnd + 1;
   const bottomLevelEnd = totalShelves;
+
+  // DEBUG: Log shelf ranges for 5 shelves
+  if (totalShelves === 5) {
+    console.log(`[DEBUG] Eye level shelves: ${eyeLevelStart}-${eyeLevelEnd}`);
+    console.log(`[DEBUG] Hand level shelves: ${handLevelStart}-${handLevelEnd}`);
+    console.log(`[DEBUG] Bottom level shelves: ${bottomLevelStart}-${bottomLevelEnd}`);
+  }
 
   // Return shelves for the requested zone
   if (zone === "Altura dos olhos") {
@@ -131,11 +99,17 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
     for (let i = eyeLevelStart; i <= eyeLevelEnd; i++) {
       result.push(i);
     }
+    if (totalShelves === 5) {
+      console.log(`[DEBUG] Eye level: start=${eyeLevelStart}, end=${eyeLevelEnd}, result=${result.join(',')}`);
+    }
     return result.length > 0 ? result : [1];
   } else if (zone === "Altura das mãos") {
     const result: number[] = [];
     for (let i = handLevelStart; i <= handLevelEnd; i++) {
       result.push(i);
+    }
+    if (totalShelves === 5) {
+      console.log(`[DEBUG] Hand level: start=${handLevelStart}, end=${handLevelEnd}, result=${result.join(',')}`);
     }
     return result.length > 0 ? result : [Math.ceil(totalShelves / 2)];
   } else {
@@ -143,6 +117,9 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
     const result: number[] = [];
     for (let i = bottomLevelStart; i <= bottomLevelEnd; i++) {
       result.push(i);
+    }
+    if (totalShelves === 5) {
+      console.log(`[DEBUG] Bottom level: zone="${zone}", start=${bottomLevelStart}, end=${bottomLevelEnd}, result=${result.join(',')}`);
     }
     return result.length > 0 ? result : [totalShelves];
   }
@@ -228,10 +205,26 @@ export function distributeProductsAcrossShelves(
 
   // For each zone, distribute products across the zone's shelves filling 100%
   Object.entries(productsByZone).forEach(([zone, zoneProducts]) => {
-    if (zoneProducts.length === 0) return;
+    if (zoneProducts.length === 0) {
+      if (totalShelves === 5) {
+        console.log(`[DEBUG] Zone "${zone}" has NO products, skipping`);
+      }
+      return;
+    }
 
     const targetShelfNumbers = getShelvesForZone(zone, totalShelves);
-    if (targetShelfNumbers.length === 0) return;
+    
+    if (totalShelves === 5) {
+      console.log(`[DEBUG] Zone "${zone}" has ${zoneProducts.length} products`);
+      console.log(`[DEBUG] Target shelves for zone: ${targetShelfNumbers.join(',')}`);
+    }
+    
+    if (targetShelfNumbers.length === 0) {
+      if (totalShelves === 5) {
+        console.log(`[DEBUG] WARNING: targetShelfNumbers is empty for zone "${zone}"`);
+      }
+      return;
+    }
 
     // Normalize shares within this zone to sum to 100%
     const totalShare = zoneProducts.reduce((sum, p) => sum + (p.share || 10), 0);
@@ -243,7 +236,10 @@ export function distributeProductsAcrossShelves(
     // Fill each shelf in the zone with the same product mix (100% occupancy)
     targetShelfNumbers.forEach((shelfNum) => {
       const shelfRef = shelves[shelfNum - 1];
-      if (!shelfRef) return;
+      if (!shelfRef) {
+        console.error(`[ERROR] Shelf ${shelfNum} not found in shelves array`);
+        return;
+      }
 
       // Calculate fronts for each product to fill 100% of shelf width
       let usedWidth = 0;
@@ -285,6 +281,10 @@ export function distributeProductsAcrossShelves(
       shelfRef.usedWidth = usedWidth;
       // PRIMARY RULE: Always round up to 100% occupancy
       shelfRef.utilizationPercent = 100;
+
+      if (totalShelves === 5 && shelfNum === 5) {
+        console.log(`[DEBUG] Shelf 5 products: ${shelfProductEntries.length}, usedWidth: ${usedWidth}`);
+      }
     });
   });
 
@@ -300,6 +300,13 @@ export function distributeProductsAcrossShelves(
   const totalAvailableWidth = gondolaWidth * totalShelves;
   // PRIMARY RULE: Utilization is always 100% because all shelves are filled
   const utilizationPercentage = 100;
+
+  if (totalShelves === 5) {
+    console.log(`[DEBUG] Final shelves with products:`);
+    shelves.forEach((shelf) => {
+      console.log(`  Shelf ${shelf.shelfNumber}: ${shelf.products.length} products, ${shelf.usedWidth}cm`);
+    });
+  }
 
   return {
     shelves,

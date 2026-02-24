@@ -245,3 +245,7 @@
   - [x] Corrigir lógica de getShelvesForZone() para garantir 100% ocupação
   - [x] Usar Math.ceil() em vez de Math.round() para arredondamento
   - [x] Testar com 5 prateleiras (2-2-1 distribuição)
+
+- [x] Corrigir GondolaFrontView para aceitar propriedade zone ou zona
+  - [x] Atualizar interface Product para aceitar ambas as propriedades
+  - [x] Corrigir filtro de produtos por zona
