@@ -218,3 +218,12 @@
   - [x] Atualizar shelfDistributor.ts com novo algoritmo
   - [x] Recriar testes vitest com novo conceito
   - [x] Testar com 1, 2, 3, 5, 10, 20 produtos em diferentes cenários
+
+- [x] Criar gráfico visual de distribuição por zona em tempo real
+  - [x] Componente ZoneDistributionChart com Chart.js
+  - [x] Mostrar distribuição de produtos por zona (30-40-30)
+  - [x] Indicador visual de ocupação (sempre 100%)
+  - [x] Número de prateleiras por zona
+  - [x] Quantidade de produtos em cada zona
+  - [x] Integrar no SmartLayoutSimulator
+  - [x] Atualizar em tempo real conforme produtos são adicionados/removidos

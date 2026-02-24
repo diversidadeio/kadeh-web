@@ -28,6 +28,7 @@ import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerato
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
 import ProductFormModal, { type ProductFormData } from "@/components/ProductFormModal";
+import { ZoneDistributionChart, type ZoneStats } from "@/components/ZoneDistributionChart";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -476,6 +477,59 @@ export default function SmartLayoutSimulator() {
     "Lugar baixo": "bg-red-400",
   };
 
+  const calculateZoneStats = (): ZoneStats[] => {
+    const zoneColors = {
+      "Altura dos olhos": "#10b981",
+      "Altura das mãos": "#f59e0b",
+      "Parte de Baixo": "#ef4444",
+    };
+
+    const eyeLevelShelfCount = Math.round(shelves * 0.30);
+    const handLevelShelfCount = Math.round(shelves * 0.40);
+    const bottomLevelShelfCount = shelves - eyeLevelShelfCount - handLevelShelfCount;
+
+    const eyeLevelProducts = filteredProductsByZone.filter((p) => {
+      const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+      return rec.zone === "Altura dos olhos";
+    }).length;
+
+    const handLevelProducts = filteredProductsByZone.filter((p) => {
+      const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+      return rec.zone === "Altura das mãos";
+    }).length;
+
+    const bottomLevelProducts = filteredProductsByZone.filter((p) => {
+      const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+      return rec.zone === "Parte de Baixo";
+    }).length;
+
+    const totalProducts = eyeLevelProducts + handLevelProducts + bottomLevelProducts;
+
+    return [
+      {
+        zone: "Altura dos olhos",
+        productCount: eyeLevelProducts,
+        shelfCount: Math.max(1, eyeLevelShelfCount),
+        percentage: totalProducts > 0 ? (eyeLevelProducts / totalProducts) * 100 : 0,
+        color: zoneColors["Altura dos olhos"],
+      },
+      {
+        zone: "Altura das mãos",
+        productCount: handLevelProducts,
+        shelfCount: Math.max(1, handLevelShelfCount),
+        percentage: totalProducts > 0 ? (handLevelProducts / totalProducts) * 100 : 0,
+        color: zoneColors["Altura das mãos"],
+      },
+      {
+        zone: "Parte de Baixo",
+        productCount: bottomLevelProducts,
+        shelfCount: Math.max(1, bottomLevelShelfCount),
+        percentage: totalProducts > 0 ? (bottomLevelProducts / totalProducts) * 100 : 0,
+        color: zoneColors["Parte de Baixo"],
+      },
+    ];
+  };
+
   return (
     <div className="space-y-6">
       {/* Filtros */}
@@ -832,6 +886,15 @@ export default function SmartLayoutSimulator() {
             language={language}
           />
         </div>
+      )}
+
+      {/* Zone Distribution Chart */}
+      {products.length > 0 && (
+        <ZoneDistributionChart
+          stats={calculateZoneStats()}
+          totalShelves={shelves}
+          totalProducts={filteredProductsByZone.length}
+        />
       )}
 
       {/* Visualização da Loja com IA */}
