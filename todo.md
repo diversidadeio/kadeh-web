@@ -235,3 +235,7 @@
   - [x] Adicionar botão "Aplicar Otimização"
   - [x] Mostrar comparação antes/depois
   - [x] Criar testes vitest para otimização
+
+- [x] Corrigir erro Chart.js "doughnut is not a registered controller"
+  - [x] Adicionar DoughnutController ao registro
+  - [x] Testar se o gráfico renderiza corretamente

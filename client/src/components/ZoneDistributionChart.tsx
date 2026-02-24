@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
 import type { ChartOptions } from 'chart.js';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, DoughnutController);
 
 export interface ZoneStats {
   zone: "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo";
@@ -72,7 +72,7 @@ export function ZoneDistributionChart({
     const productCounts = stats.map((s) => s.productCount);
     const colors = stats.map((s) => s.color);
 
-    const options: ChartOptions<'doughnut'> = {
+    const options: ChartOptions = {
       responsive: true,
       maintainAspectRatio: true,
       plugins: {
