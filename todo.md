@@ -313,3 +313,17 @@
   - [x] Testar em diferentes tamanhos de tela (320px, 480px, 768px)
   - [x] Validar em português e inglês
   - [x] RESULTADO: Menu mobile com hamburger icon funcionando corretamente ✅px)\n  - [ ] Validar em portugu\u00eas e ingl\u00eas\n
+
+
+- [ ] CORREÇÃO: Formulário Kadeh Ads não visível em mobile
+  - [ ] Verificar se página /kadeh-ads-campaign está acessível em mobile
+  - [ ] Adicionar botão "Investir em Mídia" ou "Kadeh Ads" no menu mobile
+  - [ ] Testar acessibilidade completa do formulário em telas pequenas (320px, 480px)
+  - [ ] Validar responsividade dos inputs, dropdowns e upload de imagem
+  - [ ] Validar em português e inglês
+
+
+- [x] Corrigir validação de CNPJ no formulário de Kadeh Ads - remover formatação antes de enviar
+- [x] Corrigir sincronização do campo de data com React state
+- [x] Criar registro de anunciante para usuário autenticado no banco de dados
+- [x] Testar envio completo do formulário de Kadeh Ads

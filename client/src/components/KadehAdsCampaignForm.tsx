@@ -229,6 +229,11 @@ export function KadehAdsCampaignForm() {
       return;
     }
 
+    if (!formData.startDate) {
+      alert("Por favor, selecione uma data de início");
+      return;
+    }
+
     try {
       setIsUploadingImage(true);
 
@@ -237,9 +242,15 @@ export function KadehAdsCampaignForm() {
         imageUrl = await uploadImageToS3(formData.productImageFile);
       }
 
+      // Remove formatting from CNPJ (keep only digits)
+      const cleanCNPJ = formData.companyDocument.replace(/\D/g, '');
+
+      // Remove formatting from EAN13 (keep only digits)
+      const cleanEAN13 = formData.productEAN13.replace(/\D/g, '');
+
       createCampaignMutation.mutate({
         companyName: formData.companyName,
-        companyDocument: formData.companyDocument,
+        companyDocument: cleanCNPJ,
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
         duration: formData.duration as "1day" | "3days" | "7days" | "14days",
@@ -247,7 +258,7 @@ export function KadehAdsCampaignForm() {
         startDate: new Date(formData.startDate),
         productName: formData.productName,
         productImageUrl: imageUrl,
-        productEAN13: formData.productEAN13,
+        productEAN13: cleanEAN13,
       });
     } catch (error) {
       console.error("Error submitting campaign:", error);
@@ -372,7 +383,7 @@ export function KadehAdsCampaignForm() {
                   id="startDate"
                   name="startDate"
                   type="date"
-                  value={formData.startDate}
+                  value={formData.startDate || ""}
                   onChange={handleInputChange}
                   required
                 />
