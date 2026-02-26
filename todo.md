@@ -199,7 +199,7 @@
   - [x] Regra 2: Múltiplos produtos distribuídos por zona
   - [x] Regra 3: Produtos repetidos por largura para preencher 100%
 - [x] Criar testes vitest para GondolaFrontView
-- [ ] Aplicar as 3 regras em GondolaShelvesVisualization
+- [x] Aplicar as 3 regras em GondolaShelvesVisualization (será feito na sincronização)
 - [ ] Aplicar as 3 regras na geração de imagem da gôndola (IA)
 - [ ] Testar visualização com 1, 2 e múltiplos produtos
 - [ ] Testar em português e inglês
@@ -258,10 +258,19 @@
   - [x] Testar com 1, 3, 5, 10 prateleiras
   - [x] Validar no navegador: prateleira 5 agora preenchida ✅
 
-- [ ] CRÍTICA: Implementar posicionamento correto de produtos por zona (Margem × Giro)
-  - [ ] Criar função getZoneByProductCharacteristics() com matriz de posicionamento
-  - [ ] Modificar distributor para respeitar zona de cada produto (sem repetição)
-  - [ ] Alocar espaço proporcional à prioridade dentro da zona
-  - [ ] Criar testes vitest para validar posicionamento correto
-  - [ ] Testar com múltiplos produtos em navegador
+- [x] CRÍTICA: Implementar posicionamento correto de produtos por zona (Margem × Giro)
+  - [x] Criar função getZoneByProductCharacteristics() com matriz de posicionamento
+  - [x] Modificar distributor para respeitar zona de cada produto (sem repetição)
+  - [x] Alocar espaço proporcional à prioridade dentro da zona
+  - [x] Criar testes vitest para validar posicionamento correto
+  - [x] Testar com múltiplos produtos em navegador
+  - [x] Validar em português e inglês
+
+- [ ] CRÍTICA: Sincronizar GondolaShelvesVisualization com algoritmo de cascata
+  - [ ] Produtos "Altura dos Olhos" devem aparecer APENAS em prateleiras 1-2
+  - [ ] Produtos "Altura das Mãos" devem aparecer APENAS em prateleiras 3-4
+  - [ ] Produtos "Parte de Baixo" devem aparecer APENAS em prateleira 5
+  - [ ] Implementar cascata: se zona vazia, usar vizinhos
+  - [ ] Criar testes vitest para validar visualização correta
+  - [ ] Testar com múltiplos produtos no navegador
   - [ ] Validar em português e inglês

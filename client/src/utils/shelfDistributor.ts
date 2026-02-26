@@ -336,3 +336,144 @@ export function distributeProductsAcrossShelves(
     utilizationPercentage,
   };
 }
+
+/**
+ * STRICT distribution: Products stay ONLY in their assigned zone
+ * No cascading to neighboring zones
+ * Used for GondolaShelvesVisualization to show exact zone placement
+ */
+export function distributeProductsStrictByZone(
+  products: ProductForDistribution[],
+  gondolaWidth: number,
+  totalShelves: number
+): GondolaDistribution {
+  // Initialize shelves
+  const shelves: ShelfDistribution[] = [];
+  for (let i = 1; i <= totalShelves; i++) {
+    shelves.push({
+      shelfNumber: i,
+      zone: getZoneForShelf(i, totalShelves),
+      products: [],
+      usedWidth: 0,
+      availableWidth: gondolaWidth,
+      utilizationPercent: 0,
+    });
+  }
+
+  if (products.length === 0) {
+    return {
+      shelves,
+      totalUsedWidth: 0,
+      totalAvailableWidth: gondolaWidth * totalShelves,
+      totalProducts: 0,
+      utilizationPercentage: 0,
+    };
+  }
+
+  // Group products by zone (NO cascading)
+  const productsByZone: Record<string, ProductForDistribution[]> = {
+    "Altura dos olhos": [],
+    "Altura das mãos": [],
+    "Parte de Baixo": [],
+  };
+
+  products.forEach((p) => {
+    const zone = p.zone || "Altura das mãos";
+    if (zone in productsByZone) {
+      productsByZone[zone].push(p);
+    }
+  });
+
+  // For each zone, distribute ONLY zone-specific products (strict mode)
+  const zones = ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"];
+  
+  zones.forEach((zone) => {
+    const targetShelfNumbers = getShelvesForZone(zone, totalShelves);
+    
+    // STRICT: Only use products from this zone, NO cascading
+    const zoneProducts = sortProductsByPriority(productsByZone[zone]);
+    
+    if (zoneProducts.length === 0) {
+      // No products for this zone - leave shelves empty
+      return;
+    }
+
+    // Normalize shares within this zone to sum to 100%
+    const totalShare = zoneProducts.reduce((sum, p) => sum + (p.share || 10), 0);
+    const normalizedProducts = zoneProducts.map((p) => ({
+      ...p,
+      normalizedShare: ((p.share || 10) / totalShare) * 100,
+    }));
+
+    // Fill each shelf in the zone with products
+    targetShelfNumbers.forEach((shelfNum) => {
+      const shelfRef = shelves[shelfNum - 1];
+      if (!shelfRef) {
+        console.error(`[ERROR] Shelf ${shelfNum} not found in shelves array`);
+        return;
+      }
+
+      // Calculate fronts for each product to fill shelf width
+      let usedWidth = 0;
+      const shelfProductEntries: ShelfProduct[] = [];
+
+      normalizedProducts.forEach((product, idx) => {
+        const isLast = idx === normalizedProducts.length - 1;
+        const productShare = product.normalizedShare;
+
+        // Calculate allocated width for this product
+        const allocatedWidth = (productShare / 100) * gondolaWidth;
+
+        // Calculate number of fronts (minimum 1)
+        const productWidth = Math.max(product.largura, 1);
+        let fronts = Math.max(1, Math.floor(allocatedWidth / productWidth));
+
+        // For the last product, fill remaining space to ensure 100% occupancy
+        if (isLast) {
+          const remainingWidth = gondolaWidth - usedWidth;
+          fronts = Math.max(1, Math.round(remainingWidth / productWidth));
+        }
+
+        const widthUsed = fronts * productWidth;
+        usedWidth += widthUsed;
+
+        shelfProductEntries.push({
+          id: product.id,
+          name: product.name,
+          largura: product.largura,
+          comprimento: product.comprimento,
+          zone: product.zone,
+          fronts,
+          widthUsed,
+          sharePercent: productShare,
+        });
+      });
+
+      shelfRef.products = shelfProductEntries;
+      shelfRef.usedWidth = usedWidth;
+      shelfRef.utilizationPercent = (usedWidth / gondolaWidth) * 100;
+    });
+  });
+
+  // Calculate totals
+  let totalUsedWidth = 0;
+  let totalProducts = 0;
+
+  shelves.forEach((shelf) => {
+    totalUsedWidth += shelf.usedWidth;
+    totalProducts += shelf.products.length;
+  });
+
+  const totalAvailableWidth = gondolaWidth * totalShelves;
+  const utilizationPercentage = totalAvailableWidth > 0 
+    ? (totalUsedWidth / totalAvailableWidth) * 100 
+    : 0;
+
+  return {
+    shelves,
+    totalUsedWidth,
+    totalAvailableWidth,
+    totalProducts,
+    utilizationPercentage,
+  };
+}
