@@ -303,3 +303,13 @@
   - [ ] Implementar geração de fatura automática
   - [ ] Implementar notificações de campanha pendente
   - [ ] Testar fluxo completo end-to-end em português e inglês
+
+
+- [ ] NOVA FU- [x] NOVA FUNCIONALIDADE: Menu Mobile com Botões de Acesso às Páginas
+  - [x] Analisar estrutura de navegação atual (Header.tsx)
+  - [x] Criar componente de menu mobile (hamburger menu)
+  - [x] Adicionar botões para: Smart Layout, Intelligence, Picking, Kadeh Ads, Soluções, Como Funciona, Mídia, Vídeo, FAQ
+  - [x] Implementar responsividade (mostrar/ocultar em mobile)
+  - [x] Testar em diferentes tamanhos de tela (320px, 480px, 768px)
+  - [x] Validar em português e inglês
+  - [x] RESULTADO: Menu mobile com hamburger icon funcionando corretamente ✅px)\n  - [ ] Validar em portugu\u00eas e ingl\u00eas\n
