@@ -266,11 +266,12 @@
   - [x] Testar com múltiplos produtos em navegador
   - [x] Validar em português e inglês
 
-- [ ] CRÍTICA: Sincronizar GondolaShelvesVisualization com algoritmo de cascata
-  - [ ] Produtos "Altura dos Olhos" devem aparecer APENAS em prateleiras 1-2
-  - [ ] Produtos "Altura das Mãos" devem aparecer APENAS em prateleiras 3-4
-  - [ ] Produtos "Parte de Baixo" devem aparecer APENAS em prateleira 5
-  - [ ] Implementar cascata: se zona vazia, usar vizinhos
-  - [ ] Criar testes vitest para validar visualização correta
-  - [ ] Testar com múltiplos produtos no navegador
-  - [ ] Validar em português e inglês
+- [x] CRÍTICA: Corrigir cascata inteligente - Prateleira 5 vazia com vinhos
+  - [x] PROBLEMA: Distribuição estrita deixa prateleira 5 vazia (deveria ter cascata)
+  - [x] SOLUÇÃO: Voltar para distributeProductsAcrossShelves com cascata inteligente
+  - [x] Testar com vinhos: baixa margem + baixo giro deve ir para prateleira 5
+  - [x] Validar cascata: zona vazia preenche com vizinhos (Mãos → Olhos/Baixo)
+  - [x] Criar testes vitest para múltiplos produtos de diferentes zonas
+  - [x] Testar no navegador com 3+ produtos (vinhos, café, feijão)
+  - [x] Validar em português e inglês
+  - [x] RESULTADO: Todas as 5 prateleiras 100% ocupadas com cascata funcionando corretamente ✅

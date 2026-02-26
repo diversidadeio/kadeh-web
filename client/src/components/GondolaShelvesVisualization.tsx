@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { distributeProductsStrictByZone, type ProductForDistribution, type GondolaDistribution, type ShelfProduct } from "@/utils/shelfDistributor";
+import { distributeProductsAcrossShelves, type ProductForDistribution, type GondolaDistribution, type ShelfProduct } from "@/utils/shelfDistributor";
 
 interface GondolaShelvesVisualizationProps {
   products: ProductForDistribution[];
@@ -53,7 +53,7 @@ export default function GondolaShelvesVisualization({
   numberOfShelves,
   language,
 }: GondolaShelvesVisualizationProps) {
-  const distribution = distributeProductsStrictByZone(products, gondolaWidth, numberOfShelves);
+  const distribution = distributeProductsAcrossShelves(products, gondolaWidth, numberOfShelves);
 
   // Build a color map for products by id (consistent colors across shelves)
   const productColorMap: Record<string, typeof PRODUCT_COLORS[0]> = {};

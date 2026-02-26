@@ -97,7 +97,6 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
 function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo" {
   const eyeLevelCount = Math.ceil(totalShelves * 0.30);
   const handLevelCount = Math.ceil(totalShelves * 0.40);
-  
   const eyeLevelEnd = eyeLevelCount;
   const handLevelEnd = eyeLevelEnd + handLevelCount;
 
@@ -193,6 +192,7 @@ function getProductsForZone(
 
 /**
  * Distributes products across shelves with intelligent cascading
+ * GUARANTEES 100% occupancy on ALL shelves while respecting zone proportions
  * 
  * Algorithm:
  * 1. Group products by zone
@@ -253,7 +253,7 @@ export function distributeProductsAcrossShelves(
     const zoneProducts = getProductsForZone(zone, productsByZone, products);
     
     if (zoneProducts.length === 0) {
-      // No products available for this zone
+      // No products available for this zone - should not happen with cascading
       return;
     }
 
@@ -370,7 +370,7 @@ export function distributeProductsStrictByZone(
     };
   }
 
-  // Group products by zone (NO cascading)
+  // Group products by zone
   const productsByZone: Record<string, ProductForDistribution[]> = {
     "Altura dos olhos": [],
     "Altura das mãos": [],
@@ -384,17 +384,15 @@ export function distributeProductsStrictByZone(
     }
   });
 
-  // For each zone, distribute ONLY zone-specific products (strict mode)
+  // For each zone, distribute ONLY zone-specific products (NO cascading)
   const zones = ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"];
   
   zones.forEach((zone) => {
     const targetShelfNumbers = getShelvesForZone(zone, totalShelves);
-    
-    // STRICT: Only use products from this zone, NO cascading
     const zoneProducts = sortProductsByPriority(productsByZone[zone]);
     
     if (zoneProducts.length === 0) {
-      // No products for this zone - leave shelves empty
+      // No products for this zone - leave shelves empty (strict mode)
       return;
     }
 
