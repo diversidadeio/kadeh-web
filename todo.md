@@ -284,3 +284,22 @@
   - [ ] Testar geração de imagem com vinhos, café, feijão
   - [ ] Validar que imagem reflete exatamente a visualização de gôndola
   - [ ] Testar em português e inglês
+
+
+- [ ] NOVA FUNCIONALIDADE: Contratação do Kadeh Ads (Parcialmente Implementada)
+  - [x] Confirmar tabela de preços e pacotes de dias com usuário
+  - [x] Criar schema de banco de dados (adCampaigns, adBankPayments)
+  - [x] Implementar procedures tRPC para criar campanha e calcular preço
+  - [x] Criar formulário de contratação com validação
+  - [x] Implementar cálculo automático de valor (Preço Base × Multiplicador)
+  - [x] Implementar cálculo de data final baseado em duração
+  - [x] Implementar validação de 7 dias úteis de antecedência
+  - [x] Implementar upload de imagem para S3
+  - [x] Criar testes vitest (32 testes passando)
+  - [ ] CORRIGIR: Campo de data não está sendo preenchido corretamente no formulário
+  - [ ] Implementar envio de email para adm@kadeh.io e cliente
+  - [ ] Implementar botões de pagamento por depósito bancário
+  - [ ] Implementar dashboard de aprovação admin
+  - [ ] Implementar geração de fatura automática
+  - [ ] Implementar notificações de campanha pendente
+  - [ ] Testar fluxo completo end-to-end em português e inglês

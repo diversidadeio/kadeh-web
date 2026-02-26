@@ -153,6 +153,66 @@ export type AdAnalytic = typeof adAnalytics.$inferSelect;
 export type InsertAdAnalytic = typeof adAnalytics.$inferInsert;
 
 /**
+ * Campanhas de Anúncios - Requisições de contratação de anúncios
+ */
+export const adCampaigns = mysqlTable("adCampaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  advertiserId: int("advertiserId").notNull(),
+  companyName: varchar("companyName", { length: 255 }).notNull(),
+  companyDocument: varchar("companyDocument", { length: 20 }).notNull(),
+  contactEmail: varchar("contactEmail", { length: 320 }).notNull(),
+  contactPhone: varchar("contactPhone", { length: 20 }).notNull(),
+  duration: mysqlEnum("duration", ["1day", "3days", "7days", "14days"]).notNull(),
+  numberOfStores: int("numberOfStores").notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  productName: varchar("productName", { length: 255 }).notNull(),
+  productImageUrl: varchar("productImageUrl", { length: 500 }).notNull(),
+  productEAN13: varchar("productEAN13", { length: 13 }).notNull(),
+  basePrice: decimal("basePrice", { precision: 10, scale: 2 }).notNull(),
+  multiplier: decimal("multiplier", { precision: 5, scale: 2 }).notNull(),
+  totalCost: decimal("totalCost", { precision: 10, scale: 2 }).notNull(),
+  status: mysqlEnum("status", ["pending_approval", "approved", "rejected", "payment_pending", "active", "completed", "cancelled"]).default("pending_approval").notNull(),
+  approvedBy: int("approvedBy"),
+  approvalDate: timestamp("approvalDate"),
+  rejectionReason: text("rejectionReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  advertiserIdx: index("adCampaigns_advertiser_idx").on(table.advertiserId),
+  statusIdx: index("adCampaigns_status_idx").on(table.status),
+  startDateIdx: index("adCampaigns_startDate_idx").on(table.startDate),
+}));
+
+export type AdCampaign = typeof adCampaigns.$inferSelect;
+export type InsertAdCampaign = typeof adCampaigns.$inferInsert;
+
+/**
+ * Pagamentos por Depósito Bancário
+ */
+export const adBankPayments = mysqlTable("adBankPayments", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("BRL").notNull(),
+  status: mysqlEnum("status", ["pending", "confirmed", "failed", "cancelled"]).default("pending").notNull(),
+  invoiceNumber: varchar("invoiceNumber", { length: 50 }).unique(),
+  invoiceUrl: varchar("invoiceUrl", { length: 500 }),
+  paymentProofUrl: varchar("paymentProofUrl", { length: 500 }),
+  paidAt: timestamp("paidAt"),
+  confirmedAt: timestamp("confirmedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  campaignIdx: index("adBankPayments_campaign_idx").on(table.campaignId),
+  statusIdx: index("adBankPayments_status_idx").on(table.status),
+}));
+
+export type AdBankPayment = typeof adBankPayments.$inferSelect;
+export type InsertAdBankPayment = typeof adBankPayments.$inferInsert;
+
+/**
  * Transações de Pagamento - Histórico de pagamentos dos anúncios
  */
 export const adPayments = mysqlTable("adPayments", {

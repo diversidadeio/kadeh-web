@@ -15,6 +15,13 @@
       "when": 1770513728793,
       "tag": "0001_gray_caretaker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1772129944460,
+      "tag": "0002_parched_roughhouse",
+      "breakpoints": true
     }
   ]
 }

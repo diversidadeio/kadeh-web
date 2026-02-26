@@ -7,6 +7,7 @@ import { notifyOwner } from "./_core/notification";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
 import { adsRouter } from "./adsRouter";
+import { campaignsRouter } from "./campaignsRouter";
 import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
 import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -14,6 +15,7 @@ import { eq, and } from "drizzle-orm";
 export const appRouter = router({
   system: systemRouter,
   ads: adsRouter,
+  campaigns: campaignsRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
