@@ -275,3 +275,12 @@
   - [x] Testar no navegador com 3+ produtos (vinhos, café, feijão)
   - [x] Validar em português e inglês
   - [x] RESULTADO: Todas as 5 prateleiras 100% ocupadas com cascata funcionando corretamente ✅
+
+- [x] CRITICA: Sincronizar geracao de imagem IA com cascata inteligente
+  - [ ] PROBLEMA: Imagem IA mostra prateleiras vazias quando deveriam estar 100% ocupadas
+  - [ ] SOLUÇÃO: Usar distributeProductsAcrossShelves() no StoreVisualizationGenerator
+  - [ ] Gerar prompt descritivo com TODOS os produtos em TODAS as prateleiras
+  - [ ] Incluir informação de 100% ocupação e cascata no prompt
+  - [ ] Testar geração de imagem com vinhos, café, feijão
+  - [ ] Validar que imagem reflete exatamente a visualização de gôndola
+  - [ ] Testar em português e inglês

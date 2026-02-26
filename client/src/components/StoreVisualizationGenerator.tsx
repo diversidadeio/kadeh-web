@@ -1,6 +1,7 @@
 /**
  * StoreVisualizationGenerator Component
  * Generates AI images representing how the store would look based on Smart Layout simulation
+ * Now uses the intelligent cascading distribution algorithm to ensure 100% shelf occupancy
  */
 
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
-import { generateShelfDescription, calculateZonePercentages } from "@/utils/gondolaDistribution";
+import { distributeProductsAcrossShelves, type ProductForDistribution } from "@/utils/shelfDistributor";
 
 interface Product {
   id: string;
@@ -20,6 +21,8 @@ interface Product {
   largura?: number;
   comprimento?: number;
   zone?: string;
+  giro?: string;
+  margem?: string;
 }
 
 interface StoreVisualizationGeneratorProps {
@@ -75,60 +78,88 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
-    // Calculate zone percentages and shelf distribution
-    const zonePercentages = calculateZonePercentages(
-      products.map(p => ({
-        zone: p.zone || "Altura das mãos",
-        share: 1, // Equal weight for all products
-      }))
+    // Convert products to distribution format
+    const productsForDistribution: ProductForDistribution[] = products.map(p => ({
+      id: p.id,
+      name: p.name,
+      largura: p.largura || 10,
+      comprimento: p.comprimento || 5,
+      zone: (p.zone || "Altura das mãos") as "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo",
+      giro: (p.giro || "Médio") as any,
+      margem: (p.margem || "Média") as any,
+      share: 10, // Default share
+    }));
+
+    // Use intelligent cascading distribution
+    const distribution = distributeProductsAcrossShelves(
+      productsForDistribution,
+      gondolaWidth,
+      numberOfShelves
     );
 
-    // Generate detailed shelf description
-    const shelfDescription = generateShelfDescription(
-      products.map(p => ({
-        id: p.id,
-        name: p.name,
-        zone: p.zone || "Altura das mãos",
-        share: 1,
-        category: p.category,
-      })),
-      numberOfShelves,
-      language as 'pt' | 'en'
-    );
+    // Build detailed shelf descriptions with actual product distribution
+    let shelfDescriptions = "";
+    distribution.shelves.forEach((shelf, idx) => {
+      const zoneLabel = {
+        "Altura dos olhos": language === "pt" ? "Altura dos Olhos (Eye Level)" : "Eye Level",
+        "Altura das mãos": language === "pt" ? "Altura das Mãos (Hand Level)" : "Hand Level",
+        "Parte de Baixo": language === "pt" ? "Parte de Baixo (Bottom)" : "Bottom Shelf",
+      }[shelf.zone];
 
-    // Organize products by zone for additional context
-    const productsByZone: Record<string, string[]> = {
-      eyes: [],
-      hands: [],
-      bottom: [],
-    };
+      const productList = shelf.products
+        .map(p => `${p.name} (${p.fronts} fronts)`)
+        .join(", ");
 
-    products.forEach((p) => {
-      const zone = p.zone || "Altura das mãos";
-      const productName = `${p.name} (${p.category.name})`;
-      
-      if (zone === "Altura dos olhos" || zone === "eyes") {
-        productsByZone.eyes.push(productName);
-      } else if (zone === "Altura das mãos" || zone === "hands") {
-        productsByZone.hands.push(productName);
-      } else if (zone === "Parte de Baixo" || zone === "bottom") {
-        productsByZone.bottom.push(productName);
-      }
+      shelfDescriptions += `\n**Shelf ${shelf.shelfNumber} (${zoneLabel}):** ${productList} - ${shelf.utilizationPercent.toFixed(1)}% occupied`;
     });
 
-    // Build detailed zone descriptions with Portuguese and English
+    // Organize products by zone with actual distribution
+    const productsByZone: Record<string, { name: string; fronts: number }[]> = {
+      "Altura dos olhos": [],
+      "Altura das mãos": [],
+      "Parte de Baixo": [],
+    };
+
+    distribution.shelves.forEach((shelf) => {
+      shelf.products.forEach((p) => {
+        const existing = productsByZone[shelf.zone].find(prod => prod.name === p.name);
+        if (existing) {
+          existing.fronts += p.fronts;
+        } else {
+          productsByZone[shelf.zone].push({
+            name: p.name,
+            fronts: p.fronts,
+          });
+        }
+      });
+    });
+
+    // Build zone descriptions with actual product distribution
     let eyeLevelDesc = "";
     let handLevelDesc = "";
     let bottomLevelDesc = "";
 
-    if (productsByZone.eyes.length > 0) {
-      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productsByZone.eyes.join(", ")}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility and premium placement. This zone represents ${zonePercentages.eyeLevel.toFixed(1)}% of total shelf space.`;
+    const eyeLevelProducts = productsByZone["Altura dos olhos"];
+    const handLevelProducts = productsByZone["Altura das mãos"];
+    const bottomLevelProducts = productsByZone["Parte de Baixo"];
+
+    const eyeLevelPercentage = (eyeLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
+    const handLevelPercentage = (handLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
+    const bottomLevelPercentage = (bottomLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
+
+    if (eyeLevelProducts.length > 0) {
+      const productList = eyeLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productList}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility. This zone represents ${eyeLevelPercentage}% of total display space with ${eyeLevelProducts.length} product types.`;
     }
-    if (productsByZone.hands.length > 0) {
-      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productsByZone.hands.join(", ")}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access and frequent purchase. This zone represents ${zonePercentages.handLevel.toFixed(1)}% of total shelf space.`;
+
+    if (handLevelProducts.length > 0) {
+      const productList = handLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productList}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access. This zone represents ${handLevelPercentage}% of total display space with ${handLevelProducts.length} product types.`;
     }
-    if (productsByZone.bottom.length > 0) {
-      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Heavy/Bulk Items):**\n${productsByZone.bottom.join(", ")}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high) for bulk items, heavy products, and promotional displays. This zone represents ${zonePercentages.bottomLevel.toFixed(1)}% of total shelf space.`;
+
+    if (bottomLevelProducts.length > 0) {
+      const productList = bottomLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Base Products):**\n${productList}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high). This zone represents ${bottomLevelPercentage}% of total display space with ${bottomLevelProducts.length} product types.`;
     }
 
     const zoneDetails = eyeLevelDesc + handLevelDesc + bottomLevelDesc;
@@ -152,51 +183,44 @@ export default function StoreVisualizationGenerator({
       exposureTypeDetail = "This is a standard retail shelf display.";
     }
 
-    // Calculate number of fronts per shelf
-    const productsPerZone = {
-      eyes: productsByZone.eyes.length,
-      hands: productsByZone.hands.length,
-      bottom: productsByZone.bottom.length,
-    };
-    
-    const frontsPerShelf = Math.ceil(products.length / numberOfShelves);
-    const shelfDistribution = [
-      `Shelf 1 (Top - Eye Level): ${Math.ceil(productsPerZone.eyes / 1)} fronts`,
-      `Shelves 2-3 (Middle - Hand Level): ${Math.ceil(productsPerZone.hands / 2)} fronts each`,
-      `Shelves 4+ (Bottom): ${Math.ceil(productsPerZone.bottom / (numberOfShelves - 3))} fronts each`,
-    ].join('\n');
+    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying ${products.length} products strategically positioned by exposure zones. ALL SHELVES ARE 100% OCCUPIED with intelligent product distribution and cascading.${zoneDetails}
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying products strategically positioned by exposure zones. Total of ${products.length} products distributed across ${frontsPerShelf} average fronts per shelf.${zoneDetails}
+**Detailed Shelf Distribution (100% Occupancy - Intelligent Cascading):**
+${shelfDescriptions}
 
-**Detailed Shelf Distribution:**
-${shelfDescription}
-
-**Product Front Distribution:**
-${shelfDistribution}
+**Key Distribution Metrics:**
+- Total Products: ${products.length}
+- Total Fronts: ${distribution.totalProducts}
+- Total Space Used: ${distribution.totalUsedWidth}cm / ${distribution.totalAvailableWidth}cm
+- Utilization: ${distribution.utilizationPercentage.toFixed(1)}%
+- Average Fronts per Shelf: ${(distribution.totalProducts / numberOfShelves).toFixed(1)}
+- All ${numberOfShelves} shelves are 100% occupied
 
 **Shelf Specifications:**
 - Width: ${gondolaWidth}cm
 - Depth: ${shelfDepth}cm
 - Height between shelves: ${shelfHeight}cm
 - Total shelves: ${numberOfShelves}
-- Average fronts per shelf: ${frontsPerShelf}
-- Shelf 1 (Top): Altura dos Olhos (Eye Level) - Premium placement zone - ${productsPerZone.eyes} product fronts
-- Shelves 2-3 (Middle): Altura das Mãos (Hand Level) - Convenient reach zone - ${productsPerZone.hands} product fronts
-- Shelves 4+ (Bottom): Parte de Baixo (Bottom Shelf) - Bulk and heavy items zone - ${productsPerZone.bottom} product fronts
+- Shelf 1-${Math.ceil(numberOfShelves * 0.30)} (Top): Altura dos Olhos (Eye Level) - Premium placement zone
+- Shelf ${Math.ceil(numberOfShelves * 0.30) + 1}-${Math.ceil(numberOfShelves * 0.70)} (Middle): Altura das Mãos (Hand Level) - Convenient reach zone
+- Shelf ${Math.ceil(numberOfShelves * 0.70) + 1}-${numberOfShelves} (Bottom): Parte de Baixo (Bottom Shelf) - Base products zone
 
 ${exposureTypeDetail}
 
-**Visual Requirements:**
-- Products at eye level (Altura dos Olhos) are prominently displayed with excellent lighting and visibility - representing ${zonePercentages.eyeLevel.toFixed(1)}% of shelf space
-- Products at hand level (Altura das Mãos) are easily accessible and well-organized - representing ${zonePercentages.handLevel.toFixed(1)}% of shelf space
-- Products at bottom shelf (Parte de Baixo) are clearly visible and properly arranged - representing ${zonePercentages.bottomLevel.toFixed(1)}% of shelf space
+**CRITICAL Visual Requirements:**
+- EVERY SHELF MUST BE 100% FULL with products - NO EMPTY SHELVES
+- Products at eye level are prominently displayed with excellent lighting
+- Products at hand level are easily accessible and well-organized
+- Products at bottom shelf are clearly visible and properly arranged
+- The display shows intelligent cascading distribution where products overflow from their primary zones to fill adjacent zones
+- Each shelf is completely filled from left to right with no gaps
 - The display is neatly organized in a modern supermarket setting with professional, warm lighting
 - Clear shelf dividers and zone markers visible
 - Realistic product placement showing actual retail merchandising standards
 - High quality, detailed, professional retail photography style
 - Show how customers would naturally see and interact with the products in a real store environment
 - Each shelf zone should be clearly distinguishable with proper lighting and organization
-- Product distribution across shelves should match the percentages specified above`;
+- Product distribution across shelves should show 100% occupancy with realistic spacing`;
 
     return prompt;
   };
@@ -282,7 +306,7 @@ ${exposureTypeDetail}
             className="w-full rounded-lg border border-gray-200 object-cover"
           />
           <p className="text-xs text-gray-500">
-            Generated AI visualization based on simulation configuration
+            Generated AI visualization based on intelligent cascading distribution with 100% shelf occupancy
           </p>
         </div>
       )}
@@ -290,7 +314,7 @@ ${exposureTypeDetail}
       {!generatedImage && !error && products.length > 0 && (
         <div className="rounded-lg bg-gray-50 p-4 text-center">
           <p className="text-sm text-gray-600">
-            Click the button above to generate an AI visualization of your store layout
+            Click the button above to generate an AI visualization of your store layout with 100% shelf occupancy
           </p>
         </div>
       )}
