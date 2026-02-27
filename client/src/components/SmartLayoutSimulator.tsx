@@ -38,7 +38,7 @@ interface Product {
   id: string;
   name: string;
   categoryId: string;
-  category: Category;
+  category: Category & { shelfZone?: string };
   largura?: number;
   comprimento?: number;
   promotionalPoints?: PromotionalPoint[];
@@ -460,11 +460,19 @@ export default function SmartLayoutSimulator() {
       (c) => c.mainCategory === formData.category
     ) || CATEGORIES_DATABASE[0];
 
+    // Calculate optimal shelf zone based on margin and giro
+    // Use the margin and velocity names directly (not ABC curves)
+    const optimalZone = calculateShelfZone(
+      formData.marginCategory || 'Média',
+      formData.velocityCategory || 'Médio',
+      language as 'pt' | 'en'
+    );
+
     const newProduct: Product = {
       id: formData.id,
       name: formData.name,
       categoryId: category.id,
-      category: category,
+      category: { ...category, shelfZone: optimalZone },
       largura: formData.width,
       comprimento: formData.depth,
     };

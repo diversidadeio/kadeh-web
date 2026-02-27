@@ -11,13 +11,13 @@ export type ShelfZone = 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baix
 /**
  * Calculates the optimal shelf zone based on product margin and sales velocity
  * 
- * Matrix Logic:
+ * Matrix Logic (CORRECTED):
+ * - Low Margin (ANY Giro) = Bottom Shelf (SEMPRE na parte de baixo)
  * - High Margin + High Giro = Eye Level (Premium positioning)
- * - High Margin + Medium Giro = Eye Level (Premium positioning)
- * - Medium Margin + High Giro = Hand Level (Accessible, high volume)
- * - Medium Margin + Medium Giro = Hand Level (Accessible, balanced)
- * - Low Margin + High Giro = Hand Level (Volume sales)
- * - Any Margin + Low Giro = Bottom Shelf (Bulk, heavy items)
+ * - High Margin + Medium Giro = Hand Level (Premium but accessible)
+ * - Medium Margin + High Giro = Eye Level (High velocity)
+ * - Medium Margin + Medium Giro = Hand Level (Balanced)
+ * - Medium Margin + Low Giro = Bottom Shelf (Low velocity)
  * 
  * @param margin - Product margin level (Alta/Média/Baixa or High/Medium/Low)
  * @param giro - Product sales velocity (Alto/Médio/Baixo or High/Medium/Low)
@@ -33,34 +33,35 @@ export function calculateShelfZone(
   const normalizedMargin = normalizeMargin(margin);
   const normalizedGiro = normalizeGiro(giro);
 
-  // Apply decision matrix
-  if (normalizedGiro === 'Low') {
-    // Low sales velocity → Bottom shelf (bulk, heavy items)
+  // REGRA PRINCIPAL: Produtos com Margem Baixa SEMPRE ficam na Parte de Baixo
+  if (normalizedMargin === 'Low') {
     return language === 'pt' ? 'Parte de Baixo' : 'Bottom shelf';
   }
 
+  // Para produtos com Margem Alta ou Média, aplicar regras baseadas em Giro
   if (normalizedMargin === 'High') {
-    // High margin products → Eye level (premium positioning)
-    return language === 'pt' ? 'Altura dos olhos' : 'Eye level';
-  }
-
-  if (normalizedMargin === 'Medium') {
-    // Medium margin products
+    // High margin products
     if (normalizedGiro === 'High') {
-      // High velocity → Hand level (accessible, high volume)
+      // High margin + High giro → Eye level (premium, best positioning)
+      return language === 'pt' ? 'Altura dos olhos' : 'Eye level';
+    } else if (normalizedGiro === 'Medium') {
+      // High margin + Medium giro → Hand level (accessible)
       return language === 'pt' ? 'Altura das mãos' : 'Hand level';
     } else {
-      // Medium velocity → Hand level (balanced)
-      return language === 'pt' ? 'Altura das mãos' : 'Hand level';
+      // High margin + Low giro → Bottom shelf (low velocity)
+      return language === 'pt' ? 'Parte de Baixo' : 'Bottom shelf';
     }
   }
 
-  // Low margin products
+  // Medium margin products
   if (normalizedGiro === 'High') {
-    // High velocity despite low margin → Hand level (volume sales)
+    // Medium margin + High giro → Eye level (high velocity)
+    return language === 'pt' ? 'Altura dos olhos' : 'Eye level';
+  } else if (normalizedGiro === 'Medium') {
+    // Medium margin + Medium giro → Hand level (balanced)
     return language === 'pt' ? 'Altura das mãos' : 'Hand level';
   } else {
-    // Low margin + medium velocity → Bottom shelf
+    // Medium margin + Low giro → Bottom shelf (low velocity)
     return language === 'pt' ? 'Parte de Baixo' : 'Bottom shelf';
   }
 }

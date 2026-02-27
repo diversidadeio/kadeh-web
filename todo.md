@@ -188,7 +188,7 @@
 - [x] Implementar suporte multilíngue completo no GondolaVisualization
 - [x] Testar visualização de zonas em português e inglês
 
-- [ ] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
+- [x] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
 - [ ] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
 - [ ] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
 - [ ] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
