@@ -329,3 +329,7 @@
 - [x] Testar envio completo do formulário de Kadeh Ads
 
 - [x] Adicionar Header e Footer à página de Kadeh Ads com navegação completa
+
+- [x] Reestruturar página Kadeh Ads como landing page com informações sobre o produto
+- [x] Criar modal para formulário de cadastro de campanha
+- [x] Adicionar seções de benefícios, como funciona e CTA para abrir formulário
