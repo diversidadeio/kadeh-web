@@ -327,3 +327,5 @@
 - [x] Corrigir sincronização do campo de data com React state
 - [x] Criar registro de anunciante para usuário autenticado no banco de dados
 - [x] Testar envio completo do formulário de Kadeh Ads
+
+- [x] Adicionar Header e Footer à página de Kadeh Ads com navegação completa
