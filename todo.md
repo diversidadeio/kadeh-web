@@ -336,3 +336,16 @@
 
 - [x] Adicionar exibição de valor do investimento da campanha na landing page
 - [x] Adicionar botão "Contratar" na landing page (fora do modal)
+
+- [ ] Adicionar funcionalidade de múltiplos produtos no formulário de Kadeh Ads
+- [ ] Criar botão "Adicionar Produto" para adicionar mais produtos à campanha
+- [ ] Permitir remover produtos da lista
+- [ ] Validar e salvar múltiplos produtos no banco de dados
+
+
+- [x] Adicionar funcionalidade de múltiplos produtos no formulário Kadeh Ads
+- [x] Criar botão "Adicionar Produto" para adicionar novos produtos à campanha
+- [x] Criar botão "Remover" para remover produtos da campanha
+- [x] Atualizar schema do banco de dados com tabela campaignProducts
+- [x] Atualizar procedure createCampaign para aceitar múltiplos produtos
+- [x] Testar formulário com múltiplos produtos em português e inglês

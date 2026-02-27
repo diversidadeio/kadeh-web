@@ -5,6 +5,7 @@ import {
   adCampaigns, 
   adBankPayments,
   advertisers,
+  campaignProducts,
   InsertAdCampaign,
   InsertAdBankPayment
 } from "../drizzle/schema";
@@ -169,10 +170,16 @@ export const createCampaign = protectedProcedure
       duration: z.enum(["1day", "3days", "7days", "14days"]),
       numberOfStores: z.number().min(1),
       startDate: z.date(),
-      // Dados do Produto
-      productName: z.string().min(1),
-      productImageUrl: z.string().url(),
-      productEAN13: z.string().min(13).max(13),
+      // Dados dos Produtos (múltiplos)
+      products: z.array(z.object({
+        productName: z.string().min(1),
+        productImageUrl: z.string().url(),
+        productEAN13: z.string().min(13).max(13),
+      })).min(1),
+      // Preço
+      basePrice: z.number(),
+      multiplier: z.number(),
+      totalCost: z.number(),
     })
   )
   .mutation(async ({ input, ctx }) => {
@@ -206,11 +213,6 @@ export const createCampaign = protectedProcedure
         });
       }
 
-      // Calcular valor total
-      const basePrice = PRICING_BY_DURATION[input.duration];
-      const multiplier = getStoreMultiplier(input.numberOfStores);
-      const totalCost = basePrice * multiplier;
-
       // Calcular data final
       const durationDays: Record<string, number> = {
         "1day": 1,
@@ -220,6 +222,9 @@ export const createCampaign = protectedProcedure
       };
       const endDate = new Date(input.startDate);
       endDate.setDate(endDate.getDate() + durationDays[input.duration]);
+
+      // Usar o primeiro produto como principal (para compatibilidade com schema existente)
+      const firstProduct = input.products[0];
 
       // Criar campanha
       const campaign: InsertAdCampaign = {
@@ -232,44 +237,33 @@ export const createCampaign = protectedProcedure
         numberOfStores: input.numberOfStores,
         startDate: input.startDate,
         endDate,
-        productName: input.productName,
-        productImageUrl: input.productImageUrl,
-        productEAN13: input.productEAN13,
-        basePrice: basePrice.toString(),
-        multiplier: multiplier.toString(),
-        totalCost: totalCost.toString(),
+        productName: firstProduct.productName,
+        productImageUrl: firstProduct.productImageUrl,
+        productEAN13: firstProduct.productEAN13,
+        basePrice: input.basePrice.toString(),
+        multiplier: input.multiplier.toString(),
+        totalCost: input.totalCost.toString(),
         status: "pending_approval",
       };
 
       const result = await db.insert(adCampaigns).values(campaign);
       const campaignId = result[0]?.insertId || 0;
 
+      // Inserir produtos adicionais na tabela campaignProducts
+      if (input.products.length > 0) {
+        const campaignProductsData = input.products.map((product, index) => ({
+          campaignId,
+          productName: product.productName,
+          productImageUrl: product.productImageUrl,
+          productEAN13: product.productEAN13,
+          position: index,
+        }));
+        await db.insert(campaignProducts).values(campaignProductsData);
+      }
+
       // Enviar email de notificação
-      const emailContent = `
-Nova Campanha Kadeh Ads Solicitada
-
-Empresa: ${input.companyName}
-CNPJ: ${input.companyDocument}
-Email: ${input.contactEmail}
-Telefone: ${input.contactPhone}
-
-Dados da Campanha:
-- Produto: ${input.productName}
-- EAN13: ${input.productEAN13}
-- Duração: ${input.duration}
-- Quantidade de Lojas: ${input.numberOfStores}
-- Data Inicial: ${input.startDate.toLocaleDateString("pt-BR")}
-- Data Final: ${endDate.toLocaleDateString("pt-BR")}
-
-Cálculo de Valor:
-- Preço Base: R$ ${basePrice.toFixed(2)}
-- Multiplicador (${input.numberOfStores} lojas): x${multiplier.toFixed(2)}
-- Valor Total: R$ ${totalCost.toFixed(2)}
-
-Status: Pendente de Aprovação
-
-ID da Campanha: ${campaignId}
-`;
+      const productsInfo = input.products.map((p, i) => `${i + 1}. ${p.productName} (EAN13: ${p.productEAN13})`).join("\\n");
+      const emailContent = `Nova Campanha Kadeh Ads Solicitada\n\nEmpresa: ${input.companyName}\nCNPJ: ${input.companyDocument}\nEmail: ${input.contactEmail}\nTelefone: ${input.contactPhone}\n\nDados da Campanha:\nProdutos:\n${productsInfo}\n- Duração: ${input.duration}\n- Quantidade de Lojas: ${input.numberOfStores}\n- Data Inicial: ${input.startDate.toLocaleDateString("pt-BR")}\n- Data Final: ${endDate.toLocaleDateString("pt-BR")}\n\nCálculo de Valor:\n- Preço Base: R$ ${input.basePrice.toFixed(2)}\n- Multiplicador (${input.numberOfStores} lojas): x${input.multiplier.toFixed(2)}\n- Valor Total: R$ ${input.totalCost.toFixed(2)}\n\nStatus: Pendente de Aprovação\n\nID da Campanha: ${campaignId}\n`;
 
       // Notificar admin
       await notifyOwner({

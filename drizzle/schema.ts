@@ -213,6 +213,25 @@ export type AdBankPayment = typeof adBankPayments.$inferSelect;
 export type InsertAdBankPayment = typeof adBankPayments.$inferInsert;
 
 /**
+ * Produtos de Campanha - Permite múltiplos produtos por campanha
+ */
+export const campaignProducts = mysqlTable("campaignProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  productName: varchar("productName", { length: 255 }).notNull(),
+  productImageUrl: varchar("productImageUrl", { length: 500 }).notNull(),
+  productEAN13: varchar("productEAN13", { length: 13 }).notNull(),
+  position: int("position").notNull(), // Ordem dos produtos na campanha
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  campaignIdx: index("campaignProducts_campaign_idx").on(table.campaignId),
+}));
+
+export type CampaignProduct = typeof campaignProducts.$inferSelect;
+export type InsertCampaignProduct = typeof campaignProducts.$inferInsert;
+
+/**
  * Transações de Pagamento - Histórico de pagamentos dos anúncios
  */
 export const adPayments = mysqlTable("adPayments", {

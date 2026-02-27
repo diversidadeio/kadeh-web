@@ -7,8 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+
+interface Product {
+  id: string;
+  productName: string;
+  productImageUrl: string;
+  productImageFile: File | null;
+  productEAN13: string;
+}
 
 interface FormData {
   companyName: string;
@@ -18,10 +26,7 @@ interface FormData {
   duration: "1day" | "3days" | "7days" | "14days" | "";
   numberOfStores: string;
   startDate: string;
-  productName: string;
-  productImageUrl: string;
-  productImageFile: File | null;
-  productEAN13: string;
+  products: Product[];
 }
 
 interface PricingInfo {
@@ -36,7 +41,7 @@ const translations = {
     subtitle: "Crie uma campanha de publicidade para suas lojas",
     companyInfo: "Informações da Empresa",
     campaignInfo: "Informações da Campanha",
-    productInfo: "Informações do Produto",
+    productInfo: "Informações dos Produtos",
     pricing: "Cálculo de Valor",
     companyName: "Nome da Empresa",
     cnpj: "CNPJ",
@@ -70,6 +75,11 @@ const translations = {
     stores6to20: "6-20 lojas (x1.5)",
     stores21to50: "21-50 lojas (x2.0)",
     stores50plus: "50+ lojas (x2.5)",
+    addProduct: "Adicionar Produto",
+    removeProduct: "Remover",
+    product: "Produto",
+    noProducts: "Nenhum produto adicionado",
+    minProducts: "Adicione pelo menos um produto",
   },
 };
 
@@ -82,17 +92,23 @@ export function KadehAdsCampaignForm() {
     duration: "",
     numberOfStores: "",
     startDate: "",
-    productName: "",
-    productImageUrl: "",
-    productImageFile: null,
-    productEAN13: "",
+    products: [
+      {
+        id: "1",
+        productName: "",
+        productImageUrl: "",
+        productImageFile: null,
+        productEAN13: "",
+      },
+    ],
   });
 
   const [pricingInfo, setPricingInfo] = useState<PricingInfo | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState<{ [key: string]: boolean }>({});
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const t = translations.pt;
 
@@ -106,19 +122,168 @@ export function KadehAdsCampaignForm() {
     }
   );
 
-  const validateDateQuery = trpc.campaigns.validateStartDate.useQuery(
-    {
-      startDate: formData.startDate ? new Date(formData.startDate) : new Date(),
-    },
-    {
-      enabled: !!formData.startDate,
+  useEffect(() => {
+    if (calculatePriceQuery.data) {
+      setPricingInfo(calculatePriceQuery.data);
     }
-  );
+  }, [calculatePriceQuery.data]);
 
-  const uploadImageMutation = trpc.campaigns.uploadImage.useMutation();
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    productId?: string
+  ) => {
+    const { id, value } = e.target;
 
-  const createCampaignMutation = trpc.campaigns.create.useMutation({
-    onSuccess: (data) => {
+    if (productId) {
+      setFormData((prev) => ({
+        ...prev,
+        products: prev.products.map((p) =>
+          p.id === productId ? { ...p, [id]: value } : p
+        ),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    }
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const businessDaysNeeded = 7;
+    const minDate = new Date(today);
+    let businessDaysAdded = 0;
+    while (businessDaysAdded < businessDaysNeeded) {
+      minDate.setDate(minDate.getDate() + 1);
+      const dayOfWeek = minDate.getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        businessDaysAdded++;
+      }
+    }
+
+    if (selectedDate < minDate) {
+      setDateError(
+        `${t.dateWarning}. ${minDate.toLocaleDateString("pt-BR")}`
+      );
+    } else {
+      setDateError(null);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      startDate: e.target.value,
+    }));
+  };
+
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    productId: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage((prev) => ({ ...prev, [productId]: true }));
+    setUploadError(null);
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+
+      setFormData((prev) => ({
+        ...prev,
+        products: prev.products.map((p) =>
+          p.id === productId
+            ? { ...p, productImageUrl: data.url, productImageFile: file }
+            : p
+        ),
+      }));
+    } catch (error) {
+      setUploadError("Erro ao fazer upload da imagem");
+      console.error("Upload error:", error);
+    } finally {
+      setIsUploadingImage((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const addProduct = () => {
+    const newId = String(Math.max(...formData.products.map((p) => parseInt(p.id) || 0)) + 1);
+    setFormData((prev) => ({
+      ...prev,
+      products: [
+        ...prev.products,
+        {
+          id: newId,
+          productName: "",
+          productImageUrl: "",
+          productImageFile: null,
+          productEAN13: "",
+        },
+      ],
+    }));
+  };
+
+  const removeProduct = (productId: string) => {
+    if (formData.products.length === 1) return;
+    setFormData((prev) => ({
+      ...prev,
+      products: prev.products.filter((p) => p.id !== productId),
+    }));
+  };
+
+  const createCampaignMutation = trpc.campaigns.create.useMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.products.length === 0) {
+      setUploadError(t.minProducts);
+      return;
+    }
+
+    if (dateError) {
+      setUploadError(t.invalidDate);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setUploadError(null);
+
+    try {
+      const cleanCNPJ = formData.companyDocument.replace(/\D/g, "");
+
+      await createCampaignMutation.mutateAsync({
+        companyName: formData.companyName,
+        companyDocument: cleanCNPJ,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+        duration: formData.duration as "1day" | "3days" | "7days" | "14days",
+        numberOfStores: parseInt(formData.numberOfStores),
+        startDate: new Date(formData.startDate),
+        products: formData.products.map((p) => ({
+          productName: p.productName,
+          productImageUrl: p.productImageUrl,
+          productEAN13: p.productEAN13.replace(/\D/g, ""),
+        })),
+        basePrice: pricingInfo?.basePrice || 0,
+        multiplier: pricingInfo?.multiplier || 1,
+        totalCost: pricingInfo?.totalCost || 0,
+      });
+
       setSuccessMessage(t.success);
       setFormData({
         companyName: "",
@@ -128,200 +293,86 @@ export function KadehAdsCampaignForm() {
         duration: "",
         numberOfStores: "",
         startDate: "",
-        productName: "",
-        productImageUrl: "",
-        productImageFile: null,
-        productEAN13: "",
+        products: [
+          {
+            id: "1",
+            productName: "",
+            productImageUrl: "",
+            productImageFile: null,
+            productEAN13: "",
+          },
+        ],
       });
       setPricingInfo(null);
-    },
-    onError: (error) => {
-      setUploadError(error.message || t.error);
-    },
-  });
 
-  useEffect(() => {
-    if (calculatePriceQuery.data?.success) {
-      setPricingInfo(calculatePriceQuery.data.breakdown);
-    }
-  }, [calculatePriceQuery.data]);
-
-  useEffect(() => {
-    if (validateDateQuery.data?.success) {
-      if (!validateDateQuery.data.isValid) {
-        setDateError(validateDateQuery.data.message);
-      } else {
-        setDateError(null);
-      }
-    }
-  }, [validateDateQuery.data]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        productImageFile: file,
-        productImageUrl: URL.createObjectURL(file),
-      }));
-      setUploadError(null);
-    }
-  };
-
-  const uploadImageToS3 = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = (reader.result as string).split(",")[1];
-        uploadImageMutation.mutate(
-          {
-            fileName: file.name,
-            fileData: base64,
-            mimeType: file.type,
-          },
-          {
-            onSuccess: (data) => {
-              resolve(data.url);
-            },
-            onError: (error) => {
-              reject(error);
-            },
-          }
-        );
-      };
-      reader.onerror = () => {
-        reject(new Error("Falha ao ler arquivo"));
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!pricingInfo) {
-      alert("Por favor, calcule o valor da campanha");
-      return;
-    }
-
-    if (dateError) {
-      alert("Por favor, selecione uma data válida");
-      return;
-    }
-
-    if (!formData.productImageFile) {
-      alert("Por favor, selecione uma imagem do produto");
-      return;
-    }
-
-    if (!formData.startDate) {
-      alert("Por favor, selecione uma data de início");
-      return;
-    }
-
-    try {
-      setIsUploadingImage(true);
-
-      let imageUrl = formData.productImageUrl;
-      if (formData.productImageFile && !formData.productImageUrl.startsWith("http")) {
-        imageUrl = await uploadImageToS3(formData.productImageFile);
-      }
-
-      // Remove formatting from CNPJ (keep only digits)
-      const cleanCNPJ = formData.companyDocument.replace(/\D/g, '');
-
-      // Remove formatting from EAN13 (keep only digits)
-      const cleanEAN13 = formData.productEAN13.replace(/\D/g, '');
-
-      createCampaignMutation.mutate({
-        companyName: formData.companyName,
-        companyDocument: cleanCNPJ,
-        contactEmail: formData.contactEmail,
-        contactPhone: formData.contactPhone,
-        duration: formData.duration as "1day" | "3days" | "7days" | "14days",
-        numberOfStores: parseInt(formData.numberOfStores),
-        startDate: new Date(formData.startDate),
-        productName: formData.productName,
-        productImageUrl: imageUrl,
-        productEAN13: cleanEAN13,
-      });
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (error) {
-      console.error("Error submitting campaign:", error);
-      setUploadError("Erro ao fazer upload da imagem. Tente novamente.");
+      const errorMessage =
+        error instanceof Error ? error.message : t.error;
+      setUploadError(errorMessage);
     } finally {
-      setIsUploadingImage(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{t.title}</h1>
-        <p className="text-gray-600">{t.subtitle}</p>
+    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">{t.title}</h2>
+        <p className="text-gray-600 mt-2">{t.subtitle}</p>
       </div>
 
       {successMessage && (
-        <Alert className="mb-6 border-green-200 bg-green-50">
+        <Alert className="mb-6 bg-green-50 border-green-200">
           <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
+          <AlertDescription className="text-green-800">
+            {successMessage}
+          </AlertDescription>
         </Alert>
       )}
 
       {uploadError && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
+        <Alert className="mb-6 bg-red-50 border-red-200">
           <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">{uploadError}</AlertDescription>
+          <AlertDescription className="text-red-800">
+            {uploadError}
+          </AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Company Information */}
         <Card>
           <CardHeader>
             <CardTitle>{t.companyInfo}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="companyName">{t.companyName}</Label>
-                <Input
-                  id="companyName"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="companyDocument">{t.cnpj}</Label>
-                <Input
-                  id="companyDocument"
-                  name="companyDocument"
-                  value={formData.companyDocument}
-                  onChange={handleInputChange}
-                  placeholder="00.000.000/0000-00"
-                  required
-                />
-              </div>
+            <div>
+              <Label htmlFor="companyName">{t.companyName}</Label>
+              <Input
+                id="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="companyDocument">{t.cnpj}</Label>
+              <Input
+                id="companyDocument"
+                placeholder="00.000.000/0000-00"
+                value={formData.companyDocument}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="contactEmail">{t.email}</Label>
                 <Input
                   id="contactEmail"
-                  name="contactEmail"
                   type="email"
                   value={formData.contactEmail}
                   onChange={handleInputChange}
@@ -332,10 +383,9 @@ export function KadehAdsCampaignForm() {
                 <Label htmlFor="contactPhone">{t.phone}</Label>
                 <Input
                   id="contactPhone"
-                  name="contactPhone"
+                  placeholder="(11) 99999-9999"
                   value={formData.contactPhone}
                   onChange={handleInputChange}
-                  placeholder="(11) 99999-9999"
                   required
                 />
               </div>
@@ -343,15 +393,24 @@ export function KadehAdsCampaignForm() {
           </CardContent>
         </Card>
 
+        {/* Campaign Information */}
         <Card>
           <CardHeader>
             <CardTitle>{t.campaignInfo}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="duration">{t.duration}</Label>
-                <Select value={formData.duration} onValueChange={(value) => handleSelectChange("duration", value)}>
+                <Select
+                  value={formData.duration}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      duration: value as "1day" | "3days" | "7days" | "14days",
+                    }))
+                  }
+                >
                   <SelectTrigger id="duration">
                     <SelectValue placeholder={t.selectDuration} />
                   </SelectTrigger>
@@ -365,121 +424,180 @@ export function KadehAdsCampaignForm() {
               </div>
               <div>
                 <Label htmlFor="numberOfStores">{t.numberOfStores}</Label>
-                <Select value={formData.numberOfStores} onValueChange={(value) => handleSelectChange("numberOfStores", value)}>
+                <Select
+                  value={formData.numberOfStores}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      numberOfStores: value,
+                    }))
+                  }
+                >
                   <SelectTrigger id="numberOfStores">
                     <SelectValue placeholder={t.selectStores} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="5">{t.stores1to5}</SelectItem>
-                    <SelectItem value="20">{t.stores6to20}</SelectItem>
-                    <SelectItem value="50">{t.stores21to50}</SelectItem>
-                    <SelectItem value="100">{t.stores50plus}</SelectItem>
+                    <SelectItem value="1-5">{t.stores1to5}</SelectItem>
+                    <SelectItem value="6-20">{t.stores6to20}</SelectItem>
+                    <SelectItem value="21-50">{t.stores21to50}</SelectItem>
+                    <SelectItem value="50+">{t.stores50plus}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="startDate">{t.startDate}</Label>
-                <Input
-                  id="startDate"
-                  name="startDate"
-                  type="date"
-                  value={formData.startDate || ""}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
             </div>
+            <div>
+              <Label htmlFor="startDate">{t.startDate}</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={formData.startDate}
+                onChange={handleDateChange}
+                required
+              />
+              {dateError && (
+                <p className="text-red-600 text-sm mt-2">{dateError}</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-            {dateError && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">{dateError}</AlertDescription>
-              </Alert>
+        {/* Products Information */}
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>{t.productInfo}</CardTitle>
+              <Button
+                type="button"
+                onClick={addProduct}
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                {t.addProduct}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {formData.products.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">{t.noProducts}</p>
+            ) : (
+              formData.products.map((product, index) => (
+                <div
+                  key={product.id}
+                  className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                >
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-gray-900">
+                      {t.product} {index + 1}
+                    </h4>
+                    {formData.products.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => removeProduct(product.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        {t.removeProduct}
+                      </Button>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`productName-${product.id}`}>
+                      {t.productName}
+                    </Label>
+                    <Input
+                      id={`productName-${product.id}`}
+                      value={product.productName}
+                      onChange={(e) => handleInputChange(e, product.id)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`productImage-${product.id}`}>
+                      {t.productImage}
+                    </Label>
+                    <Input
+                      id={`productImage-${product.id}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, product.id)}
+                      disabled={isUploadingImage[product.id]}
+                    />
+                    {product.productImageUrl && (
+                      <img
+                        src={product.productImageUrl}
+                        alt={product.productName}
+                        className="mt-2 w-24 h-24 object-cover rounded"
+                      />
+                    )}
+                    {isUploadingImage[product.id] && (
+                      <div className="mt-2 flex items-center gap-2 text-blue-600">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {t.calculating}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`productEAN13-${product.id}`}>
+                      {t.productEAN13}
+                    </Label>
+                    <Input
+                      id={`productEAN13-${product.id}`}
+                      placeholder="1234567890123"
+                      value={product.productEAN13}
+                      onChange={(e) => handleInputChange(e, product.id)}
+                      required
+                    />
+                  </div>
+                </div>
+              ))
             )}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t.productInfo}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="productName">{t.productName}</Label>
-              <Input
-                id="productName"
-                name="productName"
-                value={formData.productName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="productImage">{t.productImage}</Label>
-              <Input
-                id="productImage"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                required
-              />
-              {formData.productImageUrl && (
-                <img
-                  src={formData.productImageUrl}
-                  alt="Product preview"
-                  className="mt-4 h-32 w-32 object-cover rounded"
-                />
-              )}
-            </div>
-            <div>
-              <Label htmlFor="productEAN13">{t.productEAN13}</Label>
-              <Input
-                id="productEAN13"
-                name="productEAN13"
-                value={formData.productEAN13}
-                onChange={handleInputChange}
-                placeholder="1234567890123"
-                maxLength={13}
-                required
-              />
-            </div>
-          </CardContent>
-        </Card>
-
+        {/* Pricing Information */}
         {pricingInfo && (
-          <Card className="border-blue-200 bg-blue-50">
+          <Card>
             <CardHeader>
               <CardTitle>{t.pricing}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">{t.basePrice}</p>
-                  <p className="text-lg font-bold">R$ {pricingInfo.basePrice.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    R$ {pricingInfo.basePrice.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t.multiplier}</p>
-                  <p className="text-lg font-bold">x{pricingInfo.multiplier.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    x{pricingInfo.multiplier.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t.totalCost}</p>
-                  <p className="text-2xl font-bold text-blue-600">R$ {pricingInfo.totalCost.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-blue-600">
+                    R$ {pricingInfo.totalCost.toFixed(2)}
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
+        {/* Submit Button */}
         <Button
           type="submit"
-          className="w-full"
-          disabled={createCampaignMutation.isPending || !pricingInfo || !!dateError || isUploadingImage}
-          size="lg"
+          disabled={isSubmitting || calculatePriceQuery.isLoading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
         >
-          {createCampaignMutation.isPending || isUploadingImage ? (
+          {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {isUploadingImage ? "Enviando imagem..." : t.submitting}
+              {t.submitting}
             </>
           ) : (
             t.submit
