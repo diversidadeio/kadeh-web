@@ -333,3 +333,6 @@
 - [x] Reestruturar página Kadeh Ads como landing page com informações sobre o produto
 - [x] Criar modal para formulário de cadastro de campanha
 - [x] Adicionar seções de benefícios, como funciona e CTA para abrir formulário
+
+- [x] Adicionar exibição de valor do investimento da campanha na landing page
+- [x] Adicionar botão "Contratar" na landing page (fora do modal)
