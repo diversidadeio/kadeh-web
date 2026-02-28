@@ -368,3 +368,8 @@
 - [x] Integrar biblioteca de PDF (html2pdf ou pdfkit) para exportação
 - [ ] Testar geração e download de PDF em português e inglês
 - [ ] Validar layout e formatação do PDF exportado
+
+- [x] CORRIGIR: Produtos com zona "Lugar baixo" não estão ficando na prateleira inferior
+- [x] Revisar lógica de distribuição em GondolaFrontView.tsx
+- [x] Revisar lógica de distribuição em shelfDistributor.ts
+- [ ] Testar distribuição com produtos de baixo (Margem Baixa + Giro Baixo)
