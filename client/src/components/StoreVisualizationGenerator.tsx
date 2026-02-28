@@ -265,11 +265,13 @@ Generate a professional retail shelf photograph that EXACTLY matches this produc
           <p className="text-sm font-medium text-foreground">
             {language === 'pt' ? 'Visualização Gerada:' : 'Generated Visualization:'}
           </p>
-          <img
-            src={generatedImage}
-            alt="Store visualization"
-            className="w-full rounded-md border border-border object-cover max-h-96"
-          />
+          <div className="w-full overflow-x-auto border border-border rounded-md bg-background">
+            <img
+              src={generatedImage}
+              alt="Store visualization"
+              className="w-full h-auto rounded-md object-contain"
+            />
+          </div>
         </div>
       )}
     </div>
