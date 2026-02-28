@@ -28,7 +28,7 @@ interface Shelf3DProps {
 const zoneColors: Record<string, string> = {
   "Altura dos olhos": "#22c55e",
   "Altura das mãos": "#eab308",
-  "Lugar baixo": "#ef4444",
+  "Parte de Baixo": "#ef4444",
 };
 
 export default function Shelf3DVisualization({

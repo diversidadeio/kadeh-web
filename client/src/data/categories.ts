@@ -1246,7 +1246,7 @@ export function getRecommendationByABCCurves(
     "B-C": { quadrantes: 4, zone: "Altura das mãos", share: 15 },
     "C-A": { quadrantes: 2, zone: "Altura das mãos", share: 20 },
     "C-B": { quadrantes: 4, zone: "Altura das mãos", share: 15 },
-    "C-C": { quadrantes: 5, zone: "Lugar baixo", share: 5 },
+    "C-C": { quadrantes: 5, zone: "Parte de Baixo", share: 5 },
   };
 
   const key = `${curvaFaturamento}-${curvaLucratividade}`;

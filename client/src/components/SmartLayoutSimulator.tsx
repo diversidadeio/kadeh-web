@@ -44,8 +44,8 @@ interface Product {
   largura?: number;
   comprimento?: number;
   promotionalPoints?: PromotionalPoint[];
-  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Lugar baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Below';
-  zona?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Lugar baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Below';
+  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf';
+  zona?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf';
 }
 
 interface PromotionalPoint {
@@ -542,7 +542,7 @@ export default function SmartLayoutSimulator() {
   const colorMap: Record<string, string> = {
     "Altura dos olhos": "bg-green-600",
     "Altura das mãos": "bg-yellow-500",
-    "Lugar baixo": "bg-red-400",
+
   };
 
   const calculateZoneStats = (): ZoneStats[] => {

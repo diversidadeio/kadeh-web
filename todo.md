@@ -372,4 +372,5 @@
 - [x] CORRIGIR: Produtos com zona "Lugar baixo" não estão ficando na prateleira inferior
 - [x] Revisar lógica de distribuição em GondolaFrontView.tsx
 - [x] Revisar lógica de distribuição em shelfDistributor.ts
-- [ ] Testar distribuição com produtos de baixo (Margem Baixa + Giro Baixo)
+- [x] Testar distribuição com produtos de baixo (Margem Baixa + Giro Baixo)
+- [x] Padronizar sistema para usar apenas "Parte de Baixo" em todos os lugares

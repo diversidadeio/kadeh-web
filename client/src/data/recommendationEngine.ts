@@ -131,14 +131,14 @@ export function recommendProductPlacement(
       reason = "Supporting product";
     } else {
       quadrants = 1;
-      zone = "Lugar baixo";
+      zone = "Parte de Baixo";
       reason = "Low priority product";
     }
 
     // Adjust based on position in ranking
     if (index > sorted.length * 0.7) {
       quadrants = Math.max(quadrants - 1, 1);
-      zone = "Lugar baixo";
+      zone = "Parte de Baixo";
     }
 
     recommendations.push({

@@ -347,7 +347,7 @@ const createPlanogramHTML = (data: PlanogramData): string => {
           
           ${renderZoneSection('Altura dos Olhos (Eye Level)', produtosPorZona['Altura dos olhos'] || [], 'olhos')}
           ${renderZoneSection('Altura das Mãos (Hand Level)', produtosPorZona['Altura das mãos'] || [], 'maos')}
-          ${renderZoneSection('Parte de Baixo (Floor Level)', produtosPorZona['Lugar baixo'] || [], 'baixo')}
+          ${renderZoneSection('Parte de Baixo (Floor Level)', produtosPorZona['Parte de Baixo'] || [], 'baixo')}
         </div>
 
         <div class="section">
@@ -436,7 +436,7 @@ const agruparProdutosPorZona = (products: ProductInfo[]): Record<string, Product
   const agrupado: Record<string, ProductInfo[]> = {
     'Altura dos olhos': [],
     'Altura das mãos': [],
-    'Lugar baixo': []
+    'Parte de Baixo': []
   };
 
   products.forEach(product => {

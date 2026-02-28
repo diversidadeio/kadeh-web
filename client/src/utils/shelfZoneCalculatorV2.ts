@@ -18,7 +18,7 @@
  * - Quadrante 2 → Altura dos olhos
  * - Quadrante 3 → Altura das mãos
  * - Quadrante 4 → Altura das mãos
- * - Quadrante 5 → Lugar baixo
+ * - Quadrante 5 → Parte de Baixo
  */
 
 export type Margin = "Alta" | "Média" | "Baixa" | "High" | "Medium" | "Low";

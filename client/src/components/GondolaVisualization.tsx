@@ -47,7 +47,7 @@ const TRANSLATIONS = {
     zoneSummary: "Resumo de Zonas",
     eyeLevel: "Altura dos olhos",
     handLevel: "Altura das mãos",
-    lowLevel: "Lugar baixo",
+    lowLevel: "Parte de Baixo",
     products: "produtos",
   },
   en: {
@@ -199,7 +199,7 @@ export default function GondolaVisualization({
         <div className="mb-6 p-4 bg-muted rounded-md border border-border">
           <h4 className="text-sm font-semibold text-foreground mb-3">{t.zoneSummary}</h4>
           <div className="grid grid-cols-3 gap-3">
-            {["Altura dos olhos", "Altura das mãos", "Lugar baixo"].map((zone) => (
+            {["Altura dos olhos", "Altura das mãos", "Parte de Baixo"].map((zone) => (
               <div key={zone} className="flex items-center gap-2">
                 <div className={`w-4 h-4 rounded ${colorMap[zone] || "bg-gray-400"}`}></div>
                 <div>
