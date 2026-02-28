@@ -379,3 +379,24 @@
 - [x] Melhorar prompt para IA com dados estruturados e específicos de cada prateleira
 - [ ] Implementar validação de sincronização entre visualização frontal e imagem IA
 - [ ] Testar geração de imagem com produtos atuais e validar percentuais/posições
+
+## SUGESTÕES DE MELHORIAS - FASE 2
+
+### 1. Testes com Múltiplos Cenários
+- [x] Criar suite de testes com 10-20 produtos em diferentes combinações
+- [x] Testar sincronização IA em cenários complexos
+- [x] Validar precisão de percentuais em múltiplos produtos
+- [x] Arquivo: server/smart-layout.test.ts (15 testes)
+
+### 2. Validação Automática de Imagem
+- [x] Implementar verificação de produtos na imagem gerada
+- [x] Adicionar feedback visual de validação
+- [x] Criar sistema de retry automático se validação falhar
+- [x] Arquivos: imageValidationService.ts, StoreVisualizationGeneratorWithValidation.tsx
+
+### 3. Dashboard de Analytics
+- [x] Criar componente de dashboard com métricas de impacto
+- [x] Calcular aumento de lucratividade estimado
+- [x] Calcular redução de ruptura estimada
+- [x] Adicionar tabelas de comparação antes/depois
+- [x] Arquivo: PlanogramImpactDashboard.tsx
