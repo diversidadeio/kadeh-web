@@ -79,71 +79,25 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
-    // Convert products to distribution format
-    const productsForDistribution: ProductForDistribution[] = products.map(p => {
-      // Use the calculated zone from the product category
-      let zone = p.zone || "Altura das mãos";
-      if (p.category && p.category.shelfZone) {
-        zone = p.category.shelfZone;
-      }
-      
-      return {
-        id: p.id,
-        name: p.name,
-        largura: p.largura || 10,
-        comprimento: p.comprimento || 5,
-        zone: zone as "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo",
-        giro: (p.giro || "Médio") as any,
-        margem: (p.margem || "Média") as any,
-        share: 10, // Default share
-      };
-    });
-
-    // Use intelligent cascading distribution
-    const distribution = distributeProductsAcrossShelves(
-      productsForDistribution,
-      gondolaWidth,
-      numberOfShelves
-    );
-
-    // Build detailed shelf descriptions with actual product distribution
-    let shelfDescriptions = "";
-    distribution.shelves.forEach((shelf, idx) => {
-      const zoneLabel = {
-        "Altura dos olhos": language === "pt" ? "Altura dos Olhos (Eye Level)" : "Eye Level",
-        "Altura das mãos": language === "pt" ? "Altura das Mãos (Hand Level)" : "Hand Level",
-        "Parte de Baixo": language === "pt" ? "Parte de Baixo (Bottom)" : "Bottom Shelf",
-      }[shelf.zone];
-
-      const productList = shelf.products
-        .map(p => `${p.name} (${p.fronts} fronts)`)
-        .join(", ");
-
-      shelfDescriptions += `\n**Shelf ${shelf.shelfNumber} (${zoneLabel}):** ${productList} - ${shelf.utilizationPercent.toFixed(1)}% occupied`;
-    });
-
-    // Organize products by zone with actual distribution
-    const productsByZone: Record<string, { name: string; fronts: number }[]> = {
+    // Group products by zone (same logic as GondolaFrontView)
+    const productsByZone: Record<string, Product[]> = {
       "Altura dos olhos": [],
       "Altura das mãos": [],
       "Parte de Baixo": [],
     };
 
-    distribution.shelves.forEach((shelf) => {
-      shelf.products.forEach((p) => {
-        const existing = productsByZone[shelf.zone].find(prod => prod.name === p.name);
-        if (existing) {
-          existing.fronts += p.fronts;
-        } else {
-          productsByZone[shelf.zone].push({
-            name: p.name,
-            fronts: p.fronts,
-          });
-        }
-      });
+    products.forEach(p => {
+      let zone = p.zone || "Altura das mãos";
+      if (p.category && p.category.shelfZone) {
+        zone = p.category.shelfZone;
+      }
+      
+      if (zone === "Altura dos olhos" || zone === "Altura das mãos" || zone === "Parte de Baixo") {
+        productsByZone[zone].push(p);
+      }
     });
 
-    // Build zone descriptions with actual product distribution
+    // Build detailed zone descriptions with product grouping
     let eyeLevelDesc = "";
     let handLevelDesc = "";
     let bottomLevelDesc = "";
@@ -152,50 +106,89 @@ export default function StoreVisualizationGenerator({
     const handLevelProducts = productsByZone["Altura das mãos"];
     const bottomLevelProducts = productsByZone["Parte de Baixo"];
 
-    const eyeLevelPercentage = (eyeLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
-    const handLevelPercentage = (handLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
-    const bottomLevelPercentage = (bottomLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
+    // Calculate total width for each zone
+    const eyeLevelWidth = eyeLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
+    const handLevelWidth = handLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
+    const bottomLevelWidth = bottomLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
 
+    // Build descriptions with visual arrangement
     if (eyeLevelProducts.length > 0) {
-      const productNames = eyeLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      eyeLevelDesc = `\n**Eye Level (${eyeLevelPercentage}% of space):** ${productNames}`;
+      const productList = eyeLevelProducts
+        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
+        .join(" → ");
+      const percentage = (eyeLevelWidth / gondolaWidth * 100).toFixed(1);
+      eyeLevelDesc = `\n**Eye Level Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
     }
 
     if (handLevelProducts.length > 0) {
-      const productNames = handLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      handLevelDesc = `\n**Hand Level (${handLevelPercentage}% of space):** ${productNames}`;
+      const productList = handLevelProducts
+        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
+        .join(" → ");
+      const percentage = (handLevelWidth / gondolaWidth * 100).toFixed(1);
+      handLevelDesc = `\n**Hand Level Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
     }
 
     if (bottomLevelProducts.length > 0) {
-      const productNames = bottomLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      bottomLevelDesc = `\n**Bottom Shelf (${bottomLevelPercentage}% of space):** ${productNames}`;
+      const productList = bottomLevelProducts
+        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
+        .join(" → ");
+      const percentage = (bottomLevelWidth / gondolaWidth * 100).toFixed(1);
+      bottomLevelDesc = `\n**Bottom Shelf Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
     }
 
-    const prompt = `Create a realistic photograph of a retail store shelf with the following product arrangement:
+    // Build visual representation
+    let visualLayout = "";
+    if (eyeLevelProducts.length > 0) {
+      visualLayout += `\n\n[EYE LEVEL]\n`;
+      eyeLevelProducts.forEach(p => {
+        visualLayout += `[${p.name.substring(0, 8)}]`;
+      });
+    }
+    if (handLevelProducts.length > 0) {
+      visualLayout += `\n[HAND LEVEL]\n`;
+      handLevelProducts.forEach(p => {
+        visualLayout += `[${p.name.substring(0, 8)}]`;
+      });
+    }
+    if (bottomLevelProducts.length > 0) {
+      visualLayout += `\n[BOTTOM]\n`;
+      bottomLevelProducts.forEach(p => {
+        visualLayout += `[${p.name.substring(0, 8)}]`;
+      });
+    }
 
-**Shelf Dimensions:**
-- Width: ${gondolaWidth}cm
-- Height between shelves: ${shelfHeight}cm
-- Depth: ${shelfDepth}cm
-- Total shelves: ${numberOfShelves}
+    const prompt = `Create a realistic photograph of a retail store shelf with products EXACTLY arranged as shown below.
 
-**Product Distribution by Zone:**
+**CRITICAL: Products must be grouped and positioned EXACTLY as described:**
 ${eyeLevelDesc}
 ${handLevelDesc}
 ${bottomLevelDesc}
 
-**Shelf Layout Details:**
-${shelfDescriptions}
+**Visual Layout Reference:**
+${visualLayout}
 
-**Requirements:**
-- Show a realistic retail environment with proper lighting
-- Display products with clear labels and packaging
-- Ensure products are positioned correctly by zone (eye level = premium positioning, hand level = accessible, bottom = bulk items)
-- Use realistic store shelving and professional retail display
-- Include store background and ambient lighting
-- Make it look like a real supermarket or retail store
+**Shelf Specifications:**
+- Total Width: ${gondolaWidth}cm
+- Height between shelves: ${shelfHeight}cm
+- Shelf Depth: ${shelfDepth}cm
+- Number of shelves: 3 (Eye Level, Hand Level, Bottom)
 
-Generate a professional retail shelf photograph that matches this exact product distribution.`;
+**IMPORTANT POSITIONING RULES:**
+- Eye Level (top shelf): Premium positioning for high-margin products
+- Hand Level (middle shelf): Most accessible for high-turnover products
+- Bottom Shelf: Bulk items and low-margin products
+- Products in each zone must be grouped together horizontally
+- Maintain the exact left-to-right order shown above
+- Fill any remaining space by repeating the product sequence
+
+**Visual Style:**
+- Realistic supermarket/retail environment
+- Professional lighting and store background
+- Clear product packaging and labels
+- Modern retail shelving system
+- Professional product photography style
+
+Generate a professional retail shelf photograph that EXACTLY matches this product grouping and positioning.`;
 
     return prompt;
   };
