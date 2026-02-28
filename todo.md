@@ -361,3 +361,10 @@
 - [ ] Teste 1: Validar distribuição com múltiplos produtos (10+)
 - [ ] Teste 2: Validar fallback de zonas (sem produtos em Olhos, sem produtos em Mãos)
 - [ ] Teste 3: Validar sincronização entre visualização e geração IA
+
+- [x] Implementar gerador de PDF com layout profissional do planograma
+- [x] Adicionar detalhes de posicionamento e dimensões dos produtos no PDF
+- [x] Criar botão "Exportar Planograma" no SmartLayoutSimulator
+- [x] Integrar biblioteca de PDF (html2pdf ou pdfkit) para exportação
+- [ ] Testar geração e download de PDF em português e inglês
+- [ ] Validar layout e formatação do PDF exportado

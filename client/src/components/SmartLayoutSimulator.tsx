@@ -24,6 +24,7 @@ import ShelfZoneFilter from "@/components/ShelfZoneFilter";
 import { type ProductForDistribution } from "@/utils/shelfDistributor";
 import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
+import { generatePlanogramPDF, preparePlanogramData, type ShelfConfig } from "@/lib/planogramPdfGenerator";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
@@ -414,16 +415,33 @@ export default function SmartLayoutSimulator() {
     });
   }, [products, selectedZone]);
 
-  const handleExportPDF = (areaType: string) => {
-    const productsToExport = selectedZone ? filteredProductsByZone : products;
-    exportPlanogramToPDF(
-      productsToExport,
-      gondolaWidth,
-      areaType,
-      getRecommendationByABCCurves,
-      colorMap,
-      language
-    );
+  const handleExportPDF = async (areaType: string) => {
+    try {
+      const productsToExport = selectedZone ? filteredProductsByZone : products;
+      const shelfConfig: ShelfConfig = {
+        largura: gondolaWidth,
+        profundidade: shelfDepth,
+        altura: shelfHeight,
+        numPrateleiras: shelves,
+        alturaEntrePrateleiras: shelfHeight
+      };
+      const productsForPDF = productsToExport.map((p: any) => ({
+        name: p.name,
+        dimensions: p.largura && p.comprimento ? `${p.largura}cm x ${p.comprimento}cm` : 'N/A',
+        giro: p.category?.curvaFaturamento || 'N/A',
+        margem: p.category?.curvaLucratividade || 'N/A',
+        quadrantes: p.category?.quadrantes || 0,
+        espaço: p.largura && p.comprimento ? `${(p.largura * p.comprimento) / 100}m2` : 'N/A',
+        percentualGondola: ((p.largura || 0) / gondolaWidth) * 100,
+        zona: p.zone || p.zona || 'Altura das mãos'
+      }));
+      const planogramData = preparePlanogramData(productsForPDF, shelfConfig);
+      const filename = `planograma_${new Date().toISOString().split('T')[0]}.pdf`;
+      await generatePlanogramPDF(planogramData, filename);
+    } catch (error) {
+      console.error('Erro ao exportar PDF:', error);
+      alert(language === 'pt' ? 'Erro ao gerar planograma' : 'Error generating planogram');
+    }
   };
 
   const calculateNaturalPointCapacity = (product: Product): number => {
