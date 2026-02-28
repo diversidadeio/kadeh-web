@@ -349,3 +349,15 @@
 - [x] Atualizar schema do banco de dados com tabela campaignProducts
 - [x] Atualizar procedure createCampaign para aceitar múltiplos produtos
 - [x] Testar formulário com múltiplos produtos em português e inglês
+
+
+## CORREÇÃO CRÍTICA DO SMART LAYOUT - PRIORIDADE MÁXIMA
+
+- [ ] Corrigir: Produtos com Margem Baixa devem SEMPRE aparecer em "Parte de Baixo" na visualização
+- [ ] Corrigir: Produtos com Margem Baixa + Giro Médio devem aparecer em "Parte de Baixo" (não em "Altura das Mãos")
+- [ ] Corrigir: Implementar fallback inteligente (Olhos→Mãos→Baixo) quando não há produtos em uma zona
+- [ ] Corrigir: Sincronizar disposição de produtos entre visualização da gôndola e geração de imagem IA
+- [ ] Corrigir: Produtos devem ficar lado a lado com seus produtos correlacionados (mesma zona)
+- [ ] Teste 1: Validar distribuição com múltiplos produtos (10+)
+- [ ] Teste 2: Validar fallback de zonas (sem produtos em Olhos, sem produtos em Mãos)
+- [ ] Teste 3: Validar sincronização entre visualização e geração IA

@@ -11,6 +11,7 @@ import CSVImporter from "@/components/CSVImporter";
 import ProductDescriptor, { type ProductDescriptor as ProductDescriptorType } from "@/components/ProductDescriptor";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CATEGORIES_DATABASE, getRecommendationByABCCurves, type Category } from "@/data/categories";
+import { calculateShelfZoneV2 } from "@/utils/shelfZoneCalculatorV2";
 import { calculateShelfZone } from "@/utils/shelfZoneCalculator";
 import Shelf3DVisualization from "@/components/Shelf3DVisualization";
 import SimulationHistory, { type Simulation } from "@/components/SimulationHistory";
@@ -42,6 +43,8 @@ interface Product {
   largura?: number;
   comprimento?: number;
   promotionalPoints?: PromotionalPoint[];
+  zone?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Lugar baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Below';
+  zona?: 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo' | 'Lugar baixo' | 'Eye level' | 'Hand level' | 'Bottom shelf' | 'Below';
 }
 
 interface PromotionalPoint {
@@ -446,7 +449,7 @@ export default function SmartLayoutSimulator() {
       id: `prod_${Date.now()}`,
       name: category.name,
       categoryId: category.id,
-      category,
+      category: { ...category, shelfZone: optimalZone },
       largura: category.defaultLargura,
       comprimento: category.defaultComprimento,
       promotionalPoints: [],
@@ -460,13 +463,25 @@ export default function SmartLayoutSimulator() {
       (c) => c.mainCategory === formData.category
     ) || CATEGORIES_DATABASE[0];
 
-    // Calculate optimal shelf zone based on margin and giro
-    // Use the margin and velocity names directly (not ABC curves)
-    const optimalZone = calculateShelfZone(
+    // Debug log
+    console.log('DEBUG - handleAddProductFromForm:', {
+      marginCategory: formData.marginCategory,
+      velocityCategory: formData.velocityCategory,
+      productName: formData.name,
+    });
+
+    // Calculate optimal shelf zone based on margin and giro using V2 calculator
+    const optimalZone = calculateShelfZoneV2(
       formData.marginCategory || 'Média',
       formData.velocityCategory || 'Médio',
       language as 'pt' | 'en'
     );
+
+    console.log('DEBUG - calculateShelfZone result:', {
+      marginCategory: formData.marginCategory,
+      velocityCategory: formData.velocityCategory,
+      optimalZone: optimalZone,
+    });
 
     const newProduct: Product = {
       id: formData.id,
@@ -475,6 +490,8 @@ export default function SmartLayoutSimulator() {
       category: { ...category, shelfZone: optimalZone },
       largura: formData.width,
       comprimento: formData.depth,
+      zone: optimalZone,
+      zona: optimalZone,
     };
 
     setProducts([...products, newProduct]);
@@ -905,12 +922,17 @@ export default function SmartLayoutSimulator() {
           <GondolaShelvesVisualization
             products={products.map((p: any) => {
               const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+              const zone = p.category.shelfZone || rec.zone;
+              const giro = p.category.curvaFaturamento === 'A' ? 'Alto' : p.category.curvaFaturamento === 'B' ? 'Medio' : 'Baixo';
+              const margem = p.category.curvaLucratividade === 'A' ? 'Alta' : p.category.curvaLucratividade === 'B' ? 'Media' : 'Baixa';
               return {
                 id: p.id,
                 name: p.name,
                 largura: p.largura || 10,
                 comprimento: p.comprimento || 5,
-                zone: rec.zone,
+                zone: zone,
+                giro: giro,
+                margem: margem,
                 share: typeof rec.share === 'number' ? rec.share : 15,
               };
             }) as ProductForDistribution[]}

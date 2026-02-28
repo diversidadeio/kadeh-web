@@ -232,6 +232,15 @@ export default function ProductFormModal({
 
   // Handle form submission
   const handleSubmit = () => {
+    // Debug log ANTES de validação
+    console.log('DEBUG - ProductFormModal.handleSubmit - ANTES de validação:', {
+      productName,
+      marginCategory,
+      velocityCategory,
+      marginType,
+      velocityType,
+    });
+
     // Validation
     if (!productName.trim()) {
       alert(t.enterProductName);
@@ -269,7 +278,9 @@ export default function ProductFormModal({
       subCategory,
     };
 
+    console.log('DEBUG - newProduct ANTES de onAddProduct:', newProduct);
     onAddProduct(newProduct);
+    console.log('DEBUG - onAddProduct chamado com:', newProduct);
     
     // Reset form
     setProductName("");

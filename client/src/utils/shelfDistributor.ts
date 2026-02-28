@@ -176,9 +176,12 @@ function getProductsForZone(
       return sortProductsByPriority(productsByZone["Altura das mãos"]);
     }
   } else if (zone === "Parte de Baixo") {
-    // Bottom can use Hand level
+    // Bottom can use Hand level or Eye level
     if (productsByZone["Altura das mãos"].length > 0) {
       return sortProductsByPriority(productsByZone["Altura das mãos"]);
+    }
+    if (productsByZone["Altura dos olhos"].length > 0) {
+      return sortProductsByPriority(productsByZone["Altura dos olhos"]);
     }
   }
 

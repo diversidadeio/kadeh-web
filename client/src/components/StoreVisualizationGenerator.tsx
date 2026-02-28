@@ -17,6 +17,7 @@ interface Product {
   category: {
     name: string;
     mainCategory: string;
+    shelfZone?: string;
   };
   largura?: number;
   comprimento?: number;
@@ -79,16 +80,24 @@ export default function StoreVisualizationGenerator({
     }
 
     // Convert products to distribution format
-    const productsForDistribution: ProductForDistribution[] = products.map(p => ({
-      id: p.id,
-      name: p.name,
-      largura: p.largura || 10,
-      comprimento: p.comprimento || 5,
-      zone: (p.zone || "Altura das mãos") as "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo",
-      giro: (p.giro || "Médio") as any,
-      margem: (p.margem || "Média") as any,
-      share: 10, // Default share
-    }));
+    const productsForDistribution: ProductForDistribution[] = products.map(p => {
+      // Use the calculated zone from the product category
+      let zone = p.zone || "Altura das mãos";
+      if (p.category && p.category.shelfZone) {
+        zone = p.category.shelfZone;
+      }
+      
+      return {
+        id: p.id,
+        name: p.name,
+        largura: p.largura || 10,
+        comprimento: p.comprimento || 5,
+        zone: zone as "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo",
+        giro: (p.giro || "Médio") as any,
+        margem: (p.margem || "Média") as any,
+        share: 10, // Default share
+      };
+    });
 
     // Use intelligent cascading distribution
     const distribution = distributeProductsAcrossShelves(
@@ -148,79 +157,45 @@ export default function StoreVisualizationGenerator({
     const bottomLevelPercentage = (bottomLevelProducts.reduce((sum, p) => sum + p.fronts, 0) / distribution.totalProducts * 100).toFixed(1);
 
     if (eyeLevelProducts.length > 0) {
-      const productList = eyeLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      eyeLevelDesc = `\n**Altura dos Olhos (Eye Level - Premium Placement):**\n${productList}\nThese products are positioned at customer eye level (approximately 1.5m high) for maximum visibility. This zone represents ${eyeLevelPercentage}% of total display space with ${eyeLevelProducts.length} product types.`;
+      const productNames = eyeLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      eyeLevelDesc = `\n**Eye Level (${eyeLevelPercentage}% of space):** ${productNames}`;
     }
 
     if (handLevelProducts.length > 0) {
-      const productList = handLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      handLevelDesc = `\n**Altura das Mãos (Hand Level - Convenient Reach):**\n${productList}\nThese products are positioned at convenient hand reach (approximately 0.9-1.2m high) for easy access. This zone represents ${handLevelPercentage}% of total display space with ${handLevelProducts.length} product types.`;
+      const productNames = handLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      handLevelDesc = `\n**Hand Level (${handLevelPercentage}% of space):** ${productNames}`;
     }
 
     if (bottomLevelProducts.length > 0) {
-      const productList = bottomLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
-      bottomLevelDesc = `\n**Parte de Baixo (Bottom Shelf - Base Products):**\n${productList}\nThese products are positioned at the bottom shelf (approximately 0-0.5m high). This zone represents ${bottomLevelPercentage}% of total display space with ${bottomLevelProducts.length} product types.`;
+      const productNames = bottomLevelProducts.map(p => `${p.name} (${p.fronts} fronts)`).join(", ");
+      bottomLevelDesc = `\n**Bottom Shelf (${bottomLevelPercentage}% of space):** ${productNames}`;
     }
 
-    const zoneDetails = eyeLevelDesc + handLevelDesc + bottomLevelDesc;
+    const prompt = `Create a realistic photograph of a retail store shelf with the following product arrangement:
 
-    // Build exposure type description
-    let exposureDescription = "a retail shelf";
-    let exposureTypeDetail = "";
-    if (exposureType === "terminalGondola") {
-      exposureDescription = "a shelf terminal (end-cap display)";
-      exposureTypeDetail = "This is a high-traffic end-cap display at the end of an aisle.";
-    } else if (exposureType === "freezerVertical") {
-      exposureDescription = "a vertical freezer";
-      exposureTypeDetail = "This is a vertical freezer display with multiple shelves.";
-    } else if (exposureType === "freezerHorizontal") {
-      exposureDescription = "a horizontal freezer";
-      exposureTypeDetail = "This is a horizontal freezer display with top-opening access.";
-    } else if (exposureType === "bancaFrutas") {
-      exposureDescription = "a fruit and vegetable stand";
-      exposureTypeDetail = "This is a fresh produce display stand with tiered presentation.";
-    } else {
-      exposureTypeDetail = "This is a standard retail shelf display.";
-    }
+**Shelf Dimensions:**
+- Width: ${gondolaWidth}cm
+- Height between shelves: ${shelfHeight}cm
+- Depth: ${shelfDepth}cm
+- Total shelves: ${numberOfShelves}
 
-    const prompt = `Professional retail store photograph showing ${exposureDescription} with ${numberOfShelves} shelves displaying ${products.length} products strategically positioned by exposure zones. ALL SHELVES ARE 100% OCCUPIED with intelligent product distribution and cascading.${zoneDetails}
+**Product Distribution by Zone:**
+${eyeLevelDesc}
+${handLevelDesc}
+${bottomLevelDesc}
 
-**Detailed Shelf Distribution (100% Occupancy - Intelligent Cascading):**
+**Shelf Layout Details:**
 ${shelfDescriptions}
 
-**Key Distribution Metrics:**
-- Total Products: ${products.length}
-- Total Fronts: ${distribution.totalProducts}
-- Total Space Used: ${distribution.totalUsedWidth}cm / ${distribution.totalAvailableWidth}cm
-- Utilization: ${distribution.utilizationPercentage.toFixed(1)}%
-- Average Fronts per Shelf: ${(distribution.totalProducts / numberOfShelves).toFixed(1)}
-- All ${numberOfShelves} shelves are 100% occupied
+**Requirements:**
+- Show a realistic retail environment with proper lighting
+- Display products with clear labels and packaging
+- Ensure products are positioned correctly by zone (eye level = premium positioning, hand level = accessible, bottom = bulk items)
+- Use realistic store shelving and professional retail display
+- Include store background and ambient lighting
+- Make it look like a real supermarket or retail store
 
-**Shelf Specifications:**
-- Width: ${gondolaWidth}cm
-- Depth: ${shelfDepth}cm
-- Height between shelves: ${shelfHeight}cm
-- Total shelves: ${numberOfShelves}
-- Shelf 1-${Math.ceil(numberOfShelves * 0.30)} (Top): Altura dos Olhos (Eye Level) - Premium placement zone
-- Shelf ${Math.ceil(numberOfShelves * 0.30) + 1}-${Math.ceil(numberOfShelves * 0.70)} (Middle): Altura das Mãos (Hand Level) - Convenient reach zone
-- Shelf ${Math.ceil(numberOfShelves * 0.70) + 1}-${numberOfShelves} (Bottom): Parte de Baixo (Bottom Shelf) - Base products zone
-
-${exposureTypeDetail}
-
-**CRITICAL Visual Requirements:**
-- EVERY SHELF MUST BE 100% FULL with products - NO EMPTY SHELVES
-- Products at eye level are prominently displayed with excellent lighting
-- Products at hand level are easily accessible and well-organized
-- Products at bottom shelf are clearly visible and properly arranged
-- The display shows intelligent cascading distribution where products overflow from their primary zones to fill adjacent zones
-- Each shelf is completely filled from left to right with no gaps
-- The display is neatly organized in a modern supermarket setting with professional, warm lighting
-- Clear shelf dividers and zone markers visible
-- Realistic product placement showing actual retail merchandising standards
-- High quality, detailed, professional retail photography style
-- Show how customers would naturally see and interact with the products in a real store environment
-- Each shelf zone should be clearly distinguishable with proper lighting and organization
-- Product distribution across shelves should show 100% occupancy with realistic spacing`;
+Generate a professional retail shelf photograph that matches this exact product distribution.`;
 
     return prompt;
   };
@@ -236,22 +211,15 @@ ${exposureTypeDetail}
 
     try {
       const prompt = generateStorePrompt();
-      console.log("Generated prompt:", prompt);
+      const result = await generateMutation.mutateAsync({ prompt });
 
-      // Call the tRPC endpoint to generate image using AI
-      const result = await generateMutation.mutateAsync({
-        prompt,
-      });
-
-      console.log("Generation result:", result);
-      if (result.success && result.url) {
+      if (result.url) {
         setGeneratedImage(result.url);
       } else {
-        throw new Error("No image URL in response");
+        setError(t.error);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error("Error generating visualization:", errorMessage);
+      console.error("Error generating visualization:", err);
       setError(t.error);
     } finally {
       setIsGenerating(false);
@@ -259,63 +227,56 @@ ${exposureTypeDetail}
   };
 
   return (
-    <div className="w-full space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{t.storeLayout}</h3>
-          <p className="text-sm text-gray-600">{t.description}</p>
-        </div>
-        <Button
-          onClick={handleGenerateVisualization}
-          disabled={isGenerating || products.length === 0}
-          className="flex items-center gap-2"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t.generating}
-            </>
-          ) : (
-            <>
-              <ImageIcon className="h-4 w-4" />
-              {t.generateVisualization}
-            </>
-          )}
-        </Button>
+    <div className="bg-card p-6 rounded-md border border-border space-y-4">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-foreground">{t.storeLayout}</h3>
+        <p className="text-sm text-muted-foreground">{t.description}</p>
       </div>
 
+      <Button
+        onClick={handleGenerateVisualization}
+        disabled={isGenerating || products.length === 0}
+        className="w-full"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            {t.generating}
+          </>
+        ) : (
+          <>
+            <ImageIcon className="w-4 h-4 mr-2" />
+            {t.generateVisualization}
+          </>
+        )}
+      </Button>
+
       {error && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleGenerateVisualization}
-            className="mt-2"
-          >
-            {t.retry}
-          </Button>
+        <div className="bg-destructive/10 border border-destructive text-destructive p-3 rounded-md text-sm">
+          {error}
+          {error === t.error && (
+            <Button
+              onClick={handleGenerateVisualization}
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full"
+            >
+              {t.retry}
+            </Button>
+          )}
         </div>
       )}
 
       {generatedImage && (
-        <div className="mt-4 space-y-2">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">
+            {language === 'pt' ? 'Visualização Gerada:' : 'Generated Visualization:'}
+          </p>
           <img
             src={generatedImage}
-            alt="Store Visualization"
-            className="w-full rounded-lg border border-gray-200 object-cover"
+            alt="Store visualization"
+            className="w-full rounded-md border border-border object-cover max-h-96"
           />
-          <p className="text-xs text-gray-500">
-            Generated AI visualization based on intelligent cascading distribution with 100% shelf occupancy
-          </p>
-        </div>
-      )}
-
-      {!generatedImage && !error && products.length > 0 && (
-        <div className="rounded-lg bg-gray-50 p-4 text-center">
-          <p className="text-sm text-gray-600">
-            Click the button above to generate an AI visualization of your store layout with 100% shelf occupancy
-          </p>
         </div>
       )}
     </div>
