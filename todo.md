@@ -374,3 +374,8 @@
 - [x] Revisar lógica de distribuição em shelfDistributor.ts
 - [x] Testar distribuição com produtos de baixo (Margem Baixa + Giro Baixo)
 - [x] Padronizar sistema para usar apenas "Parte de Baixo" em todos os lugares
+
+- [x] CORRIGIR: Imagem IA gerada mostra produtos diferentes da visualização frontal
+- [x] Melhorar prompt para IA com dados estruturados e específicos de cada prateleira
+- [ ] Implementar validação de sincronização entre visualização frontal e imagem IA
+- [ ] Testar geração de imagem com produtos atuais e validar percentuais/posições

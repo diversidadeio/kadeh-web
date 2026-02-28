@@ -111,84 +111,110 @@ export default function StoreVisualizationGenerator({
     const handLevelWidth = handLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
     const bottomLevelWidth = bottomLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
 
-    // Build descriptions with visual arrangement
-    if (eyeLevelProducts.length > 0) {
-      const productList = eyeLevelProducts
-        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
-        .join(" → ");
-      const percentage = (eyeLevelWidth / gondolaWidth * 100).toFixed(1);
-      eyeLevelDesc = `\n**Eye Level Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
+    // Calculate percentages for each product
+    const getProductPercentages = (zoneProducts: Product[], zoneWidth: number) => {
+      return zoneProducts.map(p => ({
+        name: p.name,
+        width: p.largura || 10,
+        percentage: ((p.largura || 10) / zoneWidth * 100).toFixed(1)
+      }));
+    };
+
+    const eyeLevelPercentages = eyeLevelWidth > 0 ? getProductPercentages(eyeLevelProducts, eyeLevelWidth) : [];
+    const handLevelPercentages = handLevelWidth > 0 ? getProductPercentages(handLevelProducts, handLevelWidth) : [];
+    const bottomLevelPercentages = bottomLevelWidth > 0 ? getProductPercentages(bottomLevelProducts, bottomLevelWidth) : [];
+
+    // Build detailed product specifications
+    let eyeLevelSpec = "";
+    let handLevelSpec = "";
+    let bottomLevelSpec = "";
+
+    if (eyeLevelPercentages.length > 0) {
+      eyeLevelSpec = `\n**PRATELEIRA 1 - ALTURA DOS OLHOS (Top Shelf):**\n`;
+      eyeLevelPercentages.forEach((p, idx) => {
+        eyeLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+      });
+      eyeLevelSpec += `Total: ${(eyeLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
-    if (handLevelProducts.length > 0) {
-      const productList = handLevelProducts
-        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
-        .join(" → ");
-      const percentage = (handLevelWidth / gondolaWidth * 100).toFixed(1);
-      handLevelDesc = `\n**Hand Level Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
+    if (handLevelPercentages.length > 0) {
+      handLevelSpec = `\n**PRATELEIRAS 2-4 - ALTURA DAS MÃOS (Middle Shelves):**\n`;
+      handLevelPercentages.forEach((p, idx) => {
+        handLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+      });
+      handLevelSpec += `Total: ${(handLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
-    if (bottomLevelProducts.length > 0) {
-      const productList = bottomLevelProducts
-        .map(p => `${p.name} (${p.largura || 10}cm wide)`)
-        .join(" → ");
-      const percentage = (bottomLevelWidth / gondolaWidth * 100).toFixed(1);
-      bottomLevelDesc = `\n**Bottom Shelf Zone (${percentage}% of width):** Products arranged left to right: ${productList}`;
+    if (bottomLevelPercentages.length > 0) {
+      bottomLevelSpec = `\n**PRATELEIRA 5 - PARTE DE BAIXO (Bottom Shelf):**\n`;
+      bottomLevelPercentages.forEach((p, idx) => {
+        bottomLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+      });
+      bottomLevelSpec += `Total: ${(bottomLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
-    // Build visual representation
+    // Build visual layout
     let visualLayout = "";
     if (eyeLevelProducts.length > 0) {
-      visualLayout += `\n\n[EYE LEVEL]\n`;
+      visualLayout += `\n[ALTURA DOS OLHOS]\n`;
       eyeLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 8)}]`;
+        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
     if (handLevelProducts.length > 0) {
-      visualLayout += `\n[HAND LEVEL]\n`;
+      visualLayout += `\n[ALTURA DAS MÃOS]\n`;
       handLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 8)}]`;
+        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
     if (bottomLevelProducts.length > 0) {
-      visualLayout += `\n[BOTTOM]\n`;
+      visualLayout += `\n[PARTE DE BAIXO]\n`;
       bottomLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 8)}]`;
+        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
 
-    const prompt = `Create a realistic photograph of a retail store shelf with products EXACTLY arranged as shown below.
+    const prompt = `Você é um merchandiser profissional de varejo. Crie uma fotografia REALISTA de uma gôndola de loja com produtos posicionados EXATAMENTE conforme especificado abaixo.
 
-**CRITICAL: Products must be grouped and positioned EXACTLY as described:**
-${eyeLevelDesc}
-${handLevelDesc}
-${bottomLevelDesc}
+**REQUISITO CRÍTICO: A imagem gerada DEVE mostrar produtos nas EXATAS posições e percentuais especificados. Esta é uma visualização de planograma.**
 
-**Visual Layout Reference:**
+**CONFIGURAÇÃO DA GÔNDOLA:**
+- Largura Total: ${gondolaWidth}cm
+- Altura entre prateleiras: ${shelfHeight}cm
+- Profundidade da prateleira: ${shelfDepth}cm
+- Total de Prateleiras: 5 (Olhos, Mãos, Mãos, Mãos, Baixo)
+
+**POSICIONAMENTO DE PRODUTOS - SIGA EXATAMENTE:**
+${eyeLevelSpec}${handLevelSpec}${bottomLevelSpec}
+
+**DIAGRAMA DE LAYOUT VISUAL:**
 ${visualLayout}
 
-**Shelf Specifications:**
-- Total Width: ${gondolaWidth}cm
-- Height between shelves: ${shelfHeight}cm
-- Shelf Depth: ${shelfDepth}cm
-- Number of shelves: 3 (Eye Level, Hand Level, Bottom)
+**REGRAS OBRIGATÓRIAS DE POSICIONAMENTO:**
+1. ALTURA DOS OLHOS (Prateleira 1): Produtos da esquerda para direita nesta ordem exata: ${eyeLevelProducts.map(p => p.name).join(' → ')}
+2. ALTURA DAS MÃOS (Prateleiras 2-4): Produtos da esquerda para direita nesta ordem exata: ${handLevelProducts.map(p => p.name).join(' → ')}
+3. PARTE DE BAIXO (Prateleira 5): Produtos da esquerda para direita nesta ordem exata: ${bottomLevelProducts.map(p => p.name).join(' → ')}
+4. Cada produto ocupa seu percentual especificado da largura da prateleira
+5. Produtos são agrupados por nível de prateleira - NÃO misture produtos entre prateleiras
+6. Repita a sequência de produtos horizontalmente para preencher a largura da prateleira
+7. Mantenha aparência profissional de varejo com iluminação adequada
 
-**IMPORTANT POSITIONING RULES:**
-- Eye Level (top shelf): Premium positioning for high-margin products
-- Hand Level (middle shelf): Most accessible for high-turnover products
-- Bottom Shelf: Bulk items and low-margin products
-- Products in each zone must be grouped together horizontally
-- Maintain the exact left-to-right order shown above
-- Fill any remaining space by repeating the product sequence
+**IMPORTANTE - NÃO FAÇA:**
+- Mude a ordem dos produtos
+- Coloque produtos em prateleiras erradas
+- Use produtos genéricos de placeholder
+- Ignore os percentuais especificados
+- Gere produtos diferentes dos listados
 
-**Visual Style:**
-- Realistic supermarket/retail environment
-- Professional lighting and store background
-- Clear product packaging and labels
-- Modern retail shelving system
-- Professional product photography style
+**ESTILO VISUAL:**
+- Ambiente profissional de supermercado/varejo
+- Sistema de prateleiras moderno com 5 prateleiras visíveis
+- Iluminação profissional destacando cada prateleira
+- Embalagens de produtos e rótulos claramente visíveis
+- Fundo realista de loja de varejo
+- Estilo de fotografia de produto profissional
 
-Generate a professional retail shelf photograph that EXACTLY matches this product grouping and positioning.`;
+Gere uma fotografia profissional de gôndola de varejo que EXATAMENTE corresponda a esta especificação de planograma.`;
 
     return prompt;
   };
@@ -205,11 +231,8 @@ Generate a professional retail shelf photograph that EXACTLY matches this produc
     try {
       const prompt = generateStorePrompt();
       const result = await generateMutation.mutateAsync({ prompt });
-
       if (result.url) {
         setGeneratedImage(result.url);
-      } else {
-        setError(t.error);
       }
     } catch (err) {
       console.error("Error generating visualization:", err);
@@ -220,16 +243,17 @@ Generate a professional retail shelf photograph that EXACTLY matches this produc
   };
 
   return (
-    <div className="bg-card p-6 rounded-md border border-border space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-foreground">{t.storeLayout}</h3>
-        <p className="text-sm text-muted-foreground">{t.description}</p>
+    <div className="w-full space-y-6 p-6 bg-card rounded-lg border border-border">
+      <div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">{t.storeLayout}</h3>
+        <p className="text-sm text-muted-foreground mb-4">{t.description}</p>
       </div>
 
       <Button
         onClick={handleGenerateVisualization}
         disabled={isGenerating || products.length === 0}
         className="w-full"
+        size="lg"
       >
         {isGenerating ? (
           <>
@@ -245,31 +269,26 @@ Generate a professional retail shelf photograph that EXACTLY matches this produc
       </Button>
 
       {error && (
-        <div className="bg-destructive/10 border border-destructive text-destructive p-3 rounded-md text-sm">
-          {error}
-          {error === t.error && (
-            <Button
-              onClick={handleGenerateVisualization}
-              variant="outline"
-              size="sm"
-              className="mt-2 w-full"
-            >
-              {t.retry}
-            </Button>
-          )}
+        <div className="p-4 bg-destructive/10 border border-destructive rounded-md">
+          <p className="text-sm text-destructive mb-2">{error}</p>
+          <Button
+            onClick={handleGenerateVisualization}
+            variant="outline"
+            size="sm"
+          >
+            {t.retry}
+          </Button>
         </div>
       )}
 
       {generatedImage && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-foreground">
-            {language === 'pt' ? 'Visualização Gerada:' : 'Generated Visualization:'}
-          </p>
-          <div className="w-full overflow-x-auto border border-border rounded-md bg-background">
+          <p className="text-sm font-medium text-foreground">Visualização Gerada:</p>
+          <div className="w-full overflow-x-auto bg-muted rounded-md border border-border p-4">
             <img
               src={generatedImage}
               alt="Store visualization"
-              className="w-full h-auto rounded-md object-contain"
+              className="w-full h-auto object-contain"
             />
           </div>
         </div>
