@@ -508,3 +508,6 @@
 - [ ] Testar CRUD de categorias em português e inglês
 - [ ] Testar Dashboard de Performance em português e inglês
 - [x] Adicionar links de navegação para Admin de Categorias e Dashboard no Header
+- [x] Adicionar formulário de preenchimento de métricas no Dashboard
+- [x] Integrar Dashboard com dados reais do banco de dados
+- [x] Implementar atualização de métricas via tRPC

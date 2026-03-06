@@ -3,17 +3,43 @@
  * Análise de métricas de performance de categorias com gráficos e comparações
  */
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { TrendingUp, TrendingDown, DollarSign, Zap, AlertCircle, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { TrendingUp, TrendingDown, DollarSign, Zap, AlertCircle, Target, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
 export default function CategoryPerformanceDashboard() {
   const { language } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [metricsForm, setMetricsForm] = useState({
+    salesVolume: "",
+    turnoverRate: "",
+    profitMargin: "",
+    stockoutRate: "",
+  });
 
   const t = {
     pt: {
@@ -41,10 +67,19 @@ export default function CategoryPerformanceDashboard() {
       mediumPerformance: "Desempenho Médio",
       lowPerformance: "Baixo Desempenho",
       highStockout: "Ruptura Alta",
-      recommendations: "Recomendações",
-      increaseSpace: "Aumentar espaço",
-      decreaseSpace: "Reduzir espaço",
-      monitor: "Monitorar",
+      addMetrics: "Adicionar Métricas",
+      updateMetrics: "Atualizar Métricas",
+      selectCategory: "Selecione uma categoria",
+      salesVolume: "Volume de Vendas (R$)",
+      turnoverRate: "Taxa de Giro (%)",
+      profitMargin: "Margem de Lucro (%)",
+      stockoutRate: "Taxa de Ruptura (%)",
+      save: "Salvar",
+      cancel: "Cancelar",
+      success: "Métricas atualizadas com sucesso",
+      error: "Erro ao atualizar métricas",
+      noCategories: "Nenhuma categoria cadastrada",
+      createFirst: "Crie categorias primeiro no Admin de Categorias",
     },
     en: {
       title: "Category Performance Dashboard",
@@ -71,16 +106,71 @@ export default function CategoryPerformanceDashboard() {
       mediumPerformance: "Medium Performance",
       lowPerformance: "Low Performance",
       highStockout: "High Stockout",
-      recommendations: "Recommendations",
-      increaseSpace: "Increase space",
-      decreaseSpace: "Decrease space",
-      monitor: "Monitor",
+      addMetrics: "Add Metrics",
+      updateMetrics: "Update Metrics",
+      selectCategory: "Select a category",
+      salesVolume: "Sales Volume (R$)",
+      turnoverRate: "Turnover Rate (%)",
+      profitMargin: "Profit Margin (%)",
+      stockoutRate: "Stockout Rate (%)",
+      save: "Save",
+      cancel: "Cancel",
+      success: "Metrics updated successfully",
+      error: "Error updating metrics",
+      noCategories: "No categories registered",
+      createFirst: "Create categories first in Admin Categories",
     },
   };
 
   const texts = t[language as keyof typeof t];
 
-  const { data: analytics, isLoading } = trpc.categories.getAnalytics.useQuery();
+  const { data: analytics, isLoading, refetch } = trpc.categories.getAnalytics.useQuery();
+  const { data: categories } = trpc.categories.list.useQuery({});
+  const updateMetricsMutation = trpc.categories.updateMetrics.useMutation();
+
+  const handleOpenDialog = (categoryId: number) => {
+    setSelectedCategory(categoryId);
+    const category = categories?.find(c => c.id === categoryId);
+    if (category) {
+      setMetricsForm({
+        salesVolume: String(category.salesVolume || ""),
+        turnoverRate: String(category.turnoverRate || ""),
+        profitMargin: String(category.profitMargin || ""),
+        stockoutRate: String(category.stockoutRate || ""),
+      });
+    }
+    setIsOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsOpen(false);
+    setSelectedCategory(null);
+    setMetricsForm({
+      salesVolume: "",
+      turnoverRate: "",
+      profitMargin: "",
+      stockoutRate: "",
+    });
+  };
+
+  const handleSubmitMetrics = async () => {
+    if (!selectedCategory) return;
+
+    try {
+      await updateMetricsMutation.mutateAsync({
+        categoryId: selectedCategory,
+        salesVolume: parseFloat(metricsForm.salesVolume) || 0,
+        turnoverRate: parseFloat(metricsForm.turnoverRate) || 0,
+        profitMargin: parseFloat(metricsForm.profitMargin) || 0,
+        stockoutRate: parseFloat(metricsForm.stockoutRate) || 0,
+      });
+      toast.success(texts.success);
+      handleCloseDialog();
+      refetch();
+    } catch (error) {
+      toast.error(texts.error);
+    }
+  };
 
   const mainCategoryData = useMemo(() => {
     if (!analytics) return [];
@@ -160,11 +250,14 @@ export default function CategoryPerformanceDashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">{texts.title}</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">{texts.title}</h1>
           <p className="text-slate-600 mb-8">{texts.description}</p>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-center text-slate-500">{texts.noData}</div>
+              <div className="text-center">
+                <p className="text-slate-500 mb-4">{texts.noCategories}</p>
+                <p className="text-slate-400 text-sm">{texts.createFirst}</p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -176,9 +269,111 @@ export default function CategoryPerformanceDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">{texts.title}</h1>
-          <p className="text-slate-600">{texts.description}</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 mb-2">{texts.title}</h1>
+            <p className="text-slate-600">{texts.description}</p>
+          </div>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                {texts.addMetrics}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{texts.updateMetrics}</DialogTitle>
+                <DialogDescription>
+                  {texts.selectCategory}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">{texts.categoryName}</label>
+                  <Select
+                    value={selectedCategory?.toString() || ""}
+                    onValueChange={(value) => setSelectedCategory(parseInt(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">{texts.salesVolume}</label>
+                  <Input
+                    type="number"
+                    value={metricsForm.salesVolume}
+                    onChange={(e) =>
+                      setMetricsForm({ ...metricsForm, salesVolume: e.target.value })
+                    }
+                    placeholder="0.00"
+                    min="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">{texts.turnoverRate}</label>
+                  <Input
+                    type="number"
+                    value={metricsForm.turnoverRate}
+                    onChange={(e) =>
+                      setMetricsForm({ ...metricsForm, turnoverRate: e.target.value })
+                    }
+                    placeholder="0.00"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">{texts.profitMargin}</label>
+                  <Input
+                    type="number"
+                    value={metricsForm.profitMargin}
+                    onChange={(e) =>
+                      setMetricsForm({ ...metricsForm, profitMargin: e.target.value })
+                    }
+                    placeholder="0.00"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">{texts.stockoutRate}</label>
+                  <Input
+                    type="number"
+                    value={metricsForm.stockoutRate}
+                    onChange={(e) =>
+                      setMetricsForm({ ...metricsForm, stockoutRate: e.target.value })
+                    }
+                    placeholder="0.00"
+                    min="0"
+                    max="100"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={handleCloseDialog}>
+                  {texts.cancel}
+                </Button>
+                <Button onClick={handleSubmitMetrics} disabled={updateMetricsMutation.isPending}>
+                  {texts.save}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Key Metrics */}
@@ -340,25 +535,27 @@ export default function CategoryPerformanceDashboard() {
         </div>
 
         {/* Top Categories Chart */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>{texts.topCategories}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={topCategories}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="sales" fill="#3b82f6" name={texts.sales} />
-                <Bar dataKey="turnover" fill="#10b981" name={texts.turnover} />
-                <Bar dataKey="margin" fill="#f59e0b" name={texts.margin} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {topCategories.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>{texts.topCategories}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={topCategories}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="sales" fill="#3b82f6" name={texts.sales} />
+                  <Bar dataKey="turnover" fill="#10b981" name={texts.turnover} />
+                  <Bar dataKey="margin" fill="#f59e0b" name={texts.margin} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Performance Analysis */}
         {performanceMetrics && (
