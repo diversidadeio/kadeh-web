@@ -483,3 +483,61 @@ export const capacityReports = mysqlTable("capacityReports", {
 
 export type CapacityReport = typeof capacityReports.$inferSelect;
 export type InsertCapacityReport = typeof capacityReports.$inferInsert;
+
+// ============================================================================
+// CATEGORY MANAGEMENT - Gerenciamento de Categorias
+// ============================================================================
+
+/**
+ * Categorias de Produtos - Banco de dados persistente de categorias
+ */
+export const productCategories = mysqlTable("productCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Usuário que criou/gerencia a categoria
+  name: varchar("name", { length: 255 }).notNull(),
+  mainCategory: mysqlEnum("mainCategory", ["Alimentar", "Não-Alimentar"]).notNull(),
+  curvaFaturamento: mysqlEnum("curvaFaturamento", ["A", "B", "C"]).notNull(),
+  curvaLucratividade: mysqlEnum("curvaLucratividade", ["A", "B", "C"]).notNull(),
+  papelEstrategico: varchar("papelEstrategico", { length: 100 }).notNull(),
+  defaultGiro: mysqlEnum("defaultGiro", ["Baixo", "Médio", "Alto"]).notNull(),
+  defaultMargem: mysqlEnum("defaultMargem", ["Baixa", "Média", "Alta"]).notNull(),
+  defaultLargura: int("defaultLargura").notNull(), // em cm
+  defaultComprimento: int("defaultComprimento").notNull(), // em cm
+  // Métricas de Performance
+  salesVolume: decimal("salesVolume", { precision: 12, scale: 2 }).default("0.00").notNull(), // Volume de vendas em R$
+  turnoverRate: decimal("turnoverRate", { precision: 5, scale: 2 }).default("0.00").notNull(), // Taxa de giro (%)
+  profitMargin: decimal("profitMargin", { precision: 5, scale: 2 }).default("0.00").notNull(), // Margem de lucro (%)
+  stockoutRate: decimal("stockoutRate", { precision: 5, scale: 2 }).default("0.00").notNull(), // Taxa de ruptura (%)
+  lastUpdatedMetrics: timestamp("lastUpdatedMetrics"),
+  isActive: boolean("isActive").default(true).notNull(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("productCategories_user_idx").on(table.userId),
+  mainCategoryIdx: index("productCategories_mainCategory_idx").on(table.mainCategory),
+  nameIdx: index("productCategories_name_idx").on(table.name),
+}));
+
+export type ProductCategory = typeof productCategories.$inferSelect;
+export type InsertProductCategory = typeof productCategories.$inferInsert;
+
+/**
+ * Histórico de Performance de Categorias - Rastreamento de métricas ao longo do tempo
+ */
+export const categoryPerformanceHistory = mysqlTable("categoryPerformanceHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  categoryId: int("categoryId").notNull(),
+  date: timestamp("date").defaultNow().notNull(),
+  salesVolume: decimal("salesVolume", { precision: 12, scale: 2 }).notNull(),
+  turnoverRate: decimal("turnoverRate", { precision: 5, scale: 2 }).notNull(),
+  profitMargin: decimal("profitMargin", { precision: 5, scale: 2 }).notNull(),
+  stockoutRate: decimal("stockoutRate", { precision: 5, scale: 2 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("categoryPerformanceHistory_category_idx").on(table.categoryId),
+  dateIdx: index("categoryPerformanceHistory_date_idx").on(table.date),
+}));
+
+export type CategoryPerformanceHistory = typeof categoryPerformanceHistory.$inferSelect;
+export type InsertCategoryPerformanceHistory = typeof categoryPerformanceHistory.$inferInsert;

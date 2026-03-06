@@ -495,3 +495,15 @@
 - [x] Calcular impacto estimado (vendas, margem, ruptura)
 - [x] Validar recomendações
 - [x] Arquivo: client/src/lib/storeSmartLayout.ts
+
+- [x] Atualizar schema de banco de dados com tabela de categorias persistentes
+- [x] Criar procedures tRPC para CRUD de categorias (criar, ler, atualizar, deletar)
+- [x] Implementar página de Admin de Categorias com interface CRUD completa
+- [x] Adicionar validação de dados para categorias (nome, margem, giro, etc)
+- [x] Implementar Dashboard de Análise de Performance de categorias
+- [x] Adicionar métricas de vendas, margem e giro ao dashboard
+- [x] Criar gráficos de performance por categoria
+- [x] Adicionar rotas para Admin de Categorias (/pt/admin/categories, /en/admin/categories)
+- [x] Integrar links de navegação para Admin de Categorias
+- [ ] Testar CRUD de categorias em português e inglês
+- [ ] Testar Dashboard de Performance em português e inglês

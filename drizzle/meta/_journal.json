@@ -36,6 +36,13 @@
       "when": 1772797959959,
       "tag": "0004_serious_annihilus",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1772808746220,
+      "tag": "0005_good_kate_bishop",
+      "breakpoints": true
     }
   ]
 }

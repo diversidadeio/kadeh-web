@@ -17,6 +17,8 @@ import KadehAds from "./pages/KadehAds";
 import KadehAdsFull from "./pages/KadehAdsFull";
 import KadehAdsCampaign from "./pages/KadehAdsCampaign";
 import StoreMapping from "./pages/StoreMapping";
+import AdminCategories from "./pages/AdminCategories";
+import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -36,6 +38,8 @@ function Router() {
       <Route path="/pt/kadeh-ads" component={KadehAdsFull} />
       <Route path="/pt/kadeh-ads-campaign" component={KadehAdsCampaign} />
       <Route path="/pt/store-mapping" component={StoreMapping} />
+      <Route path="/pt/admin/categories" component={AdminCategories} />
+      <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -51,6 +55,8 @@ function Router() {
       <Route path="/en/kadeh-ads" component={KadehAdsFull} />
       <Route path="/en/kadeh-ads-campaign" component={KadehAdsCampaign} />
       <Route path="/en/store-mapping" component={StoreMapping} />
+      <Route path="/en/admin/categories" component={AdminCategories} />
+      <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -66,6 +72,8 @@ function Router() {
       <Route path="/kadeh-ads" component={KadehAdsFull} />
       <Route path="/kadeh-ads-campaign" component={KadehAdsCampaign} />
       <Route path="/store-mapping" component={StoreMapping} />
+      <Route path="/admin/categories" component={AdminCategories} />
+      <Route path="/categories/performance" component={CategoryPerformanceDashboard} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
