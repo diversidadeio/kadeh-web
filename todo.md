@@ -512,3 +512,5 @@
 - [x] Integrar Dashboard com dados reais do banco de dados
 - [x] Implementar atualização de métricas via tRPC
 - [x] Adicionar campo defaultAltura nas categorias para otimização de espaço em gôndolas
+- [x] Gerar imagem realista de smartphone com Kadeh Ads em corredor de loja
+- [x] Integrar imagem principal na página Kadeh Ads

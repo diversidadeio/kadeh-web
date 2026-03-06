@@ -12,8 +12,20 @@ export default function KadehAds() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-white">
+        {/* Hero Section with Main Image */}
+        <div className="w-full h-96 md:h-[500px] overflow-hidden">
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/kadeh-ads-smartphone-hero-B5rAGR9ter9i8VwvEmTLwm.webp"
+            alt="Kadeh Ads - Promoção no Smartphone"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 py-12 px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-center">
+            <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Kadeh Ads</CardTitle>
             <CardDescription>
@@ -61,6 +73,8 @@ export default function KadehAds() {
             </div>
           </CardContent>
         </Card>
+          </div>
+        </div>
       </div>
     );
   }
