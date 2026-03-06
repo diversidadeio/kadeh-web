@@ -514,3 +514,4 @@
 - [x] Adicionar campo defaultAltura nas categorias para otimização de espaço em gôndolas
 - [x] Gerar imagem realista de smartphone com Kadeh Ads em corredor de loja
 - [x] Integrar imagem principal na página Kadeh Ads
+- [x] Substituir imagem principal do Hero pela imagem do Kadeh Ads
