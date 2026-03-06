@@ -62,7 +62,7 @@ export default function AdminCategories() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterMain, setFilterMain] = useState<"Alimentar" | "Não-Alimentar" | "">("");
+  const [filterMain, setFilterMain] = useState<"Alimentar" | "Não-Alimentar" | "">("Alimentar");
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
   const t = {
@@ -225,7 +225,7 @@ export default function AdminCategories() {
     const matchesSearch =
       cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cat.papelEstrategico.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = !filterMain || cat.mainCategory === filterMain;
+    const matchesFilter = cat.mainCategory === filterMain;
     return matchesSearch && matchesFilter;
   });
 
@@ -261,10 +261,9 @@ export default function AdminCategories() {
             </div>
             <Select value={filterMain} onValueChange={(value: any) => setFilterMain(value)}>
               <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={texts.filter} />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{texts.filterAll}</SelectItem>
                 <SelectItem value="Alimentar">{texts.filterFood}</SelectItem>
                 <SelectItem value="Não-Alimentar">{texts.filterNonFood}</SelectItem>
               </SelectContent>
