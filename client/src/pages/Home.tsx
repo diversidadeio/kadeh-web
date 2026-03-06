@@ -120,8 +120,8 @@ export default function Home() {
         subtitle={t.hero.description}
         primaryCTA={t.header.requestDemo}
         secondaryCTA={t.hero.viewSolutions}
-        imageUrl="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/kadeh-ads-smartphone-hero-B5rAGR9ter9i8VwvEmTLwm.webp"
-        imageAlt="Kadeh Ads - Promoção no Smartphone"
+        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/xXOvSTrqbBQYstKf.png"
+        imageAlt="Navegação indoor com IA"
       />
 
       {/* O que a Kadeh entrega */}
