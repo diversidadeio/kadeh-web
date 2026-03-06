@@ -10,6 +10,7 @@ import { adsRouter } from "./adsRouter";
 import { campaignsRouter } from "./campaignsRouter";
 import { categoriesRouter } from "./categoriesRouter";
 import { productsRouter } from "./productsRouter";
+import { adsPaymentRouter } from "./adsPaymentRouter";
 import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
 import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -17,6 +18,7 @@ import { eq, and } from "drizzle-orm";
 export const appRouter = router({
   system: systemRouter,
   ads: adsRouter,
+  adsPayment: adsPaymentRouter,
   campaigns: campaignsRouter,
   categories: categoriesRouter,
   products: productsRouter,

@@ -601,3 +601,87 @@ export const productPerformanceHistory = mysqlTable("productPerformanceHistory",
 
 export type ProductPerformanceHistory = typeof productPerformanceHistory.$inferSelect;
 export type InsertProductPerformanceHistory = typeof productPerformanceHistory.$inferInsert;
+
+// ============================================================================
+// STRIPE PAYMENTS - Pagamentos com Stripe para Kadeh Ads
+// ============================================================================
+
+/**
+ * Stripe Checkout Sessions - Rastreamento de sessões de checkout
+ */
+export const stripeCheckoutSessions = mysqlTable("stripeCheckoutSessions", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }).notNull().unique(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("BRL").notNull(),
+  status: mysqlEnum("status", ["open", "complete", "expired"]).default("open").notNull(),
+  paymentStatus: mysqlEnum("paymentStatus", ["unpaid", "paid", "no_payment_required"]).default("unpaid").notNull(),
+  checkoutUrl: varchar("checkoutUrl", { length: 500 }).notNull(),
+  successUrl: varchar("successUrl", { length: 500 }).notNull(),
+  cancelUrl: varchar("cancelUrl", { length: 500 }).notNull(),
+  expiresAt: timestamp("expiresAt"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  campaignIdx: index("stripeCheckoutSessions_campaign_idx").on(table.campaignId),
+  stripeSessionIdx: index("stripeCheckoutSessions_stripe_idx").on(table.stripeSessionId),
+  statusIdx: index("stripeCheckoutSessions_status_idx").on(table.status),
+}));
+
+export type StripeCheckoutSession = typeof stripeCheckoutSessions.$inferSelect;
+export type InsertStripeCheckoutSession = typeof stripeCheckoutSessions.$inferInsert;
+
+/**
+ * Stripe Payments - Pagamentos processados via Stripe
+ */
+export const stripePayments = mysqlTable("stripePayments", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }).notNull().unique(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeChargeId: varchar("stripeChargeId", { length: 255 }).unique(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("BRL").notNull(),
+  status: mysqlEnum("status", ["processing", "succeeded", "requires_action", "canceled", "failed"]).notNull(),
+  paymentMethod: varchar("paymentMethod", { length: 50 }), // card, boleto, etc
+  receiptUrl: varchar("receiptUrl", { length: 500 }),
+  invoiceNumber: varchar("invoiceNumber", { length: 50 }).unique(),
+  invoiceUrl: varchar("invoiceUrl", { length: 500 }),
+  paidAt: timestamp("paidAt"),
+  refundedAt: timestamp("refundedAt"),
+  refundAmount: decimal("refundAmount", { precision: 10, scale: 2 }),
+  refundReason: text("refundReason"),
+  failureReason: text("failureReason"),
+  metadata: json("metadata").$type<Record<string, string>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  campaignIdx: index("stripePayments_campaign_idx").on(table.campaignId),
+  stripePaymentIdx: index("stripePayments_stripe_idx").on(table.stripePaymentIntentId),
+  statusIdx: index("stripePayments_status_idx").on(table.status),
+}));
+
+export type StripePayment = typeof stripePayments.$inferSelect;
+export type InsertStripePayment = typeof stripePayments.$inferInsert;
+
+/**
+ * Stripe Customers - Mapeamento de clientes Stripe para anunciantes
+ */
+export const stripeCustomers = mysqlTable("stripeCustomers", {
+  id: int("id").autoincrement().primaryKey(),
+  advertiserId: int("advertiserId").notNull().unique(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  advertiserIdx: index("stripeCustomers_advertiser_idx").on(table.advertiserId),
+  stripeIdx: index("stripeCustomers_stripe_idx").on(table.stripeCustomerId),
+}));
+
+export type StripeCustomer = typeof stripeCustomers.$inferSelect;
+export type InsertStripeCustomer = typeof stripeCustomers.$inferInsert;

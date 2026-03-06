@@ -515,3 +515,29 @@
 - [x] Gerar imagem realista de smartphone com Kadeh Ads em corredor de loja
 - [x] Integrar imagem principal na página Kadeh Ads
 - [x] Substituir imagem principal do Hero pela imagem do Kadeh Ads
+
+## Funcionalidade de Pagamento Kadeh Ads
+
+- [ ] Adicionar integração Stripe ao projeto
+- [ ] Criar schema de banco de dados para campanhas e pagamentos
+- [ ] Implementar procedures tRPC para gerenciamento de campanhas
+- [ ] Criar página de contratação com formulário de dados da empresa
+- [ ] Implementar cálculo dinâmico de preços com desconto progressivo
+- [ ] Integrar checkout com Stripe
+- [ ] Configurar webhooks para notificações de pagamento
+- [ ] Criar sistema de notificação para admin e parceiros
+- [ ] Implementar liberação automática de acesso após pagamento
+- [ ] Testar fluxo completo de pagamento
+
+## Status de Implementação - Funcionalidade de Pagamento Kadeh Ads
+
+- [x] Adicionar integração Stripe ao projeto (webdev_add_feature)
+- [x] Criar schema de banco de dados para campanhas e pagamentos Stripe
+- [x] Criar procedures tRPC para gerenciamento de campanhas e pagamentos
+- [ ] Criar página de contratação com formulário de dados da empresa
+- [ ] Implementar cálculo dinâmico de preços com desconto progressivo
+- [ ] Integrar checkout com Stripe
+- [ ] Configurar webhooks para notificações de pagamento
+- [ ] Criar sistema de notificação para admin e parceiros
+- [ ] Implementar liberação automática de acesso após pagamento
+- [ ] Testar fluxo completo de pagamento
