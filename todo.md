@@ -507,3 +507,4 @@
 - [x] Integrar links de navegação para Admin de Categorias
 - [ ] Testar CRUD de categorias em português e inglês
 - [ ] Testar Dashboard de Performance em português e inglês
+- [x] Adicionar links de navegação para Admin de Categorias e Dashboard no Header

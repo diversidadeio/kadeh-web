@@ -12,6 +12,8 @@ export const translations = {
       media: 'Mídia',
       video: 'Vídeo',
       faq: 'FAQ',
+      adminCategories: 'Admin Categorias',
+      performanceDashboard: 'Performance',
       talkToSpecialist: 'Falar com especialista',
       requestDemo: 'Solicitar demonstração',
     },
@@ -292,8 +294,10 @@ export const translations = {
       media: 'Media',
       video: 'Video',
       faq: 'FAQ',
-      talkToSpecialist: 'Talk to Specialist',
-      requestDemo: 'Request Demo',
+      adminCategories: 'Admin Categories',
+      performanceDashboard: 'Performance',
+      talkToSpecialist: 'Talk to specialist',
+      requestDemo: 'Request demo',
     },
 
     // Hero Section
