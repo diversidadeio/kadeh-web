@@ -414,11 +414,12 @@
 - [x] Migração: drizzle/0004_serious_annihilus.sql (7 tabelas)
 
 ### Fase 2: Editor de Planta Baixa
-- [ ] Criar componente de esboço da loja (canvas/SVG)
-- [ ] Implementar entrada de medidas (metros/centímetros)
-- [ ] Criar ferramenta de desenho de corredores
-- [ ] Implementar validação de medidas
-- [ ] Adicionar grid de referência
+- [x] Criar componente de esboço da loja (canvas/SVG)
+- [x] Implementar entrada de medidas (metros/centímetros)
+- [x] Criar ferramenta de desenho de corredores
+- [x] Implementar validação de medidas
+- [x] Adicionar grid de referência
+- [x] Arquivo: client/src/components/store-mapping/StoreFloorPlanEditor.tsx
 
 ### Fase 3: Biblioteca de Módulos
 - [ ] Criar componente de biblioteca de módulos
