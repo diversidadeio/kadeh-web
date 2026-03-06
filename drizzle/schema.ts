@@ -503,6 +503,7 @@ export const productCategories = mysqlTable("productCategories", {
   defaultMargem: mysqlEnum("defaultMargem", ["Baixa", "Média", "Alta"]).notNull(),
   defaultLargura: int("defaultLargura").notNull(), // em cm
   defaultComprimento: int("defaultComprimento").notNull(), // em cm
+  defaultAltura: int("defaultAltura").notNull().default(20), // em cm
   // Métricas de Performance
   salesVolume: decimal("salesVolume", { precision: 12, scale: 2 }).default("0.00").notNull(), // Volume de vendas em R$
   turnoverRate: decimal("turnoverRate", { precision: 5, scale: 2 }).default("0.00").notNull(), // Taxa de giro (%)

@@ -50,6 +50,13 @@
       "when": 1772814622715,
       "tag": "0006_marvelous_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1772815572732,
+      "tag": "0007_nostalgic_champions",
+      "breakpoints": true
     }
   ]
 }

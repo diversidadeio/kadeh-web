@@ -1,0 +1,1 @@
+ALTER TABLE `productCategories` ADD `defaultAltura` int DEFAULT 20 NOT NULL;

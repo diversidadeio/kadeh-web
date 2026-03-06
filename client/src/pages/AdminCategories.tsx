@@ -38,6 +38,7 @@ interface FormData {
   defaultMargem: "Baixa" | "Média" | "Alta";
   defaultLargura: number;
   defaultComprimento: number;
+  defaultAltura: number;
   description?: string;
   salesVolume?: number;
   turnoverRate?: number;
@@ -55,6 +56,7 @@ const initialFormData: FormData = {
   defaultMargem: "Média",
   defaultLargura: 10,
   defaultComprimento: 15,
+  defaultAltura: 20,
 };
 
 export default function AdminCategories() {
@@ -89,6 +91,7 @@ export default function AdminCategories() {
       defaultMargem: "Margem Padrão",
       defaultLargura: "Largura Padrão (cm)",
       defaultComprimento: "Comprimento Padrão (cm)",
+      defaultAltura: "Altura Padrão (cm)",
       descriptionLabel: "Descrição",
       salesVolume: "Volume de Vendas (R$)",
       turnoverRate: "Taxa de Giro (%)",
@@ -130,7 +133,8 @@ export default function AdminCategories() {
       defaultGiro: "Default Turnover",
       defaultMargem: "Default Margin",
       defaultLargura: "Default Width (cm)",
-      defaultComprimento: "Default Depth (cm)",
+      defaultComprimento: "Default Length (cm)",
+      defaultAltura: "Default Height (cm)",
       descriptionLabel: "Description",
       salesVolume: "Sales Volume (R$)",
       turnoverRate: "Turnover Rate (%)",
@@ -174,6 +178,7 @@ export default function AdminCategories() {
         defaultMargem: category.defaultMargem,
         defaultLargura: category.defaultLargura,
         defaultComprimento: category.defaultComprimento,
+        defaultAltura: category.defaultAltura,
         description: category.description,
         salesVolume: category.salesVolume,
         turnoverRate: category.turnoverRate,
@@ -440,7 +445,7 @@ export default function AdminCategories() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="text-sm font-medium">{texts.defaultLargura}</label>
                       <Input
@@ -464,6 +469,20 @@ export default function AdminCategories() {
                           setFormData({
                             ...formData,
                             defaultComprimento: parseInt(e.target.value) || 0,
+                          })
+                        }
+                        min="1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">{texts.defaultAltura}</label>
+                      <Input
+                        type="number"
+                        value={formData.defaultAltura}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            defaultAltura: parseInt(e.target.value) || 0,
                           })
                         }
                         min="1"
@@ -596,7 +615,7 @@ export default function AdminCategories() {
 
                 {expandedRows.has(category.id) && (
                   <CardContent className="pt-0 pb-4 border-t">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
                       <div>
                         <p className="text-xs text-slate-600">{texts.defaultGiro}</p>
                         <p className="font-semibold">{category.defaultGiro}</p>
@@ -612,6 +631,10 @@ export default function AdminCategories() {
                       <div>
                         <p className="text-xs text-slate-600">{texts.defaultComprimento}</p>
                         <p className="font-semibold">{category.defaultComprimento} cm</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-600">{texts.defaultAltura}</p>
+                        <p className="font-semibold">{category.defaultAltura} cm</p>
                       </div>
                     </div>
 

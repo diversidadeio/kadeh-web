@@ -511,3 +511,4 @@
 - [x] Adicionar formulário de preenchimento de métricas no Dashboard
 - [x] Integrar Dashboard com dados reais do banco de dados
 - [x] Implementar atualização de métricas via tRPC
+- [x] Adicionar campo defaultAltura nas categorias para otimização de espaço em gôndolas
