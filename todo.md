@@ -451,3 +451,47 @@
 - [ ] Validar cálculos 3D
 - [ ] Testar drag & drop
 - [ ] Salvar checkpoint
+
+
+## SISTEMA DE MAPEAMENTO DE LOJA - IMPLEMENTAÇÃO COMPLETA
+
+### Fase 1: Estrutura de Dados ✅
+- [x] Criar tipos TypeScript para Loja (dimensões, corredores)
+- [x] Criar tipos para Módulos (tipo, dimensões, posição)
+- [x] Criar tipos para Prateleiras (altura, profundidade, largura)
+- [x] Criar tipos para Posicionamento de Produtos
+- [x] Criar schema Drizzle para persistência
+- [x] Arquivo: shared/types/storeMapping.ts (tipos completos)
+- [x] Migração: drizzle/0004_serious_annihilus.sql (7 tabelas)
+
+### Fase 2: Editor de Planta Baixa ✅
+- [x] Criar componente de esboço da loja (canvas/SVG)
+- [x] Implementar entrada de medidas (metros/centímetros)
+- [x] Criar ferramenta de desenho de corredores
+- [x] Implementar validação de medidas
+- [x] Adicionar grid de referência
+- [x] Arquivo: client/src/components/store-mapping/StoreFloorPlanEditor.tsx
+
+### Fase 3: Biblioteca de Módulos ✅
+- [x] Criar componente de biblioteca de módulos
+- [x] Implementar drag & drop para posicionamento
+- [x] Adicionar customização de dimensões
+- [x] Criar templates de módulos (Gôndola, Freezers, Ilha, Banca, Display)
+- [x] Implementar duplicação e exclusão de módulos
+- [x] Arquivo: client/src/components/store-mapping/ModuleLibrary.tsx
+
+### Fase 4: Cálculo 3D de Capacidade ✅
+- [x] Implementar algoritmo de cálculo 3D (Largura × Profundidade × Altura)
+- [x] Calcular número de frentes por produto
+- [x] Validar ocupação de prateleiras
+- [x] Distribuir produtos em múltiplas prateleiras
+- [x] Calcular percentual de ocupação
+- [x] Arquivo: client/src/lib/capacityCalculator3D.ts
+
+### Fase 5: Integração Smart Layout ✅
+- [x] Criar matriz Margem × Giro para recomendações
+- [x] Implementar cálculo de prioridade de produtos
+- [x] Gerar sugestões automáticas de posicionamento
+- [x] Calcular impacto estimado (vendas, margem, ruptura)
+- [x] Validar recomendações
+- [x] Arquivo: client/src/lib/storeSmartLayout.ts
