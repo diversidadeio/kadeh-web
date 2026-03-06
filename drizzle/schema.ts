@@ -541,3 +541,62 @@ export const categoryPerformanceHistory = mysqlTable("categoryPerformanceHistory
 
 export type CategoryPerformanceHistory = typeof categoryPerformanceHistory.$inferSelect;
 export type InsertCategoryPerformanceHistory = typeof categoryPerformanceHistory.$inferInsert;
+
+/**
+ * Produtos de Categoria - Produtos dentro de cada categoria
+ */
+export const categoryProducts = mysqlTable("categoryProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  categoryId: int("categoryId").notNull(), // Referência à categoria
+  userId: int("userId").notNull(), // Usuário que criou/gerencia o produto
+  name: varchar("name", { length: 255 }).notNull(),
+  sku: varchar("sku", { length: 100 }).notNull(), // SKU do produto
+  ean: varchar("ean", { length: 13 }), // Código EAN-13
+  curvaFaturamento: mysqlEnum("curvaFaturamento", ["A", "B", "C"]).notNull(),
+  curvaLucratividade: mysqlEnum("curvaLucratividade", ["A", "B", "C"]).notNull(),
+  papelEstrategico: varchar("papelEstrategico", { length: 100 }).notNull(),
+  defaultGiro: mysqlEnum("defaultGiro", ["Baixo", "Médio", "Alto"]).notNull(),
+  defaultMargem: mysqlEnum("defaultMargem", ["Baixa", "Média", "Alta"]).notNull(),
+  defaultLargura: int("defaultLargura").notNull(), // em cm
+  defaultComprimento: int("defaultComprimento").notNull(), // em cm
+  defaultAltura: int("defaultAltura").notNull(), // em cm
+  // Métricas de Performance
+  salesVolume: decimal("salesVolume", { precision: 12, scale: 2 }).default("0.00").notNull(),
+  turnoverRate: decimal("turnoverRate", { precision: 5, scale: 2 }).default("0.00").notNull(),
+  profitMargin: decimal("profitMargin", { precision: 5, scale: 2 }).default("0.00").notNull(),
+  stockoutRate: decimal("stockoutRate", { precision: 5, scale: 2 }).default("0.00").notNull(),
+  lastUpdatedMetrics: timestamp("lastUpdatedMetrics"),
+  isActive: boolean("isActive").default(true).notNull(),
+  description: text("description"),
+  imageUrl: varchar("imageUrl", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("categoryProducts_category_idx").on(table.categoryId),
+  userIdx: index("categoryProducts_user_idx").on(table.userId),
+  skuIdx: index("categoryProducts_sku_idx").on(table.sku),
+  eanIdx: index("categoryProducts_ean_idx").on(table.ean),
+}));
+
+export type CategoryProduct = typeof categoryProducts.$inferSelect;
+export type InsertCategoryProduct = typeof categoryProducts.$inferInsert;
+
+/**
+ * Histórico de Performance de Produtos - Rastreamento de métricas ao longo do tempo
+ */
+export const productPerformanceHistory = mysqlTable("productPerformanceHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  productId: int("productId").notNull(),
+  date: timestamp("date").defaultNow().notNull(),
+  salesVolume: decimal("salesVolume", { precision: 12, scale: 2 }).notNull(),
+  turnoverRate: decimal("turnoverRate", { precision: 5, scale: 2 }).notNull(),
+  profitMargin: decimal("profitMargin", { precision: 5, scale: 2 }).notNull(),
+  stockoutRate: decimal("stockoutRate", { precision: 5, scale: 2 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  productIdx: index("productPerformanceHistory_product_idx").on(table.productId),
+  dateIdx: index("productPerformanceHistory_date_idx").on(table.date),
+}));
+
+export type ProductPerformanceHistory = typeof productPerformanceHistory.$inferSelect;
+export type InsertProductPerformanceHistory = typeof productPerformanceHistory.$inferInsert;

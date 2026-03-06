@@ -24,7 +24,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Edit2, Trash2, Search, ChevronDown } from "lucide-react";
+import { Plus, Edit2, Trash2, ChevronDown, ChevronUp, Package } from "lucide-react";
+import { CategoryProductsAdmin } from "@/components/CategoryProductsAdmin";
 import { toast } from "sonner";
 
 interface FormData {
@@ -64,12 +65,16 @@ export default function AdminCategories() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMain, setFilterMain] = useState<"Alimentar" | "Não-Alimentar" | "">("Alimentar");
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [selectedCategoryForProducts, setSelectedCategoryForProducts] = useState<number | null>(null);
 
   const t = {
     pt: {
       title: "Gerenciamento de Categorias",
       description: "Crie, edite e gerencie categorias de produtos",
       addNew: "Adicionar Categoria",
+      products: "Produtos",
+      manageProducts: "Gerenciar produtos desta categoria",
+      back: "Voltar",
       search: "Pesquisar categorias...",
       filter: "Filtrar por tipo",
       filterAll: "Todos",
@@ -109,6 +114,9 @@ export default function AdminCategories() {
       title: "Category Management",
       description: "Create, edit and manage product categories",
       addNew: "Add Category",
+      products: "Products",
+      manageProducts: "Manage products in this category",
+      back: "Back",
       search: "Search categories...",
       filter: "Filter by type",
       filterAll: "All",
@@ -238,6 +246,27 @@ export default function AdminCategories() {
     }
     setExpandedRows(newExpanded);
   };
+
+  if (selectedCategoryForProducts) {
+    const category = categories?.find(c => c.id === selectedCategoryForProducts);
+    return (
+      <div>
+        <Button
+          variant="outline"
+          onClick={() => setSelectedCategoryForProducts(null)}
+          className="mb-4"
+        >
+          ← {texts.back}
+        </Button>
+        {category && (
+          <CategoryProductsAdmin
+            categoryId={selectedCategoryForProducts}
+            categoryName={category.name}
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
@@ -615,16 +644,22 @@ export default function AdminCategories() {
                       </div>
                     )}
 
-                    {category.description && (
-                      <p className="text-sm text-slate-600 mb-4">{category.description}</p>
-                    )}
-
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedCategoryForProducts(category.id)}
+                        className="gap-1"
+                        title={texts.manageProducts}
+                      >
+                        <Package className="w-4 h-4" />
+                        {texts.products}
+                      </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleOpenDialog(category)}
-                        className="gap-2"
+                        className="gap-1"
                       >
                         <Edit2 className="w-4 h-4" />
                         {texts.edit}
@@ -633,7 +668,7 @@ export default function AdminCategories() {
                         size="sm"
                         variant="destructive"
                         onClick={() => handleDelete(category.id)}
-                        className="gap-2"
+                        className="gap-1"
                       >
                         <Trash2 className="w-4 h-4" />
                         {texts.delete}
