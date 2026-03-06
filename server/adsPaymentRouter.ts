@@ -6,7 +6,7 @@ import { eq, and } from "drizzle-orm";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-12-27.acme",
+  apiVersion: "2024-06-20",
 });
 
 /**

@@ -1,15 +1,16 @@
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, advertisers, advertisements, pricingPlans, adAnalytics, adPayments, correlatedCategories } from "../drizzle/schema";
+import { InsertUser, users, advertisers, advertisements, pricingPlans, adAnalytics, adPayments, correlatedCategories, adCampaigns, stripeCheckoutSessions, stripePayments, stripeCustomers } from "../drizzle/schema";
+import * as schema from "../drizzle/schema";
 import { ENV } from './_core/env';
 
-let _db: ReturnType<typeof drizzle> | null = null;
+let _db: any | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      _db = drizzle(process.env.DATABASE_URL, { schema, mode: 'default' });
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;

@@ -541,3 +541,23 @@
 - [ ] Criar sistema de notificação para admin e parceiros
 - [ ] Implementar liberação automática de acesso após pagamento
 - [ ] Testar fluxo completo de pagamento
+- [ ] Criar página de contratação de Kadeh Ads com formulário interativo
+- [ ] Implementar cálculo dinâmico de preços com desconto progressivo
+- [ ] Adicionar upload de imagem do produto
+- [ ] Implementar validação de EAN13
+- [ ] Criar webhook handler para Stripe (/api/stripe/webhook)
+- [ ] Implementar atualização de status de campanha após pagamento
+- [ ] Criar página de sucesso de pagamento
+- [ ] Criar página de cancelamento de pagamento
+- [ ] Implementar notificações automáticas para admin e parceiros
+- [ ] Testar fluxo completo de pagamento
+- [x] Criar página de contratação de Kadeh Ads com formulário interativo
+- [x] Implementar cálculo dinâmico de preços com desconto progressivo
+- [x] Adicionar upload de imagem do produto
+- [x] Implementar validação de EAN13
+- [ ] Criar webhook handler para Stripe (/api/stripe/webhook)
+- [ ] Implementar atualização de status de campanha após pagamento
+- [x] Criar página de sucesso de pagamento
+- [x] Criar página de cancelamento de pagamento
+- [ ] Implementar notificações automáticas para admin e parceiros
+- [ ] Testar fluxo completo de pagamento
