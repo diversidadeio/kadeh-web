@@ -29,6 +29,13 @@
       "when": 1772192616574,
       "tag": "0003_misty_giant_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1772797959959,
+      "tag": "0004_serious_annihilus",
+      "breakpoints": true
     }
   ]
 }

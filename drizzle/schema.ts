@@ -294,3 +294,192 @@ export const adPaymentsRelations = relations(adPayments, ({ one }) => ({
     references: [advertisements.id],
   }),
 }));
+
+
+// ============================================================================
+// STORE MAPPING SYSTEM - Mapeamento de Loja
+// ============================================================================
+
+/**
+ * Lojas - Armazena informações da planta baixa da loja
+ */
+export const stores = mysqlTable("stores", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  layoutType: mysqlEnum("layoutType", ["linear", "grid", "custom"]).default("linear").notNull(),
+  // Dimensões em centímetros
+  width: int("width").notNull(), // largura total em cm
+  length: int("length").notNull(), // comprimento total em cm
+  height: int("height").notNull(), // altura total em cm
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("stores_user_idx").on(table.userId),
+}));
+
+export type Store = typeof stores.$inferSelect;
+export type InsertStore = typeof stores.$inferInsert;
+
+/**
+ * Corredores - Divisões dentro da loja
+ */
+export const corridors = mysqlTable("corridors", {
+  id: int("id").autoincrement().primaryKey(),
+  storeId: int("storeId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  // Posição em centímetros
+  positionX: int("positionX").notNull(),
+  positionY: int("positionY").notNull(),
+  // Dimensões em centímetros
+  width: int("width").notNull(),
+  length: int("length").notNull(),
+  order: int("order").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  storeIdx: index("corridors_store_idx").on(table.storeId),
+}));
+
+export type Corridor = typeof corridors.$inferSelect;
+export type InsertCorridor = typeof corridors.$inferInsert;
+
+/**
+ * Modelos de Módulos - Templates reutilizáveis
+ */
+export const moduleTemplates = mysqlTable("moduleTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: mysqlEnum("type", ["gondola", "freezer_horizontal", "freezer_vertical", "island", "produce_stand", "hanging_display"]).notNull(),
+  description: text("description"),
+  // Dimensões padrão em centímetros
+  defaultWidth: int("defaultWidth").notNull(),
+  defaultDepth: int("defaultDepth").notNull(),
+  defaultHeight: int("defaultHeight").notNull(),
+  defaultShelves: int("defaultShelves").notNull(),
+  isCustomizable: boolean("isCustomizable").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("moduleTemplates_user_idx").on(table.userId),
+  typeIdx: index("moduleTemplates_type_idx").on(table.type),
+}));
+
+export type ModuleTemplate = typeof moduleTemplates.$inferSelect;
+export type InsertModuleTemplate = typeof moduleTemplates.$inferInsert;
+
+/**
+ * Módulos - Gôndolas, Freezers, Ilhas, etc. posicionados na loja
+ */
+export const modules = mysqlTable("modules", {
+  id: int("id").autoincrement().primaryKey(),
+  storeId: int("storeId").notNull(),
+  corridorId: int("corridorId"),
+  templateId: int("templateId"),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: mysqlEnum("type", ["gondola", "freezer_horizontal", "freezer_vertical", "island", "produce_stand", "hanging_display"]).notNull(),
+  // Posição em centímetros
+  positionX: int("positionX").notNull(),
+  positionY: int("positionY").notNull(),
+  // Dimensões em centímetros
+  width: int("width").notNull(),
+  depth: int("depth").notNull(),
+  height: int("height").notNull(),
+  shelfHeight: int("shelfHeight"), // altura entre prateleiras
+  numberOfShelves: int("numberOfShelves").notNull(),
+  // Capacidade
+  totalCapacity: int("totalCapacity").notNull(), // em cm³
+  totalOccupied: int("totalOccupied").default(0).notNull(), // em cm³
+  occupancyPercentage: decimal("occupancyPercentage", { precision: 5, scale: 2 }).default("0.00").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  storeIdx: index("modules_store_idx").on(table.storeId),
+  corridorIdx: index("modules_corridor_idx").on(table.corridorId),
+  typeIdx: index("modules_type_idx").on(table.type),
+}));
+
+export type Module = typeof modules.$inferSelect;
+export type InsertModule = typeof modules.$inferInsert;
+
+/**
+ * Prateleiras - Divisões dentro de cada módulo
+ */
+export const shelves = mysqlTable("shelves", {
+  id: int("id").autoincrement().primaryKey(),
+  moduleId: int("moduleId").notNull(),
+  order: int("order").notNull(), // 1 = topo, 5 = fundo
+  // Dimensões em centímetros
+  width: int("width").notNull(),
+  depth: int("depth").notNull(),
+  height: int("height").notNull(), // espaço acima da prateleira
+  zone: mysqlEnum("zone", ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"]).notNull(),
+  // Capacidade
+  capacity: int("capacity").notNull(), // em cm³
+  occupiedSpace: int("occupiedSpace").default(0).notNull(), // em cm³
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  moduleIdx: index("shelves_module_idx").on(table.moduleId),
+  zoneIdx: index("shelves_zone_idx").on(table.zone),
+}));
+
+export type Shelf = typeof shelves.$inferSelect;
+export type InsertShelf = typeof shelves.$inferInsert;
+
+/**
+ * Posicionamento de Produtos - Produtos alocados em prateleiras
+ */
+export const productPlacements = mysqlTable("productPlacements", {
+  id: int("id").autoincrement().primaryKey(),
+  storeId: int("storeId").notNull(),
+  moduleId: int("moduleId").notNull(),
+  shelfId: int("shelfId").notNull(),
+  productId: varchar("productId", { length: 255 }).notNull(), // EAN ou ID do produto
+  productName: varchar("productName", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  // Dimensões do produto em centímetros
+  productWidth: int("productWidth").notNull(),
+  productDepth: int("productDepth").notNull(),
+  productHeight: int("productHeight").notNull(),
+  // Propriedades
+  giro: mysqlEnum("giro", ["A", "B", "C"]).notNull(), // Velocidade
+  margem: mysqlEnum("margem", ["A", "B", "C"]).notNull(), // Margem
+  zone: mysqlEnum("zone", ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"]).notNull(),
+  quantity: int("quantity").notNull(), // quantidade de unidades
+  volume: int("volume").notNull(), // em cm³
+  positionOrder: int("positionOrder").notNull(), // ordem esquerda para direita
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  storeIdx: index("productPlacements_store_idx").on(table.storeId),
+  moduleIdx: index("productPlacements_module_idx").on(table.moduleId),
+  shelfIdx: index("productPlacements_shelf_idx").on(table.shelfId),
+  productIdx: index("productPlacements_product_idx").on(table.productId),
+}));
+
+export type ProductPlacement = typeof productPlacements.$inferSelect;
+export type InsertProductPlacement = typeof productPlacements.$inferInsert;
+
+/**
+ * Relatórios de Capacidade - Cache de cálculos para performance
+ */
+export const capacityReports = mysqlTable("capacityReports", {
+  id: int("id").autoincrement().primaryKey(),
+  storeId: int("storeId").notNull(),
+  moduleId: int("moduleId"),
+  totalCapacity: int("totalCapacity").notNull(), // em cm³
+  totalOccupied: int("totalOccupied").notNull(), // em cm³
+  occupancyPercentage: decimal("occupancyPercentage", { precision: 5, scale: 2 }).notNull(),
+  reportData: json("reportData").$type<object>().notNull(), // dados completos do relatório
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  storeIdx: index("capacityReports_store_idx").on(table.storeId),
+  moduleIdx: index("capacityReports_module_idx").on(table.moduleId),
+}));
+
+export type CapacityReport = typeof capacityReports.$inferSelect;
+export type InsertCapacityReport = typeof capacityReports.$inferInsert;

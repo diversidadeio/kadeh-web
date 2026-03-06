@@ -400,3 +400,53 @@
 - [x] Calcular redução de ruptura estimada
 - [x] Adicionar tabelas de comparação antes/depois
 - [x] Arquivo: PlanogramImpactDashboard.tsx
+
+
+## NOVO PROJETO: SISTEMA DE MAPEAMENTO DE LOJA
+
+### Fase 1: Estrutura de Dados
+- [x] Criar tipos TypeScript para Loja (dimensões, corredores)
+- [x] Criar tipos para Módulos (tipo, dimensões, posição)
+- [x] Criar tipos para Prateleiras (altura, profundidade, largura)
+- [x] Criar tipos para Posicionamento de Produtos (módulo, prateleira, zona)
+- [x] Criar schema Drizzle para persistência
+- [x] Arquivo: shared/types/storeMapping.ts (tipos completos)
+- [x] Migração: drizzle/0004_serious_annihilus.sql (7 tabelas)
+
+### Fase 2: Editor de Planta Baixa
+- [ ] Criar componente de esboço da loja (canvas/SVG)
+- [ ] Implementar entrada de medidas (metros/centímetros)
+- [ ] Criar ferramenta de desenho de corredores
+- [ ] Implementar validação de medidas
+- [ ] Adicionar grid de referência
+
+### Fase 3: Biblioteca de Módulos
+- [ ] Criar componente de biblioteca de módulos
+- [ ] Implementar drag & drop para planta baixa
+- [ ] Criar modal de configuração de módulo
+- [ ] Suportar tipos: Gôndola, Freezer Horizontal, Freezer Vertical, Ilha, Banca
+- [ ] Permitir customização de dimensões
+
+### Fase 4: Cálculo 3D
+- [ ] Implementar função de cálculo de capacidade 3D
+- [ ] Calcular quantidade de frentes por produto
+- [ ] Considerar profundidade da prateleira
+- [ ] Validar ocupação total
+
+### Fase 5: Integração Smart Layout
+- [ ] Integrar algoritmo de distribuição por zona
+- [ ] Sugerir posicionamento automático de produtos
+- [ ] Permitir ajuste manual
+- [ ] Mostrar recomendações de margem/giro
+
+### Fase 6: Visualização Frontal
+- [ ] Criar visualização frontal de cada módulo
+- [ ] Mostrar produtos posicionados
+- [ ] Exibir percentuais de ocupação
+- [ ] Permitir edição visual
+
+### Fase 7: Testes e Deploy
+- [ ] Testar fluxo completo
+- [ ] Validar cálculos 3D
+- [ ] Testar drag & drop
+- [ ] Salvar checkpoint
