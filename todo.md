@@ -561,3 +561,18 @@
 - [x] Criar página de cancelamento de pagamento
 - [ ] Implementar notificações automáticas para admin e parceiros
 - [ ] Testar fluxo completo de pagamento
+
+## Fase 2 - Integração de Pagamento Stripe
+
+- [ ] Criar webhook handler do Stripe em /api/stripe/webhook
+- [ ] Implementar atualização de status de campanha após pagamento
+- [ ] Implementar procedures tRPC para criar sessão de checkout Stripe
+- [ ] Integrar formulário de checkout com procedure tRPC
+- [ ] Implementar validação de duplicatas de campanhas
+- [ ] Testar fluxo completo de pagamento
+- [x] Criar webhook handler do Stripe em /api/stripe/webhook
+- [x] Implementar atualização de status de campanha após pagamento
+- [x] Implementar procedures tRPC para criar sessão de checkout Stripe
+- [x] Implementar validação de duplicatas de campanhas
+- [ ] Integrar formulário de checkout com procedure tRPC no frontend
+- [ ] Testar fluxo completo de pagamento
