@@ -139,7 +139,7 @@ export default function KadehAdsCheckout() {
     setPricing(newPricing);
   }, [formData.duration, formData.numberOfStores]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -318,6 +318,7 @@ export default function KadehAdsCheckout() {
                   <Input
                     id="productName"
                     name="productName"
+                    type="text"
                     value={formData.productName}
                     onChange={handleInputChange}
                     placeholder="Produto Premium"
@@ -329,6 +330,7 @@ export default function KadehAdsCheckout() {
                   <Input
                     id="ean13"
                     name="ean13"
+                    type="text"
                     value={formData.ean13}
                     onChange={handleInputChange}
                     placeholder="1234567890123"
@@ -401,7 +403,6 @@ export default function KadehAdsCheckout() {
                 <CheckCircle2 className="w-5 h-5 text-green-600" />
                 {t.pricing}
               </CardTitle>
-              <CardDescription>{t.pricePerStoreDay}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -411,25 +412,35 @@ export default function KadehAdsCheckout() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t.discount}</p>
-                  <p className="text-2xl font-bold text-red-600">-{pricing.multiplier}%</p>
-                  <p className="text-xs text-gray-500">-R$ {pricing.discount}</p>
+                  <p className="text-2xl font-bold text-green-600">-{pricing.multiplier}%</p>
                 </div>
-                <div className="md:col-span-2">
+                <div>
+                  <p className="text-sm text-gray-600">Economia</p>
+                  <p className="text-2xl font-bold text-blue-600">R$ {pricing.discount}</p>
+                </div>
+                <div>
                   <p className="text-sm text-gray-600">{t.totalPrice}</p>
-                  <p className="text-4xl font-bold text-green-600">R$ {pricing.totalPrice}</p>
+                  <p className="text-2xl font-bold text-indigo-600">R$ {pricing.totalPrice}</p>
                 </div>
               </div>
-              <p className="mt-4 text-xs text-gray-600">{t.discountInfo}</p>
+              <p className="text-xs text-gray-500 mt-4">{t.discountInfo}</p>
             </CardContent>
           </Card>
 
-          {/* Actions */}
-          <div className="flex gap-4 justify-end">
-            <Button variant="outline" type="button" onClick={() => window.history.back()}>
-              {t.cancel}
-            </Button>
-            <Button type="submit" className="bg-green-600 hover:bg-green-700">
+          {/* Buttons */}
+          <div className="flex gap-4">
+            <Button type="submit" className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white">
               {t.submit}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => {
+                window.history.back();
+              }}
+            >
+              {t.cancel}
             </Button>
           </div>
         </form>
