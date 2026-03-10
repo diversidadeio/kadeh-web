@@ -16,8 +16,8 @@ export default function KadehAds() {
         {/* Hero Section with Main Image */}
         <div className="w-full h-96 md:h-[500px] overflow-hidden">
           <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/kadeh-ads-smartphone-hero-B5rAGR9ter9i8VwvEmTLwm.webp"
-            alt="Kadeh Ads - Promoção no Smartphone"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/BhoNhyjtUKhzSkIr.png"
+            alt="Kadeh Ads - Família Fazendo Compras em Supermercado"
             className="w-full h-full object-cover"
           />
         </div>
