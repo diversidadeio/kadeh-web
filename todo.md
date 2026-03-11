@@ -593,3 +593,11 @@
 - [x] Remover link separado de Vídeo do Header
 - [x] Remover rotas de Vídeo do App.tsx
 - [x] Testar navegação e layout responsivo
+
+## Fase 5 - Tipos de Ads e Texto Customizável
+
+- [x] Adicionar campo de tipo de Ads (Desconto Especial, Leve 3 Pague 2, Produtos com Poucas Unidades, Leve Mais por Menos)
+- [x] Adicionar campo de texto com limite de 140 caracteres para cada tipo de Ads
+- [ ] Atualizar schema de banco de dados com novo campo adType e adText
+- [x] Integrar validação de 140 caracteres no formulário
+- [ ] Testar funcionalidade no formulário de contratação

@@ -12,6 +12,15 @@ const translations = {
     subtitle: "Impulsione seus produtos com publicidade inteligente no ponto de venda",
     heroTitle: "Invista em Publicidade Inteligente",
     heroSubtitle: "Escolha o plano ideal para sua empresa e comece a impulsionar seus produtos com anúncios contextualizados",
+    adTypeTitle: "Tipo de Anúncio",
+    adTypeDesc: "Selecione o tipo de anúncio que melhor representa sua promoção",
+    adType1: "Desconto Especial",
+    adType2: "Leve 3 Pague 2",
+    adType3: "Produtos com Poucas Unidades",
+    adType4: "Leve Mais por Menos",
+    adTextLabel: "Texto do Anúncio",
+    adTextPlaceholder: "Digite o texto do seu anúncio (máximo 140 caracteres)",
+    adTextCounter: "caracteres",
     benefit1: "Anúncios Contextualizados",
     benefit1Desc: "Exiba anúncios relevantes baseados na busca do cliente",
     benefit2: "Descontos Progressivos",
@@ -49,6 +58,15 @@ const translations = {
     subtitle: "Boost your products with intelligent advertising at the point of sale",
     heroTitle: "Invest in Intelligent Advertising",
     heroSubtitle: "Choose the ideal plan for your company and start boosting your products with contextualized ads",
+    adTypeTitle: "Ad Type",
+    adTypeDesc: "Select the ad type that best represents your promotion",
+    adType1: "Special Discount",
+    adType2: "Buy 3 Pay 2",
+    adType3: "Low Stock Products",
+    adType4: "Buy More Pay Less",
+    adTextLabel: "Ad Text",
+    adTextPlaceholder: "Enter your ad text (maximum 140 characters)",
+    adTextCounter: "characters",
     benefit1: "Contextualized Ads",
     benefit1Desc: "Display relevant ads based on customer search",
     benefit2: "Progressive Discounts",
@@ -150,6 +168,8 @@ const pricingPlans: PricingPlan[] = [
 export default function KadehAdsContratacao() {
   const { isAuthenticated } = useAuth();
   const [lang, setLang] = useState<"pt" | "en">("pt");
+  const [selectedAdType, setSelectedAdType] = useState<string>("desconto");
+  const [adText, setAdText] = useState<string>("");
   const t = translations[lang];
 
   if (!isAuthenticated) {
@@ -230,6 +250,66 @@ export default function KadehAdsContratacao() {
                 <p className="text-slate-400 text-sm">{t.benefit3Desc}</p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Ad Type Selection Section */}
+      <section className="bg-blue-50 py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.adTypeTitle}</h2>
+            <p className="text-lg text-muted-foreground">{t.adTypeDesc}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {[
+              { id: "desconto", label: t.adType1 },
+              { id: "leve3pague2", label: t.adType2 },
+              { id: "poucasunidades", label: t.adType3 },
+              { id: "levemais", label: t.adType4 },
+            ].map((type) => (
+              <Card
+                key={type.id}
+                className={`cursor-pointer transition ${
+                  selectedAdType === type.id
+                    ? "border-blue-600 border-2 bg-blue-100"
+                    : "border-gray-200 hover:border-blue-300"
+                }`}
+                onClick={() => setSelectedAdType(type.id)}
+              >
+                <CardContent className="pt-6 text-center">
+                  <input
+                    type="radio"
+                    name="adType"
+                    value={type.id}
+                    checked={selectedAdType === type.id}
+                    onChange={() => setSelectedAdType(type.id)}
+                    className="mr-3"
+                  />
+                  <label className="font-semibold text-lg">{type.label}</label>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="max-w-2xl mx-auto">
+            <label className="block text-lg font-semibold mb-2">{t.adTextLabel}</label>
+            <textarea
+              value={adText}
+              onChange={(e) => {
+                if (e.target.value.length <= 140) {
+                  setAdText(e.target.value);
+                }
+              }}
+              placeholder={t.adTextPlaceholder}
+              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+              rows={4}
+              maxLength={140}
+            />
+            <div className="text-right text-sm text-muted-foreground mt-2">
+              {adText.length}/140 {t.adTextCounter}
+            </div>
           </div>
         </div>
       </section>
