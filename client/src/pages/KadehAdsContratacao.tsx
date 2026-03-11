@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,8 +35,10 @@ const translations = {
     benefit3: "Ativação Rápida",
     benefit3Desc: "Campanha ativa em até 24 horas",
     pricingTitle: "Calcule seu Investimento",
-    pricingSubtitle: "Selecione a quantidade de produtos a anunciar e veja o preço progressivo",
+    pricingSubtitle: "Selecione a quantidade de produtos, dias e lojas para ver o preço progressivo",
     numProducts: "Número de Produtos",
+    numDays: "Número de Dias",
+    numStores: "Número de Lojas",
     pricePerProduct: "Preço por Produto",
     totalInvestment: "Investimento Total",
     savings: "Economia",
@@ -65,6 +65,7 @@ const translations = {
     viewPlans: "Ver Planos e Preços",
     loginRequired: "Faça login para contratar Kadeh Ads",
     login: "Fazer Login",
+    originalValue: "Valor Original",
   },
   en: {
     adTypeTitle: "Choose Your Ad Type",
@@ -95,8 +96,10 @@ const translations = {
     benefit3: "Quick Activation",
     benefit3Desc: "Campaign active within 24 hours",
     pricingTitle: "Investment Scale for Kadeh Ads",
-    pricingSubtitle: "Price per image — the larger the volume, the greater the discount",
+    pricingSubtitle: "Select the number of products, days and stores to see the progressive price",
     numProducts: "Number of Products",
+    numDays: "Number of Days",
+    numStores: "Number of Stores",
     pricePerProduct: "Price per Product",
     totalInvestment: "Total Investment",
     savings: "Savings",
@@ -123,6 +126,7 @@ const translations = {
     viewPlans: "View Plans and Prices",
     loginRequired: "Log in to hire Kadeh Ads",
     login: "Login",
+    originalValue: "Original Value",
   },
 };
 
@@ -140,6 +144,8 @@ export default function KadehAdsContratacao() {
   const [selectedAdType, setSelectedAdType] = useState<string>("desconto");
   const [adText, setAdText] = useState<string>("");
   const [selectedProducts, setSelectedProducts] = useState<number>(1);
+  const [selectedDays, setSelectedDays] = useState<number>(30);
+  const [selectedStores, setSelectedStores] = useState<number>(1);
   const t = translations[lang];
 
   // Calcular preço baseado na quantidade de produtos
@@ -151,8 +157,9 @@ export default function KadehAdsContratacao() {
   };
 
   const selectedTier = calculatePrice(selectedProducts);
-  const totalInvestment = selectedProducts * selectedTier.pricePerProduct;
-  const originalPrice = selectedProducts * 100;
+  // Fórmula completa: preço_por_produto × número_produtos × número_dias × número_lojas
+  const totalInvestment = selectedTier.pricePerProduct * selectedProducts * selectedDays * selectedStores;
+  const originalPrice = 100 * selectedProducts * selectedDays * selectedStores;
   const savings = originalPrice - totalInvestment;
 
   if (!isAuthenticated) {
@@ -309,15 +316,16 @@ export default function KadehAdsContratacao() {
             <p className="text-lg text-muted-foreground">{t.pricingSubtitle}</p>
           </div>
 
-          {/* Product Quantity Selector and Calculator */}
+          {/* Product Quantity, Days and Stores Selector and Calculator */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Left: Quantity Selector */}
-            <div>
+            {/* Left: Quantity, Days and Stores Selector */}
+            <div className="space-y-6">
+              {/* Products */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-xl">{t.numProducts}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     {[1, 3, 5, 10].map((qty) => (
                       <button
@@ -345,11 +353,79 @@ export default function KadehAdsContratacao() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Days */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">{t.numDays}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {[7, 15, 30, 60].map((days) => (
+                      <button
+                        key={days}
+                        onClick={() => setSelectedDays(days)}
+                        className={`p-4 rounded-lg border-2 transition font-semibold text-lg ${
+                          selectedDays === days
+                            ? "border-blue-600 bg-blue-100 text-blue-900"
+                            : "border-gray-200 bg-white text-gray-900 hover:border-blue-300"
+                        }`}
+                      >
+                        {days} dias
+                      </button>
+                    ))}
+                  </div>
+                  <div className="border-t pt-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ou digite a quantidade de dias:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={selectedDays}
+                      onChange={(e) => setSelectedDays(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Stores */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">{t.numStores}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {[1, 3, 5, 10].map((stores) => (
+                      <button
+                        key={stores}
+                        onClick={() => setSelectedStores(stores)}
+                        className={`p-4 rounded-lg border-2 transition font-semibold text-lg ${
+                          selectedStores === stores
+                            ? "border-blue-600 bg-blue-100 text-blue-900"
+                            : "border-gray-200 bg-white text-gray-900 hover:border-blue-300"
+                        }`}
+                      >
+                        {stores} {stores === 1 ? "Loja" : "Lojas"}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="border-t pt-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ou digite a quantidade de lojas:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={selectedStores}
+                      onChange={(e) => setSelectedStores(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Right: Price Summary */}
             <div>
-              <Card className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-0">
+              <Card className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-0 sticky top-4">
                 <CardHeader>
                   <CardTitle className="text-2xl">{t.totalInvestment}</CardTitle>
                 </CardHeader>
@@ -360,12 +436,20 @@ export default function KadehAdsContratacao() {
                       <span className="text-2xl font-bold">{selectedProducts}</span>
                     </div>
                     <div className="flex justify-between items-center">
+                      <span className="text-blue-100">{t.numDays}:</span>
+                      <span className="text-2xl font-bold">{selectedDays}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-100">{t.numStores}:</span>
+                      <span className="text-2xl font-bold">{selectedStores}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
                       <span className="text-blue-100">{t.pricePerProduct}:</span>
                       <span className="text-2xl font-bold">R$ {selectedTier.pricePerProduct.toFixed(2)}</span>
                     </div>
                     <div className="border-t border-blue-400 pt-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-blue-100">Valor Original:</span>
+                        <span className="text-blue-100">{t.originalValue}:</span>
                         <span className="line-through text-blue-200">R$ {originalPrice.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between items-center text-3xl font-bold">
@@ -397,7 +481,7 @@ export default function KadehAdsContratacao() {
                 <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                   <th className="px-6 py-4 text-left font-semibold">Quantidade de Produtos</th>
                   <th className="px-6 py-4 text-center font-semibold">Preço por Produto</th>
-                  <th className="px-6 py-4 text-center font-semibold">Valor Total</th>
+                  <th className="px-6 py-4 text-center font-semibold">Valor Total (1 dia, 1 loja)</th>
                   <th className="px-6 py-4 text-center font-semibold">Desconto</th>
                   <th className="px-6 py-4 text-center font-semibold">{t.contract}</th>
                 </tr>
@@ -452,7 +536,7 @@ export default function KadehAdsContratacao() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            * Valores em reais. Para volumes acima de 100 produtos, entre em contato para uma proposta personalizada.
+            * Valores em reais. Fórmula: Preço por Produto × Número de Produtos × Número de Dias × Número de Lojas. Para volumes acima de 100 produtos, entre em contato para uma proposta personalizada.
           </p>
         </div>
       </section>
