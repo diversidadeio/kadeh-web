@@ -3,11 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Link } from 'wouter';
 import StoreFloorPlanEditor from '@/components/store-mapping/StoreFloorPlanEditor';
 import { ModuleLibrary } from '@/components/store-mapping/ModuleLibrary';
 import { Store, Module, Corridor } from '@shared/types/storeMapping';
 import { generateStoreLayoutRecommendations, calculateRecommendationImpact } from '@/lib/storeSmartLayout';
-import { AlertCircle, MapPin, Package, TrendingUp } from 'lucide-react';
+import { AlertCircle, MapPin, Package, TrendingUp, Settings } from 'lucide-react';
 
 interface StoreMappingState {
   store: Store | null;
@@ -142,7 +143,17 @@ export default function StoreMapping() {
               <h1 className="text-4xl font-bold text-slate-900">{t.title}</h1>
               <p className="text-slate-600 mt-2">{t.subtitle}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <Link href="/admin/categories">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Settings className="h-4 w-4" />
+                  {language === 'pt' ? 'Admin Categorias' : 'Admin Categories'}
+                </Button>
+              </Link>
               <Button
                 variant={language === 'pt' ? 'default' : 'outline'}
                 onClick={() => setLanguage('pt')}

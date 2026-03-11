@@ -24,9 +24,7 @@ export default function Header() {
     { href: "/data-intelligence", label: t.header.intelligence },
     { href: "/how-it-works", label: t.header.howItWorks },
     { href: "/media", label: t.header.media },
-
     { href: "/faq", label: t.header.faq },
-    { href: "/admin/categories", label: t.header.adminCategories },
     { href: "/categories/performance", label: t.header.performanceDashboard },
     { href: "/kadeh-ads-campaign", label: "Kadeh Ads", special: true },
   ];

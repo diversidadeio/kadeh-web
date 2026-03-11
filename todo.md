@@ -617,3 +617,9 @@
 - [x] Remover botão "Contratar" do Header
 - [x] Adicionar botão "Contratar" dentro da página Kadeh Ads
 - [ ] Testar navegação em português e inglês
+
+## Fase 8 - Reorganização do Botão Admin Categorias
+
+- [x] Remover botão "Admin Categorias" do Header
+- [x] Adicionar botão "Admin Categorias" dentro da página Smart Layout
+- [ ] Testar navegação em português e inglês

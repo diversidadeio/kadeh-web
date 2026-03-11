@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { Link } from "wouter";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -15,6 +16,7 @@ import SmartLayoutWithSaveFeature from "@/components/SmartLayoutWithSaveFeature"
 import ImageZoomModal from "@/components/ImageZoomModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 import {
   BarChart3,
   Zap,
@@ -25,6 +27,7 @@ import {
   DollarSign,
   Eye,
   Layers,
+  Settings,
 } from "lucide-react";
 
 export default function SmartLayout() {
@@ -218,6 +221,22 @@ export default function SmartLayout() {
   return (
     <>
       <Header />
+
+      {/* Admin Categorias Button */}
+      <div className="bg-slate-50 border-b border-border py-3 px-6">
+        <div className="max-w-7xl mx-auto flex justify-end">
+          <Link href="/admin/categories">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              {language === 'pt' ? 'Admin Categorias' : 'Admin Categories'}
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       {/* Hero */}
       <Hero
