@@ -25,11 +25,15 @@ const translations = {
     benefit1: "Anúncios Contextualizados",
     benefit1Desc: "Exiba anúncios relevantes baseados na busca do cliente",
     benefit2: "Descontos Progressivos",
-    benefit2Desc: "Até 40% de desconto por volume de imagens",
+    benefit2Desc: "Até 40% de desconto por volume de produtos",
     benefit3: "Ativação Rápida",
     benefit3Desc: "Campanha ativa em até 24 horas",
-    pricingTitle: "Escala de Investimento para Kadeh Ads",
-    pricingSubtitle: "Preço por imagem — quanto maior o volume, maior o desconto",
+    pricingTitle: "Calcule seu Investimento",
+    pricingSubtitle: "Selecione a quantidade de produtos a anunciar e veja o preço progressivo",
+    numProducts: "Número de Produtos",
+    pricePerProduct: "Preço por Produto",
+    totalInvestment: "Investimento Total",
+    savings: "Economia",
     plan: "Plano",
     perImage: "Por Imagem",
     totalValue: "Valor Total",
@@ -122,6 +126,12 @@ interface PricingPlan {
   note?: string;
 }
 
+interface ProductPricingTier {
+  quantity: number;
+  pricePerProduct: number;
+  discount: number;
+}
+
 const pricingPlans: PricingPlan[] = [
   {
     id: "avulso",
@@ -174,12 +184,37 @@ const pricingPlans: PricingPlan[] = [
   },
 ];
 
+// Tabela de preços por quantidade de produtos
+const productPricingTiers: ProductPricingTier[] = [
+  { quantity: 1, pricePerProduct: 100, discount: 0 },
+  { quantity: 3, pricePerProduct: 90, discount: 10 },
+  { quantity: 5, pricePerProduct: 70, discount: 30 },
+  { quantity: 10, pricePerProduct: 50, discount: 50 },
+];
+
 export default function KadehAdsContratacao() {
   const { isAuthenticated } = useAuth();
   const [lang, setLang] = useState<"pt" | "en">("pt");
   const [selectedAdType, setSelectedAdType] = useState<string>("desconto");
   const [adText, setAdText] = useState<string>("");
+  const [selectedProducts, setSelectedProducts] = useState<number>(1);
   const t = translations[lang];
+
+  // Calcular preço baseado na quantidade de produtos
+  const calculatePrice = (quantity: number) => {
+    let tier = productPricingTiers[0];
+    for (const t of productPricingTiers) {
+      if (quantity >= t.quantity) {
+        tier = t;
+      }
+    }
+    return tier;
+  };
+
+  const selectedTier = calculatePrice(selectedProducts);
+  const totalInvestment = selectedProducts * selectedTier.pricePerProduct;
+  const originalPrice = selectedProducts * 100;
+  const savings = originalPrice - totalInvestment;
 
   if (!isAuthenticated) {
     return (
@@ -341,11 +376,92 @@ export default function KadehAdsContratacao() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.pricingTitle}</h2>
             <p className="text-lg text-muted-foreground">{t.pricingSubtitle}</p>
+          </div>
+
+          {/* Product Quantity Selector and Calculator */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Left: Quantity Selector */}
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">{t.numProducts}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-3">
+                    {[1, 3, 5, 10].map((qty) => (
+                      <button
+                        key={qty}
+                        onClick={() => setSelectedProducts(qty)}
+                        className={`p-4 rounded-lg border-2 transition font-semibold text-lg ${
+                          selectedProducts === qty
+                            ? "border-blue-600 bg-blue-100 text-blue-900"
+                            : "border-gray-200 bg-white text-gray-900 hover:border-blue-300"
+                        }`}
+                      >
+                        {qty} {qty === 1 ? "Produto" : "Produtos"}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="border-t pt-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ou digite uma quantidade:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={selectedProducts}
+                      onChange={(e) => setSelectedProducts(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right: Price Summary */}
+            <div>
+              <Card className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-0">
+                <CardHeader>
+                  <CardTitle className="text-2xl">{t.totalInvestment}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-100">{t.numProducts}:</span>
+                      <span className="text-2xl font-bold">{selectedProducts}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-blue-100">{t.pricePerProduct}:</span>
+                      <span className="text-2xl font-bold">R$ {selectedTier.pricePerProduct.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t border-blue-400 pt-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-blue-100">Valor Original:</span>
+                        <span className="line-through text-blue-200">R$ {originalPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-3xl font-bold">
+                        <span>{t.totalInvestment}:</span>
+                        <span>R$ {totalInvestment.toFixed(2)}</span>
+                      </div>
+                    </div>
+                    {savings > 0 && (
+                      <div className="bg-green-500 bg-opacity-20 rounded-lg p-3 mt-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-green-100">{t.savings}:</span>
+                          <span className="font-bold text-lg">R$ {savings.toFixed(2)} ({selectedTier.discount}%)</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold text-lg py-6">
+                    {t.contract}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           {/* Pricing Table */}

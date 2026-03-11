@@ -8,6 +8,35 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 /**
+ * Cálculo de preço baseado em quantidade de produtos
+ */
+function calculateProductAdvertisingCost(
+  numberOfProducts: number
+): { pricePerProduct: number; discount: number; totalPrice: number } {
+  let pricePerProduct = 100; // Preço base: R$ 100,00
+  let discount = 0;
+
+  if (numberOfProducts >= 10) {
+    pricePerProduct = 50; // R$ 50,00 por produto
+    discount = 50; // 50% de desconto
+  } else if (numberOfProducts >= 5) {
+    pricePerProduct = 70; // R$ 70,00 por produto
+    discount = 30; // 30% de desconto
+  } else if (numberOfProducts >= 3) {
+    pricePerProduct = 90; // R$ 90,00 por produto
+    discount = 10; // 10% de desconto
+  }
+
+  const totalPrice = numberOfProducts * pricePerProduct;
+
+  return {
+    pricePerProduct,
+    discount,
+    totalPrice,
+  };
+}
+
+/**
  * Cálculo de preço baseado em duração e número de lojas
  */
 function calculateAdsCost(
@@ -258,5 +287,83 @@ export const stripeRouter = router({
         discountPercentage: (1 - pricing.multiplier) * 100,
         totalPrice: pricing.totalPrice,
       };
+    }),
+  /**
+   * Calcular preço para produtos anunciados
+   */
+  calculateProductPrice: publicProcedure
+    .input(
+      z.object({
+        numberOfProducts: z.number().min(1).max(1000),
+      })
+    )
+    .query(({ input }) => {
+      const pricing = calculateProductAdvertisingCost(input.numberOfProducts);
+      return {
+        pricePerProduct: pricing.pricePerProduct,
+        discountPercentage: pricing.discount,
+        totalPrice: pricing.totalPrice,
+      };
+    }),
+
+  /**
+   * Criar sessão de checkout para produtos anunciados
+   */
+  createProductCheckoutSession: protectedProcedure
+    .input(
+      z.object({
+        numberOfProducts: z.number().min(1).max(1000),
+        productNames: z.array(z.string().min(1)),
+        email: z.string().email(),
+        companyName: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const pricing = calculateProductAdvertisingCost(input.numberOfProducts);
+        const priceInCents = Math.round(pricing.totalPrice * 100);
+
+        const checkoutSession = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          line_items: [
+            {
+              price_data: {
+                currency: "brl",
+                product_data: {
+                  name: `Kadeh Ads - ${input.numberOfProducts} Produto${input.numberOfProducts > 1 ? "s" : ""} Anunciado${input.numberOfProducts > 1 ? "s" : ""}`,
+                  description: `${input.productNames.join(", ")}`,
+                },
+                unit_amount: priceInCents,
+              },
+              quantity: 1,
+            },
+          ],
+          mode: "payment",
+          success_url: `${ctx.req.headers.origin}/pt/kadeh-ads/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${ctx.req.headers.origin}/pt/kadeh-ads/cancel`,
+          customer_email: input.email,
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            customer_email: input.email,
+            customer_name: input.companyName,
+            numberOfProducts: input.numberOfProducts.toString(),
+            discount: pricing.discount.toString(),
+          },
+        });
+
+        return {
+          sessionId: checkoutSession.id,
+          checkoutUrl: checkoutSession.url,
+          pricing: {
+            numberOfProducts: input.numberOfProducts,
+            pricePerProduct: pricing.pricePerProduct,
+            discountPercentage: pricing.discount,
+            totalPrice: pricing.totalPrice,
+          },
+        };
+      } catch (error) {
+        console.error("[Stripe Router] Error creating product checkout session:", error);
+        throw error;
+      }
     }),
 });

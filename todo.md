@@ -623,3 +623,11 @@
 - [x] Remover botão "Admin Categorias" do Header
 - [x] Adicionar botão "Admin Categorias" dentro da página Smart Layout
 - [ ] Testar navegação em português e inglês
+
+## Fase 9 - Simulador de Investimento Kadeh Ads com Preço por Volume de Produtos
+
+- [x] Implementar seletor de quantidade de produtos (1, 3, 5, 10+) na página de contratação
+- [x] Criar tabela de preços progressivos (100 → 90 → 70 → 50 reais por produto)
+- [x] Adicionar cálculo dinâmico no simulador de investimento
+- [x] Implementar lógica de cobrança no backend com preços por volume
+- [x] Testar simulador e fluxo de cobrança
