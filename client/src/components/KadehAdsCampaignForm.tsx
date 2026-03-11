@@ -135,10 +135,12 @@ export function KadehAdsCampaignForm() {
     const { id, value } = e.target;
 
     if (productId) {
+      // Extract the field name from id (e.g., "productName-1" -> "productName")
+      const fieldName = id.split('-')[0];
       setFormData((prev) => ({
         ...prev,
         products: prev.products.map((p) =>
-          p.id === productId ? { ...p, [id]: value } : p
+          p.id === productId ? { ...p, [fieldName]: value } : p
         ),
       }));
     } else {

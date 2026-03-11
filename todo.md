@@ -631,3 +631,10 @@
 - [x] Adicionar cálculo dinâmico no simulador de investimento
 - [x] Implementar lógica de cobrança no backend com preços por volume
 - [x] Testar simulador e fluxo de cobrança
+
+## Fase 10 - Corrigir Campo de Nome do Produto no Modal de Campanha
+
+- [x] Localizar componente de criação de campanha
+- [x] Identificar por que o campo de nome do produto não aceita digitação
+- [x] Corrigir o input para aceitar digitação
+- [x] Testar o campo corrigido
