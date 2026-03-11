@@ -11,7 +11,7 @@ import DataIntelligence from "./pages/DataIntelligence";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import Media from "./pages/Media";
-import Video from "./pages/Video";
+
 import FAQ from "./pages/FAQ";
 import KadehAds from "./pages/KadehAds";
 import KadehAdsFull from "./pages/KadehAdsFull";
@@ -36,7 +36,6 @@ function Router() {
       <Route path="/pt/smart-layout" component={SmartLayout} />
       <Route path="/pt/data-intelligence" component={DataIntelligence} />
       <Route path="/pt/media" component={Media} />
-      <Route path="/pt/video" component={Video} />
       <Route path="/pt/faq" component={FAQ} />
       <Route path="/pt/ads" component={KadehAds} />
       <Route path="/pt/kadeh-ads" component={KadehAdsFull} />
@@ -57,7 +56,6 @@ function Router() {
       <Route path="/en/smart-layout" component={SmartLayout} />
       <Route path="/en/data-intelligence" component={DataIntelligence} />
       <Route path="/en/media" component={Media} />
-      <Route path="/en/video" component={Video} />
       <Route path="/en/faq" component={FAQ} />
       <Route path="/en/ads" component={KadehAds} />
       <Route path="/en/kadeh-ads" component={KadehAdsFull} />
@@ -78,7 +76,6 @@ function Router() {
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/media" component={Media} />
-      <Route path="/video" component={Video} />
       <Route path="/faq" component={FAQ} />
       <Route path="/ads" component={KadehAds} />
       <Route path="/kadeh-ads" component={KadehAdsFull} />

@@ -216,6 +216,30 @@ export default function Media() {
         </div>
       </section>
 
+      {/* Video Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-border">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6 text-center">
+            {language === 'pt' ? 'Vídeo Completo' : 'Complete Video'}
+          </h2>
+          <div className="relative mx-auto mb-16" style={{ width: '100%', maxWidth: '800px', paddingBottom: '56.25%' }}>
+            <div className="relative w-full bg-black rounded-lg overflow-hidden shadow-2xl">
+              <video
+                className="absolute top-0 left-0 w-full h-full"
+                controls
+                poster="/images/kadeh_logo.png"
+              >
+                <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/tIomtiaDJuZmlYtx.mp4" type="video/mp4" />
+                {language === 'pt' ? 'Seu navegador não suporta o elemento de vídeo.' : 'Your browser does not support the video element.'}
+              </video>
+            </div>
+          </div>
+          <p className="text-center text-muted-foreground mt-4 text-sm">
+            {language === 'pt' ? 'Vídeo compilado com todas as soluções Kadeh' : 'Compiled video with all Kadeh solutions'}
+          </p>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

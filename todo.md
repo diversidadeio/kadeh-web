@@ -586,3 +586,10 @@
 - [ ] Adicionar formulário de dados da empresa
 - [ ] Integrar com Stripe para processamento de pagamento
 - [ ] Enviar notificações por email ao admin e cliente
+
+## Fase 4 - Otimização de Navegação
+
+- [x] Integrar conteúdo de Vídeo na página Mídia
+- [x] Remover link separado de Vídeo do Header
+- [x] Remover rotas de Vídeo do App.tsx
+- [x] Testar navegação e layout responsivo
