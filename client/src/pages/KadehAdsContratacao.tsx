@@ -144,13 +144,10 @@ export default function KadehAdsContratacao() {
 
   // Calcular preço baseado na quantidade de produtos
   const calculatePrice = (quantity: number) => {
-    let tier = productPricingTiers[0];
-    for (const t of productPricingTiers) {
-      if (quantity >= t.quantity) {
-        tier = t;
-      }
-    }
-    return tier;
+    if (quantity <= 2) return { quantity: 1, pricePerProduct: 100, discount: 0 };
+    if (quantity <= 4) return { quantity: 3, pricePerProduct: 90, discount: 10 };
+    if (quantity <= 9) return { quantity: 5, pricePerProduct: 70, discount: 30 };
+    return { quantity: 10, pricePerProduct: 50, discount: 50 };
   };
 
   const selectedTier = calculatePrice(selectedProducts);
