@@ -29,6 +29,7 @@ export default function Header() {
     { href: "/admin/categories", label: t.header.adminCategories },
     { href: "/categories/performance", label: t.header.performanceDashboard },
     { href: "/kadeh-ads-campaign", label: "Kadeh Ads", special: true },
+    { href: "/kadeh-ads/contratacao", label: "Contratar", special: true },
   ];
 
   return (

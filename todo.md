@@ -576,3 +576,13 @@
 - [x] Implementar validação de duplicatas de campanhas
 - [ ] Integrar formulário de checkout com procedure tRPC no frontend
 - [ ] Testar fluxo completo de pagamento
+
+## Fase 3 - Página de Contratação Kadeh Ads (Similar Impacto Social)
+
+- [x] Criar página de contratação com tabela de planos e valores
+- [x] Implementar seleção de plano com cálculo dinâmico
+- [x] Adicionar rotas para página de contratação (PT/EN)
+- [x] Integrar link "Contratar" no Header
+- [ ] Adicionar formulário de dados da empresa
+- [ ] Integrar com Stripe para processamento de pagamento
+- [ ] Enviar notificações por email ao admin e cliente

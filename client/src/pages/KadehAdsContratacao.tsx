@@ -1,0 +1,364 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, Zap, BarChart3, Clock } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
+
+const translations = {
+  pt: {
+    title: "Kadeh Ads - Planos e Preços",
+    subtitle: "Impulsione seus produtos com publicidade inteligente no ponto de venda",
+    heroTitle: "Invista em Publicidade Inteligente",
+    heroSubtitle: "Escolha o plano ideal para sua empresa e comece a impulsionar seus produtos com anúncios contextualizados",
+    benefit1: "Anúncios Contextualizados",
+    benefit1Desc: "Exiba anúncios relevantes baseados na busca do cliente",
+    benefit2: "Descontos Progressivos",
+    benefit2Desc: "Até 40% de desconto por volume de imagens",
+    benefit3: "Ativação Rápida",
+    benefit3Desc: "Campanha ativa em até 24 horas",
+    pricingTitle: "Escala de Investimento para Kadeh Ads",
+    pricingSubtitle: "Preço por imagem — quanto maior o volume, maior o desconto",
+    plan: "Plano",
+    perImage: "Por Imagem",
+    totalValue: "Valor Total",
+    discount: "Desconto",
+    contract: "Contratar",
+    included: "O que está incluído em todos os planos",
+    feature1: "Anúncios Contextualizados",
+    feature1Desc: "Exiba seus produtos onde os clientes mais compram",
+    feature2: "Analytics em Tempo Real",
+    feature2Desc: "Acompanhe impressões, cliques e conversões",
+    feature3: "Ativação Imediata",
+    feature3Desc: "Sua campanha ativa em até 24 horas",
+    feature4: "Suporte Dedicado",
+    feature4Desc: "Equipe pronta para ajudar no sucesso da sua campanha",
+    feature5: "Segmentação Inteligente",
+    feature5Desc: "Anúncios aparecem para o público certo, no momento certo",
+    feature6: "Relatórios Detalhados",
+    feature6Desc: "Entenda o desempenho e ROI de cada campanha",
+    cta: "Pronto para começar?",
+    ctaDesc: "Selecione o plano que melhor se adapta ao seu volume de imagens e envie seu interesse. Nossa equipe entrará em contato em até 24 horas.",
+    viewPlans: "Ver Planos e Preços",
+    loginRequired: "Faça login para contratar Kadeh Ads",
+    login: "Fazer Login",
+  },
+  en: {
+    title: "Kadeh Ads - Plans and Pricing",
+    subtitle: "Boost your products with intelligent advertising at the point of sale",
+    heroTitle: "Invest in Intelligent Advertising",
+    heroSubtitle: "Choose the ideal plan for your company and start boosting your products with contextualized ads",
+    benefit1: "Contextualized Ads",
+    benefit1Desc: "Display relevant ads based on customer search",
+    benefit2: "Progressive Discounts",
+    benefit2Desc: "Up to 40% discount per image volume",
+    benefit3: "Quick Activation",
+    benefit3Desc: "Campaign active within 24 hours",
+    pricingTitle: "Investment Scale for Kadeh Ads",
+    pricingSubtitle: "Price per image — the larger the volume, the greater the discount",
+    plan: "Plan",
+    perImage: "Per Image",
+    totalValue: "Total Value",
+    discount: "Discount",
+    contract: "Contract",
+    included: "What's included in all plans",
+    feature1: "Contextualized Ads",
+    feature1Desc: "Display your products where customers buy the most",
+    feature2: "Real-Time Analytics",
+    feature2Desc: "Track impressions, clicks and conversions",
+    feature3: "Immediate Activation",
+    feature3Desc: "Your campaign active within 24 hours",
+    feature4: "Dedicated Support",
+    feature4Desc: "Team ready to help your campaign succeed",
+    feature5: "Intelligent Segmentation",
+    feature5Desc: "Ads appear to the right audience, at the right time",
+    feature6: "Detailed Reports",
+    feature6Desc: "Understand the performance and ROI of each campaign",
+    cta: "Ready to get started?",
+    ctaDesc: "Select the plan that best suits your image volume and submit your interest. Our team will contact you within 24 hours.",
+    viewPlans: "View Plans and Pricing",
+    loginRequired: "Log in to contract Kadeh Ads",
+    login: "Log In",
+  },
+};
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  minImages: number;
+  maxImages: number;
+  pricePerImage: number;
+  totalValue: number;
+  discount: number;
+  badge?: string;
+  note?: string;
+}
+
+const pricingPlans: PricingPlan[] = [
+  {
+    id: "avulso",
+    name: "Avulso",
+    minImages: 20,
+    maxImages: 20,
+    pricePerImage: 5.0,
+    totalValue: 100.0,
+    discount: 0,
+    note: "Pacote com venda única, para testes",
+  },
+  {
+    id: "pacote100",
+    name: "Pacote de 100 imagens",
+    minImages: 100,
+    maxImages: 100,
+    pricePerImage: 4.0,
+    totalValue: 500.0,
+    discount: 20,
+  },
+  {
+    id: "pacote500",
+    name: "Pacote de 101 a 500 imagens",
+    minImages: 101,
+    maxImages: 500,
+    pricePerImage: 3.5,
+    totalValue: 1750.0,
+    discount: 30,
+    badge: "Recomendado",
+  },
+  {
+    id: "pacote999",
+    name: "Pacote de 501 a 999 imagens",
+    minImages: 501,
+    maxImages: 999,
+    pricePerImage: 3.0,
+    totalValue: 3000.0,
+    discount: 40,
+    badge: "Mais Popular",
+  },
+  {
+    id: "pacote1001",
+    name: "Pacote acima de 1001 imagens",
+    minImages: 1001,
+    maxImages: 4999,
+    pricePerImage: 2.5,
+    totalValue: 12497.5,
+    discount: 50,
+    badge: "Melhor Valor",
+  },
+];
+
+export default function KadehAdsContratacao() {
+  const { isAuthenticated } = useAuth();
+  const [lang, setLang] = useState<"pt" | "en">("pt");
+  const t = translations[lang];
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+        <div className="max-w-md mx-auto">
+          <Card>
+            <CardHeader className="text-center">
+              <CardTitle>{t.loginRequired}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <p className="text-muted-foreground">
+                Você precisa estar autenticado para acessar os planos de contratação
+              </p>
+              <Button
+                onClick={() => {
+                  window.location.href = getLoginUrl();
+                }}
+                className="w-full"
+              >
+                {t.login}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Language Selector */}
+      <div className="flex justify-end p-4">
+        <div className="flex gap-2">
+          <Button
+            variant={lang === "pt" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setLang("pt")}
+          >
+            PT
+          </Button>
+          <Button
+            variant={lang === "en" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setLang("en")}
+          >
+            EN
+          </Button>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-16 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t.heroTitle}</h1>
+          <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+
+          {/* Benefits Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6 text-center">
+                <Zap className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white mb-2">{t.benefit1}</h3>
+                <p className="text-slate-400 text-sm">{t.benefit1Desc}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6 text-center">
+                <BarChart3 className="w-8 h-8 text-green-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white mb-2">{t.benefit2}</h3>
+                <p className="text-slate-400 text-sm">{t.benefit2Desc}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6 text-center">
+                <Clock className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+                <h3 className="font-semibold text-white mb-2">{t.benefit3}</h3>
+                <p className="text-slate-400 text-sm">{t.benefit3Desc}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.pricingTitle}</h2>
+            <p className="text-lg text-muted-foreground">{t.pricingSubtitle}</p>
+          </div>
+
+          {/* Pricing Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                  <th className="px-6 py-4 text-left font-semibold">{t.plan}</th>
+                  <th className="px-6 py-4 text-center font-semibold">{t.perImage}</th>
+                  <th className="px-6 py-4 text-center font-semibold">{t.totalValue}</th>
+                  <th className="px-6 py-4 text-center font-semibold">{t.discount}</th>
+                  <th className="px-6 py-4 text-center font-semibold">{t.contract}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pricingPlans.map((plan, index) => (
+                  <tr
+                    key={plan.id}
+                    className={`border-b ${index % 2 === 0 ? "bg-white" : "bg-slate-50"} hover:bg-slate-100 transition`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <p className="font-semibold text-gray-900">{plan.name}</p>
+                          {plan.note && <p className="text-xs text-muted-foreground mt-1">{plan.note}</p>}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <p className="font-semibold text-blue-600">R$ {plan.pricePerImage.toFixed(2)}</p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <p className="font-semibold">R$ {plan.totalValue.toFixed(2)}</p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {plan.discount > 0 ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <Badge variant="secondary" className="bg-green-100 text-green-800">
+                            -{plan.discount}%
+                          </Badge>
+                          {plan.badge && (
+                            <Badge variant="default" className="bg-blue-600">
+                              {plan.badge}
+                            </Badge>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <Button
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => {
+                          alert(`Plano selecionado: ${plan.name}\nValor: R$ ${plan.totalValue.toFixed(2)}`);
+                          // Aqui você redirecionaria para o checkout
+                        }}
+                      >
+                        {t.contract}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            * Valores em reais. Para volumes acima de 5.000 imagens, entre em contato para uma proposta personalizada.
+          </p>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-slate-50 py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{t.included}</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: t.feature1, desc: t.feature1Desc },
+              { title: t.feature2, desc: t.feature2Desc },
+              { title: t.feature3, desc: t.feature3Desc },
+              { title: t.feature4, desc: t.feature4Desc },
+              { title: t.feature5, desc: t.feature5Desc },
+              { title: t.feature6, desc: t.feature6Desc },
+            ].map((feature, index) => (
+              <Card key={index}>
+                <CardContent className="pt-6">
+                  <div className="flex gap-3">
+                    <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold mb-2">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white py-16 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.cta}</h2>
+          <p className="text-lg text-blue-100 mb-8">{t.ctaDesc}</p>
+          <Button
+            size="lg"
+            className="bg-white text-blue-600 hover:bg-blue-50"
+            onClick={() => {
+              document.querySelector("table")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            {t.viewPlans}
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}
