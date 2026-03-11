@@ -611,3 +611,9 @@
 - [x] Adicionar efeitos visuais (sombra, brilho, hover)
 - [x] Testar pré-visualização em português e inglês
 - [ ] Validar responsividade em diferentes tamanhos de tela
+
+## Fase 7 - Reorganização de Navegação
+
+- [x] Remover botão "Contratar" do Header
+- [x] Adicionar botão "Contratar" dentro da página Kadeh Ads
+- [ ] Testar navegação em português e inglês

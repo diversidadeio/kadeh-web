@@ -63,12 +63,15 @@ export default function KadehAds() {
               </div>
             </div>
 
-            <div className="border-t pt-4">
-              <p className="text-sm text-muted-foreground mb-3">
+            <div className="border-t pt-4 space-y-3">
+              <p className="text-sm text-muted-foreground">
                 Faça login para acessar o Kadeh Ads e começar a anunciar
               </p>
               <Button className="w-full" asChild>
                 <a href="/login">Fazer Login</a>
+              </Button>
+              <Button className="w-full" variant="outline" asChild>
+                <a href="/kadeh-ads/contratacao">Contratar</a>
               </Button>
             </div>
           </CardContent>
