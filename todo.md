@@ -601,3 +601,13 @@
 - [ ] Atualizar schema de banco de dados com novo campo adType e adText
 - [x] Integrar validação de 140 caracteres no formulário
 - [ ] Testar funcionalidade no formulário de contratação
+
+## Fase 6 - Pré-visualização de Anúncios em Tempo Real
+
+- [x] Criar componente de pré-visualização de anúncio (AdPreview)
+- [x] Implementar simulação de smartphone mostrando anúncio
+- [x] Integrar pré-visualização na página de contratação
+- [x] Adicionar animações de transição para mudanças de tipo de anúncio
+- [x] Adicionar efeitos visuais (sombra, brilho, hover)
+- [x] Testar pré-visualização em português e inglês
+- [ ] Validar responsividade em diferentes tamanhos de tela

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Zap, BarChart3, Clock } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import AdPreview from "@/components/AdPreview";
 
 const translations = {
   pt: {
@@ -54,11 +55,19 @@ const translations = {
     login: "Fazer Login",
   },
   en: {
-    title: "Kadeh Ads - Plans and Pricing",
+    adTypeTitle: "Choose Your Ad Type",
+    adTypeDesc: "Select the ad type and write your message",
+    adType1: "1 - Special Discount",
+    adType2: "2 - Buy 3 Pay 2",
+    adType3: "3 - Low Stock Products",
+    adType4: "4 - Buy More Pay Less",
+    adTextLabel: "Ad Text",
+    adTextPlaceholder: "Type your ad text (maximum 140 characters)...",
+    adTextCounter: "characters",
+    title: "Kadeh Ads - Plans and Prices",
     subtitle: "Boost your products with intelligent advertising at the point of sale",
     heroTitle: "Invest in Intelligent Advertising",
     heroSubtitle: "Choose the ideal plan for your company and start boosting your products with contextualized ads",
-    adTypeTitle: "Ad Type",
     adTypeDesc: "Select the ad type that best represents your promotion",
     adType1: "Special Discount",
     adType2: "Buy 3 Pay 2",
@@ -262,13 +271,18 @@ export default function KadehAdsContratacao() {
             <p className="text-lg text-muted-foreground">{t.adTypeDesc}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {[
-              { id: "desconto", label: t.adType1 },
-              { id: "leve3pague2", label: t.adType2 },
-              { id: "poucasunidades", label: t.adType3 },
-              { id: "levemais", label: t.adType4 },
-            ].map((type) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Left: Form */}
+            <div>
+              <h3 className="text-xl font-semibold mb-6 text-gray-900">Configurar Anúncio</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {[
+                  { id: "desconto", label: t.adType1 },
+                  { id: "leve3pague2", label: t.adType2 },
+                  { id: "poucasunidades", label: t.adType3 },
+                  { id: "levemais", label: t.adType4 },
+                ].map((type) => (
               <Card
                 key={type.id}
                 className={`cursor-pointer transition ${
@@ -291,24 +305,36 @@ export default function KadehAdsContratacao() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+              </div>
 
-          <div className="max-w-2xl mx-auto">
-            <label className="block text-lg font-semibold mb-2">{t.adTextLabel}</label>
-            <textarea
-              value={adText}
-              onChange={(e) => {
-                if (e.target.value.length <= 140) {
-                  setAdText(e.target.value);
-                }
-              }}
-              placeholder={t.adTextPlaceholder}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-              rows={4}
-              maxLength={140}
-            />
-            <div className="text-right text-sm text-muted-foreground mt-2">
-              {adText.length}/140 {t.adTextCounter}
+              <div>
+                <label className="block text-lg font-semibold mb-2">{t.adTextLabel}</label>
+                <textarea
+                  value={adText}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 140) {
+                      setAdText(e.target.value);
+                    }
+                  }}
+                  placeholder={t.adTextPlaceholder}
+                  className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                  rows={4}
+                  maxLength={140}
+                />
+                <div className="text-right text-sm text-muted-foreground mt-2">
+                  {adText.length}/140 {t.adTextCounter}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Preview */}
+            <div className="flex items-center justify-center bg-white rounded-xl p-8 shadow-lg border border-gray-200">
+              <AdPreview
+                adType={selectedAdType}
+                adText={adText}
+                productName="Seu Produto"
+                lang={lang}
+              />
             </div>
           </div>
         </div>
