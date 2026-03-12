@@ -4,15 +4,45 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, BarChart3, Zap, Users, TrendingUp, Target, Clock } from "lucide-react";
 import { useLocation } from "wouter";
+import { useState } from "react";
 
 export default function KadehAdsFull() {
   const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const { language } = useLanguage();
+  
+  // Simulador de investimento
+  const [duration, setDuration] = useState(7);
+  const [stores, setStores] = useState(1.0);
+  const [products, setProducts] = useState(1);
+  const [customProducts, setCustomProducts] = useState("");
 
   const handleContactForm = () => {
     navigate("/contact");
   };
+
+  // Preços base por duração
+  const durationPrices: { [key: number]: number } = {
+    1: 100,
+    3: 250,
+    7: 500,
+    14: 900,
+  };
+
+  // Preço por produto com desconto progressivo
+  const getProductPrice = (qty: number): number => {
+    if (qty >= 10) return 50;
+    if (qty >= 5) return 70;
+    if (qty >= 3) return 90;
+    return 100;
+  };
+
+  // Calcular valor total
+  const selectedProducts = customProducts ? parseInt(customProducts) || 1 : products;
+  const pricePerProduct = getProductPrice(selectedProducts);
+  const durationPrice = durationPrices[duration] || 500;
+  const totalValue = durationPrice * stores * selectedProducts;
+  const savings = selectedProducts * 100 * duration * stores - totalValue;
 
   return (
     <div className="min-h-screen bg-white">
@@ -233,58 +263,117 @@ export default function KadehAdsFull() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-8 text-gray-900">
-              <h3 className="text-2xl font-bold mb-6">Tabela de Preços</h3>
+            {/* Interactive Calculator */}
+            <div className="bg-white rounded-lg p-8 text-gray-900 space-y-6">
+              <h3 className="text-2xl font-bold">Calcule seu Investimento</h3>
               
-              <div className="space-y-4 mb-6">
-                <div className="border-b pb-4">
-                  <h4 className="font-bold mb-3">Por Duração</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>1 dia</span>
-                      <span className="font-semibold">R$ 100</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>3 dias</span>
-                      <span className="font-semibold">R$ 250</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>7 dias</span>
-                      <span className="font-semibold">R$ 500</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>14 dias</span>
-                      <span className="font-semibold">R$ 900</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-bold mb-3">Multiplicador por Lojas/Região</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>1-5 lojas</span>
-                      <span className="font-semibold">x 1.0</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>6-20 lojas</span>
-                      <span className="font-semibold">x 1.5</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>21-50 lojas</span>
-                      <span className="font-semibold">x 2.0</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>50+ lojas</span>
-                      <span className="font-semibold">x 2.5</span>
-                    </div>
-                  </div>
+              {/* Duration Selector */}
+              <div>
+                <label className="block text-sm font-semibold mb-3">Duração da Campanha</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[1, 3, 7, 14].map((days) => (
+                    <button
+                      key={days}
+                      onClick={() => setDuration(days)}
+                      className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                        duration === days
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {days} {days === 1 ? 'dia' : 'dias'}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <p className="text-xs text-gray-600 mb-6">
-                Exemplo: 7 dias × 10 lojas = R$ 500 × 1.5 = R$ 750
-              </p>
+              {/* Stores Selector */}
+              <div>
+                <label className="block text-sm font-semibold mb-3">Quantidade de Lojas</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: '1-5 lojas', value: 1.0 },
+                    { label: '6-20 lojas', value: 1.5 },
+                    { label: '21-50 lojas', value: 2.0 },
+                    { label: '50+ lojas', value: 2.5 },
+                  ].map((store) => (
+                    <button
+                      key={store.value}
+                      onClick={() => setStores(store.value)}
+                      className={`py-2 px-3 rounded-lg font-semibold transition-all text-sm ${
+                        stores === store.value
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {store.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Products Selector */}
+              <div>
+                <label className="block text-sm font-semibold mb-3">Quantidade de Produtos</label>
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {[1, 3, 5, 10].map((prod) => (
+                    <button
+                      key={prod}
+                      onClick={() => {
+                        setProducts(prod);
+                        setCustomProducts("");
+                      }}
+                      className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                        products === prod && !customProducts
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {prod} {prod === 1 ? 'produto' : 'produtos'}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="number"
+                  min="1"
+                  value={customProducts}
+                  onChange={(e) => {
+                    setCustomProducts(e.target.value);
+                    if (e.target.value) setProducts(1);
+                  }}
+                  placeholder="Ou digite uma quantidade"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Preço por Produto:</span>
+                  <span className="font-semibold">R$ {pricePerProduct.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Duração ({duration} dias):</span>
+                  <span className="font-semibold">R$ {durationPrice.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Multiplicador Lojas:</span>
+                  <span className="font-semibold">x {stores.toFixed(1)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Quantidade Produtos:</span>
+                  <span className="font-semibold">{selectedProducts}</span>
+                </div>
+                <div className="border-t pt-2 flex justify-between font-bold text-lg">
+                  <span>Investimento Total:</span>
+                  <span className="text-blue-600">R$ {totalValue.toFixed(2)}</span>
+                </div>
+                {savings > 0 && (
+                  <div className="text-sm text-green-600 font-semibold">
+                    Economia: R$ {savings.toFixed(2)}
+                  </div>
+                )}
+              </div>
 
               <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleContactForm}>
                 Começar a Anunciar
@@ -378,7 +467,7 @@ export default function KadehAdsFull() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-blue-600 text-white">
+      <section className="py-16 px-4 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <h2 className="text-4xl font-bold">
             Pronto para impactar seus clientes?
