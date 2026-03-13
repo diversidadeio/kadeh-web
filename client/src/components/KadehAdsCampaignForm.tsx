@@ -24,6 +24,7 @@ interface FormData {
   contactEmail: string;
   contactPhone: string;
   duration: "1day" | "3days" | "7days" | "14days" | "";
+  numberOfProducts: string;
   numberOfStores: string;
   startDate: string;
   products: Product[];
@@ -48,6 +49,7 @@ const translations = {
     email: "Email",
     phone: "Telefone",
     duration: "Duração da Campanha",
+    numberOfProducts: "Quantidade de Produtos",
     numberOfStores: "Quantidade de Lojas",
     startDate: "Data de Início",
     productName: "Nome do Produto",
@@ -65,7 +67,12 @@ const translations = {
     invalidDate: "Data inválida",
     dateWarning: "A campanha deve iniciar com antecedência de 7 dias úteis",
     selectDuration: "Selecione a duração",
+    selectProducts: "Selecione a quantidade de produtos",
     selectStores: "Selecione a quantidade de lojas",
+    products1: "1 Produto",
+    products3: "3 Produtos",
+    products5: "5 Produtos",
+    products10: "10 Produtos",
     selectStartDate: "Selecione a data de início",
     pricing1day: "1 dia",
     pricing3days: "3 dias",
@@ -90,6 +97,7 @@ export function KadehAdsCampaignForm() {
     contactEmail: "",
     contactPhone: "",
     duration: "",
+    numberOfProducts: "",
     numberOfStores: "",
     startDate: "",
     products: [
@@ -293,6 +301,7 @@ export function KadehAdsCampaignForm() {
         contactEmail: "",
         contactPhone: "",
         duration: "",
+        numberOfProducts: "",
         numberOfStores: "",
         startDate: "",
         products: [
@@ -401,7 +410,7 @@ export function KadehAdsCampaignForm() {
             <CardTitle>{t.campaignInfo}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="duration">{t.duration}</Label>
                 <Select
@@ -421,6 +430,28 @@ export function KadehAdsCampaignForm() {
                     <SelectItem value="3days">{t.pricing3days}</SelectItem>
                     <SelectItem value="7days">{t.pricing7days}</SelectItem>
                     <SelectItem value="14days">{t.pricing14days}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="numberOfProducts">{t.numberOfProducts}</Label>
+                <Select
+                  value={formData.numberOfProducts}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      numberOfProducts: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger id="numberOfProducts">
+                    <SelectValue placeholder={t.selectProducts} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">{t.products1}</SelectItem>
+                    <SelectItem value="3">{t.products3}</SelectItem>
+                    <SelectItem value="5">{t.products5}</SelectItem>
+                    <SelectItem value="10">{t.products10}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
