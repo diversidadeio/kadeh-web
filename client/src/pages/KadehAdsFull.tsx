@@ -265,7 +265,7 @@ export default function KadehAdsFull() {
 
             {/* Interactive Calculator - All 4 Variables */}
             <div className="bg-white rounded-lg p-8 text-gray-900 space-y-4 overflow-y-auto max-h-full">
-              <h3 className="text-2xl font-bold">Calcule seu Investimento</h3>
+              <h3 className="text-2xl font-bold">Calcule seu Investimento - 4 Variáveis</h3>
               
               {/* Duration Selector */}
               <div>
