@@ -11,7 +11,7 @@ export default function KadehAdsFull() {
   const [, navigate] = useLocation();
   const { language } = useLanguage();
   
-  // Simulador de investimento
+  // Simulador de investimento - Versão com 4 variáveis completas
   const [duration, setDuration] = useState(7);
   const [stores, setStores] = useState(1.0);
   const [products, setProducts] = useState(1);
