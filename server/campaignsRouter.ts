@@ -173,8 +173,8 @@ export const createCampaign = protectedProcedure
       // Dados dos Produtos (múltiplos)
       products: z.array(z.object({
         productName: z.string().min(1),
-        productImageUrl: z.string().url(),
-        productEAN13: z.string().min(13).max(13),
+        productImageUrl: z.string().url().optional().or(z.literal("")),
+        productEAN13: z.string().max(20).optional().or(z.literal("")),
       })).min(1),
       // Preço
       basePrice: z.number(),

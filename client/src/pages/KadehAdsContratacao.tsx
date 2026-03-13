@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, Zap, BarChart3, Clock } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import AdPreview from "@/components/AdPreview";
+import { KadehAdsCampaignForm } from "@/components/KadehAdsCampaignForm";
 import { useState } from "react";
 
 interface ProductPricingTier {
@@ -141,6 +143,7 @@ const productPricingTiers: ProductPricingTier[] = [
 export default function KadehAdsContratacao() {
   const { isAuthenticated } = useAuth();
   const [lang, setLang] = useState<"pt" | "en">("pt");
+  const [showFormModal, setShowFormModal] = useState<boolean>(false);
   const [selectedAdType, setSelectedAdType] = useState<string>("desconto");
   const [adText, setAdText] = useState<string>("");
   const [selectedProducts, setSelectedProducts] = useState<number>(1);
@@ -466,7 +469,7 @@ export default function KadehAdsContratacao() {
                       </div>
                     )}
                   </div>
-                  <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold text-lg py-6">
+                  <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold text-lg py-6" onClick={() => setShowFormModal(true)}>
                     {t.contract}
                   </Button>
                 </CardContent>
@@ -522,7 +525,7 @@ export default function KadehAdsContratacao() {
                           className="bg-blue-600 hover:bg-blue-700"
                           onClick={() => {
                             setSelectedProducts(tier.quantity);
-                            window.scrollTo({ top: 386, behavior: "smooth" });
+                            setShowFormModal(true);
                           }}
                         >
                           {t.contract}
@@ -581,6 +584,16 @@ export default function KadehAdsContratacao() {
           </Button>
         </div>
       </section>
+
+      {/* Campaign Form Modal */}
+      <Dialog open={showFormModal} onOpenChange={setShowFormModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Criar Campanha Kadeh Ads</DialogTitle>
+          </DialogHeader>
+          <KadehAdsCampaignForm />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
