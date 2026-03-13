@@ -314,7 +314,7 @@ export default function KadehAdsFull() {
 
               {/* Products Selector */}
               <div>
-                <label className="block text-sm font-semibold mb-3">Quantidade de Produtos</label>
+                <label className="block text-sm font-semibold mb-3">Quantidade de Produtos Anunciados (1, 3, 5, 10+)</label>
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   {[1, 3, 5, 10].map((prod) => (
                     <button
