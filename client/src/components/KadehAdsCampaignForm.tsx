@@ -409,10 +409,10 @@ export function KadehAdsCampaignForm() {
           <CardHeader>
             <CardTitle>{t.campaignInfo}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="duration">{t.duration}</Label>
+                <Label htmlFor="duration" className="block mb-2 font-medium">{t.duration}</Label>
                 <Select
                   value={formData.duration}
                   onValueChange={(value) =>
@@ -434,7 +434,7 @@ export function KadehAdsCampaignForm() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="numberOfProducts">{t.numberOfProducts}</Label>
+                <Label htmlFor="numberOfProducts" className="block mb-2 font-medium">{t.numberOfProducts}</Label>
                 <Select
                   value={formData.numberOfProducts}
                   onValueChange={(value) =>
@@ -455,8 +455,10 @@ export function KadehAdsCampaignForm() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="numberOfStores">{t.numberOfStores}</Label>
+                <Label htmlFor="numberOfStores" className="block mb-2 font-medium">{t.numberOfStores}</Label>
                 <Select
                   value={formData.numberOfStores}
                   onValueChange={(value) =>
@@ -477,19 +479,19 @@ export function KadehAdsCampaignForm() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            <div>
-              <Label htmlFor="startDate">{t.startDate}</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={formData.startDate}
-                onChange={handleDateChange}
-                required
-              />
-              {dateError && (
-                <p className="text-red-600 text-sm mt-2">{dateError}</p>
-              )}
+              <div>
+                <Label htmlFor="startDate" className="block mb-2 font-medium">{t.startDate}</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  value={formData.startDate}
+                  onChange={handleDateChange}
+                  required
+                />
+                {dateError && (
+                  <p className="text-red-600 text-sm mt-2">{dateError}</p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

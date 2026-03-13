@@ -163,7 +163,7 @@ export const createCampaign = protectedProcedure
     z.object({
       // Dados da Empresa
       companyName: z.string().min(1),
-      companyDocument: z.string().min(14).max(14), // CNPJ
+      companyDocument: z.string().min(11).max(20), // CNPJ (com ou sem formatação)
       contactEmail: z.string().email(),
       contactPhone: z.string().min(1),
       // Dados da Campanha
