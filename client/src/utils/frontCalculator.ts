@@ -128,10 +128,12 @@ export function calculateShelfLayout(
 ): ShelfLayout[] {
   const shelves: ShelfLayout[] = [];
 
-  // Inicializar prateleiras
+  // Inicializar prateleiras (numeradas de baixo para cima)
+  // Prateleira 1 = mais baixa, Prateleira N = mais alta
   for (let i = 0; i < numberOfShelves; i++) {
+    const invertedShelfNumber = numberOfShelves - i; // Inverter: última posição = 1, primeira = N
     shelves.push({
-      shelfNumber: i + 1,
+      shelfNumber: invertedShelfNumber,
       products: [],
       totalWidthUsed: 0,
       availableWidth: totalGondolaWidth,

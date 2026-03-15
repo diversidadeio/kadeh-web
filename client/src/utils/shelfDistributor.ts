@@ -95,14 +95,18 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
  * Gets the zone for a specific shelf number
  */
 function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo" {
+  // Inverter numeração: contar de baixo para cima
+  // Prateleira 1 = mais baixa, Prateleira N = mais alta
+  const invertedShelfNumber = totalShelves - shelfNumber + 1;
+  
   const eyeLevelCount = Math.ceil(totalShelves * 0.30);
   const handLevelCount = Math.ceil(totalShelves * 0.40);
   const eyeLevelEnd = eyeLevelCount;
   const handLevelEnd = eyeLevelEnd + handLevelCount;
 
-  if (shelfNumber <= eyeLevelEnd) {
+  if (invertedShelfNumber <= eyeLevelEnd) {
     return "Altura dos olhos";
-  } else if (shelfNumber <= handLevelEnd) {
+  } else if (invertedShelfNumber <= handLevelEnd) {
     return "Altura das mãos";
   } else {
     return "Parte de Baixo";
