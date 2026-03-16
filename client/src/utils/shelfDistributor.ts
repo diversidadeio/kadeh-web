@@ -93,23 +93,23 @@ export function getShelvesForZone(zone: string, totalShelves: number): number[] 
 
 /**
  * Gets the zone for a specific shelf number
+ * Numeração: Prateleira 1 = mais baixa, Prateleira N = mais alta
+ * Distribuição de zonas: 30% Altura dos olhos (topo), 40% Altura das mãos (meio), 30% Parte de Baixo (base)
  */
 function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo" {
-  // Inverter numeração: contar de baixo para cima
-  // Prateleira 1 = mais baixa, Prateleira N = mais alta
-  const invertedShelfNumber = totalShelves - shelfNumber + 1;
-  
-  const eyeLevelCount = Math.ceil(totalShelves * 0.30);
-  const handLevelCount = Math.ceil(totalShelves * 0.40);
-  const eyeLevelEnd = eyeLevelCount;
-  const handLevelEnd = eyeLevelEnd + handLevelCount;
+  // Calcular quantas prateleiras para cada zona
+  const bottomLevelCount = Math.ceil(totalShelves * 0.30);  // 30% na base (Parte de Baixo)
+  const handLevelCount = Math.ceil(totalShelves * 0.40);   // 40% no meio (Altura das mãos)
+  const eyeLevelCount = totalShelves - bottomLevelCount - handLevelCount; // Resto no topo (Altura dos olhos)
 
-  if (invertedShelfNumber <= eyeLevelEnd) {
-    return "Altura dos olhos";
-  } else if (invertedShelfNumber <= handLevelEnd) {
+  // Prateleira 1 = mais baixa (Parte de Baixo)
+  // Prateleiras aumentam para cima
+  if (shelfNumber <= bottomLevelCount) {
+    return "Parte de Baixo";
+  } else if (shelfNumber <= bottomLevelCount + handLevelCount) {
     return "Altura das mãos";
   } else {
-    return "Parte de Baixo";
+    return "Altura dos olhos";
   }
 }
 
