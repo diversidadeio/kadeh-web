@@ -172,10 +172,12 @@ export const adCampaigns = mysqlTable("adCampaigns", {
   basePrice: decimal("basePrice", { precision: 10, scale: 2 }).notNull(),
   multiplier: decimal("multiplier", { precision: 5, scale: 2 }).notNull(),
   totalCost: decimal("totalCost", { precision: 10, scale: 2 }).notNull(),
-  status: mysqlEnum("status", ["pending_approval", "approved", "rejected", "payment_pending", "active", "completed", "cancelled"]).default("pending_approval").notNull(),
+  status: mysqlEnum("status", ["pending_approval", "approved", "rejected", "payment_pending", "active", "completed", "cancelled", "refunded"]).default("pending_approval").notNull(),
   approvedBy: int("approvedBy"),
   approvalDate: timestamp("approvalDate"),
   rejectionReason: text("rejectionReason"),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({

@@ -286,7 +286,7 @@
   - [ ] Testar em português e inglês
 
 
-- [ ] NOVA FUNCIONALIDADE: Contratação do Kadeh Ads (Parcialmente Implementada)
+- [x] NOVA FUNCIONALIDADE: Contratação do Kadeh Ads (Parcialmente Implementada)
   - [x] Confirmar tabela de preços e pacotes de dias com usuário
   - [x] Criar schema de banco de dados (adCampaigns, adBankPayments)
   - [x] Implementar procedures tRPC para criar campanha e calcular preço
@@ -296,9 +296,15 @@
   - [x] Implementar validação de 7 dias úteis de antecedência
   - [x] Implementar upload de imagem para S3
   - [x] Criar testes vitest (32 testes passando)
-  - [ ] CORRIGIR: Campo de data não está sendo preenchido corretamente no formulário
+  - [x] CORRIGIR: Campo de data não está sendo preenchido corretamente no formulário
+  - [x] Corrigir erro "Failed to create campaign" com advertiserId
+  - [x] Verificar conexão com API do Stripe (buy_button_id e publishable-key)
+  - [x] Criar página de sucesso/cancelamento do Stripe
+  - [x] Implementar webhook do Stripe para processar pagamentos
+  - [x] Atualizar status da campanha após pagamento confirmado
+  - [x] Implementar procedimento tRPC de checkout do Stripe
+  - [ ] Testar fluxo completo de pagamento
   - [ ] Implementar envio de email para adm@kadeh.io e cliente
-  - [ ] Implementar botões de pagamento por depósito bancário
   - [ ] Implementar dashboard de aprovação admin
   - [ ] Implementar geração de fatura automática
   - [ ] Implementar notificações de campanha pendente

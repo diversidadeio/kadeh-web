@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { storagePut } from "../storage";
 import multer from "multer";
+import { handleStripeWebhook } from "../stripeWebhook";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -37,6 +38,9 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // Stripe webhook endpoint - MUST be before express.json() for signature verification
+  app.post('/api/stripe/webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
 
   // Configure multer for file uploads
   const upload = multer({ storage: multer.memoryStorage() });

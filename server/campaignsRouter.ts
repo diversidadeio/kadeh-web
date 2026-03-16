@@ -240,14 +240,23 @@ export const createCampaign = protectedProcedure
         });
         
         // Obter o ID do anunciante inserido
-        const advertiserResult = insertResult as any;
-        advertiserId = advertiserResult?.insertId || 0;
+        // Drizzle ORM retorna um objeto com insertId ou a linha inserida
+        let tempAdvertiserId = 0;
+        if (Array.isArray(insertResult) && insertResult.length > 0) {
+          tempAdvertiserId = insertResult[0]?.id || 0;
+        } else if ((insertResult as any)?.insertId) {
+          tempAdvertiserId = (insertResult as any).insertId;
+        } else if (typeof insertResult === 'object' && (insertResult as any)?.id) {
+          tempAdvertiserId = (insertResult as any).id;
+        }
+        
+        advertiserId = tempAdvertiserId;
         
         if (!advertiserId) {
-          console.error("Advertiser insert result:", advertiserResult);
+          console.error("Advertiser insert result:", insertResult, "Type:", typeof insertResult);
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to create advertiser",
+            message: "Failed to create advertiser - no ID returned",
           });
         }
       }
@@ -352,10 +361,86 @@ export const createCampaign = protectedProcedure
   });
 
 /**
+ * Criar sessão de checkout do Stripe
+ */
+const createCheckoutSession = protectedProcedure
+  .input(
+    z.object({
+      campaignId: z.number().int().positive(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    try {
+      const Stripe = require("stripe");
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      // Buscar a campanha
+      const campaign = await db.query.adCampaigns.findFirst({
+        where: (camp, { eq }) => eq(camp.id, input.campaignId),
+      });
+
+      if (!campaign) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Campaign not found",
+        });
+      }
+
+      // Criar sessão de checkout
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "brl",
+              product_data: {
+                name: `Campanha Kadeh Ads - ${campaign.productName}`,
+                description: `Duração: ${campaign.duration} | Lojas: ${campaign.numberOfStores}`,
+                images: [campaign.productImageUrl],
+              },
+              unit_amount: Math.round(parseFloat(campaign.totalCost.toString()) * 100),
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        success_url: `${ctx.req?.headers.origin || "https://kadeh.io"}/pt/kadeh-ads/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${ctx.req?.headers.origin || "https://kadeh.io"}/pt/kadeh-ads/cancel`,
+        customer_email: campaign.contactEmail,
+        metadata: {
+          campaign_id: input.campaignId.toString(),
+          user_id: ctx.user.id.toString(),
+          company_name: campaign.companyName,
+        },
+      });
+
+      return {
+        sessionId: session.id,
+        checkoutUrl: session.url,
+      };
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create checkout session",
+      });
+    }
+  });
+
+/**
  * Router de campanhas
  */
 export const campaignsRouter = router({
   calculatePrice: calculateCampaignPrice,
   validateStartDate,
   create: createCampaign,
+  createCheckoutSession,
 });
