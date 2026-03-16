@@ -220,6 +220,76 @@ export const stripeRouter = router({
     }),
 
   /**
+   * Criar sessão de checkout simplificada para campanhas de 1 dia
+   */
+  createCheckoutSessionSimple: publicProcedure
+    .input(
+      z.object({
+        storeRange: z.enum(["1-5", "6-20", "21-50", "50+"]),
+        numberOfProducts: z.number().min(1).default(1),
+        campaignDuration: z.number().min(1).default(1),
+        campaignName: z.string().min(1),
+        companyName: z.string().min(1),
+        companyEmail: z.string().email(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Mapeamento de preços por range de lojas (para 1 dia)
+        const priceMap: Record<string, number> = {
+          "1-5": 10000, // R$ 100.00 em centavos
+          "6-20": 15000, // R$ 150.00 em centavos
+          "21-50": 20000, // R$ 200.00 em centavos
+          "50+": 25000, // R$ 250.00 em centavos
+        };
+
+        const amount = priceMap[input.storeRange];
+        if (!amount) {
+          throw new Error("Invalid store range");
+        }
+
+        // Criar sessão de checkout Stripe
+        const checkoutSession = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          customer_email: input.companyEmail,
+          client_reference_id: `campaign-${Date.now()}`,
+          line_items: [
+            {
+              price_data: {
+                currency: "brl",
+                product_data: {
+                  name: input.campaignName,
+                  description: `Campanha de ${input.campaignDuration} dia(s) para ${input.storeRange} lojas`,
+                },
+                unit_amount: amount,
+              },
+              quantity: 1,
+            },
+          ],
+          success_url: `${ctx.req.headers.origin || "https://kadeh.io"}/pt/kadeh-ads/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${ctx.req.headers.origin || "https://kadeh.io"}/pt/kadeh-ads/cancel`,
+          metadata: {
+            company_name: input.companyName,
+            company_email: input.companyEmail,
+            store_range: input.storeRange,
+            campaign_duration: input.campaignDuration.toString(),
+            number_of_products: input.numberOfProducts.toString(),
+          },
+        });
+
+        return {
+          sessionId: checkoutSession.id,
+          url: checkoutSession.url,
+          amount: amount / 100, // Retornar em reais
+        };
+      } catch (error) {
+        console.error("[Stripe Router] Error creating checkout session:", error);
+        throw error;
+      }
+    }),
+
+  /**
    * Obter status de uma campanha
    */
   getCampaignStatus: publicProcedure

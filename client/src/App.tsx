@@ -20,6 +20,7 @@ import KadehAdsCheckout from "./pages/KadehAdsCheckout";
 import KadehAdsSuccess from "./pages/KadehAdsSuccess";
 import KadehAdsCancel from "./pages/KadehAdsCancel";
 import KadehAdsContratacao from "./pages/KadehAdsContratacao";
+import KadehAdsPaymentPage from "./pages/KadehAdsPaymentPage";
 import StoreMapping from "./pages/StoreMapping";
 import AdminCategories from "./pages/AdminCategories";
 import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/pt/kadeh-ads/success" component={KadehAdsSuccess} />
       <Route path="/pt/kadeh-ads/cancel" component={KadehAdsCancel} />
       <Route path="/pt/kadeh-ads/contratacao" component={KadehAdsContratacao} />
+      <Route path="/pt/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/pt/store-mapping" component={StoreMapping} />
       <Route path="/pt/admin/categories" component={AdminCategories} />
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
@@ -64,6 +66,7 @@ function Router() {
       <Route path="/en/kadeh-ads/success" component={KadehAdsSuccess} />
       <Route path="/en/kadeh-ads/cancel" component={KadehAdsCancel} />
       <Route path="/en/kadeh-ads/contratacao" component={KadehAdsContratacao} />
+      <Route path="/en/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/en/store-mapping" component={StoreMapping} />
       <Route path="/en/admin/categories" component={AdminCategories} />
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
@@ -80,6 +83,7 @@ function Router() {
       <Route path="/ads" component={KadehAds} />
       <Route path="/kadeh-ads" component={KadehAdsFull} />
       <Route path="/kadeh-ads-campaign" component={KadehAdsCampaign} />
+      <Route path="/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/store-mapping" component={StoreMapping} />
       <Route path="/admin/categories" component={AdminCategories} />
       <Route path="/categories/performance" component={CategoryPerformanceDashboard} />

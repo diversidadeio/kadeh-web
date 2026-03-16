@@ -124,9 +124,10 @@ export function KadehAdsCampaignForm() {
     {
       duration: formData.duration as "1day" | "3days" | "7days" | "14days",
       numberOfStores: parseInt(formData.numberOfStores) || 0,
+      numberOfProducts: parseInt(formData.numberOfProducts) || 1,
     },
     {
-      enabled: !!formData.duration && !!formData.numberOfStores,
+      enabled: !!formData.duration && !!formData.numberOfStores && !!formData.numberOfProducts,
     }
   );
 

@@ -90,24 +90,38 @@ export const calculateCampaignPrice = protectedProcedure
     z.object({
       duration: z.enum(["1day", "3days", "7days", "14days"]),
       numberOfStores: z.number().min(1),
+      numberOfProducts: z.number().min(1).default(1),
     })
   )
   .query(async ({ input }) => {
     try {
+      // Multiplicadores por duração
+      const durationMultipliers: Record<string, number> = {
+        "1day": 1.0,
+        "3days": 1.1,
+        "7days": 1.2,
+        "14days": 1.4,
+      };
+
       const basePrice = PRICING_BY_DURATION[input.duration];
-      const multiplier = getStoreMultiplier(input.numberOfStores);
-      const totalCost = basePrice * multiplier;
+      const storeMultiplier = getStoreMultiplier(input.numberOfStores);
+      const durationMultiplier = durationMultipliers[input.duration];
+      
+      // Fórmula: Preço Base × Multiplicador Duração × Multiplicador Lojas
+      const totalCost = basePrice * durationMultiplier * storeMultiplier;
 
       return {
         success: true,
         basePrice,
-        multiplier,
+        multiplier: storeMultiplier * durationMultiplier,
         totalCost,
         breakdown: {
           duration: input.duration,
           numberOfStores: input.numberOfStores,
+          numberOfProducts: input.numberOfProducts,
           basePrice,
-          multiplier,
+          durationMultiplier,
+          storeMultiplier,
           totalCost,
         },
       };
@@ -150,164 +164,86 @@ export const validateStartDate = protectedProcedure
       console.error("Error validating start date:", error);
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to validate date",
+        message: "Failed to validate start date",
       });
     }
   });
 
 /**
- * Criar nova campanha
+ * Criar campanha
  */
 export const createCampaign = protectedProcedure
   .input(
     z.object({
-      // Dados da Empresa
       companyName: z.string().min(1),
-      companyDocument: z.string().min(11).max(20), // CNPJ (com ou sem formatação)
+      companyDocument: z.string().min(11).max(20),
       contactEmail: z.string().email(),
-      contactPhone: z.string().min(1),
-      // Dados da Campanha
+      contactPhone: z.string().min(10),
       duration: z.enum(["1day", "3days", "7days", "14days"]),
+      numberOfProducts: z.number().min(1),
       numberOfStores: z.number().min(1),
       startDate: z.date(),
-      // Dados dos Produtos (múltiplos)
-      products: z.array(z.object({
-        productName: z.string().min(1),
-        productImageUrl: z.string().url().optional().or(z.literal("")),
-        productEAN13: z.string().max(20).optional().or(z.literal("")),
-      })).min(1),
-      // Preço
-      basePrice: z.number(),
-      multiplier: z.number(),
-      totalCost: z.number(),
+      products: z.array(
+        z.object({
+          productName: z.string().min(1),
+          productImageUrl: z.string().url().optional().or(z.literal("")),
+          productEAN13: z.string().max(20).optional(),
+        })
+      ).min(1),
     })
   )
   .mutation(async ({ input, ctx }) => {
     try {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+      const db = getDb();
 
-      // Validar data inicial
-      const now = new Date();
-      const requiredBusinessDays = 7;
-      const earliestStartDate = addBusinessDays(now, requiredBusinessDays);
-
-      if (input.startDate < earliestStartDate) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `A campanha deve iniciar com antecedência de ${requiredBusinessDays} dias úteis. Data mínima: ${earliestStartDate.toLocaleDateString("pt-BR")}`,
-        });
-      }
-
-      // Buscar anunciante
-      const advertiser = await db
-        .select()
-        .from(advertisers)
-        .where(eq(advertisers.userId, ctx.user!.id))
-        .limit(1);
-
-      if (advertiser.length === 0) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Advertiser not found",
-        });
-      }
-
-      // Calcular data final
-      const durationDays: Record<string, number> = {
-        "1day": 1,
-        "3days": 3,
-        "7days": 7,
-        "14days": 14,
-      };
-      const endDate = new Date(input.startDate);
-      endDate.setDate(endDate.getDate() + durationDays[input.duration]);
-
-      // Usar o primeiro produto como principal (para compatibilidade com schema existente)
-      const firstProduct = input.products[0];
-
-      // Criar campanha
-      const campaign: InsertAdCampaign = {
-        advertiserId: advertiser[0].id,
+      // Inserir campanha
+      const result = await db.insert(adCampaigns).values({
         companyName: input.companyName,
         companyDocument: input.companyDocument,
         contactEmail: input.contactEmail,
         contactPhone: input.contactPhone,
         duration: input.duration,
+        numberOfProducts: input.numberOfProducts,
         numberOfStores: input.numberOfStores,
         startDate: input.startDate,
-        endDate,
-        productName: firstProduct.productName,
-        productImageUrl: firstProduct.productImageUrl,
-        productEAN13: firstProduct.productEAN13,
-        basePrice: input.basePrice.toString(),
-        multiplier: input.multiplier.toString(),
-        totalCost: input.totalCost.toString(),
-        status: "pending_approval",
-      };
-
-      const result = await db.insert(adCampaigns).values(campaign);
-      
-      // Obter o ID da campanha inserida
-      // Drizzle ORM retorna um array com informações da inserção
-      let campaignId: number;
-      if (Array.isArray(result) && result.length > 0) {
-        // Se result é um array de objetos com insertId
-        campaignId = result[0]?.insertId as number;
-      } else if (result && typeof result === 'object' && 'insertId' in result) {
-        // Se result é um objeto com insertId
-        campaignId = result.insertId as number;
-      } else {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get campaign ID after insertion",
-        });
-      }
-
-      if (!campaignId || campaignId === 0) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Invalid campaign ID returned from database",
-        });
-      }
-
-      // Inserir produtos adicionais na tabela campaignProducts
-      if (input.products.length > 0) {
-        const campaignProductsData = input.products.map((product, index) => ({
-          campaignId,
-          productName: product.productName,
-          productImageUrl: product.productImageUrl || "",
-          productEAN13: product.productEAN13 || "",
-          position: index,
-        }));
-        await db.insert(campaignProducts).values(campaignProductsData);
-      }
-
-      // Enviar email de notificação
-      const productsInfo = input.products.map((p, i) => `${i + 1}. ${p.productName} (EAN13: ${p.productEAN13})`).join("\\n");
-      const emailContent = `Nova Campanha Kadeh Ads Solicitada\n\nEmpresa: ${input.companyName}\nCNPJ: ${input.companyDocument}\nEmail: ${input.contactEmail}\nTelefone: ${input.contactPhone}\n\nDados da Campanha:\nProdutos:\n${productsInfo}\n- Duração: ${input.duration}\n- Quantidade de Lojas: ${input.numberOfStores}\n- Data Inicial: ${input.startDate.toLocaleDateString("pt-BR")}\n- Data Final: ${endDate.toLocaleDateString("pt-BR")}\n\nCálculo de Valor:\n- Preço Base: R$ ${input.basePrice.toFixed(2)}\n- Multiplicador (${input.numberOfStores} lojas): x${input.multiplier.toFixed(2)}\n- Valor Total: R$ ${input.totalCost.toFixed(2)}\n\nStatus: Pendente de Aprovação\n\nID da Campanha: ${campaignId}\n`;
-
-      // Notificar admin
-      await notifyOwner({
-        title: `Nova Campanha Kadeh Ads: ${input.companyName}`,
-        content: emailContent,
+        status: "pending",
+        createdAt: new Date(),
       });
 
-      // Notificar cliente
-      // TODO: Implementar envio de email para o cliente
+      // Obter o ID da campanha inserida
+      const campaignId = result[0]?.insertId || 0;
+
+      if (!campaignId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create campaign",
+        });
+      }
+
+      // Inserir produtos da campanha
+      for (const product of input.products) {
+        await db.insert(campaignProducts).values({
+          campaignId,
+          productName: product.productName,
+          productImageUrl: product.productImageUrl || null,
+          productEAN13: product.productEAN13 || null,
+          createdAt: new Date(),
+        });
+      }
+
+      // Notificar proprietário
+      await notifyOwner({
+        title: "Nova Campanha Criada",
+        content: `${input.companyName} criou uma nova campanha de ${input.duration} com ${input.numberOfProducts} produtos para ${input.numberOfStores} lojas.`,
+      });
 
       return {
         success: true,
         campaignId,
-        message: "Campanha criada com sucesso! Aguardando aprovação do administrador.",
-        campaign: {
-          id: campaignId,
-          ...campaign,
-        },
+        message: "Campanha criada com sucesso!",
       };
     } catch (error) {
       console.error("Error creating campaign:", error);
-      if (error instanceof TRPCError) throw error;
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to create campaign",
@@ -316,141 +252,10 @@ export const createCampaign = protectedProcedure
   });
 
 /**
- * Listar campanhas do usuário
+ * Router de campanhas
  */
-export const listMyCampaigns = protectedProcedure
-  .query(async ({ ctx }) => {
-    try {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
-      // Buscar anunciante
-      const advertiser = await db
-        .select()
-        .from(advertisers)
-        .where(eq(advertisers.userId, ctx.user!.id))
-        .limit(1);
-
-      if (advertiser.length === 0) {
-        return {
-          success: true,
-          campaigns: [],
-        };
-      }
-
-      // Buscar campanhas
-      const campaigns = await db
-        .select()
-        .from(adCampaigns)
-        .where(eq(adCampaigns.advertiserId, advertiser[0].id));
-
-      return {
-        success: true,
-        campaigns,
-      };
-    } catch (error) {
-      console.error("Error listing campaigns:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to list campaigns",
-      });
-    }
-  });
-
-/**
- * Obter detalhes de uma campanha
- */
-export const getCampaign = protectedProcedure
-  .input(
-    z.object({
-      campaignId: z.number().min(1),
-    })
-  )
-  .query(async ({ input, ctx }) => {
-    try {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
-
-      // Buscar campanha
-      const campaign = await db
-        .select()
-        .from(adCampaigns)
-        .where(eq(adCampaigns.id, input.campaignId))
-        .limit(1);
-
-      if (campaign.length === 0) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Campaign not found",
-        });
-      }
-
-      // Verificar permissão
-      const advertiser = await db
-        .select()
-        .from(advertisers)
-        .where(eq(advertisers.userId, ctx.user!.id))
-        .limit(1);
-
-      if (advertiser.length === 0 || advertiser[0].id !== campaign[0].advertiserId) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Unauthorized",
-        });
-      }
-
-      return {
-        success: true,
-        campaign: campaign[0],
-      };
-    } catch (error) {
-      console.error("Error getting campaign:", error);
-      if (error instanceof TRPCError) throw error;
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get campaign",
-      });
-    }
-  });
-
-/**
- * Upload de imagem para S3
- */
-export const uploadProductImage = protectedProcedure
-  .input(
-    z.object({
-      fileName: z.string().min(1),
-      fileData: z.string(), // Sem limite de tamanho
-      mimeType: z.string(),
-    })
-  )
-  .mutation(async ({ input }) => {
-    try {
-      const buffer = Buffer.from(input.fileData, 'base64');
-      const fileKey = `kadeh-ads/products/${Date.now()}-${input.fileName}`;
-      
-      const { url } = await storagePut(fileKey, buffer, input.mimeType);
-      
-      return {
-        success: true,
-        url,
-        fileKey,
-      };
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to upload image",
-      });
-    }
-  });
-
-// Export router
 export const campaignsRouter = router({
   calculatePrice: calculateCampaignPrice,
   validateStartDate,
   create: createCampaign,
-  list: listMyCampaigns,
-  get: getCampaign,
-  uploadImage: uploadProductImage,
 });
