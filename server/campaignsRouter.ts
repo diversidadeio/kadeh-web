@@ -182,7 +182,16 @@ export const createCampaign = protectedProcedure
       duration: z.enum(["1day", "3days", "7days", "14days"]),
       numberOfProducts: z.number().min(1),
       numberOfStores: z.number().min(1),
-      startDate: z.date(),
+      startDate: z.union([z.string(), z.date()]).transform((val) => {
+        if (typeof val === 'string') {
+          const date = new Date(val);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format');
+          }
+          return date;
+        }
+        return val;
+      }),
       products: z.array(
         z.object({
           productName: z.string().min(1),
@@ -203,39 +212,121 @@ export const createCampaign = protectedProcedure
         });
       }
 
-      // Inserir campanha
+      // Validar que temos pelo menos um produto
+      if (!input.products || input.products.length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "At least one product is required",
+        });
+      }
+
+      // Buscar ou criar anunciante para o usuário
+      const existingAdvertiser = await db.query.advertisers.findFirst({
+        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+      });
+
+      let advertiserId: number;
+      if (existingAdvertiser) {
+        advertiserId = existingAdvertiser.id;
+      } else {
+        // Criar novo anunciante
+        const insertResult = await db.insert(advertisers).values({
+          userId: ctx.user.id,
+          companyName: input.companyName,
+          companyDocument: input.companyDocument,
+          contactEmail: input.contactEmail,
+          contactPhone: input.contactPhone,
+          status: "pending",
+        });
+        
+        // Obter o ID do anunciante inserido
+        const advertiserResult = insertResult as any;
+        advertiserId = advertiserResult?.insertId || 0;
+        
+        if (!advertiserId) {
+          console.error("Advertiser insert result:", advertiserResult);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create advertiser",
+          });
+        }
+      }
+
+      // Usar o primeiro produto como produto principal da campanha
+      const primaryProduct = input.products[0];
+
+      // Calcular endDate baseado na duração
+      const durationDays: Record<string, number> = {
+        "1day": 1,
+        "3days": 3,
+        "7days": 7,
+        "14days": 14,
+      };
+      const endDate = addBusinessDays(input.startDate, durationDays[input.duration] || 1);
+
+      // Calcular preço da campanha
+      const basePrice = PRICING_BY_DURATION[input.duration] || 100;
+      const storeMultiplier = getStoreMultiplier(input.numberOfStores);
+      const durationMultipliers: Record<string, number> = {
+        "1day": 1.0,
+        "3days": 1.1,
+        "7days": 1.2,
+        "14days": 1.4,
+      };
+      const durationMultiplier = durationMultipliers[input.duration] || 1.0;
+      const totalCost = basePrice * durationMultiplier * storeMultiplier;
+      const multiplier = storeMultiplier * durationMultiplier;
+
+      // Inserir campanha com todos os campos obrigatórios
       const result = await db.insert(adCampaigns).values({
+        advertiserId: advertiserId,
         companyName: input.companyName,
         companyDocument: input.companyDocument,
         contactEmail: input.contactEmail,
         contactPhone: input.contactPhone,
         duration: input.duration,
-        numberOfProducts: input.numberOfProducts,
         numberOfStores: input.numberOfStores,
         startDate: input.startDate,
-        status: "pending",
+        endDate: endDate,
+        productName: primaryProduct.productName,
+        productImageUrl: primaryProduct.productImageUrl || "",
+        productEAN13: primaryProduct.productEAN13 || "",
+        basePrice: basePrice,
+        multiplier: multiplier,
+        totalCost: totalCost,
+        status: "pending_approval",
         createdAt: new Date(),
       });
 
       // Obter o ID da campanha inserida
-      // Drizzle retorna um objeto com insertId
-      const campaignId = result?.insertId || 0;
+      // Drizzle ORM retorna um objeto com insertId ou a linha inserida
+      let campaignId = 0;
+      if (Array.isArray(result) && result.length > 0) {
+        // Se retornar array, usar o ID do primeiro elemento
+        campaignId = result[0]?.id || 0;
+      } else if (result?.insertId) {
+        campaignId = result.insertId;
+      } else if (typeof result === 'object' && result?.id) {
+        campaignId = result.id;
+      }
 
       if (!campaignId) {
-        console.error("Campaign insert result:", result);
+        console.error("Campaign insert result:", result, "Type:", typeof result);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create campaign - no ID returned",
         });
       }
 
-      // Inserir produtos da campanha
-      for (const product of input.products) {
+      // Inserir todos os produtos da campanha
+      for (let i = 0; i < input.products.length; i++) {
+        const product = input.products[i];
         await db.insert(campaignProducts).values({
           campaignId,
           productName: product.productName,
-          productImageUrl: product.productImageUrl || null,
-          productEAN13: product.productEAN13 || null,
+          productImageUrl: product.productImageUrl || "",
+          productEAN13: product.productEAN13 || "",
+          position: i + 1,
           createdAt: new Date(),
         });
       }
