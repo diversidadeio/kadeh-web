@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, AlertCircle, CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { StripePaymentButton } from "./StripePaymentButton";
 
 interface Product {
   id: string;
@@ -361,6 +362,10 @@ export function KadehAdsCampaignForm() {
             {successMessage}
           </AlertDescription>
         </Alert>
+      )}
+
+      {successMessage && formData.duration === "1day" && parseInt(formData.numberOfStores) >= 1 && parseInt(formData.numberOfStores) <= 5 && (
+        <StripePaymentButton />
       )}
 
       {uploadError && (
