@@ -194,7 +194,14 @@ export const createCampaign = protectedProcedure
   )
   .mutation(async ({ input, ctx }) => {
     try {
-      const db = getDb();
+      const db = await getDb();
+      
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
 
       // Inserir campanha
       const result = await db.insert(adCampaigns).values({
@@ -211,12 +218,14 @@ export const createCampaign = protectedProcedure
       });
 
       // Obter o ID da campanha inserida
-      const campaignId = result[0]?.insertId || 0;
+      // Drizzle retorna um objeto com insertId
+      const campaignId = result?.insertId || 0;
 
       if (!campaignId) {
+        console.error("Campaign insert result:", result);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create campaign",
+          message: "Failed to create campaign - no ID returned",
         });
       }
 
