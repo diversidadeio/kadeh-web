@@ -7,6 +7,8 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { storagePut } from "../storage";
+import multer from "multer";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +37,36 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+
+  // Configure multer for file uploads
+  const upload = multer({ storage: multer.memoryStorage() });
+
+  // File upload endpoint
+  app.post('/api/upload', upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file provided' });
+      }
+
+      const fileBuffer = req.file.buffer;
+      const fileName = req.file.originalname;
+      const contentType = req.file.mimetype;
+
+      // Generate a unique key for the file
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const fileKey = `campaigns/${timestamp}-${random}-${fileName}`;
+
+      // Upload to S3
+      const { url } = await storagePut(fileKey, fileBuffer, contentType);
+
+      return res.json({ url, key: fileKey });
+    } catch (error) {
+      console.error('Upload error:', error);
+      return res.status(500).json({ error: 'Upload failed', message: error instanceof Error ? error.message : 'Unknown error' });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
