@@ -160,7 +160,19 @@ export function KadehAdsCampaignForm() {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(e.target.value);
+    const dateValue = e.target.value;
+    
+    // Se a data estiver vazia, apenas atualiza o estado
+    if (!dateValue) {
+      setFormData((prev) => ({
+        ...prev,
+        startDate: dateValue,
+      }));
+      setDateError(null);
+      return;
+    }
+
+    const selectedDate = new Date(dateValue);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -185,7 +197,7 @@ export function KadehAdsCampaignForm() {
 
     setFormData((prev) => ({
       ...prev,
-      startDate: e.target.value,
+      startDate: dateValue,
     }));
   };
 
@@ -265,6 +277,11 @@ export function KadehAdsCampaignForm() {
       return;
     }
 
+    if (!formData.startDate) {
+      setUploadError("Data de início é obrigatória");
+      return;
+    }
+
     if (dateError) {
       setUploadError(t.invalidDate);
       return;
@@ -282,6 +299,7 @@ export function KadehAdsCampaignForm() {
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
         duration: formData.duration as "1day" | "3days" | "7days" | "14days",
+        numberOfProducts: parseInt(formData.numberOfProducts),
         numberOfStores: parseInt(formData.numberOfStores),
         startDate: new Date(formData.startDate),
         products: formData.products.map((p) => ({

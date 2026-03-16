@@ -21,15 +21,7 @@ export default function KadehAdsFull() {
     navigate("/contact");
   };
 
-  // Preços base por duração
-  const durationPrices: { [key: number]: number } = {
-    1: 100,
-    3: 250,
-    7: 500,
-    14: 900,
-  };
-
-  // Preço por produto com desconto progressivo
+  // Preço base por produto com desconto progressivo
   const getProductPrice = (qty: number): number => {
     if (qty >= 10) return 50;
     if (qty >= 5) return 70;
@@ -37,12 +29,32 @@ export default function KadehAdsFull() {
     return 100;
   };
 
+  // Multiplicadores por duração da campanha
+  const durationMultipliers: { [key: number]: number } = {
+    1: 1.0,
+    3: 1.1,
+    7: 1.2,
+    14: 1.4,
+  };
+
+  // Multiplicadores por quantidade de lojas
+  const storeMultipliers: { [key: number]: number } = {
+    1.0: 1.0,  // 1-5 lojas
+    1.5: 1.5,  // 6-20 lojas
+    2.0: 2.0,  // 21-50 lojas
+    2.5: 2.5,  // 50+ lojas
+  };
+
   // Calcular valor total
   const selectedProducts = customProducts ? parseInt(customProducts) || 1 : products;
   const pricePerProduct = getProductPrice(selectedProducts);
-  const durationPrice = durationPrices[duration] || 500;
-  const totalValue = durationPrice * stores * selectedProducts;
-  const savings = selectedProducts * 100 * duration * stores - totalValue;
+  const durationMultiplier = durationMultipliers[duration] || 1.0;
+  const storeMultiplier = storeMultipliers[stores] || 1.0;
+  
+  // Fórmula: Preço por Produto × Número de Produtos × Multiplicador Duração × Multiplicador Lojas
+  const totalValue = pricePerProduct * selectedProducts * durationMultiplier * storeMultiplier;
+  const originalValue = 100 * selectedProducts * duration * stores;
+  const savings = originalValue - totalValue;
 
   return (
     <div className="min-h-screen bg-white">
@@ -353,16 +365,16 @@ export default function KadehAdsFull() {
                   <span className="font-semibold">R$ {pricePerProduct.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Duração ({duration} dias):</span>
-                  <span className="font-semibold">R$ {durationPrice.toFixed(2)}</span>
+                  <span>Quantidade de Produtos:</span>
+                  <span className="font-semibold">{selectedProducts}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Multiplicador Duração ({duration} dias):</span>
+                  <span className="font-semibold">x {durationMultiplier.toFixed(1)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Multiplicador Lojas:</span>
-                  <span className="font-semibold">x {stores.toFixed(1)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Quantidade Produtos:</span>
-                  <span className="font-semibold">{selectedProducts}</span>
+                  <span className="font-semibold">x {storeMultiplier.toFixed(1)}</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between font-bold text-lg">
                   <span>Investimento Total:</span>

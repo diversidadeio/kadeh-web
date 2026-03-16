@@ -247,15 +247,37 @@ export const createCampaign = protectedProcedure
       };
 
       const result = await db.insert(adCampaigns).values(campaign);
-      const campaignId = result[0]?.insertId || 0;
+      
+      // Obter o ID da campanha inserida
+      // Drizzle ORM retorna um array com informações da inserção
+      let campaignId: number;
+      if (Array.isArray(result) && result.length > 0) {
+        // Se result é um array de objetos com insertId
+        campaignId = result[0]?.insertId as number;
+      } else if (result && typeof result === 'object' && 'insertId' in result) {
+        // Se result é um objeto com insertId
+        campaignId = result.insertId as number;
+      } else {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get campaign ID after insertion",
+        });
+      }
+
+      if (!campaignId || campaignId === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Invalid campaign ID returned from database",
+        });
+      }
 
       // Inserir produtos adicionais na tabela campaignProducts
       if (input.products.length > 0) {
         const campaignProductsData = input.products.map((product, index) => ({
           campaignId,
           productName: product.productName,
-          productImageUrl: product.productImageUrl,
-          productEAN13: product.productEAN13,
+          productImageUrl: product.productImageUrl || "",
+          productEAN13: product.productEAN13 || "",
           position: index,
         }));
         await db.insert(campaignProducts).values(campaignProductsData);
