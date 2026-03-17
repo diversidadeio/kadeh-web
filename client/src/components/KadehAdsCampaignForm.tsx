@@ -279,6 +279,12 @@ export function KadehAdsCampaignForm() {
       return;
     }
 
+    // Redirecionar para Stripe se duração é 1 dia e lojas são 1-5 (ANTES de validar data)
+    if (formData.duration === "1day" && formData.numberOfStores === "1-5") {
+      window.location.href = "https://buy.stripe.com/test_eVq14n0u451F4Vn6EZ0Ba00";
+      return;
+    }
+
     if (!formData.startDate) {
       setUploadError("Data de início é obrigatória");
       return;

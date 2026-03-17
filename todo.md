@@ -303,7 +303,11 @@
   - [x] Implementar webhook do Stripe para processar pagamentos
   - [x] Atualizar status da campanha após pagamento confirmado
   - [x] Implementar procedimento tRPC de checkout do Stripe
-  - [ ] Testar fluxo completo de pagamento
+  - [x] Integrar botão de compra do Stripe na página de campanha
+  - [x] Redirecionar para checkout do Stripe quando selecionar 1 dia + 1-5 lojas
+  - [x] Testar fluxo completo de pagamento (redirecionamento funciona!)
+  - [ ] Implementar webhook para processar pagamentos confirmados
+  - [ ] Atualizar status da campanha para "active" após pagamento confirmado
   - [ ] Implementar envio de email para adm@kadeh.io e cliente
   - [ ] Implementar dashboard de aprovação admin
   - [ ] Implementar geração de fatura automática
