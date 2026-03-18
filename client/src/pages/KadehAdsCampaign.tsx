@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import { Zap, BarChart3, TrendingUp, Target, Users, DollarSign } from "lucide-react";
+import { KadehAdsCostSimulator } from "@/components/KadehAdsCostSimulator";
 
 export default function KadehAdsCampaignPage() {
   const [showFormModal, setShowFormModal] = useState(false);
@@ -266,6 +267,16 @@ export default function KadehAdsCampaignPage() {
               </div>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Cost Simulator Section */}
+      <section className="py-16 md:py-24 bg-white border-t border-gray-200">
+        <div className="container max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+            {language === "pt" ? "Simulador de Custos Detalhado" : "Detailed Cost Simulator"}
+          </h2>
+          <KadehAdsCostSimulator />
         </div>
       </section>
 

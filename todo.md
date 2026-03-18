@@ -305,7 +305,11 @@
   - [x] Implementar procedimento tRPC de checkout do Stripe
   - [x] Integrar botão de compra do Stripe na página de campanha
   - [x] Redirecionar para checkout do Stripe quando selecionar 1 dia + 1-5 lojas
+  - [x] Configurar redirecionamento com 16 URLs diferentes (4 durações × 4 faixas de lojas)
   - [x] Testar fluxo completo de pagamento (redirecionamento funciona!)
+  - [x] Criar simulador de custos baseado em planilha com 3 variáveis (dias, lojas, produtos)
+  - [x] Integrar simulador na página de campanha Kadeh Ads
+  - [x] Testar simulador com diferentes combinações (7 dias + 1-5 lojas = R$600)
   - [ ] Implementar webhook para processar pagamentos confirmados
   - [ ] Atualizar status da campanha para "active" após pagamento confirmado
   - [ ] Implementar envio de email para adm@kadeh.io e cliente
