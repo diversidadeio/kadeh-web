@@ -668,3 +668,5 @@
 - [x] Substituir figura do hero section da página Kadeh Ads pela imagem de casal no supermercado
 
 - [x] Atualizar mapeamento de 64 URLs do Stripe para o botão "Contratar Agora" (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
+
+- [x] Adicionar imagem do Kadeh Ads à esquerda na seção do simulador de custos

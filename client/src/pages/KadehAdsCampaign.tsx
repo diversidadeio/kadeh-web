@@ -130,7 +130,20 @@ export default function KadehAdsCampaignPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
             {language === "pt" ? "Simulador de Custos Detalhado" : "Detailed Cost Simulator"}
           </h2>
-          <KadehAdsCostSimulator />
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            {/* Image on the left */}
+            <div className="hidden md:flex justify-center">
+              <img 
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/zZAicZSDGzqokqHa.png"
+                alt="Kadeh Ads - Receba por Ads vendidos"
+                className="w-full max-w-sm h-auto object-contain rounded-lg"
+              />
+            </div>
+            {/* Simulator on the right */}
+            <div>
+              <KadehAdsCostSimulator />
+            </div>
+          </div>
         </div>
       </section>
 
