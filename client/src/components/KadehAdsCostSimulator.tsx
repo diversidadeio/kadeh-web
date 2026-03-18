@@ -36,36 +36,117 @@ export function KadehAdsCostSimulator() {
     [ProductType, string]
   >;
 
-  // Stripe checkout URLs mapping
-  const stripeCheckoutUrls: Record<DurationType, Record<StoreType, string>> = {
+  // Stripe checkout URLs mapping with 64 combinations
+  // Format: duration -> stores -> products
+  const stripeCheckoutUrls: Record<DurationType, Record<StoreType, Record<ProductType, string>>> = {
     "1day": {
-      "1-5": "https://buy.stripe.com/eVq14n0u451F4Vn6EZ0Ba00",
-      "6-20": "https://buy.stripe.com/3cI28r0u465J3RjaVf0Ba01",
-      "21-50": "https://buy.stripe.com/dRm5kD7Ww2TxbjLbZj0Ba02",
-      "50+": "https://buy.stripe.com/5kQ5kDekU65J9bD1kF0Ba03",
+      "1-5": {
+        "1": "https://buy.stripe.com/5kQaEX1y88dR4Vn9Rb0Ba0g",
+        "3": "https://buy.stripe.com/cNi5kDgt2cu7evXbZj0Ba0h",
+        "5": "https://buy.stripe.com/8x29AT5Oo1PtdrT9Rb0Ba0i",
+        "10": "https://buy.stripe.com/00waEXccM51FafH5AV0Ba0j",
+      },
+      "6-20": {
+        "1": "https://buy.stripe.com/14AfZh90A3XBgE5aVf0Ba0k",
+        "3": "https://buy.stripe.com/3cI9AT2Cc3XBafHe7r0Ba0l",
+        "5": "https://buy.stripe.com/4gM00j7Ww8dRdrT7J30Ba0m",
+        "10": "https://buy.stripe.com/6oUdR96Ss65JafHaVf0Ba0n",
+      },
+      "21-50": {
+        "1": "https://buy.stripe.com/9B68wP3Ggcu7cnPe7r0Ba0o",
+        "3": "https://buy.stripe.com/28E00j1y82TxafH2oJ0Ba0p",
+        "5": "https://buy.stripe.com/8x2aEXdgQalZ3Rjd3n0Ba0q",
+        "10": "https://buy.stripe.com/4gM8wPdgQ1Pt73vfbv0Ba0r",
+      },
+      "50+": {
+        "1": "https://buy.stripe.com/3cI5kDb8Icu75Zr4wR0Ba0s",
+        "3": "https://buy.stripe.com/bJe14n2Cc3XB5Zr7J30Ba0t",
+        "5": "https://buy.stripe.com/8x27sLa4E8dR9bD6EZ0Ba0u",
+        "10": "https://buy.stripe.com/7sYcN56Ss9hVafHfbv0Ba0v",
+      },
     },
     "3days": {
-      "1-5": "https://buy.stripe.com/aFa8wP1y89hV9bD5AV0Ba04",
-      "6-20": "https://buy.stripe.com/8x2cN5b8IfGj87zd3n0Ba05",
-      "21-50": "https://buy.stripe.com/3cIcN5a4E8dRevX8N70Ba06",
-      "50+": "https://buy.stripe.com/4gMcN5dgQeCffA1gfz0Ba07",
+      "1-5": {
+        "1": "https://buy.stripe.com/4gMcN54Kkbq3afH7J30Ba0w",
+        "3": "https://buy.stripe.com/8x2fZhfoY9hV9bD4wR0Ba0x",
+        "5": "https://buy.stripe.com/00weVd5Oo2Tx5Zr7J30Ba0y",
+        "10": "https://buy.stripe.com/8x24gzekU9hV3Rj7J30Ba0z",
+      },
+      "6-20": {
+        "1": "https://buy.stripe.com/28E9AT6Ss2TxcnPe7r0Ba0A",
+        "3": "https://buy.stripe.com/bJe6oH5Oodyb87zd3n0Ba0B",
+        "5": "https://buy.stripe.com/dRm28rb8IdybcnP3sN0Ba0C",
+        "10": "https://buy.stripe.com/3cI28rgt2dyb1Jb7J30Ba0D",
+      },
+      "21-50": {
+        "1": "https://buy.stripe.com/3cIfZh6Ss79NcnP3sN0Ba0E",
+        "3": "https://buy.stripe.com/cNifZh5OofGjfA1bZj0Ba0F",
+        "5": "https://buy.stripe.com/dRm7sLfoY51FcnP3sN0Ba0G",
+        "10": "https://buy.stripe.com/eVq5kD7Ww1Pt87z6EZ0Ba0H",
+      },
+      "50+": {
+        "1": "https://buy.stripe.com/5kQ6oH2CcfGjevXd3n0Ba0I",
+        "3": "https://buy.stripe.com/28E4gza4EgKnfA1aVf0Ba0J",
+        "5": "https://buy.stripe.com/7sYbJ1ekU1Pt3Rj4wR0Ba0K",
+        "10": "https://buy.stripe.com/5kQ00jccMbq30F72oJ0Ba0L",
+      },
     },
     "7days": {
-      "1-5": "https://buy.stripe.com/00w9AT1y81PtevXbZj0Ba08",
-      "6-20": "https://buy.stripe.com/5kQ9AT0u4cu72NfaVf0Ba09",
-      "21-50": "https://buy.stripe.com/14A3cv1y8bq3afH3sN0Ba0a",
-      "50+": "https://buy.stripe.com/fZu4gz90Abq3bjL0gB0Ba0b",
+      "1-5": {
+        "1": "https://buy.stripe.com/dRm8wP7WweCf73v6EZ0Ba0M",
+        "3": "https://buy.stripe.com/3cI00j4KkfGjfA1e7r0Ba0N",
+        "5": "https://buy.stripe.com/9B628r5Oo0Lp2Nf3sN0Ba0O",
+        "10": "https://buy.stripe.com/4gM28r5OoalZ4Vn9Rb0Ba0P",
+      },
+      "6-20": {
+        "1": "https://buy.stripe.com/eVq8wPdgQ2TxfA12oJ0Ba0Q",
+        "3": "https://buy.stripe.com/6oU6oH3Gg3XBafH4wR0Ba0R",
+        "5": "https://buy.stripe.com/5kQ4gz5Oodyb87z6EZ0Ba0S",
+        "10": "https://buy.stripe.com/eVq8wPgt21Pt87z2oJ0Ba0T",
+      },
+      "21-50": {
+        "1": "https://buy.stripe.com/fZu9AT4Kk65J4Vn9Rb0Ba0U",
+        "3": "https://buy.stripe.com/bJebJ17Ww1Pt5Zre7r0Ba0V",
+        "5": "https://buy.stripe.com/eVq7sLekU9hV2Nf7J30Ba0W",
+        "10": "https://buy.stripe.com/5kQfZhgt28dRcnP0gB0Ba0X",
+      },
+      "50+": {
+        "1": "https://buy.stripe.com/5kQ4gza4E0LpevX8N70Ba0Y",
+        "3": "https://buy.stripe.com/4gM5kDekU51F73v7J30Ba0Z",
+        "5": "https://buy.stripe.com/8x27sLgt2eCf5Zre7r0Ba10",
+        "10": "https://buy.stripe.com/9B67sL5Oo1Pt0F7d3n0Ba11",
+      },
     },
     "14days": {
-      "1-5": "https://buy.stripe.com/6oU6oHdgQdyb9bDbZj0Ba0c",
-      "6-20": "https://buy.stripe.com/8x23cv90A0LpdrTbZj0Ba0d",
-      "21-50": "https://buy.stripe.com/dRm00j0u4cu7afH0gB0Ba0e",
-      "50+": "https://buy.stripe.com/4gM7sL6Ss1Pt3Rj1kF0Ba0f",
+      "1-5": {
+        "1": "https://buy.stripe.com/7sY14n7Ww65JgE56EZ0Ba12",
+        "3": "https://buy.stripe.com/7sY9ATccMfGj1Jb9Rb0Ba13",
+        "5": "https://buy.stripe.com/bJe14nfoYgKn0F7bZj0Ba14",
+        "10": "https://buy.stripe.com/bJeaEX4Kkdyb2Nffbv0Ba15",
+      },
+      "6-20": {
+        "1": "https://buy.stripe.com/6oU8wP6Ss9hVgE5aVf0Ba16",
+        "3": "https://buy.stripe.com/aFacN5foYdybafHe7r0Ba17",
+        "5": "https://buy.stripe.com/3cI28r0u43XB73vbZj0Ba18",
+        "10": "https://buy.stripe.com/5kQ9AT6Ss2TxgE5e7r0Ba19",
+      },
+      "21-50": {
+        "1": "https://buy.stripe.com/14AbJ1b8I51FgE58N70Ba1a",
+        "3": "https://buy.stripe.com/fZu8wP6SsfGj0F7fbv0Ba1b",
+        "5": "https://buy.stripe.com/3cIeVdekUfGjafH0gB0Ba1c",
+        "10": "https://buy.stripe.com/fZu14n0u4bq3drTfbv0Ba1d",
+      },
+      "50+": {
+        "1": "https://buy.stripe.com/4gM6oHa4E2TxgE56EZ0Ba1e",
+        "3": "https://buy.stripe.com/28EcN5ccMbq30F78N70Ba1f",
+        "5": "https://buy.stripe.com/4gM7sL3Gg79N2Nf4wR0Ba1g",
+        "10": "https://buy.stripe.com/dRmcN5b8I65JgE5fbv0Ba1h",
+      },
     },
   };
 
   const handleContractCampaign = () => {
-    const checkoutUrl = stripeCheckoutUrls[duration][stores];
+    const checkoutUrl = stripeCheckoutUrls[duration][stores][products];
     window.location.href = checkoutUrl;
   };
 

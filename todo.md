@@ -666,3 +666,5 @@
 - [x] Remover seção "Calcule seu Investimento" da página Kadeh Ads (simulador detalhado cobre essa necessidade)
 
 - [x] Substituir figura do hero section da página Kadeh Ads pela imagem de casal no supermercado
+
+- [x] Atualizar mapeamento de 64 URLs do Stripe para o botão "Contratar Agora" (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
