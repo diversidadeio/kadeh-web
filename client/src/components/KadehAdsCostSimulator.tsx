@@ -13,6 +13,7 @@ import {
 } from "@shared/pricingData";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 
 export function KadehAdsCostSimulator() {
   const [duration, setDuration] = useState<DurationType>("1day");
@@ -34,6 +35,39 @@ export function KadehAdsCostSimulator() {
   const productOptions = Object.entries(PRODUCT_LABELS) as Array<
     [ProductType, string]
   >;
+
+  // Stripe checkout URLs mapping
+  const stripeCheckoutUrls: Record<DurationType, Record<StoreType, string>> = {
+    "1day": {
+      "1-5": "https://buy.stripe.com/eVq14n0u451F4Vn6EZ0Ba00",
+      "6-20": "https://buy.stripe.com/3cI28r0u465J3RjaVf0Ba01",
+      "21-50": "https://buy.stripe.com/dRm5kD7Ww2TxbjLbZj0Ba02",
+      "50+": "https://buy.stripe.com/5kQ5kDekU65J9bD1kF0Ba03",
+    },
+    "3days": {
+      "1-5": "https://buy.stripe.com/aFa8wP1y89hV9bD5AV0Ba04",
+      "6-20": "https://buy.stripe.com/8x2cN5b8IfGj87zd3n0Ba05",
+      "21-50": "https://buy.stripe.com/3cIcN5a4E8dRevX8N70Ba06",
+      "50+": "https://buy.stripe.com/4gMcN5dgQeCffA1gfz0Ba07",
+    },
+    "7days": {
+      "1-5": "https://buy.stripe.com/00w9AT1y81PtevXbZj0Ba08",
+      "6-20": "https://buy.stripe.com/5kQ9AT0u4cu72NfaVf0Ba09",
+      "21-50": "https://buy.stripe.com/14A3cv1y8bq3afH3sN0Ba0a",
+      "50+": "https://buy.stripe.com/fZu4gz90Abq3bjL0gB0Ba0b",
+    },
+    "14days": {
+      "1-5": "https://buy.stripe.com/6oU6oHdgQdyb9bDbZj0Ba0c",
+      "6-20": "https://buy.stripe.com/8x23cv90A0LpdrTbZj0Ba0d",
+      "21-50": "https://buy.stripe.com/dRm00j0u4cu7afH0gB0Ba0e",
+      "50+": "https://buy.stripe.com/4gM7sL6Ss1Pt3Rj1kF0Ba0f",
+    },
+  };
+
+  const handleContractCampaign = () => {
+    const checkoutUrl = stripeCheckoutUrls[duration][stores];
+    window.location.href = checkoutUrl;
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
@@ -175,7 +209,7 @@ export function KadehAdsCostSimulator() {
         </div>
 
         {/* Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-gray-700">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-gray-700 mb-6">
           <p className="font-semibold text-blue-900 mb-2">
             💡 Como funciona o cálculo:
           </p>
@@ -185,6 +219,14 @@ export function KadehAdsCostSimulator() {
             produtos selecionado.
           </p>
         </div>
+
+        {/* Contract Button */}
+        <Button
+          onClick={handleContractCampaign}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 h-auto font-semibold rounded-lg"
+        >
+          Contratar Agora
+        </Button>
       </Card>
     </div>
   );

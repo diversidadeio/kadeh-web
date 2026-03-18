@@ -310,6 +310,9 @@
   - [x] Criar simulador de custos baseado em planilha com 3 variáveis (dias, lojas, produtos)
   - [x] Integrar simulador na página de campanha Kadeh Ads
   - [x] Testar simulador com diferentes combinações (7 dias + 1-5 lojas = R$600)
+  - [x] Adicionar botão "Contratar Agora" no simulador de custos
+  - [x] Integrar redirecionamento ao Stripe com 16 URLs diferentes
+  - [x] Testar botão "Contratar Agora" (redirecionamento funciona!)
   - [ ] Implementar webhook para processar pagamentos confirmados
   - [ ] Atualizar status da campanha para "active" após pagamento confirmado
   - [ ] Implementar envio de email para adm@kadeh.io e cliente
