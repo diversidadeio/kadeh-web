@@ -5,10 +5,10 @@
  */
 
 export const DURATION_PRICES = {
-  "1day": 100,
-  "3days": 250,
-  "7days": 500,
-  "14days": 800,
+  "1day": 500,
+  "3days": 1200,
+  "7days": 2450,
+  "14days": 3500,
 } as const;
 
 export const STORE_MULTIPLIERS = {
