@@ -113,10 +113,12 @@ export default function KadehAdsCampaignPage() {
                 {language === "pt" ? "Criar Campanha" : "Create Campaign"}
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="aspect-video bg-gradient-to-br from-blue-200 to-indigo-300 rounded-lg flex items-center justify-center">
-                <Zap className="w-24 h-24 text-blue-600 opacity-50" />
-              </div>
+            <div className="bg-white rounded-lg shadow-lg p-8 overflow-hidden">
+              <img 
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/IAvkBFlhnYjimXcs.png"
+                alt="Casal feliz no supermercado com carrinho de compras"
+                className="w-full h-full object-cover rounded-lg"
+              />
             </div>
           </div>
         </div>

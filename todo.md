@@ -664,3 +664,5 @@
 - [x] Testar feedback visual (confirmado funcionando corretamente)
 
 - [x] Remover seção "Calcule seu Investimento" da página Kadeh Ads (simulador detalhado cobre essa necessidade)
+
+- [x] Substituir figura do hero section da página Kadeh Ads pela imagem de casal no supermercado
