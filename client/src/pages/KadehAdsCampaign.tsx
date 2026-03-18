@@ -2,7 +2,7 @@ import { KadehAdsCampaignForm } from "@/components/KadehAdsCampaignForm";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import { Zap, BarChart3, TrendingUp, Target, Users, DollarSign } from "lucide-react";
@@ -10,55 +10,8 @@ import { KadehAdsCostSimulator } from "@/components/KadehAdsCostSimulator";
 
 export default function KadehAdsCampaignPage() {
   const [showFormModal, setShowFormModal] = useState(false);
-  const [selectedDuration, setSelectedDuration] = useState<string>("");
-  const [selectedStores, setSelectedStores] = useState<string>("");
   const { language } = useLanguage();
   const t = translations[language];
-
-  // Pricing configuration
-  const pricingByDuration: Record<string, number> = {
-    "1day": 100,
-    "3days": 250,
-    "7days": 500,
-    "14days": 800,
-  };
-
-  const multiplierByStores: Record<string, number> = {
-    "1-5": 1.0,
-    "6-20": 1.5,
-    "21-50": 2.0,
-    "50+": 2.5,
-  };
-
-  const durationOptions = [
-    { value: "1day", label: language === "pt" ? "1 dia" : "1 day", price: 100 },
-    { value: "3days", label: language === "pt" ? "3 dias" : "3 days", price: 250 },
-    { value: "7days", label: language === "pt" ? "7 dias" : "7 days", price: 500 },
-    { value: "14days", label: language === "pt" ? "14 dias" : "14 days", price: 800 },
-  ];
-
-  const storeOptions = [
-    { value: "1-5", label: language === "pt" ? "1-5 lojas" : "1-5 stores", multiplier: 1.0 },
-    { value: "6-20", label: language === "pt" ? "6-20 lojas" : "6-20 stores", multiplier: 1.5 },
-    { value: "21-50", label: language === "pt" ? "21-50 lojas" : "21-50 stores", multiplier: 2.0 },
-    { value: "50+", label: language === "pt" ? "50+ lojas" : "50+ stores", multiplier: 2.5 },
-  ];
-
-  const calculatedPrice = useMemo(() => {
-    if (!selectedDuration || !selectedStores) return null;
-    
-    const basePrice = pricingByDuration[selectedDuration] || 0;
-    const multiplier = multiplierByStores[selectedStores] || 1;
-    const totalPrice = basePrice * multiplier;
-    
-    return {
-      basePrice,
-      multiplier,
-      totalPrice,
-      durationLabel: durationOptions.find(d => d.value === selectedDuration)?.label || "",
-      storesLabel: storeOptions.find(s => s.value === selectedStores)?.label || "",
-    };
-  }, [selectedDuration, selectedStores]);
 
   const benefits = [
     {
@@ -169,109 +122,8 @@ export default function KadehAdsCampaignPage() {
         </div>
       </section>
 
-      {/* Pricing Calculator Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
-        <div className="container max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-            {language === "pt" ? "Calcule seu Investimento" : "Calculate Your Investment"}
-          </h2>
-          
-          <div className="bg-white rounded-lg shadow-lg p-8 space-y-8">
-            {/* Duration Selection */}
-            <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
-                {language === "pt" ? "Duração da Campanha" : "Campaign Duration"}
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {durationOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setSelectedDuration(option.value)}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      selectedDuration === option.value
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <div className="font-semibold text-gray-900">{option.label}</div>
-                    <div className="text-sm text-gray-600">R$ {option.price}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Store Selection */}
-            <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
-                {language === "pt" ? "Quantidade de Lojas" : "Number of Stores"}
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {storeOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setSelectedStores(option.value)}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      selectedStores === option.value
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-gray-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <div className="font-semibold text-gray-900">{option.label}</div>
-                    <div className="text-sm text-gray-600">x{option.multiplier.toFixed(1)}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Price Display */}
-            {calculatedPrice && (
-              <div className="border-t-2 pt-8 space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-2">{language === "pt" ? "Preço Base" : "Base Price"}</p>
-                    <p className="text-2xl font-bold text-gray-900">R$ {calculatedPrice.basePrice.toFixed(2)}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-2">{language === "pt" ? "Multiplicador" : "Multiplier"}</p>
-                    <p className="text-2xl font-bold text-gray-900">x{calculatedPrice.multiplier.toFixed(1)}</p>
-                  </div>
-                  <div className="text-center bg-blue-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-600 mb-2">{language === "pt" ? "Valor Total" : "Total Value"}</p>
-                    <p className="text-3xl font-bold text-blue-600">R$ {calculatedPrice.totalPrice.toFixed(2)}</p>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 rounded-lg p-4 text-center">
-                  <p className="text-sm text-gray-600 mb-2">
-                    {language === "pt" ? "Resumo da Campanha" : "Campaign Summary"}
-                  </p>
-                  <p className="text-gray-900">
-                    {calculatedPrice.durationLabel} • {calculatedPrice.storesLabel}
-                  </p>
-                </div>
-
-                <Button 
-                  onClick={() => setShowFormModal(true)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6 h-auto font-semibold"
-                >
-                  {language === "pt" ? "Contratar Agora" : "Hire Now"}
-                </Button>
-              </div>
-            )}
-
-            {!calculatedPrice && (
-              <div className="text-center py-8 text-gray-500">
-                {language === "pt" 
-                  ? "Selecione duração e quantidade de lojas para calcular o valor"
-                  : "Select duration and number of stores to calculate the price"}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Cost Simulator Section */}
-      <section className="py-16 md:py-24 bg-white border-t border-gray-200">
+      <section className="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
         <div className="container max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
             {language === "pt" ? "Simulador de Custos Detalhado" : "Detailed Cost Simulator"}

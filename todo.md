@@ -662,3 +662,5 @@
 - [x] Implementar estado de carregamento no botão (já estava implementado)
 - [x] Adicionar ícone de spinner durante o carregamento (já estava implementado)
 - [x] Testar feedback visual (confirmado funcionando corretamente)
+
+- [x] Remover seção "Calcule seu Investimento" da página Kadeh Ads (simulador detalhado cobre essa necessidade)
