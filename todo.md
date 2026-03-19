@@ -672,3 +672,5 @@
 - [x] Adicionar imagem do Kadeh Ads à esquerda na seção do simulador de custos
 
 - [x] Atualizar valores de duração no simulador de custos: 1 dia R$500, 3 dias R$1.200, 7 dias R$2.450, 14 dias R$3.500
+
+- [x] Atualizar 64 URLs de checkout do Stripe com novos links fornecidos (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
