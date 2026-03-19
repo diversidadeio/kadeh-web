@@ -676,3 +676,5 @@
 - [x] Atualizar 64 URLs de checkout do Stripe com novos links fornecidos (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
 
 - [x] Reverter 64 URLs de checkout do Stripe para os links antigos (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
+
+- [x] Atualizar URLs do Stripe: manter 7 dias e atualizar 1 dia, 3 dias e 14 dias
