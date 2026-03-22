@@ -436,6 +436,142 @@ const createCheckoutSession = protectedProcedure
   });
 
 /**
+ * Listar campanhas do usuário
+ */
+const listUserCampaigns = protectedProcedure
+  .input(
+    z.object({
+      status: z.enum(["pending_approval", "approved", "rejected", "payment_pending", "active", "completed", "cancelled", "refunded"]).optional(),
+      sortBy: z.enum(["createdAt", "startDate", "totalCost"]).optional().default("createdAt"),
+      sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
+    }).optional()
+  )
+  .query(async ({ ctx, input }) => {
+    try {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      // Buscar anunciante do usuário
+      const advertiser = await db.query.advertisers.findFirst({
+        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+      });
+
+      if (!advertiser) {
+        return {
+          success: true,
+          campaigns: [],
+          total: 0,
+        };
+      }
+
+      // Buscar campanhas do anunciante
+      let campaigns: any[] = [];
+      if (input?.status) {
+        campaigns = await db.select().from(adCampaigns).where(
+          and(eq(adCampaigns.advertiserId, advertiser.id), eq(adCampaigns.status, input.status))
+        );
+      } else {
+        campaigns = await db.select().from(adCampaigns).where(eq(adCampaigns.advertiserId, advertiser.id));
+      }
+
+      // Ordenar campanhas
+      const sortedCampaigns = campaigns.sort((a, b) => {
+        let aValue: any = a[input?.sortBy || "createdAt"];
+        let bValue: any = b[input?.sortBy || "createdAt"];
+
+        if (aValue instanceof Date && bValue instanceof Date) {
+          return input?.sortOrder === "asc" ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime();
+        }
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return input?.sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+        }
+
+        return 0;
+      });
+
+      return {
+        success: true,
+        campaigns: sortedCampaigns,
+        total: sortedCampaigns.length,
+      };
+    } catch (error) {
+      console.error("Error listing campaigns:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to list campaigns",
+      });
+    }
+  });
+
+/**
+ * Obter detalhes de uma campanha
+ */
+const getCampaignDetails = protectedProcedure
+  .input(
+    z.object({
+      campaignId: z.number().int().positive(),
+    })
+  )
+  .query(async ({ ctx, input }) => {
+    try {
+      const db = await getDb();
+      if (!db) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database connection failed",
+        });
+      }
+
+      // Buscar campanha
+      const campaign = await db.query.adCampaigns.findFirst({
+        where: (camp, { eq }) => eq(camp.id, input.campaignId),
+      });
+
+      if (!campaign) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Campaign not found",
+        });
+      }
+
+      // Verificar se o usuário é o proprietário da campanha
+      const advertiser = await db.query.advertisers.findFirst({
+        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+      });
+
+      if (!advertiser || advertiser.id !== campaign.advertiserId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have permission to view this campaign",
+        });
+      }
+
+      // Buscar produtos da campanha
+      const products = await db.query.campaignProducts.findMany({
+        where: (prod, { eq }) => eq(prod.campaignId, input.campaignId),
+      });
+
+      return {
+        success: true,
+        campaign,
+        products,
+      };
+    } catch (error) {
+      console.error("Error getting campaign details:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get campaign details",
+      });
+    }
+  });
+
+/**
  * Router de campanhas
  */
 export const campaignsRouter = router({
@@ -443,4 +579,6 @@ export const campaignsRouter = router({
   validateStartDate,
   create: createCampaign,
   createCheckoutSession,
+  listUserCampaigns,
+  getCampaignDetails,
 });

@@ -683,3 +683,9 @@
 - [x] Configurar serviço de envio de emails (nodemailer ou similar)
 - [x] Criar templates de email para administrador e cliente
 - [x] Testar fluxo completo de pagamento e envio de emails
+
+- [x] Criar procedures tRPC para buscar campanhas do usuário
+- [x] Implementar página de dashboard com listagem de campanhas
+- [x] Criar modal/página de detalhes da campanha com analytics
+- [x] Adicionar filtros e ordenação no dashboard
+- [x] Testar funcionalidades do dashboard
