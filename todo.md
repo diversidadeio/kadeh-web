@@ -678,3 +678,8 @@
 - [x] Reverter 64 URLs de checkout do Stripe para os links antigos (4 durações × 4 faixas de lojas × 4 quantidades de produtos)
 
 - [x] Atualizar URLs do Stripe: manter 7 dias e atualizar 1 dia, 3 dias e 14 dias
+
+- [x] Implementar webhook do Stripe para processar eventos de pagamento confirmado
+- [x] Configurar serviço de envio de emails (nodemailer ou similar)
+- [x] Criar templates de email para administrador e cliente
+- [x] Testar fluxo completo de pagamento e envio de emails

@@ -4,6 +4,7 @@ import { getDb } from "./db";
 import { adCampaigns } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
+import { sendClientConfirmationEmail, sendAdminNotificationEmail, PaymentConfirmationData } from "./_core/emailService";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
@@ -77,6 +78,20 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       throw new Error("Database connection failed");
     }
 
+    // Buscar dados da campanha
+    const campaign = await db
+      .select()
+      .from(adCampaigns)
+      .where(eq(adCampaigns.id, parseInt(campaignId)))
+      .limit(1);
+
+    if (!campaign || campaign.length === 0) {
+      console.error(`Campaign ${campaignId} not found`);
+      return;
+    }
+
+    const campaignData = campaign[0];
+
     // Atualizar status da campanha para "active"
     await db
       .update(adCampaigns)
@@ -87,6 +102,28 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       .where(eq(adCampaigns.id, parseInt(campaignId)));
 
     console.log(`[Webhook] Campaign ${campaignId} activated after payment`);
+
+    // Preparar dados para envio de emails
+    const emailData: PaymentConfirmationData = {
+      campaignId: campaignData.id,
+      companyName: campaignData.companyName,
+      contactEmail: campaignData.contactEmail,
+      productName: campaignData.productName,
+      duration: campaignData.duration,
+      numberOfStores: campaignData.numberOfStores,
+      totalCost: parseFloat(campaignData.totalCost.toString()),
+      startDate: campaignData.startDate,
+      endDate: campaignData.endDate,
+      stripeSessionId: session.id,
+    };
+
+    // Enviar emails de confirmação
+    const clientEmailSent = await sendClientConfirmationEmail(emailData);
+    const adminEmailSent = await sendAdminNotificationEmail(emailData);
+
+    if (!clientEmailSent || !adminEmailSent) {
+      console.warn("[Webhook] One or more confirmation emails failed to send");
+    }
 
     // Notificar o proprietário
     await notifyOwner({
