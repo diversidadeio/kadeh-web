@@ -261,7 +261,7 @@ export default function KadehAdsManual() {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-2">Telefone</h3>
-                <p className="text-muted-foreground">(11) 3000-0000</p>
+                <p className="text-muted-foreground">(11) 98983-2953</p>
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-2">Horário</h3>
