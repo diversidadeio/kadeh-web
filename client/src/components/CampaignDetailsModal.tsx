@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Calendar, Clock, Barcode } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CampaignAnalytics } from "./CampaignAnalytics";
 
 interface CampaignDetailsModalProps {
   campaignId: number | null;
@@ -197,6 +198,17 @@ export function CampaignDetailsModal({ campaignId, isOpen, onClose }: CampaignDe
                 </div>
               </CardContent>
             </Card>
+
+            {/* Analytics */}
+            {campaign.status === "active" && (
+              <CampaignAnalytics
+                campaignId={campaignId}
+                campaignData={{
+                  startDate: new Date(campaign.startDate),
+                  endDate: new Date(campaign.endDate),
+                }}
+              />
+            )}
 
             {/* Ações */}
             <div className="flex gap-2 justify-end">

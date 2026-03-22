@@ -123,7 +123,7 @@ export const categoriesRouter = router({
           .where(and(...conditions))
           .orderBy(desc(productCategories.createdAt));
 
-        return categories.map(cat => ({
+        return categories.map((cat: any) => ({
           ...cat,
           salesVolume: parseFloat(cat.salesVolume as any),
           turnoverRate: parseFloat(cat.turnoverRate as any),
@@ -423,7 +423,7 @@ export const categoriesRouter = router({
           )
           .orderBy(desc(categoryPerformanceHistory.date));
 
-        return history.map(h => ({
+        return history.map((h: any) => ({
           ...h,
           salesVolume: parseFloat(h.salesVolume as any),
           turnoverRate: parseFloat(h.turnoverRate as any),
@@ -479,7 +479,7 @@ export const categoriesRouter = router({
           averageTurnover: 0,
           averageMargin: 0,
           averageStockout: 0,
-          categories: categories.map(cat => ({
+          categories: categories.map((cat: any) => ({
             ...cat,
             salesVolume: parseFloat(cat.salesVolume as any),
             turnoverRate: parseFloat(cat.turnoverRate as any),
@@ -489,15 +489,15 @@ export const categoriesRouter = router({
         };
 
         // Calculate aggregates
-        categories.forEach(cat => {
+        categories.forEach((cat: any) => {
           if (cat.mainCategory === "Alimentar") {
             analytics.byMainCategory.alimentar++;
           } else {
             analytics.byMainCategory.naoAlimentar++;
           }
 
-          analytics.byCurvaFaturamento[cat.curvaFaturamento]++;
-          analytics.byCurvaLucratividade[cat.curvaLucratividade]++;
+          analytics.byCurvaFaturamento[cat.curvaFaturamento as keyof typeof analytics.byCurvaFaturamento]++;
+          analytics.byCurvaLucratividade[cat.curvaLucratividade as keyof typeof analytics.byCurvaLucratividade]++;
 
           analytics.totalSalesVolume += parseFloat(cat.salesVolume as any);
           analytics.averageTurnover += parseFloat(cat.turnoverRate as any);

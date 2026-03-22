@@ -121,7 +121,7 @@ export const productsRouter = router({
           )
           .orderBy(desc(categoryProducts.createdAt));
 
-        return products.map(prod => ({
+        return products.map((prod: any) => ({
           ...prod,
           salesVolume: parseFloat(prod.salesVolume as any),
           turnoverRate: parseFloat(prod.turnoverRate as any),

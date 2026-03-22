@@ -222,7 +222,7 @@ export const createCampaign = protectedProcedure
 
       // Buscar ou criar anunciante para o usuário
       const existingAdvertiser = await db.query.advertisers.findFirst({
-        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+        where: (adv: any, { eq }: any) => eq(adv.userId, ctx.user.id),
       });
 
       let advertiserId: number;
@@ -384,7 +384,7 @@ const createCheckoutSession = protectedProcedure
 
       // Buscar a campanha
       const campaign = await db.query.adCampaigns.findFirst({
-        where: (camp, { eq }) => eq(camp.id, input.campaignId),
+        where: (camp: any, { eq }: any) => eq(camp.id, input.campaignId),
       });
 
       if (!campaign) {
@@ -458,7 +458,7 @@ const listUserCampaigns = protectedProcedure
 
       // Buscar anunciante do usuário
       const advertiser = await db.query.advertisers.findFirst({
-        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+        where: (adv: any, { eq }: any) => eq(adv.userId, ctx.user.id),
       });
 
       if (!advertiser) {
@@ -530,7 +530,7 @@ const getCampaignDetails = protectedProcedure
 
       // Buscar campanha
       const campaign = await db.query.adCampaigns.findFirst({
-        where: (camp, { eq }) => eq(camp.id, input.campaignId),
+        where: (camp: any, { eq }: any) => eq(camp.id, input.campaignId),
       });
 
       if (!campaign) {
@@ -542,7 +542,7 @@ const getCampaignDetails = protectedProcedure
 
       // Verificar se o usuário é o proprietário da campanha
       const advertiser = await db.query.advertisers.findFirst({
-        where: (adv, { eq }) => eq(adv.userId, ctx.user.id),
+        where: (adv: any, { eq }: any) => eq(adv.userId, ctx.user.id),
       });
 
       if (!advertiser || advertiser.id !== campaign.advertiserId) {
@@ -554,7 +554,7 @@ const getCampaignDetails = protectedProcedure
 
       // Buscar produtos da campanha
       const products = await db.query.campaignProducts.findMany({
-        where: (prod, { eq }) => eq(prod.campaignId, input.campaignId),
+        where: (prod: any, { eq }: any) => eq(prod.campaignId, input.campaignId),
       });
 
       return {

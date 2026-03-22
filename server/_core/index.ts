@@ -10,6 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { storagePut } from "../storage";
 import multer from "multer";
 import { handleStripeWebhook } from "../stripeWebhook";
+import { startCampaignNotificationScheduler } from "./campaignNotifications";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -99,3 +100,8 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+// Iniciar scheduler de notificações de campanhas
+setTimeout(() => {
+  startCampaignNotificationScheduler();
+}, 5000);
