@@ -695,3 +695,5 @@
 - [x] Implementar sistema de notificações automáticas para campanhas
 
 - [x] Corrigir 30 erros de tipo restantes em KadehAdsContratacao.tsx, stripeWebhook.ts e adsPaymentRouter.ts
+
+- [x] Implementar recurso de exportação de histórico de campanhas em formato CSV

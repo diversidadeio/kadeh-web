@@ -572,6 +572,90 @@ const getCampaignDetails = protectedProcedure
   });
 
 /**
+ * Exportar campanhas em CSV
+ */
+const exportCampaignsCSV = protectedProcedure
+  .query(async ({ ctx }) => {
+    try {
+      const db = getDb();
+      
+      // Buscar todas as campanhas do usuário
+      const campaigns = await (db as any).query.adCampaigns.findMany({
+        where: (campaign: any, { eq }: any) => eq(campaign.userId, ctx.user.id),
+      });
+
+      if (!campaigns || campaigns.length === 0) {
+        return {
+          success: true,
+          csv: "No campaigns found",
+          filename: "campaigns_empty.csv",
+        };
+      }
+
+      // Buscar produtos para cada campanha
+      const campaignsWithProducts = await Promise.all(
+        campaigns.map(async (campaign: any) => {
+          const products = await (db as any).query.campaignProducts.findMany({
+            where: (prod: any, { eq }: any) => eq(prod.campaignId, campaign.id),
+          });
+          return { ...campaign, products };
+        })
+      );
+
+      // Gerar CSV
+      const headers = [
+        "ID da Campanha",
+        "Nome da Empresa",
+        "Email de Contato",
+        "Telefone",
+        "Duração",
+        "Número de Lojas",
+        "Número de Produtos",
+        "Data de Início",
+        "Data de Criação",
+        "Status",
+        "Valor Total (R$)",
+        "Produtos",
+      ];
+
+      const rows = campaignsWithProducts.map((campaign: any) => [
+        campaign.id,
+        campaign.companyName,
+        campaign.contactEmail,
+        campaign.contactPhone,
+        campaign.duration,
+        campaign.numberOfStores,
+        campaign.numberOfProducts,
+        new Date(campaign.startDate).toLocaleDateString("pt-BR"),
+        new Date(campaign.createdAt).toLocaleDateString("pt-BR"),
+        campaign.status || "active",
+        campaign.totalCost?.toFixed(2) || "0.00",
+        campaign.products?.map((p: any) => p.productName).join("; ") || "",
+      ]);
+
+      // Converter para CSV
+      const csv = [
+        headers.map((h) => `"${h}"`).join(","),
+        ...rows.map((row: any) => row.map((cell: any) => `"${cell}"`).join(",")),
+      ].join("\n");
+
+      const filename = `campanhas_kadeh_${new Date().toISOString().split("T")[0]}.csv`;
+
+      return {
+        success: true,
+        csv,
+        filename,
+      };
+    } catch (error) {
+      console.error("Error exporting campaigns to CSV:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to export campaigns",
+      });
+    }
+  });
+
+/**
  * Router de campanhas
  */
 export const campaignsRouter = router({
@@ -581,4 +665,5 @@ export const campaignsRouter = router({
   createCheckoutSession,
   listUserCampaigns,
   getCampaignDetails,
+  exportCSV: exportCampaignsCSV,
 });

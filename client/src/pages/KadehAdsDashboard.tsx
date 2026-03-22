@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, DollarSign, MapPin, Package, Clock, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { Calendar, DollarSign, MapPin, Package, Clock, CheckCircle, AlertCircle, XCircle, Download } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CampaignDetailsModal } from "@/components/CampaignDetailsModal";
@@ -121,6 +121,13 @@ export default function KadehAdsDashboard() {
               <div className="text-2xl font-bold text-accent">R$ {stats.totalSpent.toFixed(2)}</div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Botão de Exportação e Filtros */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex-1">
+            <ExportButton />
+          </div>
         </div>
 
         {/* Filtros */}
@@ -300,5 +307,39 @@ export default function KadehAdsDashboard() {
         onClose={() => setSelectedCampaignId(null)}
       />
     </div>
+  );
+}
+
+function ExportButton() {
+  const { data: csvData, isLoading } = trpc.campaigns.exportCSV.useQuery();
+
+  const handleExport = () => {
+    if (!csvData?.csv) {
+      alert("Nenhuma campanha para exportar");
+      return;
+    }
+
+    const blob = new Blob([csvData.csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", csvData.filename);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <Button
+      onClick={handleExport}
+      disabled={isLoading}
+      className="gap-2"
+    >
+      <Download className="w-4 h-4" />
+      {isLoading ? "Preparando..." : "Exportar em CSV"}
+    </Button>
   );
 }
