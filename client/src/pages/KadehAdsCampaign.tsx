@@ -106,12 +106,22 @@ export default function KadehAdsCampaignPage() {
                   ? "Publicidade inteligente no ponto de venda. Posicione seus produtos onde os clientes mais compram com dados em tempo real."
                   : "Smart point-of-sale advertising. Position your products where customers buy most with real-time data."}
               </p>
-              <Button 
-                onClick={() => setShowFormModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-6 h-auto"
-              >
-                {language === "pt" ? "Criar Campanha" : "Create Campaign"}
-              </Button>
+              <div className="flex gap-4">
+                <Button 
+                  onClick={() => setShowFormModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-6 h-auto"
+                >
+                  {language === "pt" ? "Criar Campanha" : "Create Campaign"}
+                </Button>
+                <a href="/pt/kadeh-ads/manual">
+                  <Button 
+                    variant="outline"
+                    className="text-lg px-8 py-6 h-auto border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
+                    {language === "pt" ? "📖 Passo a Passo" : "📖 Tutorial"}
+                  </Button>
+                </a>
+              </div>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-8 overflow-hidden">
               <img 

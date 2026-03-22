@@ -22,6 +22,7 @@ import KadehAdsCancel from "./pages/KadehAdsCancel";
 import KadehAdsContratacao from "./pages/KadehAdsContratacao";
 import KadehAdsPaymentPage from "./pages/KadehAdsPaymentPage";
 import KadehAdsDashboard from "./pages/KadehAdsDashboard";
+import KadehAdsManual from "./pages/KadehAdsManual";
 import StoreMapping from "./pages/StoreMapping";
 import AdminCategories from "./pages/AdminCategories";
 import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/pt/kadeh-ads/contratacao" component={KadehAdsContratacao} />
       <Route path="/pt/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/pt/kadeh-ads/dashboard" component={KadehAdsDashboard} />
+      <Route path="/pt/kadeh-ads/manual" component={KadehAdsManual} />
       <Route path="/pt/store-mapping" component={StoreMapping} />
       <Route path="/pt/admin/categories" component={AdminCategories} />
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />

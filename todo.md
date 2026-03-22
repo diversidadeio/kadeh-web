@@ -697,3 +697,7 @@
 - [x] Corrigir 30 erros de tipo restantes em KadehAdsContratacao.tsx, stripeWebhook.ts e adsPaymentRouter.ts
 
 - [x] Implementar recurso de exportação de histórico de campanhas em formato CSV
+
+- [x] Criar manual completo do usuário do Kadeh Ads com screenshots e passo a passo
+
+- [x] Adicionar botão de acesso ao manual/passo a passo na página do Kadeh Ads
