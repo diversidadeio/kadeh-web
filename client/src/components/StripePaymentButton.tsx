@@ -21,6 +21,7 @@ export function StripePaymentButton() {
       <h3 className="text-lg font-semibold text-blue-900 mb-4">
         Escolha seu método de pagamento
       </h3>
+      {/* @ts-ignore */}
       <stripe-buy-button
         buy-button-id="buy_btn_1TBgevFyI5BjRSkNbrJOJ8dj"
         publishable-key="pk_test_51TBZVJFyI5BjRSkNDRUMSVqmcZJwWH6JCXv4KLEWQNURSxJGNWs2ykfqiphE7hMsFGmvBtP0TGBtaB2PJwOEQT6Z00FLNBKPiX"

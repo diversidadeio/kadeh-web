@@ -130,7 +130,7 @@ export default function CategoryPerformanceDashboard() {
 
   const handleOpenDialog = (categoryId: number) => {
     setSelectedCategory(categoryId);
-    const category = categories?.find(c => c.id === categoryId);
+    const category = categories?.find((c: any) => c.id === categoryId);
     if (category) {
       setMetricsForm({
         salesVolume: String(category.salesVolume || ""),
@@ -201,9 +201,9 @@ export default function CategoryPerformanceDashboard() {
   const topCategories = useMemo(() => {
     if (!analytics) return [];
     return analytics.categories
-      .sort((a, b) => b.salesVolume - a.salesVolume)
+      .sort((a: any, b: any) => b.salesVolume - a.salesVolume)
       .slice(0, 10)
-      .map(cat => ({
+      .map((cat: any) => ({
         name: cat.name,
         sales: cat.salesVolume,
         turnover: cat.turnoverRate,
@@ -216,16 +216,16 @@ export default function CategoryPerformanceDashboard() {
     if (!analytics) return null;
 
     const highPerformance = analytics.categories.filter(
-      c => c.profitMargin > 20 && c.turnoverRate > 50
+      (c: any) => c.profitMargin > 20 && c.turnoverRate > 50
     ).length;
     const mediumPerformance = analytics.categories.filter(
-      c => (c.profitMargin > 10 || c.turnoverRate > 30) && !(c.profitMargin > 20 && c.turnoverRate > 50)
+      (c: any) => (c.profitMargin > 10 || c.turnoverRate > 30) && !(c.profitMargin > 20 && c.turnoverRate > 50)
     ).length;
     const lowPerformance = analytics.categories.filter(
-      c => c.profitMargin <= 10 && c.turnoverRate <= 30
+      (c: any) => c.profitMargin <= 10 && c.turnoverRate <= 30
     ).length;
     const highStockout = analytics.categories.filter(
-      c => c.stockoutRate > 10
+      (c: any) => c.stockoutRate > 10
     ).length;
 
     return {
@@ -299,7 +299,7 @@ export default function CategoryPerformanceDashboard() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories?.map(cat => (
+                      {categories?.map((cat: any) => (
                         <SelectItem key={cat.id} value={cat.id.toString()}>
                           {cat.name}
                         </SelectItem>

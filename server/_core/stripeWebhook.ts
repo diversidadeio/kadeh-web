@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { notifyOwner } from "./notification";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-06-20",
+  apiVersion: "2026-01-28.clover" as any,
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";

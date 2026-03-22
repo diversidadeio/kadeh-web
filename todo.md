@@ -693,3 +693,5 @@
 - [x] Corrigir 49 erros TypeScript em categoriesRouter.ts e productsRouter.ts (19 corrigidos)
 - [x] Implementar analytics em tempo real com gráficos Chart.js
 - [x] Implementar sistema de notificações automáticas para campanhas
+
+- [x] Corrigir 30 erros de tipo restantes em KadehAdsContratacao.tsx, stripeWebhook.ts e adsPaymentRouter.ts

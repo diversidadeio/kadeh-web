@@ -346,9 +346,6 @@ export function KadehAdsCampaignForm() {
           productImageUrl: p.productImageUrl,
           productEAN13: p.productEAN13.replace(/\D/g, ""),
         })),
-        basePrice: pricingInfo?.basePrice || 0,
-        multiplier: pricingInfo?.multiplier || 1,
-        totalCost: pricingInfo?.totalCost || 0,
       });
 
       setSuccessMessage(t.success);

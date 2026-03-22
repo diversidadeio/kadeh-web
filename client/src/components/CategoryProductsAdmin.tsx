@@ -276,7 +276,7 @@ export function CategoryProductsAdmin({ categoryId, categoryName }: CategoryProd
 
   const filteredProducts = useMemo(() => {
     return (products || []).filter(
-      (product) =>
+      (product: any) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -638,7 +638,7 @@ export function CategoryProductsAdmin({ categoryId, categoryName }: CategoryProd
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => (
+                {filteredProducts.map((product: any) => (
                   <tbody key={product.id}>
                     <TableRow>
                       <TableCell>

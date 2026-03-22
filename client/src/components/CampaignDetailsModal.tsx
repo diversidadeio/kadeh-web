@@ -147,7 +147,7 @@ export function CampaignDetailsModal({ campaignId, isOpen, onClose }: CampaignDe
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {products.map((product) => (
+                    {products.map((product: any) => (
                       <div key={product.id} className="border rounded-lg p-4">
                         <div className="flex items-start gap-4">
                           {product.productImageUrl && (

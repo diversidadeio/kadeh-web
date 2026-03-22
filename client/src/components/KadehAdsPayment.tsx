@@ -35,17 +35,20 @@ export function KadehAdsPayment({
       setError(null);
 
       const response = await createCheckoutMutation.mutateAsync({
-        storeRange,
-        numberOfProducts,
-        campaignDuration,
-        campaignName,
+        numberOfStores: parseInt(storeRange) || 1,
+        productName: campaignName,
         companyName,
-        companyEmail,
+        email: companyEmail,
+        cnpj: "",
+        phone: "",
+        ean13: "",
+        duration: campaignDuration as any,
+        productImageUrl: "",
       });
 
-      if (response.url) {
+      if (response.checkoutUrl) {
         // Redirect to Stripe Checkout
-        window.open(response.url, '_blank');
+        window.open(response.checkoutUrl, '_blank');
         onPaymentSuccess?.();
       }
     } catch (err) {

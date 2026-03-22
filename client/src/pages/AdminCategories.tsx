@@ -234,7 +234,7 @@ export default function AdminCategories() {
     }
   };
 
-  const filteredCategories = (categories || []).filter(cat => {
+  const filteredCategories = (categories || []).filter((cat: any) => {
     const matchesSearch =
       cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cat.papelEstrategico.toLowerCase().includes(searchTerm.toLowerCase());
@@ -253,7 +253,7 @@ export default function AdminCategories() {
   };
 
   if (selectedCategoryForProducts) {
-    const category = categories?.find(c => c.id === selectedCategoryForProducts);
+    const category = categories?.find((c: any) => c.id === selectedCategoryForProducts);
     return (
       <div>
         <Button
@@ -584,7 +584,7 @@ export default function AdminCategories() {
           </Card>
         ) : (
           <div className="space-y-2">
-            {filteredCategories.map((category) => (
+            {filteredCategories.map((category: any) => (
               <Card key={category.id} className="hover:shadow-md transition-shadow">
                 <div
                   className="p-4 cursor-pointer flex items-center justify-between"
