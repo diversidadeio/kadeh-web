@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronDown, ChevronUp, Download, Home } from "lucide-react";
 import { Link } from "wouter";
+import { ContactFormModal } from "@/components/ContactFormModal";
 
 export default function KadehAdsManual() {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -15,6 +16,9 @@ export default function KadehAdsManual() {
     exportacao: false,
     faq: false,
   });
+  const [contactFormOpen, setContactFormOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -117,6 +121,68 @@ export default function KadehAdsManual() {
       ],
     },
   ];
+
+  const faqItems = [
+    {
+      category: "Geral",
+      question: "O que é Kadeh Ads?",
+      answer: "Kadeh Ads é uma plataforma de publicidade inteligente no ponto de venda que permite posicionar seus produtos onde os clientes mais compram.",
+    },
+    {
+      category: "Geral",
+      question: "Como funciona o sistema de preços?",
+      answer: "O preço é calculado multiplicando o valor da duração pelo multiplicador de lojas e adicionando o valor do pacote de produtos.",
+    },
+    {
+      category: "Campanhas",
+      question: "Qual é o tempo mínimo para agendar uma campanha?",
+      answer: "O tempo mínimo é de 7 dias úteis. Você pode agendar campanhas com durações de 1, 3, 7 ou 14 dias.",
+    },
+    {
+      category: "Campanhas",
+      question: "Posso modificar uma campanha após criá-la?",
+      answer: "Sim, você pode modificar uma campanha se ela estiver com status 'Aguardando Aprovação'. Após aprovação, não é possível fazer alterações.",
+    },
+    {
+      category: "Pagamento",
+      question: "Quais são as formas de pagamento?",
+      answer: "Aceitamos cartão de crédito através do Stripe. O pagamento é processado imediatamente após a confirmação dos dados.",
+    },
+    {
+      category: "Pagamento",
+      question: "Recebo recibo de pagamento?",
+      answer: "Sim, você recebe um email com o recibo de pagamento e confirmação da campanha após o processamento bem-sucedido.",
+    },
+    {
+      category: "Analytics",
+      question: "Quando posso visualizar os resultados?",
+      answer: "Os dados estão disponíveis em tempo real no dashboard assim que a campanha é ativada.",
+    },
+    {
+      category: "Analytics",
+      question: "Como é calculada a taxa de conversão?",
+      answer: "A taxa de conversão é calculada como: (Conversões ÷ Cliques) × 100. Ela mostra o percentual de cliques que resultaram em compra.",
+    },
+    {
+      category: "Suporte",
+      question: "Qual é o horário de atendimento?",
+      answer: "Nosso suporte funciona de segunda a sexta, das 9h às 18h. Você pode entrar em contato via email ou WhatsApp.",
+    },
+    {
+      category: "Suporte",
+      question: "Como faço para exportar meus dados?",
+      answer: "No dashboard de campanhas, clique no botão 'Exportar em CSV' para baixar um arquivo com todos os seus dados.",
+    },
+  ];
+
+  const categories = Array.from(new Set(faqItems.map((item) => item.category)));
+  const filteredFAQ = faqItems.filter((item) => {
+    const matchesSearch =
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -260,8 +326,15 @@ export default function KadehAdsManual() {
                 <p className="text-muted-foreground">suporte@kadeh.io</p>
               </div>
               <div>
-                <h3 className="font-semibold text-foreground mb-2">Telefone</h3>
-                <p className="text-muted-foreground">(11) 98983-2953</p>
+                <h3 className="font-semibold text-foreground mb-2">WhatsApp</h3>
+                <a 
+                  href="https://wa.me/5511989832953" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  (11) 98983-2953
+                </a>
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-2">Horário</h3>
@@ -275,6 +348,87 @@ export default function KadehAdsManual() {
                   Disponível na plataforma
                 </p>
               </div>
+            </div>
+            <div className="mt-6 pt-6 border-t">
+              <Button 
+                onClick={() => setContactFormOpen(true)}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                📧 Enviar Formulário de Contato
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <ContactFormModal 
+          open={contactFormOpen} 
+          onOpenChange={setContactFormOpen} 
+        />
+
+        {/* FAQ Section */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>❓ Dúvidas Frequentes</CardTitle>
+            <CardDescription>
+              Encontre respostas para as perguntas mais comuns
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Search Bar */}
+            <div className="mb-6">
+              <input
+                type="text"
+                placeholder="Busque por palavras-chave..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+
+            {/* Category Filter */}
+            <div className="mb-6 flex flex-wrap gap-2">
+              <Button
+                variant={selectedCategory === null ? "default" : "outline"}
+                onClick={() => setSelectedCategory(null)}
+                size="sm"
+              >
+                Todas
+              </Button>
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(category)}
+                  size="sm"
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+
+            {/* FAQ Items */}
+            <div className="space-y-4">
+              {filteredFAQ.length > 0 ? (
+                filteredFAQ.map((item, idx) => (
+                  <Card key={idx} className="bg-accent/5">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-base">{item.question}</CardTitle>
+                        <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded">
+                          {item.category}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{item.answer}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  Nenhuma pergunta encontrada. Tente outra busca ou entre em contato conosco.
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>

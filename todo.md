@@ -703,3 +703,7 @@
 - [x] Adicionar botão de acesso ao manual/passo a passo na página do Kadeh Ads
 
 - [x] Atualizar telefone no manual de 11 3000-0000 para 11 98983-2953
+
+- [x] Adicionar WhatsApp link no manual
+- [x] Integrar formulário de contato no manual
+- [x] Criar FAQ dinâmico com busca e categorização
