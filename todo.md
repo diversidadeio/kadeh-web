@@ -707,3 +707,6 @@
 - [x] Adicionar WhatsApp link no manual
 - [x] Integrar formulário de contato no manual
 - [x] Criar FAQ dinâmico com busca e categorização
+
+- [ ] Corrigir visualização de gôndola: prateleira I na parte inferior, prateleira superior na parte superior
+- [ ] Sincronizar representação em IA com visualização de gôndola

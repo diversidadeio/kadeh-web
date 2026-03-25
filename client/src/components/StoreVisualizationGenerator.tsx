@@ -129,12 +129,12 @@ export default function StoreVisualizationGenerator({
     let handLevelSpec = "";
     let bottomLevelSpec = "";
 
-    if (eyeLevelPercentages.length > 0) {
-      eyeLevelSpec = `\n**PRATELEIRA 1 - ALTURA DOS OLHOS (Top Shelf):**\n`;
-      eyeLevelPercentages.forEach((p, idx) => {
-        eyeLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+     if (bottomLevelPercentages.length > 0) {
+      bottomLevelSpec = `\n**PRATELEIRA 1 - PARTE DE BAIXO (Bottom Shelf - INFERIOR):**\n`;
+      bottomLevelPercentages.forEach((p, idx) => {
+        bottomLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
       });
-      eyeLevelSpec += `Total: ${(eyeLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
+      bottomLevelSpec += `Total: ${(bottomLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
     if (handLevelPercentages.length > 0) {
@@ -145,19 +145,19 @@ export default function StoreVisualizationGenerator({
       handLevelSpec += `Total: ${(handLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
-    if (bottomLevelPercentages.length > 0) {
-      bottomLevelSpec = `\n**PRATELEIRA 5 - PARTE DE BAIXO (Bottom Shelf):**\n`;
-      bottomLevelPercentages.forEach((p, idx) => {
-        bottomLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+    if (eyeLevelProducts.length > 0) {
+      eyeLevelSpec = `\n**PRATELEIRA 5 - ALTURA DOS OLHOS (Top Shelf - SUPERIOR):**\n`;
+      eyeLevelPercentages.forEach((p, idx) => {
+        eyeLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
       });
-      bottomLevelSpec += `Total: ${(bottomLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
+      eyeLevelSpec += `Total: ${(eyeLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
     }
 
     // Build visual layout
     let visualLayout = "";
-    if (eyeLevelProducts.length > 0) {
-      visualLayout += `\n[ALTURA DOS OLHOS]\n`;
-      eyeLevelProducts.forEach(p => {
+    if (bottomLevelProducts.length > 0) {
+      visualLayout += `\n[PARTE DE BAIXO - INFERIOR]\n`;
+      bottomLevelProducts.forEach(p => {
         visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
@@ -167,9 +167,9 @@ export default function StoreVisualizationGenerator({
         visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
-    if (bottomLevelProducts.length > 0) {
-      visualLayout += `\n[PARTE DE BAIXO]\n`;
-      bottomLevelProducts.forEach(p => {
+    if (eyeLevelProducts.length > 0) {
+      visualLayout += `\n[ALTURA DOS OLHOS - SUPERIOR]\n`;
+      eyeLevelProducts.forEach(p => {
         visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
       });
     }
@@ -191,20 +191,24 @@ ${eyeLevelSpec}${handLevelSpec}${bottomLevelSpec}
 ${visualLayout}
 
 **REGRAS OBRIGATÓRIAS DE POSICIONAMENTO:**
-1. ALTURA DOS OLHOS (Prateleira 1): Produtos da esquerda para direita nesta ordem exata: ${eyeLevelProducts.map(p => p.name).join(' → ')}
+1. PARTE DE BAIXO (Prateleira 1 - INFERIOR): Produtos da esquerda para direita nesta ordem exata: ${bottomLevelProducts.map(p => p.name).join(' → ')}
 2. ALTURA DAS MÃOS (Prateleiras 2-4): Produtos da esquerda para direita nesta ordem exata: ${handLevelProducts.map(p => p.name).join(' → ')}
-3. PARTE DE BAIXO (Prateleira 5): Produtos da esquerda para direita nesta ordem exata: ${bottomLevelProducts.map(p => p.name).join(' → ')}
+3. ALTURA DOS OLHOS (Prateleira 5 - SUPERIOR): Produtos da esquerda para direita nesta ordem exata: ${eyeLevelProducts.map(p => p.name).join(' → ')}
 4. Cada produto ocupa seu percentual especificado da largura da prateleira
 5. Produtos são agrupados por nível de prateleira - NÃO misture produtos entre prateleiras
 6. Repita a sequência de produtos horizontalmente para preencher a largura da prateleira
-7. Mantenha aparência profissional de varejo com iluminação adequada
+7. NENHUMA prateleira pode estar vazia - preencha completamente com os produtos listados
+8. Use APENAS os produtos especificados acima - não adicione produtos fictícios ou genéricos
+9. Mantenha aparência profissional de varejo com iluminação adequada
 
 **IMPORTANTE - NÃO FAÇA:**
 - Mude a ordem dos produtos
 - Coloque produtos em prateleiras erradas
-- Use produtos genéricos de placeholder
+- Use produtos genéricos de placeholder ou fictícios
 - Ignore os percentuais especificados
 - Gere produtos diferentes dos listados
+- Deixe prateleiras vazias ou parcialmente preenchidas
+- Adicione produtos que não estão na lista de simulação
 
 **ESTILO VISUAL:**
 - Ambiente profissional de supermercado/varejo
