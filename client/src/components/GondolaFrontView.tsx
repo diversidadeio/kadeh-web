@@ -8,6 +8,8 @@ interface Product {
   quadrantes: number;
   largura?: number;
   share?: number;
+  giro?: string;
+  margem?: string;
 }
 
 interface GondolaFrontViewProps {
@@ -109,6 +111,10 @@ function renderShelfSection(
 ) {
   const zoneColor = colors[zone as keyof typeof colors];
   
+  // Calcular espaço utilizado
+  const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
+  const usedPercentage = Math.min(totalShare, 100);
+  
   return (
     <div key={`shelf-${shelfNumber}`}>
       <div className="flex items-center gap-2 mb-2">
@@ -120,7 +126,7 @@ function renderShelfSection(
           {language === 'pt' ? `Prateleira ${shelfNumber}` : `Shelf ${shelfNumber}`} ({zoneColor.label})
         </span>
         <span className="text-xs text-gray-500">
-          {totalWidth}cm / {totalWidth}cm (100%)
+          {usedPercentage.toFixed(1)}% / 100%
         </span>
       </div>
       <div
@@ -140,6 +146,55 @@ function renderShelfSection(
       </div>
     </div>
   );
+}
+
+/**
+ * Distribui produtos nas prateleiras respeitando percentuais recomendados
+ * Se houver espaço sobrando na Parte de Baixo, preenche com produtos de Altura das Mãos
+ */
+function distributeProductsToShelves(products: Product[]): {
+  shelf1: Product[];
+  shelves2to4: Product[];
+  shelf5: Product[];
+} {
+  const productsByZone = {
+    'Altura dos olhos': products.filter(p => (p.zone || p.zona) === 'Altura dos olhos'),
+    'Altura das mãos': products.filter(p => (p.zone || p.zona) === 'Altura das mãos'),
+    'Parte de Baixo': products.filter(p => (p.zone || p.zona) === 'Parte de Baixo'),
+  };
+
+  // Calcular espaço utilizado na Parte de Baixo
+  const bottomShare = productsByZone['Parte de Baixo'].reduce((sum, p) => sum + (p.share || 0), 0);
+  const spaceRemaining = 100 - bottomShare;
+
+  // Se há espaço sobrando na Parte de Baixo, preencher com produtos de Altura das Mãos
+  let shelf1Products = [...productsByZone['Parte de Baixo']];
+  let handLevelProducts = [...productsByZone['Altura das mãos']];
+
+  if (spaceRemaining > 0 && handLevelProducts.length > 0) {
+    // Adicionar produtos de Altura das Mãos à Parte de Baixo até preencher 100%
+    let remainingSpace = spaceRemaining;
+    const productsToAdd: Product[] = [];
+    
+    for (const product of handLevelProducts) {
+      if (remainingSpace <= 0) break;
+      
+      const productShare = product.share || 0;
+      if (productShare <= remainingSpace) {
+        productsToAdd.push(product);
+        remainingSpace -= productShare;
+      }
+    }
+
+    shelf1Products = [...shelf1Products, ...productsToAdd];
+    handLevelProducts = handLevelProducts.filter(p => !productsToAdd.includes(p));
+  }
+
+  return {
+    shelf1: shelf1Products,
+    shelves2to4: handLevelProducts,
+    shelf5: productsByZone['Altura dos olhos'],
+  };
 }
 
 export default function GondolaFrontView({
@@ -229,12 +284,8 @@ export default function GondolaFrontView({
     );
   }
 
-  // REGRA 2 & 3: Múltiplos produtos - distribuir por zona e repetir por largura
-  const productsByZone = {
-    'Altura dos olhos': products.filter(p => (p.zone || p.zona) === 'Altura dos olhos'),
-    'Altura das mãos': products.filter(p => (p.zone || p.zona) === 'Altura das mãos'),
-    'Parte de Baixo': products.filter(p => (p.zone || p.zona) === 'Parte de Baixo'),
-  };
+  // REGRA 2 & 3: Múltiplos produtos - distribuir por zona e preencher espaço sobrando
+  const { shelf1, shelves2to4, shelf5 } = distributeProductsToShelves(products);
 
   return (
     <div className="w-full space-y-6">
@@ -244,7 +295,7 @@ export default function GondolaFrontView({
           {renderShelfSection(
             5,
             'Altura dos olhos',
-            productsByZone['Altura dos olhos'],
+            shelf5,
             totalWidth,
             shelfHeight,
             colors,
@@ -255,7 +306,7 @@ export default function GondolaFrontView({
           {renderShelfSection(
             4,
             'Altura das mãos',
-            productsByZone['Altura das mãos'],
+            shelves2to4,
             totalWidth,
             shelfHeight,
             colors,
@@ -266,7 +317,7 @@ export default function GondolaFrontView({
           {renderShelfSection(
             3,
             'Altura das mãos',
-            productsByZone['Altura das mãos'],
+            shelves2to4,
             totalWidth,
             shelfHeight,
             colors,
@@ -277,7 +328,7 @@ export default function GondolaFrontView({
           {renderShelfSection(
             2,
             'Altura das mãos',
-            productsByZone['Altura das mãos'],
+            shelves2to4,
             totalWidth,
             shelfHeight,
             colors,
@@ -288,7 +339,7 @@ export default function GondolaFrontView({
           {renderShelfSection(
             1,
             'Parte de Baixo',
-            productsByZone['Parte de Baixo'],
+            shelf1,
             totalWidth,
             shelfHeight,
             colors,
