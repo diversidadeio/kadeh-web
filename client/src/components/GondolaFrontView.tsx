@@ -95,6 +95,53 @@ function renderShelf(
   );
 }
 
+/**
+ * Renderiza uma seção de prateleira com número e label
+ */
+function renderShelfSection(
+  shelfNumber: number,
+  zone: string,
+  productsInZone: Product[],
+  totalWidth: number,
+  shelfHeight: number,
+  colors: any,
+  language: string
+) {
+  const zoneColor = colors[zone as keyof typeof colors];
+  
+  return (
+    <div key={`shelf-${shelfNumber}`}>
+      <div className="flex items-center gap-2 mb-2">
+        <div
+          className="w-4 h-4 rounded"
+          style={{ backgroundColor: zoneColor.bg }}
+        />
+        <span className="text-sm font-semibold text-gray-700">
+          {language === 'pt' ? `Prateleira ${shelfNumber}` : `Shelf ${shelfNumber}`} ({zoneColor.label})
+        </span>
+        <span className="text-xs text-gray-500">
+          {totalWidth}cm / {totalWidth}cm (100%)
+        </span>
+      </div>
+      <div
+        className="border-2 rounded-md overflow-hidden"
+        style={{
+          borderColor: zoneColor.border,
+          height: `${shelfHeight}px`,
+        }}
+      >
+        {renderShelf(
+          productsInZone,
+          totalWidth,
+          shelfHeight,
+          zoneColor,
+          language
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function GondolaFrontView({
   products,
   totalWidth = 280,
@@ -122,95 +169,60 @@ export default function GondolaFrontView({
       <div className="w-full space-y-6">
         <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
           <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4 space-y-4">
-            {/* Bottom Shelf */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: colors['Parte de Baixo'].bg }}
-                />
-                <span className="text-sm font-semibold text-gray-700">
-                  {colors['Parte de Baixo'].label}
-                </span>
-              </div>
-              <div
-                className="flex border-2 rounded-md overflow-hidden"
-                style={{
-                  borderColor: colors['Parte de Baixo'].border,
-                  height: `${shelfHeight}px`,
-                  backgroundColor: colors['Parte de Baixo'].bg,
-                }}
-              >
-                <div className="w-full flex flex-col items-center justify-center p-2">
-                  <span className="text-sm font-bold text-gray-800 text-center">
-                    {singleProduct.name}
-                  </span>
-                  <span className="text-xs text-gray-600">
-                    {singleProduct.largura || 10}cm
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Prateleira 5 - Top */}
+            {renderShelfSection(
+              5,
+              'Altura dos olhos',
+              [singleProduct],
+              totalWidth,
+              shelfHeight,
+              colors,
+              language
+            )}
 
-            {/* Middle Shelf - Hand Level */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: colors['Altura das mãos'].bg }}
-                />
-                <span className="text-sm font-semibold text-gray-700">
-                  {colors['Altura das mãos'].label}
-                </span>
-              </div>
-              <div
-                className="flex border-2 rounded-md overflow-hidden"
-                style={{
-                  borderColor: colors['Altura das mãos'].border,
-                  height: `${shelfHeight}px`,
-                  backgroundColor: colors['Altura das mãos'].bg,
-                }}
-              >
-                <div className="w-full flex flex-col items-center justify-center p-2">
-                  <span className="text-sm font-bold text-gray-800 text-center">
-                    {singleProduct.name}
-                  </span>
-                  <span className="text-xs text-gray-600">
-                    {singleProduct.largura || 10}cm
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Prateleira 4 - Middle-High */}
+            {renderShelfSection(
+              4,
+              'Altura das mãos',
+              [singleProduct],
+              totalWidth,
+              shelfHeight,
+              colors,
+              language
+            )}
 
-            {/* Top Shelf - Eye Level */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: colors['Altura dos olhos'].bg }}
-                />
-                <span className="text-sm font-semibold text-gray-700">
-                  {colors['Altura dos olhos'].label}
-                </span>
-              </div>
-              <div
-                className="flex border-2 rounded-md overflow-hidden"
-                style={{
-                  borderColor: colors['Altura dos olhos'].border,
-                  height: `${shelfHeight}px`,
-                  backgroundColor: colors['Altura dos olhos'].bg,
-                }}
-              >
-                <div className="w-full flex flex-col items-center justify-center p-2">
-                  <span className="text-sm font-bold text-gray-800 text-center">
-                    {singleProduct.name}
-                  </span>
-                  <span className="text-xs text-gray-600">
-                    {singleProduct.largura || 10}cm
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Prateleira 3 - Middle */}
+            {renderShelfSection(
+              3,
+              'Altura das mãos',
+              [singleProduct],
+              totalWidth,
+              shelfHeight,
+              colors,
+              language
+            )}
+
+            {/* Prateleira 2 - Middle-Low */}
+            {renderShelfSection(
+              2,
+              'Altura das mãos',
+              [singleProduct],
+              totalWidth,
+              shelfHeight,
+              colors,
+              language
+            )}
+
+            {/* Prateleira 1 - Bottom */}
+            {renderShelfSection(
+              1,
+              'Parte de Baixo',
+              [singleProduct],
+              totalWidth,
+              shelfHeight,
+              colors,
+              language
+            )}
           </div>
         </div>
       </div>
@@ -228,89 +240,60 @@ export default function GondolaFrontView({
     <div className="w-full space-y-6">
       <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
         <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4 space-y-4">
-          {/* Bottom Shelf */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{ backgroundColor: colors['Parte de Baixo'].bg }}
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                {colors['Parte de Baixo'].label}
-              </span>
-            </div>
-            <div
-              className="border-2 rounded-md overflow-hidden"
-              style={{
-                borderColor: colors['Parte de Baixo'].border,
-                height: `${shelfHeight}px`,
-              }}
-            >
-              {renderShelf(
-                productsByZone['Parte de Baixo'],
-                totalWidth,
-                shelfHeight,
-                colors['Parte de Baixo'],
-                language
-              )}
-            </div>
-          </div>
+          {/* Prateleira 5 - Top (Altura dos Olhos) */}
+          {renderShelfSection(
+            5,
+            'Altura dos olhos',
+            productsByZone['Altura dos olhos'],
+            totalWidth,
+            shelfHeight,
+            colors,
+            language
+          )}
 
-          {/* Middle Shelf - Hand Level */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{ backgroundColor: colors['Altura das mãos'].bg }}
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                {colors['Altura das mãos'].label}
-              </span>
-            </div>
-            <div
-              className="border-2 rounded-md overflow-hidden"
-              style={{
-                borderColor: colors['Altura das mãos'].border,
-                height: `${shelfHeight}px`,
-              }}
-            >
-              {renderShelf(
-                productsByZone['Altura das mãos'],
-                totalWidth,
-                shelfHeight,
-                colors['Altura das mãos'],
-                language
-              )}
-            </div>
-          </div>
+          {/* Prateleira 4 - Middle-High (Altura das Mãos) */}
+          {renderShelfSection(
+            4,
+            'Altura das mãos',
+            productsByZone['Altura das mãos'],
+            totalWidth,
+            shelfHeight,
+            colors,
+            language
+          )}
 
-          {/* Top Shelf - Eye Level */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <div
-                className="w-4 h-4 rounded"
-                style={{ backgroundColor: colors['Altura dos olhos'].bg }}
-              />
-              <span className="text-sm font-semibold text-gray-700">
-                {colors['Altura dos olhos'].label}
-              </span>
-            </div>
-            <div
-              className="border-2 rounded-md overflow-hidden"
-              style={{
-                borderColor: colors['Altura dos olhos'].border,
-                height: `${shelfHeight}px`,
-              }}
-            >
-              {renderShelf(
-                productsByZone['Altura dos olhos'],
-                totalWidth,
-                shelfHeight,
-                colors['Altura dos olhos'],
-                language
-              )}
-            </div>
-          </div>
+          {/* Prateleira 3 - Middle (Altura das Mãos) */}
+          {renderShelfSection(
+            3,
+            'Altura das mãos',
+            productsByZone['Altura das mãos'],
+            totalWidth,
+            shelfHeight,
+            colors,
+            language
+          )}
+
+          {/* Prateleira 2 - Middle-Low (Altura das Mãos) */}
+          {renderShelfSection(
+            2,
+            'Altura das mãos',
+            productsByZone['Altura das mãos'],
+            totalWidth,
+            shelfHeight,
+            colors,
+            language
+          )}
+
+          {/* Prateleira 1 - Bottom (Parte de Baixo) */}
+          {renderShelfSection(
+            1,
+            'Parte de Baixo',
+            productsByZone['Parte de Baixo'],
+            totalWidth,
+            shelfHeight,
+            colors,
+            language
+          )}
         </div>
       </div>
 
