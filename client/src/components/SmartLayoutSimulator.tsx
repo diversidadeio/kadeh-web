@@ -7,6 +7,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, RotateCcw, Download, Lightbulb, Save } from "lucide-react";
+import GondolaPdfExportButton from "@/components/GondolaPdfExportButton";
 import CSVImporter from "@/components/CSVImporter";
 import ProductDescriptor, { type ProductDescriptor as ProductDescriptorType } from "@/components/ProductDescriptor";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -934,9 +935,40 @@ export default function SmartLayoutSimulator() {
       {/* Visualização da Gôndola - Vista de Frente */}
       {products.length > 0 && (
         <div className="bg-card p-6 rounded-md border border-border">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
-          </h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-foreground">
+              {language === 'pt' ? 'Visualização da Gôndola - Vista de Frente' : 'Shelf Visualization - Front View'}
+            </h3>
+            <GondolaPdfExportButton
+              products={products.map((p: any) => {
+                const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                const zone = p.category.shelfZone || rec.zone;
+                const giro = p.category.curvaFaturamento === 'A' ? 'Alto' : p.category.curvaFaturamento === 'B' ? 'Medio' : 'Baixo';
+                const margem = p.category.curvaLucratividade === 'A' ? 'Alta' : p.category.curvaLucratividade === 'B' ? 'Media' : 'Baixa';
+                return {
+                  id: p.id,
+                  name: p.name,
+                  largura: p.largura || 10,
+                  comprimento: p.comprimento || 5,
+                  zone: zone,
+                  zona: zone,
+                  quadrantes: rec.quadrantes || 1,
+                  giro: giro,
+                  margem: margem,
+                  share: typeof rec.share === 'number' ? rec.share : 15,
+                };
+              })}
+              gondolaConfig={{
+                width: gondolaWidth,
+                height: shelfHeight,
+                depth: shelfDepth,
+                numberOfShelves: shelves,
+              }}
+              storeName={language === 'pt' ? 'Loja' : 'Store'}
+              variant="default"
+              size="sm"
+            />
+          </div>
           <GondolaShelvesVisualization
             products={products.map((p: any) => {
               const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
