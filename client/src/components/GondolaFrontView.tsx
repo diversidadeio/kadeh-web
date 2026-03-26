@@ -30,8 +30,8 @@ const zoneColorsEn = {
 };
 
 /**
- * Renderiza uma prateleira com produtos distribuídos por largura
- * Regra: produtos são repetidos para preencher toda a largura disponível
+ * Renderiza uma prateleira com produtos distribuídos proporcionalmente por percentual (share)
+ * Regra: cada produto ocupa espaço proporcional ao seu percentual
  */
 function renderShelf(
   productsInZone: Product[],
@@ -48,32 +48,28 @@ function renderShelf(
     );
   }
 
-  // Calcular largura total dos produtos
-  const totalProductWidth = productsInZone.reduce((sum, p) => sum + (p.largura || 10), 0);
+  // Calcular share total (deve ser 100% ou próximo)
+  const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
   
-  // Calcular quantas vezes os produtos precisam se repetir para preencher a prateleira
-  const repetitions = Math.max(1, Math.ceil(totalWidth / totalProductWidth));
-  
-  // Criar array com produtos repetidos
-  const repeatedProducts: (Product & { repeatIndex: number })[] = [];
-  for (let i = 0; i < repetitions; i++) {
-    productsInZone.forEach((product, index) => {
-      repeatedProducts.push({
-        ...product,
-        repeatIndex: i,
-        id: `${product.id}-repeat-${i}-${index}`,
-      });
-    });
-  }
-
-  // Calcular largura de cada item (em pixels ou percentual)
-  const itemWidthPercent = 100 / repeatedProducts.length;
+  // Se não houver share definido, usar largura como fallback
+  const useShare = totalShare > 0;
 
   return (
     <div className="flex w-full h-full overflow-hidden">
-      {repeatedProducts.map((product, index) => {
-        const productWidth = product.largura || 10;
-        const widthPercent = (productWidth / (totalProductWidth * repetitions)) * 100;
+      {productsInZone.map((product, index) => {
+        // Usar share (percentual) se disponível, caso contrário usar largura
+        let widthPercent = 0;
+        let displayValue = '';
+        
+        if (useShare) {
+          widthPercent = product.share || 0;
+          displayValue = `${(product.share || 0).toFixed(1)}%`;
+        } else {
+          const totalProductWidth = productsInZone.reduce((sum, p) => sum + (p.largura || 10), 0);
+          const productWidth = product.largura || 10;
+          widthPercent = (productWidth / totalProductWidth) * 100;
+          displayValue = `${productWidth}cm`;
+        }
 
         return (
           <div
@@ -82,15 +78,15 @@ function renderShelf(
             style={{
               width: `${widthPercent}%`,
               backgroundColor: zoneColor.bg,
-              minWidth: '30px',
+              minWidth: widthPercent > 5 ? '30px' : '20px',
             }}
-            title={`${product.name} - ${productWidth}cm`}
+            title={`${product.name} - ${displayValue}`}
           >
             <span className="text-xs font-bold text-gray-800 text-center truncate line-clamp-2">
               {product.name}
             </span>
             <span className="text-xs text-gray-600 font-semibold">
-              {productWidth}cm
+              {displayValue}
             </span>
           </div>
         );

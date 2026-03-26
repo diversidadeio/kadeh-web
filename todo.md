@@ -710,3 +710,6 @@
 
 - [ ] Corrigir visualização de gôndola: prateleira I na parte inferior, prateleira superior na parte superior
 - [ ] Sincronizar representação em IA com visualização de gôndola
+
+- [x] Utilizar percentual de cada produto para representar espaço proporcional na visualização de gôndola
+- [x] Sincronizar visualização de IA com proporções de espaço dos produtos

@@ -111,13 +111,18 @@ export default function StoreVisualizationGenerator({
     const handLevelWidth = handLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
     const bottomLevelWidth = bottomLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
 
-    // Calculate percentages for each product
+    // Calculate percentages for each product using share if available
     const getProductPercentages = (zoneProducts: Product[], zoneWidth: number) => {
-      return zoneProducts.map(p => ({
-        name: p.name,
-        width: p.largura || 10,
-        percentage: ((p.largura || 10) / zoneWidth * 100).toFixed(1)
-      }));
+      return zoneProducts.map(p => {
+        const share = (p as any).share;
+        const percentage = share !== undefined ? share : ((p.largura || 10) / zoneWidth * 100);
+        return {
+          name: p.name,
+          width: p.largura || 10,
+          percentage: percentage.toFixed(1),
+          share: share
+        };
+      });
     };
 
     const eyeLevelPercentages = eyeLevelWidth > 0 ? getProductPercentages(eyeLevelProducts, eyeLevelWidth) : [];
