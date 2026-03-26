@@ -1,7 +1,7 @@
 /**
  * StoreVisualizationGenerator Component
  * Generates AI images representing how the store would look based on Smart Layout simulation
- * Now uses the intelligent cascading distribution algorithm to ensure 100% shelf occupancy
+ * Uses the same distribution logic as GondolaFrontView to ensure fidelity
  */
 
 import { useState } from "react";
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
-import { distributeProductsAcrossShelves, type ProductForDistribution } from "@/utils/shelfDistributor";
 
 interface Product {
   id: string;
@@ -24,6 +23,7 @@ interface Product {
   zone?: string;
   giro?: string;
   margem?: string;
+  share?: number;
 }
 
 interface StoreVisualizationGeneratorProps {
@@ -57,6 +57,55 @@ const TRANSLATIONS = {
   },
 };
 
+/**
+ * Distribui produtos nas prateleiras respeitando percentuais recomendados
+ * Se houver espaço sobrando na Parte de Baixo, preenche com produtos de Altura das Mãos
+ */
+function distributeProductsToShelves(products: Product[]): {
+  shelf1: Product[];
+  shelves2to4: Product[];
+  shelf5: Product[];
+} {
+  const productsByZone = {
+    'Altura dos olhos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura dos olhos'),
+    'Altura das mãos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura das mãos'),
+    'Parte de Baixo': products.filter(p => (p.zone || p.category?.shelfZone) === 'Parte de Baixo'),
+  };
+
+  // Calcular espaço utilizado na Parte de Baixo
+  const bottomShare = productsByZone['Parte de Baixo'].reduce((sum, p) => sum + (p.share || 0), 0);
+  const spaceRemaining = 100 - bottomShare;
+
+  // Se há espaço sobrando na Parte de Baixo, preencher com produtos de Altura das Mãos
+  let shelf1Products = [...productsByZone['Parte de Baixo']];
+  let handLevelProducts = [...productsByZone['Altura das mãos']];
+
+  if (spaceRemaining > 0 && handLevelProducts.length > 0) {
+    // Adicionar produtos de Altura das Mãos à Parte de Baixo até preencher 100%
+    let remainingSpace = spaceRemaining;
+    const productsToAdd: Product[] = [];
+    
+    for (const product of handLevelProducts) {
+      if (remainingSpace <= 0) break;
+      
+      const productShare = product.share || 0;
+      if (productShare <= remainingSpace) {
+        productsToAdd.push(product);
+        remainingSpace -= productShare;
+      }
+    }
+
+    shelf1Products = [...shelf1Products, ...productsToAdd];
+    handLevelProducts = handLevelProducts.filter(p => !productsToAdd.includes(p));
+  }
+
+  return {
+    shelf1: shelf1Products,
+    shelves2to4: handLevelProducts,
+    shelf5: productsByZone['Altura dos olhos'],
+  };
+}
+
 export default function StoreVisualizationGenerator({
   products,
   gondolaWidth,
@@ -79,151 +128,119 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
-    // Group products by zone (same logic as GondolaFrontView)
-    const productsByZone: Record<string, Product[]> = {
-      "Altura dos olhos": [],
-      "Altura das mãos": [],
-      "Parte de Baixo": [],
-    };
+    // Usar mesma lógica de distribuição do GondolaFrontView
+    const { shelf1, shelves2to4, shelf5 } = distributeProductsToShelves(products);
 
-    products.forEach(p => {
-      let zone = p.zone || "Altura das mãos";
-      if (p.category && p.category.shelfZone) {
-        zone = p.category.shelfZone;
-      }
-      
-      if (zone === "Altura dos olhos" || zone === "Altura das mãos" || zone === "Parte de Baixo") {
-        productsByZone[zone].push(p);
-      }
-    });
+    // Build detailed product specifications for each shelf
+    let shelf1Spec = "";
+    let shelves2to4Spec = "";
+    let shelf5Spec = "";
 
-    // Build detailed zone descriptions with product grouping
-    let eyeLevelDesc = "";
-    let handLevelDesc = "";
-    let bottomLevelDesc = "";
-
-    const eyeLevelProducts = productsByZone["Altura dos olhos"];
-    const handLevelProducts = productsByZone["Altura das mãos"];
-    const bottomLevelProducts = productsByZone["Parte de Baixo"];
-
-    // Calculate total width for each zone
-    const eyeLevelWidth = eyeLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
-    const handLevelWidth = handLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
-    const bottomLevelWidth = bottomLevelProducts.reduce((sum, p) => sum + (p.largura || 10), 0);
-
-    // Calculate percentages for each product using share if available
-    const getProductPercentages = (zoneProducts: Product[], zoneWidth: number) => {
-      return zoneProducts.map(p => {
-        const share = (p as any).share;
-        const percentage = share !== undefined ? share : ((p.largura || 10) / zoneWidth * 100);
-        return {
-          name: p.name,
-          width: p.largura || 10,
-          percentage: percentage.toFixed(1),
-          share: share
-        };
+    // Prateleira 1 - Parte de Baixo
+    if (shelf1.length > 0) {
+      shelf1Spec = `\n**PRATELEIRA 1 - PARTE DE BAIXO (Bottom Shelf - INFERIOR):**\n`;
+      shelf1.forEach((p, idx) => {
+        const share = p.share || 0;
+        shelf1Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
       });
-    };
-
-    const eyeLevelPercentages = eyeLevelWidth > 0 ? getProductPercentages(eyeLevelProducts, eyeLevelWidth) : [];
-    const handLevelPercentages = handLevelWidth > 0 ? getProductPercentages(handLevelProducts, handLevelWidth) : [];
-    const bottomLevelPercentages = bottomLevelWidth > 0 ? getProductPercentages(bottomLevelProducts, bottomLevelWidth) : [];
-
-    // Build detailed product specifications
-    let eyeLevelSpec = "";
-    let handLevelSpec = "";
-    let bottomLevelSpec = "";
-
-     if (bottomLevelPercentages.length > 0) {
-      bottomLevelSpec = `\n**PRATELEIRA 1 - PARTE DE BAIXO (Bottom Shelf - INFERIOR):**\n`;
-      bottomLevelPercentages.forEach((p, idx) => {
-        bottomLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
-      });
-      bottomLevelSpec += `Total: ${(bottomLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
+      const totalShare1 = shelf1.reduce((sum, p) => sum + (p.share || 0), 0);
+      shelf1Spec += `Total: ${totalShare1.toFixed(1)}% da largura total\n`;
     }
 
-    if (handLevelPercentages.length > 0) {
-      handLevelSpec = `\n**PRATELEIRAS 2-4 - ALTURA DAS MÃOS (Middle Shelves):**\n`;
-      handLevelPercentages.forEach((p, idx) => {
-        handLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+    // Prateleiras 2-4 - Altura das Mãos
+    if (shelves2to4.length > 0) {
+      shelves2to4Spec = `\n**PRATELEIRAS 2-4 - ALTURA DAS MÃOS (Middle Shelves):**\n`;
+      shelves2to4.forEach((p, idx) => {
+        const share = p.share || 0;
+        shelves2to4Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
       });
-      handLevelSpec += `Total: ${(handLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
+      const totalShare2to4 = shelves2to4.reduce((sum, p) => sum + (p.share || 0), 0);
+      shelves2to4Spec += `Total: ${totalShare2to4.toFixed(1)}% da largura total\n`;
     }
 
-    if (eyeLevelProducts.length > 0) {
-      eyeLevelSpec = `\n**PRATELEIRA 5 - ALTURA DOS OLHOS (Top Shelf - SUPERIOR):**\n`;
-      eyeLevelPercentages.forEach((p, idx) => {
-        eyeLevelSpec += `${idx + 1}. ${p.name}: ${p.percentage}% da largura (${p.width}cm)\n`;
+    // Prateleira 5 - Altura dos Olhos
+    if (shelf5.length > 0) {
+      shelf5Spec = `\n**PRATELEIRA 5 - ALTURA DOS OLHOS (Top Shelf - SUPERIOR):**\n`;
+      shelf5.forEach((p, idx) => {
+        const share = p.share || 0;
+        shelf5Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
       });
-      eyeLevelSpec += `Total: ${(eyeLevelWidth / gondolaWidth * 100).toFixed(1)}% da largura total\n`;
+      const totalShare5 = shelf5.reduce((sum, p) => sum + (p.share || 0), 0);
+      shelf5Spec += `Total: ${totalShare5.toFixed(1)}% da largura total\n`;
     }
 
-    // Build visual layout
+    // Build visual layout diagram
     let visualLayout = "";
-    if (bottomLevelProducts.length > 0) {
-      visualLayout += `\n[PARTE DE BAIXO - INFERIOR]\n`;
-      bottomLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
+    if (shelf1.length > 0) {
+      visualLayout += `\n[PRATELEIRA 1 - PARTE DE BAIXO - INFERIOR]\n`;
+      shelf1.forEach(p => {
+        const share = p.share || 0;
+        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
       });
     }
-    if (handLevelProducts.length > 0) {
-      visualLayout += `\n[ALTURA DAS MÃOS]\n`;
-      handLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
+    if (shelves2to4.length > 0) {
+      visualLayout += `\n[PRATELEIRAS 2-4 - ALTURA DAS MÃOS]\n`;
+      shelves2to4.forEach(p => {
+        const share = p.share || 0;
+        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
       });
     }
-    if (eyeLevelProducts.length > 0) {
-      visualLayout += `\n[ALTURA DOS OLHOS - SUPERIOR]\n`;
-      eyeLevelProducts.forEach(p => {
-        visualLayout += `[${p.name.substring(0, 12).padEnd(12)}]`;
+    if (shelf5.length > 0) {
+      visualLayout += `\n[PRATELEIRA 5 - ALTURA DOS OLHOS - SUPERIOR]\n`;
+      shelf5.forEach(p => {
+        const share = p.share || 0;
+        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
       });
     }
 
     const prompt = `Você é um merchandiser profissional de varejo. Crie uma fotografia REALISTA de uma gôndola de loja com produtos posicionados EXATAMENTE conforme especificado abaixo.
 
-**REQUISITO CRÍTICO: A imagem gerada DEVE mostrar produtos nas EXATAS posições e percentuais especificados. Esta é uma visualização de planograma.**
+**REQUISITO CRÍTICO: A imagem gerada DEVE mostrar produtos nas EXATAS posições, prateleiras e percentuais especificados. Esta é uma visualização de planograma profissional.**
 
 **CONFIGURAÇÃO DA GÔNDOLA:**
 - Largura Total: ${gondolaWidth}cm
 - Altura entre prateleiras: ${shelfHeight}cm
 - Profundidade da prateleira: ${shelfDepth}cm
-- Total de Prateleiras: 5 (Olhos, Mãos, Mãos, Mãos, Baixo)
+- Total de Prateleiras: 5 (numeradas de 1 a 5, sendo 1 na base e 5 no topo)
 
-**POSICIONAMENTO DE PRODUTOS - SIGA EXATAMENTE:**
-${eyeLevelSpec}${handLevelSpec}${bottomLevelSpec}
+**POSICIONAMENTO EXATO DE PRODUTOS POR PRATELEIRA:**
+${shelf1Spec}${shelves2to4Spec}${shelf5Spec}
 
 **DIAGRAMA DE LAYOUT VISUAL:**
 ${visualLayout}
 
 **REGRAS OBRIGATÓRIAS DE POSICIONAMENTO:**
-1. PARTE DE BAIXO (Prateleira 1 - INFERIOR): Produtos da esquerda para direita nesta ordem exata: ${bottomLevelProducts.map(p => p.name).join(' → ')}
-2. ALTURA DAS MÃOS (Prateleiras 2-4): Produtos da esquerda para direita nesta ordem exata: ${handLevelProducts.map(p => p.name).join(' → ')}
-3. ALTURA DOS OLHOS (Prateleira 5 - SUPERIOR): Produtos da esquerda para direita nesta ordem exata: ${eyeLevelProducts.map(p => p.name).join(' → ')}
-4. Cada produto ocupa seu percentual especificado da largura da prateleira
-5. Produtos são agrupados por nível de prateleira - NÃO misture produtos entre prateleiras
+1. PRATELEIRA 1 (INFERIOR - Parte de Baixo): Produtos da esquerda para direita: ${shelf1.map(p => p.name).join(' → ')}
+   - Cada produto ocupa exatamente seu percentual especificado
+2. PRATELEIRAS 2-4 (MEIO - Altura das Mãos): Produtos da esquerda para direita: ${shelves2to4.map(p => p.name).join(' → ')}
+   - Cada produto ocupa exatamente seu percentual especificado
+3. PRATELEIRA 5 (SUPERIOR - Altura dos Olhos): Produtos da esquerda para direita: ${shelf5.map(p => p.name).join(' → ')}
+   - Cada produto ocupa exatamente seu percentual especificado
+4. ORDEM VERTICAL: Prateleira 1 na base, Prateleira 5 no topo (visão frontal)
+5. Produtos são agrupados por prateleira - NÃO misture produtos entre prateleiras
 6. Repita a sequência de produtos horizontalmente para preencher a largura da prateleira
 7. NENHUMA prateleira pode estar vazia - preencha completamente com os produtos listados
-8. Use APENAS os produtos especificados acima - não adicione produtos fictícios ou genéricos
+8. Use APENAS os produtos especificados acima - não adicione produtos fictícios
 9. Mantenha aparência profissional de varejo com iluminação adequada
 
 **IMPORTANTE - NÃO FAÇA:**
-- Mude a ordem dos produtos
+- Mude a ordem dos produtos dentro de uma prateleira
 - Coloque produtos em prateleiras erradas
-- Use produtos genéricos de placeholder ou fictícios
+- Use produtos genéricos de placeholder
 - Ignore os percentuais especificados
 - Gere produtos diferentes dos listados
 - Deixe prateleiras vazias ou parcialmente preenchidas
-- Adicione produtos que não estão na lista de simulação
+- Adicione produtos que não estão na lista
 
 **ESTILO VISUAL:**
-- Ambiente profissional de supermercado/varejo
-- Sistema de prateleiras moderno com 5 prateleiras visíveis
+- Fotografia frontal profissional de gôndola de varejo
+- Sistema de prateleiras moderno com 5 prateleiras visíveis e numeradas
 - Iluminação profissional destacando cada prateleira
 - Embalagens de produtos e rótulos claramente visíveis
 - Fundo realista de loja de varejo
 - Estilo de fotografia de produto profissional
 
-Gere uma fotografia profissional de gôndola de varejo que EXATAMENTE corresponda a esta especificação de planograma.`;
+Gere uma fotografia profissional de gôndola de varejo que EXATAMENTE corresponda a esta especificação de planograma com as prateleiras numeradas de 1 a 5 (1 na base, 5 no topo).`;
 
     return prompt;
   };
