@@ -733,3 +733,10 @@
 - [x] Implementar comparação visual entre versões
 - [x] Adicionar funcionalidade de restaurar versão anterior
 - [x] Testar histórico de versões em português e inglês
+
+- [x] Corrigir geração de imagem IA - IA está ignorando restrições de categoria
+- [x] Reescrever prompt com linguagem mais direta e estruturada
+- [x] Adicionar validação automática de imagem antes de retornar ao usuário
+- [x] Implementar motor de regeneração automática com até 3 tentativas
+- [x] Criar testes de validação com suite completa de cenários
+- [x] Testar consistência de geração com mesmos dados

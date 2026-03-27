@@ -6,13 +6,15 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Image as ImageIcon, AlertCircle, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import ImageFidelityValidator from "./ImageFidelityValidator";
 import ImageRegenerationFeedback from "./ImageRegenerationFeedback";
 import PlanogramVersionHistory from "./PlanogramVersionHistory";
 import { v4 as uuidv4 } from "uuid";
+import { autoRegenerateImage, formatRegenerationReport } from "@/utils/autoRegenerationEngine";
+import { generateValidationFeedback } from "@/utils/imageValidationEngine";
 
 interface Product {
   id: string;
@@ -122,10 +124,13 @@ export default function StoreVisualizationGenerator({
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
 
-  const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [versions, setVersions] = useState<any[]>([]);
+  const [validationStatus, setValidationStatus] = useState<'idle' | 'validating' | 'valid' | 'invalid'>('idle');
+  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [regenerationAttempts, setRegenerationAttempts] = useState(0);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
 
@@ -213,47 +218,11 @@ export default function StoreVisualizationGenerator({
     const allProductNames = [...shelf1, ...shelves2to4, ...shelf5].map(p => p.name);
     const uniqueProductNames = Array.from(new Set(allProductNames));
     
-    const prompt = `INSTRUÇÃO CRÍTICA: Você é um especialista em visual merchandising. Crie uma fotografia profissional de uma gôndola de varejo com APENAS os produtos especificados abaixo.
+    const shelf1Percentages = shelf1.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
+    const shelves2to4Percentages = shelves2to4.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
+    const shelf5Percentages = shelf5.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
 
-**RESTRIÇÃO ABSOLUTA - LEIA COM ATENÇÃO:**
-Esta gôndola contém SOMENTE produtos da categoria: ${categoryName}
-Produtos permitidos APENAS: ${uniqueProductNames.join(', ')}
-NÃO adicione, substitua ou modifique nenhum produto.
-NÃO inclua produtos de outras categorias.
-NÃO use produtos genéricos ou similares.
-
-**CONFIGURAÇÃO TÉCNICA DA GÔNDOLA:**
-- Largura: ${gondolaWidth}cm
-- Altura entre prateleiras: ${shelfHeight}cm
-- Profundidade: ${shelfDepth}cm
-- Total de Prateleiras: 5 (numeradas 1-5, sendo 1 na base e 5 no topo)
-
-**DISTRIBUIÇÃO EXATA DE PRODUTOS:**
-${shelf1Spec}${shelves2to4Spec}${shelf5Spec}
-
-**LAYOUT VISUAL (de baixo para cima):**
-${visualLayout}
-
-**INSTRUÇÕES DE POSICIONAMENTO - OBRIGATÓRIO:**
-1. PRATELEIRA 1 (BASE): ${shelf1.map(p => p.name).join(' | ')}
-2. PRATELEIRAS 2-4 (MEIO): ${shelves2to4.map(p => p.name).join(' | ')}
-3. PRATELEIRA 5 (TOPO): ${shelf5.map(p => p.name).join(' | ')}
-
-Cada produto ocupa exatamente o percentual especificado. Repita os produtos horizontalmente para preencher 100% da prateleira.
-
-**RESTRIÇÕES ABSOLUTAS - VIOLAÇÕES RESULTAM EM FALHA:**
-❌ NÃO adicione produtos não listados
-❌ NÃO mude a ordem dos produtos
-❌ NÃO coloque produtos em prateleiras erradas
-❌ NÃO misture categorias
-❌ NÃO deixe prateleiras vazias
-❌ NÃO use produtos similares ou substitutos
-❌ NÃO ignore os percentuais especificados
-
-**ESTILO VISUAL:**
-Fotografia frontal profissional de gôndola de varejo com iluminação adequada, embalagens claras e visíveis, fundo realista de loja.
-
-Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes produtos: ${uniqueProductNames.join(', ')}.`;
+    const prompt = `INSTRUÇÃO CRÍTICA - LEIA TUDO ANTES DE GERAR IMAGEM\n\nVocê DEVE gerar uma fotografia de uma gôndola de varejo com EXATAMENTE estes produtos: ${uniqueProductNames.join(', ')}.\n\nNADA MAIS. SOMENTE ESTES PRODUTOS.\n\n=== CATEGORIA ===\nCategoria: ${categoryName}\nTodos os produtos DEVEM ser APENAS de ${categoryName}.\n\n=== PRODUTOS PERMITIDOS (ÚNICOS) ===\n${uniqueProductNames.map((name, i) => `${i + 1}. ${name}`).join('\n')}\n\n=== DISTRIBUIÇÃO POR PRATELEIRA ===\n\nPRATELEIRA 1 (BASE/INFERIOR - Parte de Baixo):\nProdutos: ${shelf1Percentages}\n\nPRATELEIRAS 2-4 (MEIO - Altura das Mãos):\nProdutos: ${shelves2to4Percentages}\n\nPRATELEIRA 5 (TOPO/SUPERIOR - Altura dos Olhos):\nProdutos: ${shelf5Percentages}\n\n=== REGRAS ABSOLUTAS (QUEBRA = FALHA) ===\n1. SOMENTE produtos listados acima\n2. SOMENTE categoria ${categoryName}\n3. Nenhum produto similar, genérico ou substituto\n4. Nenhuma prateleira vazia\n5. Cada produto ocupa exatamente seu percentual\n6. Produtos repetidos horizontalmente para preencher 100%\n7. Ordem de prateleiras: 1 (base), 2-4 (meio), 5 (topo)\n8. Sem produtos de outras categorias\n9. Sem modificações de nomes de produtos\n10. Sem adições de produtos não listados\n\n=== VERIFICAÇÃO ANTES DE GERAR ===\nConfirme internamente:\n☑ Todos os produtos são de ${categoryName}? SIM\n☑ Nenhum produto extra será adicionado? SIM\n☑ Prateleiras estão corretas? SIM\n☑ Percentuais serão respeitados? SIM\n\nSe não conseguir garantir, NÃO gere a imagem.\n\n=== ESTILO ===\nFotografia frontal profissional de gôndola de varejo com iluminação clara, embalagens visíveis, fundo realista de loja.\n\GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos: ${uniqueProductNames.join(', ')}.`
 
     return prompt;
   };
