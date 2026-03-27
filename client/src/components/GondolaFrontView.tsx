@@ -123,7 +123,9 @@ function renderShelfSection(
           style={{ backgroundColor: zoneColor.bg }}
         />
         <span className="text-sm font-semibold text-gray-700">
-          {language === 'pt' ? `Prateleira ${shelfNumber}` : `Shelf ${shelfNumber}`} ({zoneColor.label})
+          {language === 'pt' 
+            ? `Prateleira ${shelfNumber} - ${zoneColor.label}` 
+            : `Shelf ${shelfNumber} - ${zoneColor.label}`}
         </span>
         <span className="text-xs text-gray-500">
           {usedPercentage.toFixed(1)}% / 100%
