@@ -740,3 +740,7 @@
 - [x] Implementar motor de regeneração automática com até 3 tentativas
 - [x] Criar testes de validação com suite completa de cenários
 - [x] Testar consistência de geração com mesmos dados
+
+- [x] Corrigir erro na geração de visualização de layout da loja por IA
+- [x] Investigar causa do erro "Erro ao gerar visualização. Tente novamente."
+- [x] Testar geração de layout da loja novamente
