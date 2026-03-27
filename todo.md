@@ -713,3 +713,23 @@
 
 - [x] Utilizar percentual de cada produto para representar espaço proporcional na visualização de gôndola
 - [x] Sincronizar visualização de IA com proporções de espaço dos produtos
+
+- [x] Implementar validação de fidelidade de imagem IA com comparação de produtos
+- [x] Criar componente ImageFidelityValidator que analisa produtos na imagem gerada
+- [x] Comparar produtos da imagem com produtos da visualização de gôndola
+- [x] Implementar alertas visuais para discrepâncias de categoria
+- [x] Testar validação de fidelidade em português e inglês
+
+- [x] Criar modo de regeneração com feedback para imagem IA
+- [x] Implementar botão "Rejeitar e Regenerar" na visualização de imagem
+- [x] Adicionar campo de feedback para usuário descrever problema
+- [x] Implementar ajustes automáticos de prompt baseado em feedback
+- [x] Testar regeneração com feedback em português e inglês
+
+- [x] Implementar histórico de versões de planogramas
+- [x] Criar tabela de banco de dados para armazenar versões de planogramas
+- [x] Implementar funcionalidade de salvar versão com timestamp
+- [x] Criar componente PlanogramVersionHistory para listar versões
+- [x] Implementar comparação visual entre versões
+- [x] Adicionar funcionalidade de restaurar versão anterior
+- [x] Testar histórico de versões em português e inglês

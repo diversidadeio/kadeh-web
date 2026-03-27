@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+import ImageFidelityValidator from "./ImageFidelityValidator";
+import ImageRegenerationFeedback from "./ImageRegenerationFeedback";
+import PlanogramVersionHistory from "./PlanogramVersionHistory";
+import { v4 as uuidv4 } from "uuid";
 
 interface Product {
   id: string;
@@ -121,6 +125,8 @@ export default function StoreVisualizationGenerator({
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [versions, setVersions] = useState<any[]>([]);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
 
   const generateStorePrompt = (): string => {
@@ -252,7 +258,7 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
     return prompt;
   };
 
-  const handleGenerateVisualization = async () => {
+  const handleGenerateVisualization = async (feedback?: string) => {
     if (products.length === 0) {
       setError(t.noProducts);
       return;
@@ -262,7 +268,13 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
     setError(null);
 
     try {
-      const prompt = generateStorePrompt();
+      let prompt = generateStorePrompt();
+      
+      // Se há feedback, adicionar ao prompt
+      if (feedback) {
+        prompt += `\n\n**FEEDBACK DO USUÁRIO PARA MELHORIA:**\n${feedback}\n\nPor favor, corrija os problemas mencionados acima.`;
+      }
+      
       const result = await generateMutation.mutateAsync({ prompt });
       if (result.url) {
         setGeneratedImage(result.url);
@@ -275,6 +287,51 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
     }
   };
 
+  const handleSaveVersion = () => {
+    if (!generatedImage) return;
+    
+    const categoryName = products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos';
+    
+    const newVersion = {
+      id: uuidv4(),
+      timestamp: new Date(),
+      categoryName,
+      productCount: products.length,
+      shelfConfiguration: {
+        width: gondolaWidth,
+        height: shelfHeight,
+        depth: shelfDepth,
+      },
+      imageUrl: generatedImage,
+      isCurrent: true,
+    };
+    
+    setVersions(prev => [
+      ...prev.map(v => ({ ...v, isCurrent: false })),
+      newVersion
+    ]);
+  };
+
+  const handleRestoreVersion = (versionId: string) => {
+    const version = versions.find(v => v.id === versionId);
+    if (version) {
+      setGeneratedImage(version.imageUrl);
+      setVersions(prev => prev.map(v => ({
+        ...v,
+        isCurrent: v.id === versionId
+      })));
+    }
+  };
+
+  const handleDeleteVersion = (versionId: string) => {
+    setVersions(prev => prev.filter(v => v.id !== versionId));
+  };
+
+  const handleCompareVersions = (versionId1: string, versionId2: string) => {
+    console.log(`Comparando versões: ${versionId1} vs ${versionId2}`);
+    // Implementar comparação visual entre versões
+  };
+
   return (
     <div className="w-full space-y-6 p-6 bg-card rounded-lg border border-border">
       <div>
@@ -283,7 +340,7 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
       </div>
 
       <Button
-        onClick={handleGenerateVisualization}
+        onClick={() => handleGenerateVisualization()}
         disabled={isGenerating || products.length === 0}
         className="w-full"
         size="lg"
@@ -305,7 +362,7 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
         <div className="p-4 bg-destructive/10 border border-destructive rounded-md">
           <p className="text-sm text-destructive mb-2">{error}</p>
           <Button
-            onClick={handleGenerateVisualization}
+            onClick={() => handleGenerateVisualization()}
             variant="outline"
             size="sm"
           >
@@ -315,7 +372,7 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
       )}
 
       {generatedImage && (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <p className="text-sm font-medium text-foreground">Visualização Gerada:</p>
           <div className="w-full overflow-x-auto bg-muted rounded-md border border-border p-4">
             <img
@@ -324,7 +381,56 @@ Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes p
               className="w-full h-auto object-contain"
             />
           </div>
+
+          {/* Image Fidelity Validator */}
+          <ImageFidelityValidator
+            products={products}
+            categoryName={products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos'}
+            generatedImageUrl={generatedImage}
+          />
+
+          {/* Image Regeneration Feedback */}
+          <ImageRegenerationFeedback
+            isGenerating={isGenerating}
+            onRegenerate={handleGenerateVisualization}
+            onDiscard={() => {
+              setGeneratedImage(null);
+              setError(null);
+            }}
+            categoryName={products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos'}
+          />
+
+          {/* Save Version Button */}
+          <Button
+            onClick={handleSaveVersion}
+            variant="outline"
+            className="w-full"
+          >
+            Salvar Versão
+          </Button>
+
+          {/* Version History Toggle */}
+          {versions.length > 0 && (
+            <Button
+              onClick={() => setShowVersionHistory(!showVersionHistory)}
+              variant="outline"
+              className="w-full"
+            >
+              {showVersionHistory ? "Ocultar" : "Ver"} Histórico de Versões ({versions.length})
+            </Button>
+          )}
         </div>
+      )}
+
+      {/* Planogram Version History */}
+      {showVersionHistory && versions.length > 0 && (
+        <PlanogramVersionHistory
+          versions={versions}
+          currentVersion={versions.find(v => v.isCurrent)}
+          onRestore={handleRestoreVersion}
+          onDelete={handleDeleteVersion}
+          onCompare={handleCompareVersions}
+        />
       )}
     </div>
   );
