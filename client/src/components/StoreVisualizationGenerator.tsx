@@ -128,8 +128,18 @@ export default function StoreVisualizationGenerator({
       return "";
     }
 
+    // Filtrar apenas produtos da categoria selecionada
+    const categoryName = products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos';
+    const filteredProducts = products.filter(p => 
+      (p.category?.mainCategory || p.category?.name) === categoryName
+    );
+
+    if (filteredProducts.length === 0) {
+      return "";
+    }
+
     // Usar mesma lógica de distribuição do GondolaFrontView
-    const { shelf1, shelves2to4, shelf5 } = distributeProductsToShelves(products);
+    const { shelf1, shelves2to4, shelf5 } = distributeProductsToShelves(filteredProducts);
 
     // Build detailed product specifications for each shelf
     let shelf1Spec = "";
@@ -232,6 +242,11 @@ ${visualLayout}
 - Deixe prateleiras vazias ou parcialmente preenchidas
 - Adicione produtos que não estão na lista
 
+**CATEGORIA DE PRODUTOS:**
+- TODOS os produtos na gôndola DEVEM ser da categoria: ${categoryName}
+- NÃO inclua produtos de outras categorias
+- Use APENAS os nomes de produtos listados acima
+
 **ESTILO VISUAL:**
 - Fotografia frontal profissional de gôndola de varejo
 - Sistema de prateleiras moderno com 5 prateleiras visíveis e numeradas
@@ -240,7 +255,7 @@ ${visualLayout}
 - Fundo realista de loja de varejo
 - Estilo de fotografia de produto profissional
 
-Gere uma fotografia profissional de gôndola de varejo que EXATAMENTE corresponda a esta especificação de planograma com as prateleiras numeradas de 1 a 5 (1 na base, 5 no topo).`;
+Gere uma fotografia profissional de gôndola de varejo com APENAS produtos de ${categoryName} que EXATAMENTE corresponda a esta especificação de planograma com as prateleiras numeradas de 1 a 5 (1 na base, 5 no topo).`;
 
     return prompt;
   };
