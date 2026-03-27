@@ -148,6 +148,7 @@
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Varejo
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Shopping
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
+- [ ] Corrigir erro ao gerar visualização da loja por IA com 9 produtos
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 
