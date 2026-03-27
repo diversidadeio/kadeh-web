@@ -9,6 +9,7 @@ import { AlertCircle, TrendingUp, Lightbulb, Target } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { calculateExposureMetrics, getProductRecommendation, type Product, type ExposureMetrics } from '@/utils/exposureMetricsEngine';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ZoneOccupancyReport } from './ZoneOccupancyReport';
 
 interface ExposureMetricsDashboardProps {
   products: Product[];
@@ -222,6 +223,9 @@ export default function ExposureMetricsDashboard({
           )}
         </div>
       </Card>
+
+      {/* Zone Occupancy Report */}
+      <ZoneOccupancyReport products={products} language={lang as 'pt' | 'en'} />
 
       {/* Underexposed Products */}
       <Card className="p-6">

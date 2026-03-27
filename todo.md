@@ -149,7 +149,8 @@
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Shopping
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
 - [x] Corrigir erro ao gerar visualização da loja por IA com 9 produtos
-- [ ] Corrigir nomes das prateleiras para mostrar zona de exposição (Parte de Baixo, Altura das Mãos, Altura dos Olhos)
+- [x] Corrigir nomes das prateleiras para mostrar zona de exposição (Parte de Baixo, Altura das Mãos, Altura dos Olhos)
+- [ ] Criar relatório visual de ocupação por zona de exposição
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 
