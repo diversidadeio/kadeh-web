@@ -34,6 +34,7 @@ import ProductFormModal, { type ProductFormData } from "@/components/ProductForm
 import { ZoneDistributionChart, type ZoneStats } from "@/components/ZoneDistributionChart";
 import { ProductOptimizationSuggestions } from "@/components/ProductOptimizationSuggestions";
 import { generateOptimizationSuggestions, type OptimizationResult } from "@/utils/productOptimizer";
+import ExposureMetricsDashboard from "@/components/ExposureMetricsDashboard";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 
@@ -1023,6 +1024,34 @@ export default function SmartLayoutSimulator() {
           shelfDepth={shelfDepth}
         />
       </div>
+
+      {/* Exposure Metrics Dashboard */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <ExposureMetricsDashboard
+            products={products.map((p: any) => {
+              const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+              const zone = p.category.shelfZone || rec.zone;
+              const giro = p.category.curvaFaturamento === 'A' ? 'A' : p.category.curvaFaturamento === 'B' ? 'B' : 'C';
+              const margem = p.category.curvaLucratividade === 'A' ? 'A' : p.category.curvaLucratividade === 'B' ? 'B' : 'C';
+              return {
+                id: p.id,
+                name: p.name,
+                zone: zone,
+                zona: zone,
+                share: typeof rec.share === 'number' ? rec.share : 15,
+                giro: giro,
+                margem: margem,
+                category: {
+                  curvaFaturamento: giro,
+                  curvaLucratividade: margem,
+                },
+              };
+            })}
+            language={language}
+          />
+        </div>
+      )}
 
       {/* Save Simulation Section */}
       {products.length > 0 && (
