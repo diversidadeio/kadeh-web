@@ -203,59 +203,51 @@ export default function StoreVisualizationGenerator({
       });
     }
 
-    const prompt = `Você é um merchandiser profissional de varejo. Crie uma fotografia REALISTA de uma gôndola de loja com produtos posicionados EXATAMENTE conforme especificado abaixo.
+    // Lista exata de nomes de produtos para reforçar na IA
+    const allProductNames = [...shelf1, ...shelves2to4, ...shelf5].map(p => p.name);
+    const uniqueProductNames = Array.from(new Set(allProductNames));
+    
+    const prompt = `INSTRUÇÃO CRÍTICA: Você é um especialista em visual merchandising. Crie uma fotografia profissional de uma gôndola de varejo com APENAS os produtos especificados abaixo.
 
-**REQUISITO CRÍTICO: A imagem gerada DEVE mostrar produtos nas EXATAS posições, prateleiras e percentuais especificados. Esta é uma visualização de planograma profissional.**
+**RESTRIÇÃO ABSOLUTA - LEIA COM ATENÇÃO:**
+Esta gôndola contém SOMENTE produtos da categoria: ${categoryName}
+Produtos permitidos APENAS: ${uniqueProductNames.join(', ')}
+NÃO adicione, substitua ou modifique nenhum produto.
+NÃO inclua produtos de outras categorias.
+NÃO use produtos genéricos ou similares.
 
-**CONFIGURAÇÃO DA GÔNDOLA:**
-- Largura Total: ${gondolaWidth}cm
+**CONFIGURAÇÃO TÉCNICA DA GÔNDOLA:**
+- Largura: ${gondolaWidth}cm
 - Altura entre prateleiras: ${shelfHeight}cm
-- Profundidade da prateleira: ${shelfDepth}cm
-- Total de Prateleiras: 5 (numeradas de 1 a 5, sendo 1 na base e 5 no topo)
+- Profundidade: ${shelfDepth}cm
+- Total de Prateleiras: 5 (numeradas 1-5, sendo 1 na base e 5 no topo)
 
-**POSICIONAMENTO EXATO DE PRODUTOS POR PRATELEIRA:**
+**DISTRIBUIÇÃO EXATA DE PRODUTOS:**
 ${shelf1Spec}${shelves2to4Spec}${shelf5Spec}
 
-**DIAGRAMA DE LAYOUT VISUAL:**
+**LAYOUT VISUAL (de baixo para cima):**
 ${visualLayout}
 
-**REGRAS OBRIGATÓRIAS DE POSICIONAMENTO:**
-1. PRATELEIRA 1 (INFERIOR - Parte de Baixo): Produtos da esquerda para direita: ${shelf1.map(p => p.name).join(' → ')}
-   - Cada produto ocupa exatamente seu percentual especificado
-2. PRATELEIRAS 2-4 (MEIO - Altura das Mãos): Produtos da esquerda para direita: ${shelves2to4.map(p => p.name).join(' → ')}
-   - Cada produto ocupa exatamente seu percentual especificado
-3. PRATELEIRA 5 (SUPERIOR - Altura dos Olhos): Produtos da esquerda para direita: ${shelf5.map(p => p.name).join(' → ')}
-   - Cada produto ocupa exatamente seu percentual especificado
-4. ORDEM VERTICAL: Prateleira 1 na base, Prateleira 5 no topo (visão frontal)
-5. Produtos são agrupados por prateleira - NÃO misture produtos entre prateleiras
-6. Repita a sequência de produtos horizontalmente para preencher a largura da prateleira
-7. NENHUMA prateleira pode estar vazia - preencha completamente com os produtos listados
-8. Use APENAS os produtos especificados acima - não adicione produtos fictícios
-9. Mantenha aparência profissional de varejo com iluminação adequada
+**INSTRUÇÕES DE POSICIONAMENTO - OBRIGATÓRIO:**
+1. PRATELEIRA 1 (BASE): ${shelf1.map(p => p.name).join(' | ')}
+2. PRATELEIRAS 2-4 (MEIO): ${shelves2to4.map(p => p.name).join(' | ')}
+3. PRATELEIRA 5 (TOPO): ${shelf5.map(p => p.name).join(' | ')}
 
-**IMPORTANTE - NÃO FAÇA:**
-- Mude a ordem dos produtos dentro de uma prateleira
-- Coloque produtos em prateleiras erradas
-- Use produtos genéricos de placeholder
-- Ignore os percentuais especificados
-- Gere produtos diferentes dos listados
-- Deixe prateleiras vazias ou parcialmente preenchidas
-- Adicione produtos que não estão na lista
+Cada produto ocupa exatamente o percentual especificado. Repita os produtos horizontalmente para preencher 100% da prateleira.
 
-**CATEGORIA DE PRODUTOS:**
-- TODOS os produtos na gôndola DEVEM ser da categoria: ${categoryName}
-- NÃO inclua produtos de outras categorias
-- Use APENAS os nomes de produtos listados acima
+**RESTRIÇÕES ABSOLUTAS - VIOLAÇÕES RESULTAM EM FALHA:**
+❌ NÃO adicione produtos não listados
+❌ NÃO mude a ordem dos produtos
+❌ NÃO coloque produtos em prateleiras erradas
+❌ NÃO misture categorias
+❌ NÃO deixe prateleiras vazias
+❌ NÃO use produtos similares ou substitutos
+❌ NÃO ignore os percentuais especificados
 
 **ESTILO VISUAL:**
-- Fotografia frontal profissional de gôndola de varejo
-- Sistema de prateleiras moderno com 5 prateleiras visíveis e numeradas
-- Iluminação profissional destacando cada prateleira
-- Embalagens de produtos e rótulos claramente visíveis
-- Fundo realista de loja de varejo
-- Estilo de fotografia de produto profissional
+Fotografia frontal profissional de gôndola de varejo com iluminação adequada, embalagens claras e visíveis, fundo realista de loja.
 
-Gere uma fotografia profissional de gôndola de varejo com APENAS produtos de ${categoryName} que EXATAMENTE corresponda a esta especificação de planograma com as prateleiras numeradas de 1 a 5 (1 na base, 5 no topo).`;
+Gere uma fotografia que mostre EXATAMENTE esta configuração com APENAS estes produtos: ${uniqueProductNames.join(', ')}.`;
 
     return prompt;
   };
