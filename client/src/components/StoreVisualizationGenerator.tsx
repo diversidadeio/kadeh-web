@@ -42,6 +42,8 @@ interface StoreVisualizationGeneratorProps {
   numberOfShelves?: number;
 }
 
+
+
 const TRANSLATIONS = {
   pt: {
     generateVisualization: "Gerar Visualização da Loja",
@@ -113,6 +115,9 @@ function distributeProductsToShelves(products: Product[]): {
 }
 
 export default function StoreVisualizationGenerator({
+  // Importar a função aqui se necessário
+  // Ou usar a função local definida acima
+  
   products,
   gondolaWidth,
   shelfHeight,
@@ -133,6 +138,8 @@ export default function StoreVisualizationGenerator({
   const [regenerationAttempts, setRegenerationAttempts] = useState(0);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
+
+  // Usar a função local distributeProductsToShelves
 
   const generateStorePrompt = (): string => {
     if (products.length === 0) {

@@ -744,3 +744,10 @@
 - [x] Corrigir erro na geração de visualização de layout da loja por IA
 - [x] Investigar causa do erro "Erro ao gerar visualização. Tente novamente."
 - [x] Testar geração de layout da loja novamente
+
+## CRÍTICO - Geração de Loja por IA
+- [x] CRÍTICO: IA gerando gôndola vazia sem produtos mesmo com 10 tipos de arroz cadastrados
+- [x] Investigar fluxo de dados de produtos para gerador de IA de loja
+- [x] Verificar se produtos estão sendo passados corretamente ao prompt
+- [x] Corrigir função distributeProductsToShelves que estava faltando
+- [x] Testar geração com 10 tipos de arroz múltiplas vezes
