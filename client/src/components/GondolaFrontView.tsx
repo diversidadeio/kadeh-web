@@ -152,7 +152,8 @@ function renderShelfSection(
 
 /**
  * Distribui produtos nas prateleiras respeitando percentuais recomendados
- * Se houver espaço sobrando na Parte de Baixo, preenche com produtos de Altura das Mãos
+ * IMPORTANTE: Produtos da Parte de Baixo ocupam APENAS seu percentual recomendado
+ * O espaço restante é preenchido com produtos de Altura das Mãos
  */
 function distributeProductsToShelves(products: Product[]): {
   shelf1: Product[];
@@ -165,31 +166,44 @@ function distributeProductsToShelves(products: Product[]): {
     'Parte de Baixo': products.filter(p => (p.zone || p.zona) === 'Parte de Baixo'),
   };
 
-  // Calcular espaço utilizado na Parte de Baixo
-  const bottomShare = productsByZone['Parte de Baixo'].reduce((sum, p) => sum + (p.share || 0), 0);
+  // Calcular espaço utilizado APENAS pelos produtos da Parte de Baixo
+  const bottomProducts = productsByZone['Parte de Baixo'];
+  const bottomShare = bottomProducts.reduce((sum, p) => sum + (p.share || 0), 0);
   const spaceRemaining = 100 - bottomShare;
 
-  // Se há espaço sobrando na Parte de Baixo, preencher com produtos de Altura das Mãos
-  let shelf1Products = [...productsByZone['Parte de Baixo']];
+  // Manter produtos da Parte de Baixo com seu percentual recomendado
+  let shelf1Products = [...bottomProducts];
   let handLevelProducts = [...productsByZone['Altura das mãos']];
 
+  // Preencher espaço restante com produtos de Altura das Mãos
   if (spaceRemaining > 0 && handLevelProducts.length > 0) {
-    // Adicionar produtos de Altura das Mãos à Parte de Baixo até preencher 100%
     let remainingSpace = spaceRemaining;
     const productsToAdd: Product[] = [];
+    const productsToRemove: string[] = [];
     
+    // Tentar adicionar produtos de Altura das Mãos que cabem no espaço restante
     for (const product of handLevelProducts) {
       if (remainingSpace <= 0) break;
       
       const productShare = product.share || 0;
+      
+      // Se o produto cabe completamente no espaço restante, adicionar
       if (productShare <= remainingSpace) {
         productsToAdd.push(product);
+        productsToRemove.push(product.id);
         remainingSpace -= productShare;
+      }
+      // Se o produto não cabe completamente, criar uma cópia com share reduzido
+      else if (remainingSpace > 5) { // Apenas se sobrar mais de 5%
+        const adjustedProduct = { ...product, share: remainingSpace };
+        productsToAdd.push(adjustedProduct);
+        productsToRemove.push(product.id);
+        remainingSpace = 0;
       }
     }
 
     shelf1Products = [...shelf1Products, ...productsToAdd];
-    handLevelProducts = handLevelProducts.filter(p => !productsToAdd.includes(p));
+    handLevelProducts = handLevelProducts.filter(p => !productsToRemove.includes(p.id));
   }
 
   return {

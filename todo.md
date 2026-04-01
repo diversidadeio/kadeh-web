@@ -151,7 +151,8 @@
 - [x] Corrigir erro ao gerar visualização da loja por IA com 9 produtos
 - [x] Corrigir nomes das prateleiras para mostrar zona de exposição (Parte de Baixo, Altura das Mãos, Altura dos Olhos)
 - [x] Criar relatório visual de ocupação por zona de exposição
-- [ ] Corrigir clique nas categorias que mais vendem para adicionar produtos à simulação
+- [x] Corrigir clique nas categorias que mais vendem para adicionar produtos à simulação
+- [ ] Implementar preenchimento inteligente de prateleiras: Parte de Baixo ocupa % recomendado, Altura das Mãos preenche o restante
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 
