@@ -150,7 +150,8 @@
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
 - [x] Corrigir erro ao gerar visualização da loja por IA com 9 produtos
 - [x] Corrigir nomes das prateleiras para mostrar zona de exposição (Parte de Baixo, Altura das Mãos, Altura dos Olhos)
-- [ ] Criar relatório visual de ocupação por zona de exposição
+- [x] Criar relatório visual de ocupação por zona de exposição
+- [ ] Corrigir clique nas categorias que mais vendem para adicionar produtos à simulação
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 
