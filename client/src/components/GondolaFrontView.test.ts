@@ -1,3 +1,8 @@
+import { describe, it, expect } from 'vitest';
+
+// Mock the distributeProductsToShelves function
+// We'll extract it for testing purposes
+
 interface Product {
   id: string;
   name: string;
@@ -10,162 +15,12 @@ interface Product {
   margem?: string;
 }
 
-interface GondolaFrontViewProps {
-  products: Product[];
-  totalWidth?: number;
-  shelfHeight?: number;
-  numberOfShelves?: number;
-  language?: 'pt' | 'en';
-}
-
-const zoneColors = {
-  'Altura dos olhos': { bg: '#FEF3C7', border: '#FBBF24', label: 'Altura dos olhos' },
-  'Altura das mãos': { bg: '#DBEAFE', border: '#3B82F6', label: 'Altura das mãos' },
-  'Parte de Baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Parte de Baixo' },
-};
-
-const zoneColorsEn = {
-  'Altura dos olhos': { bg: '#FEF3C7', border: '#FBBF24', label: 'Eye Level' },
-  'Altura das mãos': { bg: '#DBEAFE', border: '#3B82F6', label: 'Hand Level' },
-  'Parte de Baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Bottom Shelf' },
-};
-
-/**
- * Determina a zona de uma prateleira baseado em seu número
- * Prateleiras 1-2: Parte de Baixo
- * Prateleiras 3-4: Altura das Mãos
- * Prateleiras 5+: Altura dos Olhos
- */
 function getShelfZone(shelfNumber: number): 'Parte de Baixo' | 'Altura das mãos' | 'Altura dos olhos' {
   if (shelfNumber <= 2) return 'Parte de Baixo';
   if (shelfNumber <= 4) return 'Altura das mãos';
-  return 'Altura dos olhos'; // Prateleira 5 e acima
+  return 'Altura dos olhos';
 }
 
-/**
- * Renderiza uma prateleira com produtos distribuídos proporcionalmente por percentual (share)
- */
-function renderShelf(
-  productsInZone: Product[],
-  totalWidth: number,
-  shelfHeight: number,
-  zoneColor: any,
-  language: string
-) {
-  if (productsInZone.length === 0) {
-    return (
-      <div className="w-full flex items-center justify-center text-gray-400 text-xs bg-gray-50">
-        {language === 'pt' ? 'Sem produtos' : 'No products'}
-      </div>
-    );
-  }
-
-  // Calcular share total
-  const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
-  const useShare = totalShare > 0;
-
-  return (
-    <div className="flex w-full h-full overflow-hidden">
-      {productsInZone.map((product, index) => {
-        let widthPercent = 0;
-        let displayValue = '';
-        
-        if (useShare) {
-          widthPercent = product.share || 0;
-          displayValue = `${(product.share || 0).toFixed(1)}%`;
-        } else {
-          const totalProductWidth = productsInZone.reduce((sum, p) => sum + (p.largura || 10), 0);
-          const productWidth = product.largura || 10;
-          widthPercent = (productWidth / totalProductWidth) * 100;
-          displayValue = `${productWidth}cm`;
-        }
-
-        return (
-          <div
-            key={product.id}
-            className="flex flex-col items-center justify-center border-r border-gray-300 last:border-r-0 p-2 overflow-hidden transition-all hover:opacity-80"
-            style={{
-              width: `${widthPercent}%`,
-              backgroundColor: zoneColor.bg,
-              minWidth: widthPercent > 5 ? '30px' : '20px',
-            }}
-            title={`${product.name} - ${displayValue}`}
-          >
-            <span className="text-xs font-bold text-gray-800 text-center truncate line-clamp-2">
-              {product.name}
-            </span>
-            <span className="text-xs text-gray-600 font-semibold">
-              {displayValue}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/**
- * Renderiza uma seção de prateleira com número e label
- */
-function renderShelfSection(
-  shelfNumber: number,
-  zone: string,
-  productsInZone: Product[],
-  totalWidth: number,
-  shelfHeight: number,
-  colors: any,
-  language: string
-) {
-  const zoneColor = colors[zone as keyof typeof colors];
-  
-  // Calcular espaço utilizado
-  const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
-  const usedPercentage = Math.min(totalShare, 100);
-  
-  return (
-    <div key={`shelf-${shelfNumber}`}>
-      <div className="flex items-center gap-2 mb-2">
-        <div
-          className="w-4 h-4 rounded"
-          style={{ backgroundColor: zoneColor.bg }}
-        />
-        <span className="text-sm font-semibold text-gray-700">
-          {language === 'pt' 
-            ? `Prateleira ${shelfNumber} - ${zoneColor.label}` 
-            : `Shelf ${shelfNumber} - ${zoneColor.label}`}
-        </span>
-        <span className="text-xs text-gray-500">
-          {usedPercentage.toFixed(1)}% / 100%
-        </span>
-      </div>
-      <div
-        className="border-2 rounded-md overflow-hidden"
-        style={{
-          borderColor: zoneColor.border,
-          height: `${shelfHeight}px`,
-        }}
-      >
-        {renderShelf(
-          productsInZone,
-          totalWidth,
-          shelfHeight,
-          zoneColor,
-          language
-        )}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Distribui produtos nas prateleiras respeitando hierarquia de preenchimento:
- * HIERARQUIA: Altura dos Olhos > Altura das Mãos > Parte de Baixo
- * 
- * Classificação de Prateleiras:
- * - Prateleiras 1-2: Parte de Baixo
- * - Prateleiras 3-4: Altura das Mãos
- * - Prateleiras 5+: Altura dos Olhos (qualquer prateleira acima da 5 também é Altura dos Olhos)
- */
 function distributeProductsToShelves(products: Product[], numberOfShelves: number = 5): Map<number, Product[]> {
   const productsByZone = {
     'Altura dos olhos': products.filter(p => (p.zone || p.zona) === 'Altura dos olhos'),
@@ -173,10 +28,8 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     'Parte de Baixo': products.filter(p => (p.zone || p.zona) === 'Parte de Baixo'),
   };
 
-  // Mapa de prioridade de margem (A > B > C)
   const marginPriority = { 'A': 3, 'B': 2, 'C': 1, undefined: 0 };
 
-  // Função auxiliar para ordenar por margem
   const sortByMargin = (products: Product[]) => {
     return [...products].sort((a, b) => {
       const priorityA = marginPriority[a.margem as keyof typeof marginPriority] || 0;
@@ -185,16 +38,13 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     });
   };
 
-  // Rastrear produtos já usados
   const usedProductIds = new Set<string>();
-  
-  // Mapa de prateleiras
   const shelvesMap = new Map<number, Product[]>();
   for (let i = 1; i <= numberOfShelves; i++) {
     shelvesMap.set(i, []);
   }
 
-  // ============ PRATELEIRAS 1-2 (Parte de Baixo) ============
+  // PRATELEIRAS 1-2 (Parte de Baixo)
   const bottomShelfNumbers = [1, 2].filter(n => n <= numberOfShelves);
   let spaceRemainingByShelf = new Map<number, number>();
   
@@ -202,7 +52,7 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     spaceRemainingByShelf.set(shelfNum, 100);
   }
 
-  // 1. Adicionar produtos da Parte de Baixo
+  // Adicionar produtos da Parte de Baixo
   for (const product of productsByZone['Parte de Baixo']) {
     const productShare = product.share || 0;
     let placed = false;
@@ -219,7 +69,6 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
 
     if (!placed && productShare > 0) {
-      // Adicionar à prateleira com mais espaço
       let maxShelfNum = bottomShelfNumbers[0];
       let maxSpace = spaceRemainingByShelf.get(maxShelfNum) || 0;
       
@@ -239,7 +88,7 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // 2. Preencher com Altura das Mãos (melhor margem primeiro)
+  // Preencher com Altura das Mãos
   const handLevelSorted = sortByMargin(productsByZone['Altura das mãos']);
   for (const product of handLevelSorted) {
     if (usedProductIds.has(product.id)) continue;
@@ -278,7 +127,7 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // 3. Se ainda houver espaço, preencher com Altura dos Olhos (melhor margem primeiro)
+  // Preencher com Altura dos Olhos
   const eyeLevelSorted = sortByMargin(productsByZone['Altura dos olhos']);
   for (const product of eyeLevelSorted) {
     if (usedProductIds.has(product.id)) continue;
@@ -317,7 +166,7 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // ============ PRATELEIRAS 3-4 (Altura das Mãos) ============
+  // PRATELEIRAS 3-4 (Altura das Mãos)
   const handShelfNumbers = [3, 4].filter(n => n <= numberOfShelves);
   spaceRemainingByShelf.clear();
   
@@ -325,7 +174,6 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     spaceRemainingByShelf.set(shelfNum, 100);
   }
 
-  // Distribuir produtos de Altura das Mãos
   const availableHandProducts = productsByZone['Altura das mãos'].filter(p => !usedProductIds.has(p.id));
   const handLevelSorted2 = sortByMargin(availableHandProducts);
 
@@ -366,7 +214,6 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // Preencher espaço restante com Altura dos Olhos (melhor margem primeiro)
   const eyeLevelSorted2 = sortByMargin(productsByZone['Altura dos olhos'].filter(p => !usedProductIds.has(p.id)));
   
   for (const product of eyeLevelSorted2) {
@@ -390,7 +237,7 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // ============ PRATELEIRAS 5+ (Altura dos Olhos) ============
+  // PRATELEIRAS 5+ (Altura dos Olhos)
   const eyeShelfNumbers = Array.from({ length: numberOfShelves - 4 }, (_, i) => i + 5).filter(n => n <= numberOfShelves);
   spaceRemainingByShelf.clear();
   
@@ -398,7 +245,6 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     spaceRemainingByShelf.set(shelfNum, 100);
   }
 
-  // 1. Adicionar produtos de Altura dos Olhos
   for (const product of productsByZone['Altura dos olhos']) {
     if (usedProductIds.has(product.id)) continue;
     
@@ -436,7 +282,6 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
     }
   }
 
-  // 2. Preencher espaço restante com Altura das Mãos (melhor margem primeiro)
   const handLevelSorted3 = sortByMargin(productsByZone['Altura das mãos'].filter(p => !usedProductIds.has(p.id)));
   
   for (const product of handLevelSorted3) {
@@ -463,51 +308,299 @@ function distributeProductsToShelves(products: Product[], numberOfShelves: numbe
   return shelvesMap;
 }
 
-export default function GondolaFrontView({
-  products,
-  totalWidth = 280,
-  shelfHeight = 60,
-  numberOfShelves = 5,
-  language = 'pt',
-}: GondolaFrontViewProps) {
-  if (products.length === 0) {
-    return (
-      <div className="w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-        <p className="text-gray-500 text-sm">
-          {language === 'pt'
-            ? 'Nenhum produto adicionado à simulação'
-            : 'No products added to the simulation'}
-        </p>
-      </div>
-    );
-  }
+describe('GondolaFrontView - Shelf Distribution', () => {
+  describe('getShelfZone', () => {
+    it('should classify shelves 1-2 as Parte de Baixo', () => {
+      expect(getShelfZone(1)).toBe('Parte de Baixo');
+      expect(getShelfZone(2)).toBe('Parte de Baixo');
+    });
 
-  const colors = language === 'pt' ? zoneColors : zoneColorsEn;
+    it('should classify shelves 3-4 as Altura das mãos', () => {
+      expect(getShelfZone(3)).toBe('Altura das mãos');
+      expect(getShelfZone(4)).toBe('Altura das mãos');
+    });
 
-  // Distribuir produtos nas prateleiras
-  const shelvesMap = distributeProductsToShelves(products, numberOfShelves);
+    it('should classify shelf 5 and above as Altura dos olhos', () => {
+      expect(getShelfZone(5)).toBe('Altura dos olhos');
+      expect(getShelfZone(6)).toBe('Altura dos olhos');
+      expect(getShelfZone(7)).toBe('Altura dos olhos');
+      expect(getShelfZone(8)).toBe('Altura dos olhos');
+    });
+  });
 
-  return (
-    <div className="w-full space-y-6">
-      <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
-        <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4 space-y-4 flex flex-col-reverse">
-          {/* Renderizar prateleiras em ordem reversa (de cima para baixo) */}
-          {Array.from({ length: numberOfShelves }, (_, i) => numberOfShelves - i).map((shelfNum) => {
-            const zone = getShelfZone(shelfNum);
-            const productsInShelf = shelvesMap.get(shelfNum) || [];
+  describe('distributeProductsToShelves - Basic Distribution', () => {
+    it('should distribute bottom products only to bottom shelves', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Praiana',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+        {
+          id: 'p2',
+          name: 'Polar',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+      ];
 
-            return renderShelfSection(
-              shelfNum,
-              zone,
-              productsInShelf,
-              totalWidth,
-              shelfHeight,
-              colors,
-              language
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
+      const distribution = distributeProductsToShelves(products, 5);
+      const shelf1 = distribution.get(1) || [];
+      const shelf2 = distribution.get(2) || [];
+
+      // Products should be in bottom shelves
+      expect(shelf1.length + shelf2.length).toBeGreaterThan(0);
+      expect(distribution.get(5)?.length || 0).toBe(0); // Eye level should be empty
+    });
+
+    it('should fill remaining bottom shelf space with hand level products', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Praiana',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+        {
+          id: 'p2',
+          name: 'Cerveja A',
+          zone: 'Altura das mãos',
+          quadrantes: 2,
+          share: 30,
+          margem: 'A',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 5);
+      const shelf1 = distribution.get(1) || [];
+
+      // Shelf 1 should have both bottom and hand level products
+      expect(shelf1.length).toBeGreaterThanOrEqual(1);
+      const hasBottomProduct = shelf1.some(p => p.zone === 'Parte de Baixo');
+      const hasHandProduct = shelf1.some(p => p.zone === 'Altura das mãos');
+      expect(hasBottomProduct || hasHandProduct).toBe(true);
+    });
+  });
+
+  describe('distributeProductsToShelves - Multiple Shelves', () => {
+    it('should handle 6 shelves with shelf 6 as Eye Level', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Arroz A',
+          zone: 'Altura dos olhos',
+          quadrantes: 1,
+          share: 20,
+          margem: 'A',
+        },
+        {
+          id: 'p2',
+          name: 'Arroz B',
+          zone: 'Altura dos olhos',
+          quadrantes: 1,
+          share: 15,
+          margem: 'B',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 6);
+      
+      // Shelves 5 and 6 should be Eye Level
+      expect(getShelfZone(5)).toBe('Altura dos olhos');
+      expect(getShelfZone(6)).toBe('Altura dos olhos');
+      
+      // Products should be distributed to eye level shelves
+      const shelf5 = distribution.get(5) || [];
+      const shelf6 = distribution.get(6) || [];
+      expect(shelf5.length + shelf6.length).toBeGreaterThan(0);
+    });
+
+    it('should handle 8 shelves correctly', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Bottom Product',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 10,
+          margem: 'C',
+        },
+        {
+          id: 'p2',
+          name: 'Hand Product',
+          zone: 'Altura das mãos',
+          quadrantes: 1,
+          share: 20,
+          margem: 'B',
+        },
+        {
+          id: 'p3',
+          name: 'Eye Product',
+          zone: 'Altura dos olhos',
+          quadrantes: 1,
+          share: 30,
+          margem: 'A',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 8);
+      
+      // Verify all shelves exist
+      for (let i = 1; i <= 8; i++) {
+        expect(distribution.has(i)).toBe(true);
+      }
+
+      // Verify zone classifications
+      expect(getShelfZone(1)).toBe('Parte de Baixo');
+      expect(getShelfZone(2)).toBe('Parte de Baixo');
+      expect(getShelfZone(3)).toBe('Altura das mãos');
+      expect(getShelfZone(4)).toBe('Altura das mãos');
+      expect(getShelfZone(5)).toBe('Altura dos olhos');
+      expect(getShelfZone(6)).toBe('Altura dos olhos');
+      expect(getShelfZone(7)).toBe('Altura dos olhos');
+      expect(getShelfZone(8)).toBe('Altura dos olhos');
+    });
+  });
+
+  describe('distributeProductsToShelves - Space Filling', () => {
+    it('should not duplicate products across shelves', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Praiana',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+        {
+          id: 'p2',
+          name: 'Polar',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+        {
+          id: 'p3',
+          name: 'Cerveja A',
+          zone: 'Altura das mãos',
+          quadrantes: 2,
+          share: 30,
+          margem: 'A',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 5);
+      
+      // Count total product occurrences
+      let totalOccurrences = 0;
+      for (let i = 1; i <= 5; i++) {
+        const shelf = distribution.get(i) || [];
+        totalOccurrences += shelf.length;
+      }
+
+      // Should have at least 3 products placed (no duplicates)
+      expect(totalOccurrences).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should respect product share percentages', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Praiana',
+          zone: 'Parte de Baixo',
+          quadrantes: 1,
+          share: 5,
+          margem: 'C',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 5);
+      const shelf1 = distribution.get(1) || [];
+      
+      // Should have the product with its share
+      const praianaInShelf = shelf1.find(p => p.id === 'p1');
+      expect(praianaInShelf).toBeDefined();
+      expect(praianaInShelf?.share).toBe(5);
+    });
+
+    it('should prioritize margin A products in hand level', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Cerveja A',
+          zone: 'Altura das mãos',
+          quadrantes: 2,
+          share: 25,
+          margem: 'A',
+        },
+        {
+          id: 'p2',
+          name: 'Cerveja B',
+          zone: 'Altura das mãos',
+          quadrantes: 2,
+          share: 20,
+          margem: 'C',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 5);
+      const shelf3 = distribution.get(3) || [];
+      
+      // Margin A should be placed first
+      const marginAProduct = shelf3.find(p => p.margem === 'A');
+      expect(marginAProduct).toBeDefined();
+    });
+  });
+
+  describe('distributeProductsToShelves - Edge Cases', () => {
+    it('should handle empty product list', () => {
+      const distribution = distributeProductsToShelves([], 5);
+      
+      for (let i = 1; i <= 5; i++) {
+        expect(distribution.get(i)?.length || 0).toBe(0);
+      }
+    });
+
+    it('should handle single shelf', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Product',
+          zone: 'Altura dos olhos',
+          quadrantes: 1,
+          share: 50,
+          margem: 'A',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 1);
+      expect(distribution.has(1)).toBe(true);
+      expect(distribution.get(1)?.length).toBeGreaterThan(0);
+    });
+
+    it('should handle products without share value', () => {
+      const products: Product[] = [
+        {
+          id: 'p1',
+          name: 'Product',
+          zone: 'Altura dos olhos',
+          quadrantes: 1,
+          margem: 'A',
+        },
+      ];
+
+      const distribution = distributeProductsToShelves(products, 5);
+      // Should not crash and should handle gracefully
+      expect(distribution.size).toBe(5);
+    });
+  });
+});

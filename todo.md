@@ -152,7 +152,8 @@
 - [x] Corrigir nomes das prateleiras para mostrar zona de exposição (Parte de Baixo, Altura das Mãos, Altura dos Olhos)
 - [x] Criar relatório visual de ocupação por zona de exposição
 - [x] Corrigir clique nas categorias que mais vendem para adicionar produtos à simulação
-- [ ] Implementar preenchimento inteligente de prateleiras: Parte de Baixo ocupa % recomendado, Altura das Mãos preenche o restante
+- [ ] CRÍTICO: Corrigir distribuição de produtos - respeitar % recomendado de cada produto e preencher espaço restante com melhor margem
+- [x] Corrigir classificação de prateleiras: prateleiras acima da 5 devem ser consideradas como Altura dos Olhos
 
 - [x] Redirecionar botões da página Kadeh Ads para formulário de contato
 

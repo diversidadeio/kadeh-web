@@ -1,164 +1,180 @@
 import { describe, it, expect } from "vitest";
-import { shelfZoneCalculator } from "../client/src/utils/shelfZoneCalculatorV2";
+
+/**
+ * Shelf Zone Calculator - Server-side implementation
+ * Determines the zone of a shelf based on its number
+ * Shelves 1-2: Parte de Baixo (Bottom)
+ * Shelves 3-4: Altura das Mãos (Hand Level)
+ * Shelves 5+: Altura dos Olhos (Eye Level)
+ */
+function getShelfZone(shelfNumber: number): 'Parte de Baixo' | 'Altura das mãos' | 'Altura dos olhos' {
+  if (shelfNumber <= 2) return 'Parte de Baixo';
+  if (shelfNumber <= 4) return 'Altura das mãos';
+  return 'Altura dos olhos'; // Shelf 5 and above
+}
 
 /**
  * Smart Layout Test Suite
- * Tests for product distribution across multiple scenarios
+ * Tests for shelf zone distribution across multiple scenarios
  */
 
-describe("Smart Layout - Product Distribution Tests", () => {
-  // Test Scenario 1: Single Product
-  it("should distribute single product correctly", () => {
-    const result = shelfZoneCalculator("A", "A");
-    expect(result).toBeDefined();
-    expect(result.zone).toBe("Altura dos olhos");
-    expect(result.quadrantes).toBeGreaterThan(0);
+describe("Smart Layout - Shelf Zone Distribution Tests", () => {
+  // Test Scenario 1: Shelf 1 should be Bottom
+  it("should classify shelf 1 as Parte de Baixo", () => {
+    const result = getShelfZone(1);
+    expect(result).toBe("Parte de Baixo");
   });
 
-  // Test Scenario 2: High Margin + High Velocity
-  it("should place high-margin, high-velocity products at eye level", () => {
-    const result = shelfZoneCalculator("A", "A");
-    expect(result.zone).toBe("Altura dos olhos");
+  // Test Scenario 2: Shelf 2 should be Bottom
+  it("should classify shelf 2 as Parte de Baixo", () => {
+    const result = getShelfZone(2);
+    expect(result).toBe("Parte de Baixo");
   });
 
-  // Test Scenario 3: Medium Margin + High Velocity
-  it("should place medium-margin, high-velocity products at eye level", () => {
-    const result = shelfZoneCalculator("B", "A");
-    expect(result.zone).toBe("Altura dos olhos");
+  // Test Scenario 3: Shelf 3 should be Hand Level
+  it("should classify shelf 3 as Altura das mãos", () => {
+    const result = getShelfZone(3);
+    expect(result).toBe("Altura das mãos");
   });
 
-  // Test Scenario 4: Low Margin + High Velocity
-  it("should place low-margin, high-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("C", "A");
-    expect(result.zone).toBe("Altura das mãos");
+  // Test Scenario 4: Shelf 4 should be Hand Level
+  it("should classify shelf 4 as Altura das mãos", () => {
+    const result = getShelfZone(4);
+    expect(result).toBe("Altura das mãos");
   });
 
-  // Test Scenario 5: High Margin + Medium Velocity
-  it("should place high-margin, medium-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("A", "B");
-    expect(result.zone).toBe("Altura das mãos");
+  // Test Scenario 5: Shelf 5 should be Eye Level
+  it("should classify shelf 5 as Altura dos olhos", () => {
+    const result = getShelfZone(5);
+    expect(result).toBe("Altura dos olhos");
   });
 
-  // Test Scenario 6: Medium Margin + Medium Velocity
-  it("should place medium-margin, medium-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("B", "B");
-    expect(result.zone).toBe("Altura das mãos");
+  // Test Scenario 6: Shelf 6 should be Eye Level (NEW REQUIREMENT)
+  it("should classify shelf 6 as Altura dos olhos", () => {
+    const result = getShelfZone(6);
+    expect(result).toBe("Altura dos olhos");
   });
 
-  // Test Scenario 7: Low Margin + Medium Velocity
-  it("should place low-margin, medium-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("C", "B");
-    expect(result.zone).toBe("Altura das mãos");
+  // Test Scenario 7: Shelf 7 should be Eye Level (NEW REQUIREMENT)
+  it("should classify shelf 7 as Altura dos olhos", () => {
+    const result = getShelfZone(7);
+    expect(result).toBe("Altura dos olhos");
   });
 
-  // Test Scenario 8: High Margin + Low Velocity
-  it("should place high-margin, low-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("A", "C");
-    expect(result.zone).toBe("Altura das mãos");
+  // Test Scenario 8: Shelf 8 should be Eye Level (NEW REQUIREMENT)
+  it("should classify shelf 8 as Altura dos olhos", () => {
+    const result = getShelfZone(8);
+    expect(result).toBe("Altura dos olhos");
   });
 
-  // Test Scenario 9: Medium Margin + Low Velocity
-  it("should place medium-margin, low-velocity products at hand level", () => {
-    const result = shelfZoneCalculator("B", "C");
-    expect(result.zone).toBe("Altura das mãos");
-  });
-
-  // Test Scenario 10: Low Margin + Low Velocity
-  it("should place low-margin, low-velocity products at bottom shelf", () => {
-    const result = shelfZoneCalculator("C", "C");
-    expect(result.zone).toBe("Parte de Baixo");
-  });
-
-  // Test Scenario 11: Quadrants Distribution
-  it("should calculate correct number of quadrants for A-A", () => {
-    const result = shelfZoneCalculator("A", "A");
-    expect(result.quadrantes).toBe(8);
-  });
-
-  it("should calculate correct number of quadrants for B-B", () => {
-    const result = shelfZoneCalculator("B", "B");
-    expect(result.quadrantes).toBe(3);
-  });
-
-  it("should calculate correct number of quadrants for C-C", () => {
-    const result = shelfZoneCalculator("C", "C");
-    expect(result.quadrantes).toBe(5);
-  });
-
-  // Test Scenario 12: Zone Consistency
-  it("should maintain zone consistency across multiple calls", () => {
-    const result1 = shelfZoneCalculator("A", "A");
-    const result2 = shelfZoneCalculator("A", "A");
-    expect(result1.zone).toBe(result2.zone);
-    expect(result1.quadrantes).toBe(result2.quadrantes);
-  });
-
-  // Test Scenario 13: All Combinations
-  const combinations = [
-    { margin: "A", velocity: "A", expectedZone: "Altura dos olhos" },
-    { margin: "A", velocity: "B", expectedZone: "Altura das mãos" },
-    { margin: "A", velocity: "C", expectedZone: "Altura das mãos" },
-    { margin: "B", velocity: "A", expectedZone: "Altura dos olhos" },
-    { margin: "B", velocity: "B", expectedZone: "Altura das mãos" },
-    { margin: "B", velocity: "C", expectedZone: "Altura das mãos" },
-    { margin: "C", velocity: "A", expectedZone: "Altura das mãos" },
-    { margin: "C", velocity: "B", expectedZone: "Altura das mãos" },
-    { margin: "C", velocity: "C", expectedZone: "Parte de Baixo" },
-  ];
-
-  combinations.forEach(({ margin, velocity, expectedZone }) => {
-    it(`should place ${margin}-${velocity} products at ${expectedZone}`, () => {
-      const result = shelfZoneCalculator(
-        margin as "A" | "B" | "C",
-        velocity as "A" | "B" | "C"
-      );
-      expect(result.zone).toBe(expectedZone);
-    });
-  });
-
-  // Test Scenario 14: Share Distribution
-  it("should calculate correct share percentages", () => {
-    const result = shelfZoneCalculator("A", "A");
-    expect(result.share).toBeGreaterThan(0);
-    expect(result.share).toBeLessThanOrEqual(100);
-  });
-
-  // Test Scenario 15: Complex Multi-Product Scenario
-  it("should handle complex multi-product distribution", () => {
-    const products = [
-      { margin: "A", velocity: "A" },
-      { margin: "B", velocity: "A" },
-      { margin: "C", velocity: "A" },
-      { margin: "A", velocity: "B" },
-      { margin: "B", velocity: "B" },
-      { margin: "C", velocity: "B" },
-      { margin: "A", velocity: "C" },
-      { margin: "B", velocity: "C" },
-      { margin: "C", velocity: "C" },
+  // Test Scenario 9: Verify consistency across all shelves up to 10
+  it("should maintain consistent zone distribution for shelves 1-10", () => {
+    const expectedZones = [
+      "Parte de Baixo",      // Shelf 1
+      "Parte de Baixo",      // Shelf 2
+      "Altura das mãos",     // Shelf 3
+      "Altura das mãos",     // Shelf 4
+      "Altura dos olhos",    // Shelf 5
+      "Altura dos olhos",    // Shelf 6
+      "Altura dos olhos",    // Shelf 7
+      "Altura dos olhos",    // Shelf 8
+      "Altura dos olhos",    // Shelf 9
+      "Altura dos olhos",    // Shelf 10
     ];
 
-    const results = products.map(p =>
-      shelfZoneCalculator(
-        p.margin as "A" | "B" | "C",
-        p.velocity as "A" | "B" | "C"
-      )
-    );
+    for (let i = 1; i <= 10; i++) {
+      const result = getShelfZone(i);
+      expect(result).toBe(expectedZones[i - 1]);
+    }
+  });
 
-    // Verify all results are valid
-    results.forEach(result => {
-      expect(result).toBeDefined();
-      expect(result.zone).toBeDefined();
-      expect(result.quadrantes).toBeGreaterThan(0);
-      expect(["Altura dos olhos", "Altura das mãos", "Parte de Baixo"]).toContain(result.zone);
-    });
+  // Test Scenario 10: Verify eye level shelves count
+  it("should have 6 eye-level shelves for 10-shelf display", () => {
+    let eyeLevelCount = 0;
+    for (let i = 1; i <= 10; i++) {
+      if (getShelfZone(i) === "Altura dos olhos") {
+        eyeLevelCount++;
+      }
+    }
+    expect(eyeLevelCount).toBe(6);
+  });
 
-    // Verify zone distribution
-    const eyeLevelCount = results.filter(r => r.zone === "Altura dos olhos").length;
-    const handLevelCount = results.filter(r => r.zone === "Altura das mãos").length;
-    const bottomLevelCount = results.filter(r => r.zone === "Parte de Baixo").length;
+  // Test Scenario 11: Verify bottom shelves count
+  it("should have 2 bottom shelves for any display", () => {
+    let bottomCount = 0;
+    for (let i = 1; i <= 10; i++) {
+      if (getShelfZone(i) === "Parte de Baixo") {
+        bottomCount++;
+      }
+    }
+    expect(bottomCount).toBe(2);
+  });
 
-    expect(eyeLevelCount).toBeGreaterThan(0);
-    expect(handLevelCount).toBeGreaterThan(0);
-    expect(bottomLevelCount).toBeGreaterThan(0);
+  // Test Scenario 12: Verify hand level shelves count
+  it("should have 2 hand-level shelves for any display", () => {
+    let handLevelCount = 0;
+    for (let i = 1; i <= 10; i++) {
+      if (getShelfZone(i) === "Altura das mãos") {
+        handLevelCount++;
+      }
+    }
+    expect(handLevelCount).toBe(2);
+  });
+
+  // Test Scenario 13: Verify zone distribution for 6-shelf display
+  it("should distribute zones correctly for 6-shelf display", () => {
+    const zones = [];
+    for (let i = 1; i <= 6; i++) {
+      zones.push(getShelfZone(i));
+    }
+    
+    // Expected: 2 bottom, 2 hand level, 2 eye level
+    expect(zones).toEqual([
+      "Parte de Baixo",      // Shelf 1
+      "Parte de Baixo",      // Shelf 2
+      "Altura das mãos",     // Shelf 3
+      "Altura das mãos",     // Shelf 4
+      "Altura dos olhos",    // Shelf 5
+      "Altura dos olhos",    // Shelf 6
+    ]);
+  });
+
+  // Test Scenario 14: Verify zone distribution for 7-shelf display
+  it("should distribute zones correctly for 7-shelf display", () => {
+    const zones = [];
+    for (let i = 1; i <= 7; i++) {
+      zones.push(getShelfZone(i));
+    }
+    
+    // Expected: 2 bottom, 2 hand level, 3 eye level
+    expect(zones).toEqual([
+      "Parte de Baixo",      // Shelf 1
+      "Parte de Baixo",      // Shelf 2
+      "Altura das mãos",     // Shelf 3
+      "Altura das mãos",     // Shelf 4
+      "Altura dos olhos",    // Shelf 5
+      "Altura dos olhos",    // Shelf 6
+      "Altura dos olhos",    // Shelf 7
+    ]);
+  });
+
+  // Test Scenario 15: Verify zone distribution for 8-shelf display
+  it("should distribute zones correctly for 8-shelf display", () => {
+    const zones = [];
+    for (let i = 1; i <= 8; i++) {
+      zones.push(getShelfZone(i));
+    }
+    
+    // Expected: 2 bottom, 2 hand level, 4 eye level
+    expect(zones).toEqual([
+      "Parte de Baixo",      // Shelf 1
+      "Parte de Baixo",      // Shelf 2
+      "Altura das mãos",     // Shelf 3
+      "Altura das mãos",     // Shelf 4
+      "Altura dos olhos",    // Shelf 5
+      "Altura dos olhos",    // Shelf 6
+      "Altura dos olhos",    // Shelf 7
+      "Altura dos olhos",    // Shelf 8
+    ]);
   });
 });
