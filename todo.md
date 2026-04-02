@@ -112,7 +112,15 @@
 - [x] FASE C: Melhorar prompt IA para usar ordem correta de prateleiras (topo para base)
 - [x] Testar sincronização entre visualização frontal e imagem IA gerada
 - [x] Validar que imagem IA mostra exatamente os mesmos produtos da visualização frontal
-- [ ] FASE D: Implementar validação de fidelidade (ImageFidelityValidator)
+- [x] FASE D: Implementar validação de fidelidade (ImageFidelityValidator)
+
+- [x] CORREÇÃO DEFINITIVA: Ordem de prateleiras na visualização frontal
+  - [x] Corrigir loop de renderização para sequência [1, 2, 3, 4, 5] em vez de [5, 4, 3, 2, 1]
+  - [x] Adicionar flex-col-reverse para inverter ordem visual
+  - [x] Prateleira 1 agora aparece na BASE (parte inferior)
+  - [x] Prateleira 5 agora aparece no TOPO (parte superior)
+  - [x] Testar com preset de Cervejas - FUNCIONANDO PERFEITAMENTE!
+  - [x] Validar em português
 
 - [x] Recuperar pop-up de adição de produtos com campos de dimensões (largura, comprimento, altura)
 - [x] Implementar opção de percentual numérico para Margem e Giro
