@@ -831,3 +831,10 @@
   - [x] Sem logica complexa que causa erros
   - [x] Sincronizacao 100% garantida entre tabela frontal e imagem IA gerada
   - [x] Testado com sucesso: Imagem IA mostra gondola com cervejas em ordem correta
+
+- [x] CORRECAO CRITICA: Ordem das prateleiras na visualizacao frontal (GondolaFrontViewIntelligent)
+  - [x] Prateleira 1 (Parte de Baixo) agora fica na BASE (embaixo)
+  - [x] Prateleira 5 (Altura dos olhos) agora fica no TOPO (em cima)
+  - [x] CAUSA RAIZ: flex-col-reverse no container de GondolaFrontViewIntelligent.tsx estava invertendo a ordem visual
+  - [x] SOLUCAO: Removido flex-col-reverse, mantendo loop decrescente [5,4,3,2,1]
+  - [x] Testado com preset de Refrigerantes - FUNCIONANDO CORRETAMENTE
