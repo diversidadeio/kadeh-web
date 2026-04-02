@@ -188,8 +188,8 @@ function renderShelfSection(
 }
 
 /**
- * Distributes products to shelves respecting their share percentages
- * and filling empty space with products from adjacent zones
+ * Distributes products to shelves respecting their zone and share percentages
+ * Ensures each product goes to a shelf in its assigned zone
  */
 function distributeProductsToShelves(
   products: Product[],
@@ -220,47 +220,25 @@ function distributeProductsToShelves(
     }
   });
 
-  // Sort products by margem/giro ratio (better products first)
-  // This is a placeholder - in production, calculate actual margem/giro
-  const sortByMargemGiro = (products: Product[]) => {
-    return products.sort((a, b) => {
-      const aScore = (a.share || 0);
-      const bScore = (b.share || 0);
-      return bScore - aScore;
-    });
-  };
+  // Sort products by share (larger share first)
+  Object.keys(productsByZone).forEach((zone) => {
+    productsByZone[zone].sort((a, b) => (b.share || 0) - (a.share || 0));
+  });
 
   // Distribute products to their zone shelves
+  // Each product gets added to ALL shelves in its zone
   Object.keys(productsByZone).forEach((zone) => {
     const shelvesInZone = getShelvesForZone(zone, totalShelves);
-    const productsInZone = sortByMargemGiro(productsByZone[zone]);
+    const productsInZone = productsByZone[zone];
 
-    if (shelvesInZone.length === 0 || productsInZone.length === 0) return;
-
-    // Distribute products across shelves in the zone
-    let productIndex = 0;
-    let shelfIndex = 0;
-    let currentShelfShare = 0;
-    const targetSharePerShelf = 100 / shelvesInZone.length;
-
-    while (productIndex < productsInZone.length) {
-      const product = productsInZone[productIndex];
-      const productShare = product.share || 0;
-      const shelfNumber = shelvesInZone[shelfIndex];
+    // Add each product to EACH shelf in its zone
+    shelvesInZone.forEach((shelfNumber) => {
       const shelf = distribution.get(shelfNumber) || [];
-
-      // Add product to current shelf
-      shelf.push(product);
+      productsInZone.forEach((product) => {
+        shelf.push(product);
+      });
       distribution.set(shelfNumber, shelf);
-      currentShelfShare += productShare;
-      productIndex++;
-
-      // Move to next shelf if current shelf is getting full
-      if (currentShelfShare >= targetSharePerShelf && shelfIndex < shelvesInZone.length - 1) {
-        shelfIndex++;
-        currentShelfShare = 0;
-      }
-    }
+    });
   });
 
   // Fill empty space with complementary products from other zones
@@ -268,10 +246,10 @@ function distributeProductsToShelves(
     const zone = getZoneForShelf(shelfNumber, totalShelves);
     const totalShare = shelfProducts.reduce((sum, p) => sum + (p.share || 0), 0);
     
-    if (totalShare < 100) {
+    if (totalShare < 99.9) {
       let remainingSpace = 100 - totalShare;
       
-      // Get neighboring zones sorted by priority
+      // Get neighboring zones
       const neighboringZones = zone === "Altura das mãos" 
         ? ["Altura dos olhos", "Parte de Baixo"]
         : zone === "Altura dos olhos"
@@ -282,7 +260,7 @@ function distributeProductsToShelves(
       for (const neighborZone of neighboringZones) {
         if (remainingSpace <= 0.1) break;
 
-        const neighborProducts = sortByMargemGiro(productsByZone[neighborZone])
+        const neighborProducts = productsByZone[neighborZone]
           .filter((p) => !shelfProducts.some((sp) => sp.id === p.id));
 
         for (const product of neighborProducts) {
