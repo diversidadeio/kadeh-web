@@ -127,13 +127,13 @@
     - [x] Comparativa validada: ambas mostram Prateleira 1 na BASE e Prateleira 5 no TOPO
     - [x] Sincronizacao 100% VALIDADA!
 
-- [x] CORRECAO DEFINITIVA FINAL: Ordem de prateleiras (2a tentativa com sucesso)
-  - [x] Removido flex-col-reverse
-  - [x] Alterado array para [numberOfShelves, numberOfShelves-1, ..., 1]
+- [x] CORRECAO DEFINITIVA FINAL: Ordem de prateleiras (3a tentativa com sucesso TOTAL!)
+  - [x] Alterado array para [i + 1] = [1, 2, 3, 4, 5] (ordem natural)
+  - [x] Adicionado flex-col-reverse para inverter visualmente
   - [x] Prateleira 1 agora aparece na BASE (parte inferior) - CONFIRMADO!
   - [x] Prateleira 5 agora aparece no TOPO (parte superior) - CONFIRMADO!
-  - [x] Testado com Refrigerantes - FUNCIONANDO PERFEITAMENTE!
-  - [x] Ordem corrigida DEFINITIVAMENTE!
+  - [x] Testado com Azeite de Oliva - FUNCIONANDO PERFEITAMENTE!
+  - [x] Ordem corrigida DEFINITIVAMENTE! (Solucao final: Array [1,2,3,4,5] + flex-col-reverse)
 
 - [x] Recuperar pop-up de adição de produtos com campos de dimensões (largura, comprimento, altura)
 - [x] Implementar opção de percentual numérico para Margem e Giro
