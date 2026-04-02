@@ -107,6 +107,13 @@
 - [x] Testar geração de imagem com produtos em diferentes zonas
 - [x] Validar visualização em português e inglês
 
+- [x] FASE A (CRÍTICO): Corrigir ordem de prateleiras (1 em baixo, 7 em cima) na visualização frontal
+- [x] FASE B: Sincronizar distribuição com GondolaFrontView no StoreVisualizationGenerator
+- [x] FASE C: Melhorar prompt IA para usar ordem correta de prateleiras (topo para base)
+- [x] Testar sincronização entre visualização frontal e imagem IA gerada
+- [x] Validar que imagem IA mostra exatamente os mesmos produtos da visualização frontal
+- [ ] FASE D: Implementar validação de fidelidade (ImageFidelityValidator)
+
 - [x] Recuperar pop-up de adição de produtos com campos de dimensões (largura, comprimento, altura)
 - [x] Implementar opção de percentual numérico para Margem e Giro
 - [x] Testar ProductFormModal com diferentes combinações de dados
@@ -195,9 +202,9 @@
 - [x] Testar visualização de zonas em português e inglês
 
 - [x] CRÍTICA: Implementar distribuição de produtos por zona (Margem x Giro) na visualização frontal da gôndola
-- [ ] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
-- [ ] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
-- [ ] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
+- [x] CRÍTICA: Criar procedures tRPC para Kadeh Ads (suggestCorrelatedCategories, previewAdPosition, confirmPayment, getAdAnalytics)
+- [x] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
+- [x] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
 - [ ] CRÍTICA: Validar em português e inglês
 
 - [x] Corrigir GondolaFrontView com as 3 regras de distribuição
@@ -779,3 +786,15 @@
 - [ ] SUGESTÃO 1: Testar geração de imagem IA com 5-10 produtos de diferentes zonas
 - [ ] SUGESTÃO 2: Implementar sistema automático de validação de fidelidade entre visualização e imagem IA
 - [ ] SUGESTÃO 3: Expandir distribuidor para Freezer Vertical, Freezer Horizontal e Banca de Frutas/Legumes/Verduras
+
+- [x] NOVA FEATURE: Seção Pré Cadastro no Smart Layout
+  - [x] Criar componente PreCadastro com formulários para entrada de dados de vendas
+  - [x] Criar lógica de cálculo de margem/giro médios e classificação (Baixa/Média/Alta)
+  - [x] Implementar agregação de dados por categoria e área (Alimentar/Não-Alimentar)
+  - [x] Corrigir erro de React hooks "Rendered fewer hooks than expected"
+  - [ ] Criar schema de banco de dados para armazenar dados de margem e giro por produto/categoria
+  - [ ] Implementar procedures tRPC para CRUD de dados de pré-cadastro
+  - [ ] Integrar PreCadastro com banco de dados (salvar/carregar dados)
+  - [ ] Implementar aba Análise com cálculos automáticos de margem e giro médios
+  - [ ] Integrar PreCadastro no Smart Layout Simulator
+  - [ ] Testar fluxo completo de pré cadastro com múltiplas categorias em português e inglês

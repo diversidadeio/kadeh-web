@@ -490,8 +490,8 @@ export default function GondolaFrontView({
   return (
     <div className="w-full space-y-6">
       <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
-        <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4 space-y-4 flex flex-col-reverse">
-          {/* Renderizar prateleiras em ordem reversa (de cima para baixo) */}
+        <div className="bg-gradient-to-b from-gray-100 to-gray-50 p-4 space-y-4 flex flex-col">
+          {/* Renderizar prateleiras em ordem reversa (prateleira 5 no topo, prateleira 1 na base) */}
           {Array.from({ length: numberOfShelves }, (_, i) => numberOfShelves - i).map((shelfNum) => {
             const zone = getShelfZone(shelfNum);
             const productsInShelf = shelvesMap.get(shelfNum) || [];

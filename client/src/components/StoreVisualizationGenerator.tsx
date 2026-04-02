@@ -15,7 +15,6 @@ import PlanogramVersionHistory from "./PlanogramVersionHistory";
 import { v4 as uuidv4 } from "uuid";
 import { autoRegenerateImage, formatRegenerationReport } from "@/utils/autoRegenerationEngine";
 import { generateValidationFeedback } from "@/utils/imageValidationEngine";
-// intelligentShelfDistributor is used via the local distributeProductsToShelves function
 
 interface Product {
   id: string;
@@ -67,65 +66,305 @@ const TRANSLATIONS = {
 };
 
 /**
- * Distribui produtos nas prateleiras usando o algoritmo inteligente
- * Respeita percentuais recomendados e preenche espaço vazio com melhor margem/giro
+ * Distribui produtos nas prateleiras respeitando hierarquia de preenchimento
+ * Mesma lógica do GondolaFrontView para garantir sincronização
+ * HIERARQUIA: Altura dos Olhos > Altura das Mãos > Parte de Baixo
  */
-function distributeProductsToShelves(products: Product[]): {
-  shelf1: Product[];
-  shelves2to4: Product[];
-  shelf5: Product[];
-} {
-  // Converter produtos para formato esperado pelo distribuidor inteligente
-  const productsForDistribution = products.map(p => ({
-    id: p.id,
-    name: p.name,
-    zone: p.zone || p.category?.shelfZone || 'Altura dos olhos',
-    share: p.share || 0,
-    marginToTurnoverRatio: 1, // Valor padrão
-  }));
-
-  // Usar a lógica original simplificada
+function distributeProductsToShelves(products: Product[], numberOfShelves: number = 7): Map<number, Product[]> {
   const productsByZone = {
     'Altura dos olhos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura dos olhos'),
     'Altura das mãos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura das mãos'),
     'Parte de Baixo': products.filter(p => (p.zone || p.category?.shelfZone) === 'Parte de Baixo'),
   };
 
-  const bottomShare = productsByZone['Parte de Baixo'].reduce((sum, p) => sum + (p.share || 0), 0);
-  const spaceRemaining = 100 - bottomShare;
+  // Mapa de prioridade de margem (A > B > C)
+  const marginPriority = { 'A': 3, 'B': 2, 'C': 1, undefined: 0 };
 
-  let shelf1Products = [...productsByZone['Parte de Baixo']];
-  let handLevelProducts = [...productsByZone['Altura das mãos']];
+  // Função auxiliar para ordenar por margem
+  const sortByMargin = (products: Product[]) => {
+    return [...products].sort((a, b) => {
+      const priorityA = marginPriority[a.margem as keyof typeof marginPriority] || 0;
+      const priorityB = marginPriority[b.margem as keyof typeof marginPriority] || 0;
+      return priorityB - priorityA;
+    });
+  };
 
-  if (spaceRemaining > 0 && handLevelProducts.length > 0) {
-    let remainingSpace = spaceRemaining;
-    const productsToAdd: Product[] = [];
+  // Rastrear produtos já usados
+  const usedProductIds = new Set<string>();
+  
+  // Mapa de prateleiras
+  const shelvesMap = new Map<number, Product[]>();
+  for (let i = 1; i <= numberOfShelves; i++) {
+    shelvesMap.set(i, []);
+  }
+
+  // ============ PRATELEIRAS 1-2 (Parte de Baixo) ============
+  const bottomShelfNumbers = [1, 2].filter(n => n <= numberOfShelves);
+  const spaceRemainingByShelf = new Map<number, number>();
+  
+  for (const shelfNum of bottomShelfNumbers) {
+    spaceRemainingByShelf.set(shelfNum, 100);
+  }
+
+  // Distribuir produtos de Parte de Baixo
+  const bottomLevelSorted = sortByMargin(productsByZone['Parte de Baixo']);
+  
+  for (const product of bottomLevelSorted) {
+    if (usedProductIds.has(product.id)) continue;
     
-    for (const product of handLevelProducts) {
-      if (remainingSpace <= 0) break;
-      
-      const productShare = product.share || 0;
-      if (productShare <= remainingSpace) {
-        productsToAdd.push(product);
-        remainingSpace -= productShare;
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of bottomShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (productShare <= spaceRemaining) {
+        shelvesMap.get(shelfNum)!.push(product);
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(shelfNum, spaceRemaining - productShare);
+        placed = true;
+        break;
       }
     }
 
-    shelf1Products = [...shelf1Products, ...productsToAdd];
-    handLevelProducts = handLevelProducts.filter(p => !productsToAdd.includes(p));
+    if (!placed && productShare > 0) {
+      let maxShelfNum = bottomShelfNumbers[0];
+      let maxSpace = spaceRemainingByShelf.get(maxShelfNum) || 0;
+      
+      for (const shelfNum of bottomShelfNumbers) {
+        const space = spaceRemainingByShelf.get(shelfNum) || 0;
+        if (space > maxSpace) {
+          maxSpace = space;
+          maxShelfNum = shelfNum;
+        }
+      }
+
+      if (maxSpace > 5) {
+        shelvesMap.get(maxShelfNum)!.push({ ...product, share: maxSpace });
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(maxShelfNum, 0);
+      }
+    }
   }
 
-  return {
-    shelf1: shelf1Products,
-    shelves2to4: handLevelProducts,
-    shelf5: productsByZone['Altura dos olhos'],
-  };
+  // Preencher espaço restante com Altura das Mãos (melhor margem primeiro)
+  const handLevelSorted = sortByMargin(productsByZone['Altura das mãos'].filter(p => !usedProductIds.has(p.id)));
+  
+  for (const product of handLevelSorted) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of bottomShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (spaceRemaining > 0) {
+        const shareToUse = Math.min(productShare, spaceRemaining);
+        if (shareToUse > 5) {
+          shelvesMap.get(shelfNum)!.push({ ...product, share: shareToUse });
+          usedProductIds.add(product.id);
+          spaceRemainingByShelf.set(shelfNum, spaceRemaining - shareToUse);
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // Preencher espaço restante com Altura dos Olhos (melhor margem primeiro)
+  const eyeLevelSorted = sortByMargin(productsByZone['Altura dos olhos'].filter(p => !usedProductIds.has(p.id)));
+  
+  for (const product of eyeLevelSorted) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of bottomShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (spaceRemaining > 0) {
+        const shareToUse = Math.min(productShare, spaceRemaining);
+        if (shareToUse > 5) {
+          shelvesMap.get(shelfNum)!.push({ ...product, share: shareToUse });
+          usedProductIds.add(product.id);
+          spaceRemainingByShelf.set(shelfNum, spaceRemaining - shareToUse);
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // ============ PRATELEIRAS 3-4 (Altura das Mãos) ============
+  const handShelfNumbers = [3, 4].filter(n => n <= numberOfShelves);
+  spaceRemainingByShelf.clear();
+  
+  for (const shelfNum of handShelfNumbers) {
+    spaceRemainingByShelf.set(shelfNum, 100);
+  }
+
+  // Distribuir produtos de Altura das Mãos
+  const availableHandProducts = productsByZone['Altura das mãos'].filter(p => !usedProductIds.has(p.id));
+  const handLevelSorted2 = sortByMargin(availableHandProducts);
+
+  for (const product of handLevelSorted2) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of handShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (productShare <= spaceRemaining) {
+        shelvesMap.get(shelfNum)!.push(product);
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(shelfNum, spaceRemaining - productShare);
+        placed = true;
+        break;
+      }
+    }
+
+    if (!placed && productShare > 0) {
+      let maxShelfNum = handShelfNumbers[0];
+      let maxSpace = spaceRemainingByShelf.get(maxShelfNum) || 0;
+      
+      for (const shelfNum of handShelfNumbers) {
+        const space = spaceRemainingByShelf.get(shelfNum) || 0;
+        if (space > maxSpace) {
+          maxSpace = space;
+          maxShelfNum = shelfNum;
+        }
+      }
+
+      if (maxSpace > 5) {
+        shelvesMap.get(maxShelfNum)!.push({ ...product, share: maxSpace });
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(maxShelfNum, 0);
+      }
+    }
+  }
+
+  // Preencher espaço restante com Altura dos Olhos (melhor margem primeiro)
+  const eyeLevelSorted2 = sortByMargin(productsByZone['Altura dos olhos'].filter(p => !usedProductIds.has(p.id)));
+  
+  for (const product of eyeLevelSorted2) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of handShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (spaceRemaining > 0) {
+        const shareToUse = Math.min(productShare, spaceRemaining);
+        if (shareToUse > 5) {
+          shelvesMap.get(shelfNum)!.push({ ...product, share: shareToUse });
+          usedProductIds.add(product.id);
+          spaceRemainingByShelf.set(shelfNum, spaceRemaining - shareToUse);
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // ============ PRATELEIRAS 5+ (Altura dos Olhos) ============
+  const eyeShelfNumbers = Array.from({ length: numberOfShelves - 4 }, (_, i) => i + 5).filter(n => n <= numberOfShelves);
+  spaceRemainingByShelf.clear();
+  
+  for (const shelfNum of eyeShelfNumbers) {
+    spaceRemainingByShelf.set(shelfNum, 100);
+  }
+
+  // 1. Adicionar produtos de Altura dos Olhos
+  for (const product of productsByZone['Altura dos olhos']) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of eyeShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (productShare <= spaceRemaining) {
+        shelvesMap.get(shelfNum)!.push(product);
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(shelfNum, spaceRemaining - productShare);
+        placed = true;
+        break;
+      }
+    }
+
+    if (!placed && productShare > 0) {
+      let maxShelfNum = eyeShelfNumbers[0];
+      let maxSpace = spaceRemainingByShelf.get(maxShelfNum) || 0;
+      
+      for (const shelfNum of eyeShelfNumbers) {
+        const space = spaceRemainingByShelf.get(shelfNum) || 0;
+        if (space > maxSpace) {
+          maxSpace = space;
+          maxShelfNum = shelfNum;
+        }
+      }
+
+      if (maxSpace > 5) {
+        shelvesMap.get(maxShelfNum)!.push({ ...product, share: maxSpace });
+        usedProductIds.add(product.id);
+        spaceRemainingByShelf.set(maxShelfNum, 0);
+      }
+    }
+  }
+
+  // 2. Preencher espaço restante com Altura das Mãos (melhor margem primeiro)
+  const handLevelSorted3 = sortByMargin(productsByZone['Altura das mãos'].filter(p => !usedProductIds.has(p.id)));
+  
+  for (const product of handLevelSorted3) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of eyeShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (spaceRemaining > 0) {
+        const shareToUse = Math.min(productShare, spaceRemaining);
+        if (shareToUse > 5) {
+          shelvesMap.get(shelfNum)!.push({ ...product, share: shareToUse });
+          usedProductIds.add(product.id);
+          spaceRemainingByShelf.set(shelfNum, spaceRemaining - shareToUse);
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // 3. Preencher espaço restante com Parte de Baixo (melhor margem primeiro)
+  const bottomLevelSorted2 = sortByMargin(productsByZone['Parte de Baixo'].filter(p => !usedProductIds.has(p.id)));
+  
+  for (const product of bottomLevelSorted2) {
+    if (usedProductIds.has(product.id)) continue;
+    
+    const productShare = product.share || 0;
+    let placed = false;
+
+    for (const shelfNum of eyeShelfNumbers) {
+      const spaceRemaining = spaceRemainingByShelf.get(shelfNum) || 0;
+      if (spaceRemaining > 0) {
+        const shareToUse = Math.min(productShare, spaceRemaining);
+        if (shareToUse > 5) {
+          shelvesMap.get(shelfNum)!.push({ ...product, share: shareToUse });
+          usedProductIds.add(product.id);
+          spaceRemainingByShelf.set(shelfNum, spaceRemaining - shareToUse);
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return shelvesMap;
 }
 
 export default function StoreVisualizationGenerator({
-  // Importar a função aqui se necessário
-  // Ou usar a função local definida acima
-  
   products,
   gondolaWidth,
   shelfHeight,
@@ -165,79 +404,114 @@ export default function StoreVisualizationGenerator({
     }
 
     // Usar mesma lógica de distribuição do GondolaFrontView
-    const { shelf1, shelves2to4, shelf5 } = distributeProductsToShelves(filteredProducts);
+    const shelvesMap = distributeProductsToShelves(filteredProducts, numberOfShelves);
 
-    // Build detailed product specifications for each shelf
-    let shelf1Spec = "";
-    let shelves2to4Spec = "";
-    let shelf5Spec = "";
+    // Build ASCII visualization from top to bottom as it should appear in the image
+    let asciiVisualization = "\n╔════════════════════════════════════════════════════════════════╗\n";
+    asciiVisualization += "║  VISUALIZAÇÃO ASCII - COMO DEVE APARECER NA FOTOGRAFIA DA LOJA  ║\n";
+    asciiVisualization += "╚════════════════════════════════════════════════════════════════╝\n\n";
+    asciiVisualization += "TOPO DA IMAGEM (parte superior da gôndola)\n";
+    asciiVisualization += "═══════════════════════════════════════════════════════════════════\n\n";
 
-    // Prateleira 1 - Parte de Baixo
-    if (shelf1.length > 0) {
-      shelf1Spec = `\n**PRATELEIRA 1 - PARTE DE BAIXO (Bottom Shelf - INFERIOR):**\n`;
-      shelf1.forEach((p, idx) => {
-        const share = p.share || 0;
-        shelf1Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
-      });
-      const totalShare1 = shelf1.reduce((sum, p) => sum + (p.share || 0), 0);
-      shelf1Spec += `Total: ${totalShare1.toFixed(1)}% da largura total\n`;
-    }
+    // Add shelves from top to bottom as they should appear visually
+    for (let shelfNum = numberOfShelves; shelfNum >= 1; shelfNum--) {
+      const productsInShelf = shelvesMap.get(shelfNum) || [];
+      let zoneLabel = '';
+      if (shelfNum <= 2) zoneLabel = 'PARTE DE BAIXO';
+      else if (shelfNum <= 4) zoneLabel = 'ALTURA DAS MÃOS';
+      else zoneLabel = 'ALTURA DOS OLHOS';
 
-    // Prateleiras 2-4 - Altura das Mãos
-    if (shelves2to4.length > 0) {
-      shelves2to4Spec = `\n**PRATELEIRAS 2-4 - ALTURA DAS MÃOS (Middle Shelves):**\n`;
-      shelves2to4.forEach((p, idx) => {
-        const share = p.share || 0;
-        shelves2to4Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
-      });
-      const totalShare2to4 = shelves2to4.reduce((sum, p) => sum + (p.share || 0), 0);
-      shelves2to4Spec += `Total: ${totalShare2to4.toFixed(1)}% da largura total\n`;
-    }
-
-    // Prateleira 5 - Altura dos Olhos
-    if (shelf5.length > 0) {
-      shelf5Spec = `\n**PRATELEIRA 5 - ALTURA DOS OLHOS (Top Shelf - SUPERIOR):**\n`;
-      shelf5.forEach((p, idx) => {
-        const share = p.share || 0;
-        shelf5Spec += `${idx + 1}. ${p.name}: ${share.toFixed(1)}% da largura\n`;
-      });
-      const totalShare5 = shelf5.reduce((sum, p) => sum + (p.share || 0), 0);
-      shelf5Spec += `Total: ${totalShare5.toFixed(1)}% da largura total\n`;
+      asciiVisualization += `┌─ PRATELEIRA ${shelfNum} (${zoneLabel}) ─┐\n`;
+      if (productsInShelf.length > 0) {
+        productsInShelf.forEach(p => {
+          const share = p.share || 0;
+          const barLength = Math.round(share / 5);
+          const bar = '█'.repeat(Math.max(1, barLength));
+          asciiVisualization += `│ ${p.name.padEnd(20)} ${share.toFixed(1)}% ${bar}\n`;
+        });
+      } else {
+        asciiVisualization += "│ [VAZIA]\n";
+      }
+      asciiVisualization += "└─────────────────────────────────────┘\n";
     }
 
-    // Build visual layout diagram
-    let visualLayout = "";
-    if (shelf1.length > 0) {
-      visualLayout += `\n[PRATELEIRA 1 - PARTE DE BAIXO - INFERIOR]\n`;
-      shelf1.forEach(p => {
-        const share = p.share || 0;
-        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
-      });
-    }
-    if (shelves2to4.length > 0) {
-      visualLayout += `\n[PRATELEIRAS 2-4 - ALTURA DAS MÃOS]\n`;
-      shelves2to4.forEach(p => {
-        const share = p.share || 0;
-        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
-      });
-    }
-    if (shelf5.length > 0) {
-      visualLayout += `\n[PRATELEIRA 5 - ALTURA DOS OLHOS - SUPERIOR]\n`;
-      shelf5.forEach(p => {
-        const share = p.share || 0;
-        visualLayout += `[${p.name.substring(0, 10).padEnd(10)} ${share.toFixed(1)}%]`;
-      });
-    }
+    asciiVisualization += "\n═══════════════════════════════════════════════════════════════════\n";
+    asciiVisualization += "BASE DA IMAGEM (parte inferior da gôndola)\n";
 
     // Lista exata de nomes de produtos para reforçar na IA
-    const allProductNames = [...shelf1, ...shelves2to4, ...shelf5].map(p => p.name);
+    const allProductNames = Array.from(shelvesMap.values()).flat().map(p => p.name);
     const uniqueProductNames = Array.from(new Set(allProductNames));
     
-    const shelf1Percentages = shelf1.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
-    const shelves2to4Percentages = shelves2to4.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
-    const shelf5Percentages = shelf5.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ');
+    const prompt = `INSTRUÇÃO CRÍTICA PARA GERAÇÃO DE IMAGEM DE GÔNDOLA
 
-    const prompt = `INSTRUÇÃO CRÍTICA - LEIA TUDO ANTES DE GERAR IMAGEM\n\nVocê DEVE gerar uma fotografia de uma gôndola de varejo com EXATAMENTE estes produtos: ${uniqueProductNames.join(', ')}.\n\nNADA MAIS. SOMENTE ESTES PRODUTOS.\n\n=== CATEGORIA ===\nCategoria: ${categoryName}\nTodos os produtos DEVEM ser APENAS de ${categoryName}.\n\n=== PRODUTOS PERMITIDOS (ÚNICOS) ===\n${uniqueProductNames.map((name, i) => `${i + 1}. ${name}`).join('\n')}\n\n=== DISTRIBUIÇÃO POR PRATELEIRA ===\n\nPRATELEIRA 1 (BASE/INFERIOR - Parte de Baixo):\nProdutos: ${shelf1Percentages}\n\nPRATELEIRAS 2-4 (MEIO - Altura das Mãos):\nProdutos: ${shelves2to4Percentages}\n\nPRATELEIRA 5 (TOPO/SUPERIOR - Altura dos Olhos):\nProdutos: ${shelf5Percentages}\n\n=== REGRAS ABSOLUTAS (QUEBRA = FALHA) ===\n1. SOMENTE produtos listados acima\n2. SOMENTE categoria ${categoryName}\n3. Nenhum produto similar, genérico ou substituto\n4. Nenhuma prateleira vazia\n5. Cada produto ocupa exatamente seu percentual\n6. Produtos repetidos horizontalmente para preencher 100%\n7. Ordem de prateleiras: 1 (base), 2-4 (meio), 5 (topo)\n8. Sem produtos de outras categorias\n9. Sem modificações de nomes de produtos\n10. Sem adições de produtos não listados\n\n=== VERIFICAÇÃO ANTES DE GERAR ===\nConfirme internamente:\n☑ Todos os produtos são de ${categoryName}? SIM\n☑ Nenhum produto extra será adicionado? SIM\n☑ Prateleiras estão corretas? SIM\n☑ Percentuais serão respeitados? SIM\n\nSe não conseguir garantir, NÃO gere a imagem.\n\n=== ESTILO ===\nFotografia frontal profissional de gôndola de varejo com iluminação clara, embalagens visíveis, fundo realista de loja.\n\GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos: ${uniqueProductNames.join(', ')}.`
+=== OBJETIVO FINAL ===
+Gerar fotografia frontal profissional de gôndola de varejo com EXATAMENTE estes produtos: ${uniqueProductNames.join(', ')}.
+NENHUM OUTRO PRODUTO. SOMENTE ESTES.
+
+=== CATEGORIA ===
+Categoria: ${categoryName}
+Todos os produtos DEVEM ser APENAS de ${categoryName}.
+
+=== PRODUTOS ÚNICOS PERMITIDOS ===
+${uniqueProductNames.map((name, i) => `${i + 1}. ${name}`).join('\n')}
+
+=== ORDEM VISUAL DAS PRATELEIRAS (CRÍTICO!) ===
+${asciiVisualization}
+
+=== DISTRIBUIÇÃO DETALHADA POR PRATELEIRA (DE CIMA PARA BAIXO) ===
+
+PRATELEIRA ${numberOfShelves} (TOPO/SUPERIOR - Altura dos Olhos - PARTE SUPERIOR DA IMAGEM):
+${(() => {
+  const topShelf = shelvesMap.get(numberOfShelves) || [];
+  return topShelf.length > 0 
+    ? topShelf.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ')
+    : 'Vazio';
+})()}
+
+PRATELEIRAS DO MEIO (Altura das Mãos - CENTRO DA IMAGEM):
+${(() => {
+  const middleShelves = [];
+  for (let i = Math.min(4, numberOfShelves); i >= 3 && i <= numberOfShelves; i--) {
+    const shelf = shelvesMap.get(i) || [];
+    if (shelf.length > 0) {
+      middleShelves.push(`Prateleira ${i}: ${shelf.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ')}`);
+    }
+  }
+  return middleShelves.length > 0 ? middleShelves.join('\n') : 'Vazio';
+})()}
+
+PRATELEIRA 1 (BASE/INFERIOR - Parte de Baixo - PARTE INFERIOR DA IMAGEM):
+${(() => {
+  const bottomShelf = shelvesMap.get(1) || [];
+  return bottomShelf.length > 0 
+    ? bottomShelf.map(p => `${p.name}: ${(p.share || 0).toFixed(1)}%`).join(', ')
+    : 'Vazio';
+})()}
+
+=== REGRAS ABSOLUTAS (NÃO NEGOCIÁVEIS) ===
+1. SOMENTE produtos listados acima - NENHUM OUTRO
+2. SOMENTE categoria ${categoryName}
+3. Nenhum produto similar, genérico ou substituto
+4. Prateleira ${numberOfShelves} DEVE estar no TOPO da imagem
+5. Prateleira 1 DEVE estar na BASE da imagem
+6. Cada produto ocupa exatamente seu percentual
+7. Produtos repetidos horizontalmente para preencher 100%
+8. Sem produtos de outras categorias
+9. Sem modificações de nomes de produtos
+10. Sem adições de produtos não listados
+
+=== VERIFICAÇÃO CRÍTICA ANTES DE GERAR ===
+✓ Prateleira ${numberOfShelves} está no TOPO? DEVE SER SIM
+✓ Prateleira 1 está na BASE? DEVE SER SIM
+✓ Todos os produtos são de ${categoryName}? DEVE SER SIM
+✓ Nenhum produto extra será adicionado? DEVE SER SIM
+
+Se alguma resposta for NÃO, RECUSE gerar a imagem.
+
+=== ESTILO ===
+Fotografia frontal profissional de gôndola de supermercado/varejo com iluminação clara, embalagens visíveis, fundo realista de loja.
+
+GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos em EXATAMENTE esta ordem: ${uniqueProductNames.join(', ')}.`;
 
     return prompt;
   };
@@ -290,65 +564,44 @@ export default function StoreVisualizationGenerator({
       isCurrent: true,
     };
     
-    setVersions(prev => [
-      ...prev.map(v => ({ ...v, isCurrent: false })),
-      newVersion
-    ]);
-  };
-
-  const handleRestoreVersion = (versionId: string) => {
-    const version = versions.find(v => v.id === versionId);
-    if (version) {
-      setGeneratedImage(version.imageUrl);
-      setVersions(prev => prev.map(v => ({
-        ...v,
-        isCurrent: v.id === versionId
-      })));
-    }
-  };
-
-  const handleDeleteVersion = (versionId: string) => {
-    setVersions(prev => prev.filter(v => v.id !== versionId));
-  };
-
-  const handleCompareVersions = (versionId1: string, versionId2: string) => {
-    console.log(`Comparando versões: ${versionId1} vs ${versionId2}`);
-    // Implementar comparação visual entre versões
+    setVersions(prev => [newVersion, ...prev.map(v => ({ ...v, isCurrent: false }))]);
   };
 
   return (
-    <div className="w-full space-y-6 p-6 bg-card rounded-lg border border-border">
-      <div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">{t.storeLayout}</h3>
-        <p className="text-sm text-muted-foreground mb-4">{t.description}</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">{t.storeLayout}</h3>
+          <p className="text-sm text-gray-600">{t.description}</p>
+        </div>
+        <Button
+          onClick={() => handleGenerateVisualization()}
+          disabled={products.length === 0 || isGenerating}
+          className="gap-2"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {t.generating}
+            </>
+          ) : (
+            <>
+              <ImageIcon className="w-4 h-4" />
+              {t.generateVisualization}
+            </>
+          )}
+        </Button>
       </div>
 
-      <Button
-        onClick={() => handleGenerateVisualization()}
-        disabled={isGenerating || products.length === 0}
-        className="w-full"
-        size="lg"
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            {t.generating}
-          </>
-        ) : (
-          <>
-            <ImageIcon className="w-4 h-4 mr-2" />
-            {t.generateVisualization}
-          </>
-        )}
-      </Button>
-
       {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive rounded-md">
-          <p className="text-sm text-destructive mb-2">{error}</p>
+        <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-lg">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <div className="flex-1">{error}</div>
           <Button
-            onClick={() => handleGenerateVisualization()}
-            variant="outline"
+            variant="ghost"
             size="sm"
+            onClick={() => handleGenerateVisualization()}
+            disabled={isGenerating}
           >
             {t.retry}
           </Button>
@@ -357,64 +610,22 @@ export default function StoreVisualizationGenerator({
 
       {generatedImage && (
         <div className="space-y-4">
-          <p className="text-sm font-medium text-foreground">Visualização Gerada:</p>
-          <div className="w-full overflow-x-auto bg-muted rounded-md border border-border p-4">
+          <div className="relative bg-gray-100 rounded-lg overflow-hidden">
             <img
               src={generatedImage}
               alt="Store visualization"
-              className="w-full h-auto object-contain"
+              className="w-full h-auto"
             />
           </div>
-
-          {/* Image Fidelity Validator */}
-          <ImageFidelityValidator
-            products={products}
-            categoryName={products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos'}
-            generatedImageUrl={generatedImage}
-          />
-
-          {/* Image Regeneration Feedback */}
-          <ImageRegenerationFeedback
-            isGenerating={isGenerating}
-            onRegenerate={handleGenerateVisualization}
-            onDiscard={() => {
-              setGeneratedImage(null);
-              setError(null);
-            }}
-            categoryName={products.length > 0 ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos') : 'Produtos'}
-          />
-
-          {/* Save Version Button */}
-          <Button
-            onClick={handleSaveVersion}
-            variant="outline"
-            className="w-full"
-          >
-            Salvar Versão
-          </Button>
-
-          {/* Version History Toggle */}
-          {versions.length > 0 && (
-            <Button
-              onClick={() => setShowVersionHistory(!showVersionHistory)}
-              variant="outline"
-              className="w-full"
-            >
-              {showVersionHistory ? "Ocultar" : "Ver"} Histórico de Versões ({versions.length})
+          
+          <div className="flex gap-2">
+            <Button onClick={handleSaveVersion} variant="outline" size="sm">
+              Salvar Versão
             </Button>
-          )}
-        </div>
-      )}
+          </div>
 
-      {/* Planogram Version History */}
-      {showVersionHistory && versions.length > 0 && (
-        <PlanogramVersionHistory
-          versions={versions}
-          currentVersion={versions.find(v => v.isCurrent)}
-          onRestore={handleRestoreVersion}
-          onDelete={handleDeleteVersion}
-          onCompare={handleCompareVersions}
-        />
+          {/* Image validation components will be added in next phase */}
+        </div>
       )}
     </div>
   );

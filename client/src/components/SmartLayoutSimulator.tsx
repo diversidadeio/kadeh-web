@@ -36,8 +36,10 @@ import { ZoneDistributionChart, type ZoneStats } from "@/components/ZoneDistribu
 import { ProductOptimizationSuggestions } from "@/components/ProductOptimizationSuggestions";
 import { generateOptimizationSuggestions, type OptimizationResult } from "@/utils/productOptimizer";
 import ExposureMetricsDashboard from "@/components/ExposureMetricsDashboard";
+import PreCadastro from "@/components/PreCadastro";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
+type ViewMode = "simulator" | "precadastro";
 
 interface Product {
   id: string;
@@ -221,9 +223,11 @@ const TRANSLATIONS = {
 };
 
 export default function SmartLayoutSimulator() {
+  const [viewMode, setViewMode] = useState<ViewMode>("simulator");
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
 
+  // Declare all useState BEFORE any conditional returns
   const [products, setProducts] = useState<Product[]>([]);
   const [gondolaWidth, setGondolaWidth] = useState(280);
   const [shelves, setShelves] = useState(5);
@@ -601,6 +605,24 @@ export default function SmartLayoutSimulator() {
     ];
   };
 
+  // Se estamos no modo pré-cadastro, mostrar apenas o componente PreCadastro
+  if (viewMode === "precadastro") {
+    return (
+      <div className="w-full">
+        <div className="flex items-center justify-between mb-6 px-6 pt-6">
+          <h1 className="text-3xl font-bold">Smart Layout</h1>
+          <Button
+            variant="outline"
+            onClick={() => setViewMode("simulator")}
+          >
+            Voltar ao Simulador
+          </Button>
+        </div>
+        <PreCadastro />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Filtros */}
@@ -712,8 +734,15 @@ export default function SmartLayoutSimulator() {
         </div>
       </div>
 
-      {/* Botão para abrir formulário avançado */}
-      <div className="flex justify-end mb-4">
+      {/* Botão para abrir formulário avançado e Pré-Cadastro */}
+      <div className="flex justify-end gap-2 mb-4">
+        <Button
+          onClick={() => setViewMode("precadastro")}
+          className="gap-2 bg-purple-600 hover:bg-purple-700"
+        >
+          <Lightbulb className="w-4 h-4" />
+          {language === "pt" ? "Pré Cadastro" : "Pre-Registration"}
+        </Button>
         <Button
           onClick={() => setShowProductFormModal(true)}
           className="gap-2 bg-blue-600 hover:bg-blue-700"

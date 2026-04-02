@@ -487,6 +487,93 @@ export type CapacityReport = typeof capacityReports.$inferSelect;
 export type InsertCapacityReport = typeof capacityReports.$inferInsert;
 
 // ============================================================================
+// PRE-CADASTRO - Levantamento de Dados de Vendas, Margem e Giro
+// ============================================================================
+
+/**
+ * Categorias de Vendas - Dados de vendas levantados pelo lojista
+ * Armazena informações agregadas de vendas por categoria (ex: Cervejas, Refrigerantes)
+ */
+export const salesCategories = mysqlTable("salesCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  storeId: int("storeId"),
+  categoryName: varchar("categoryName", { length: 255 }).notNull(), // Ex: "Cervejas", "Refrigerantes"
+  mainCategory: mysqlEnum("mainCategory", ["Alimentar", "Não-Alimentar"]).notNull(),
+  
+  // Dados agregados de vendas
+  totalUnitsPerPeriod: int("totalUnitsPerPeriod").notNull(), // Total de unidades vendidas no período
+  totalRevenuePerPeriod: decimal("totalRevenuePerPeriod", { precision: 12, scale: 2 }).notNull(), // Faturamento total
+  totalCostPerPeriod: decimal("totalCostPerPeriod", { precision: 12, scale: 2 }).notNull(), // Custo total
+  totalMarginPerPeriod: decimal("totalMarginPerPeriod", { precision: 12, scale: 2 }).notNull(), // Margem total (Faturamento - Custo)
+  
+  // Cálculos derivados
+  averageMarginPercentage: decimal("averageMarginPercentage", { precision: 5, scale: 2 }).notNull(), // Margem média % da categoria
+  averageTurnover: decimal("averageTurnover", { precision: 10, scale: 2 }).notNull(), // Giro médio da categoria
+  
+  // Classificações de limites
+  lowMarginThreshold: decimal("lowMarginThreshold", { precision: 5, scale: 2 }).notNull(), // Margem baixa = média - 20%
+  highMarginThreshold: decimal("highMarginThreshold", { precision: 5, scale: 2 }).notNull(), // Margem alta = média + 20%
+  lowTurnoverThreshold: decimal("lowTurnoverThreshold", { precision: 10, scale: 2 }).notNull(), // Giro baixo = média - 20%
+  highTurnoverThreshold: decimal("highTurnoverThreshold", { precision: 10, scale: 2 }).notNull(), // Giro alto = média + 20%
+  
+  // Período de referência
+  periodStartDate: timestamp("periodStartDate").notNull(),
+  periodEndDate: timestamp("periodEndDate").notNull(),
+  periodDays: int("periodDays").notNull(), // Número de dias do período
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("salesCategories_user_idx").on(table.userId),
+  storeIdx: index("salesCategories_store_idx").on(table.storeId),
+  categoryIdx: index("salesCategories_category_idx").on(table.categoryName),
+}));
+
+export type SalesCategory = typeof salesCategories.$inferSelect;
+export type InsertSalesCategory = typeof salesCategories.$inferInsert;
+
+/**
+ * Produtos de Vendas - Dados individuais de cada produto dentro de uma categoria
+ * Armazena informações de margem e giro de cada produto
+ */
+export const salesProducts = mysqlTable("salesProducts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  salesCategoryId: int("salesCategoryId").notNull(),
+  
+  productName: varchar("productName", { length: 255 }).notNull(),
+  productEAN: varchar("productEAN", { length: 13 }),
+  
+  // Dados de vendas do produto
+  unitsPerPeriod: int("unitsPerPeriod").notNull(), // Unidades vendidas no período
+  revenuePerPeriod: decimal("revenuePerPeriod", { precision: 12, scale: 2 }).notNull(), // Faturamento do produto
+  costPerUnit: decimal("costPerUnit", { precision: 10, scale: 2 }).notNull(), // Custo unitário
+  costPerPeriod: decimal("costPerPeriod", { precision: 12, scale: 2 }).notNull(), // Custo total
+  marginPerPeriod: decimal("marginPerPeriod", { precision: 12, scale: 2 }).notNull(), // Margem total (Faturamento - Custo)
+  
+  // Cálculos derivados
+  marginPercentage: decimal("marginPercentage", { precision: 5, scale: 2 }).notNull(), // Margem % do produto
+  turnover: decimal("turnover", { precision: 10, scale: 2 }).notNull(), // Giro do produto (unidades/dia)
+  marginToTurnoverRatio: decimal("marginToTurnoverRatio", { precision: 10, scale: 4 }).notNull(), // Relação margem/giro
+  
+  // Classificações
+  marginClassification: mysqlEnum("marginClassification", ["Baixa", "Média", "Alta"]).notNull(),
+  turnoverClassification: mysqlEnum("turnoverClassification", ["Baixo", "Médio", "Alto"]).notNull(),
+  zone: mysqlEnum("zone", ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"]).notNull(), // Zona recomendada
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("salesProducts_user_idx").on(table.userId),
+  categoryIdx: index("salesProducts_category_idx").on(table.salesCategoryId),
+  productIdx: index("salesProducts_product_idx").on(table.productEAN),
+}));
+
+export type SalesProduct = typeof salesProducts.$inferSelect;
+export type InsertSalesProduct = typeof salesProducts.$inferInsert;
+
+// ============================================================================
 // CATEGORY MANAGEMENT - Gerenciamento de Categorias
 // ============================================================================
 
