@@ -775,3 +775,7 @@
   - [ ] Validar em português e inglês
 
 - [x] Sincronizar StoreVisualizationGenerator com intelligentShelfDistributor para gerar imagens de IA que reflitam exatamente a visualização de gôndola
+
+- [ ] SUGESTÃO 1: Testar geração de imagem IA com 5-10 produtos de diferentes zonas
+- [ ] SUGESTÃO 2: Implementar sistema automático de validação de fidelidade entre visualização e imagem IA
+- [ ] SUGESTÃO 3: Expandir distribuidor para Freezer Vertical, Freezer Horizontal e Banca de Frutas/Legumes/Verduras

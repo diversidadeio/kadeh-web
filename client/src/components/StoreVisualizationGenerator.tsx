@@ -15,6 +15,7 @@ import PlanogramVersionHistory from "./PlanogramVersionHistory";
 import { v4 as uuidv4 } from "uuid";
 import { autoRegenerateImage, formatRegenerationReport } from "@/utils/autoRegenerationEngine";
 import { generateValidationFeedback } from "@/utils/imageValidationEngine";
+// intelligentShelfDistributor is used via the local distributeProductsToShelves function
 
 interface Product {
   id: string;
