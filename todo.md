@@ -121,6 +121,11 @@
   - [x] Prateleira 5 agora aparece no TOPO (parte superior)
   - [x] Testar com preset de Cervejas - FUNCIONANDO PERFEITAMENTE!
   - [x] Validar em português
+  - [x] VALIDAÇÃO: Sincronização entre visualização frontal e imagem IA confirmada
+    - [x] Visualização frontal mostra ordem corrigida (1 em baixo, 5 em cima)
+    - [x] Imagem IA gerada mostra mesma ordem sincronizada
+    - [x] Comparativa validada: ambas mostram Prateleira 1 na BASE e Prateleira 5 no TOPO
+    - [x] Sincronização 100% VALIDADA!
 
 - [x] Recuperar pop-up de adição de produtos com campos de dimensões (largura, comprimento, altura)
 - [x] Implementar opção de percentual numérico para Margem e Giro
