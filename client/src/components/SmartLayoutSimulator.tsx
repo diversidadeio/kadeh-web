@@ -28,7 +28,7 @@ import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { generatePlanogramPDF, preparePlanogramData, type ShelfConfig } from "@/lib/planogramPdfGenerator";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
-import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
+import StoreVisualizationGeneratorV2 from "@/components/StoreVisualizationGeneratorV2";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
 import ProductFormModal, { type ProductFormData } from "@/components/ProductFormModal";
@@ -1034,14 +1034,9 @@ export default function SmartLayoutSimulator() {
         />
       )}
 
-      {/* Visualização da Loja com IA */}
-      <StoreVisualizationGenerator
+      {/* Visualização da Loja com IA - NOVA VERSÃO V2 */}
+      <StoreVisualizationGeneratorV2
         products={products}
-        gondolaWidth={gondolaWidth}
-        shelfHeight={shelfHeight}
-        shelfDepth={shelfDepth}
-        exposureType={medidasAreaExposicao.tipo}
-        selectedZone={selectedZone}
         numberOfShelves={shelves}
       />
 

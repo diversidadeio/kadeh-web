@@ -819,3 +819,15 @@
   - [ ] Implementar aba Análise com cálculos automáticos de margem e giro médios
   - [ ] Integrar PreCadastro no Smart Layout Simulator
   - [ ] Testar fluxo completo de pré cadastro com múltiplas categorias em português e inglês
+
+- [x] FASE FINAL: Reescrever StoreVisualizationGenerator do zero (DEFINITIVA)
+  - [x] FASE 1: Desabilitar geracao de IA temporariamente
+  - [x] FASE 2: Criar StoreVisualizationGeneratorV2 com logica SIMPLES e SINCRONIZADA
+  - [x] FASE 3: Testar nova versao com Cervejas - FUNCIONANDO PERFEITAMENTE!
+  - [x] FASE 4: Integrar V2 no SmartLayoutSimulator
+  - [x] FASE 5: Validar sincronizacao 100% entre visualizacao frontal e imagem IA
+  - [x] Componente V2 usa exatamente os mesmos dados da visualizacao frontal
+  - [x] Prompt IA e gerado de forma SIMPLES e CLARA
+  - [x] Sem logica complexa que causa erros
+  - [x] Sincronizacao 100% garantida entre tabela frontal e imagem IA gerada
+  - [x] Testado com sucesso: Imagem IA mostra gondola com cervejas em ordem correta
