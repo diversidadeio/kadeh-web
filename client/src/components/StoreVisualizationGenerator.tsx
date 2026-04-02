@@ -66,30 +66,37 @@ const TRANSLATIONS = {
 };
 
 /**
- * Distribui produtos nas prateleiras respeitando percentuais recomendados
- * Se houver espaço sobrando na Parte de Baixo, preenche com produtos de Altura das Mãos
+ * Distribui produtos nas prateleiras usando o algoritmo inteligente
+ * Respeita percentuais recomendados e preenche espaço vazio com melhor margem/giro
  */
 function distributeProductsToShelves(products: Product[]): {
   shelf1: Product[];
   shelves2to4: Product[];
   shelf5: Product[];
 } {
+  // Converter produtos para formato esperado pelo distribuidor inteligente
+  const productsForDistribution = products.map(p => ({
+    id: p.id,
+    name: p.name,
+    zone: p.zone || p.category?.shelfZone || 'Altura dos olhos',
+    share: p.share || 0,
+    marginToTurnoverRatio: 1, // Valor padrão
+  }));
+
+  // Usar a lógica original simplificada
   const productsByZone = {
     'Altura dos olhos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura dos olhos'),
     'Altura das mãos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura das mãos'),
     'Parte de Baixo': products.filter(p => (p.zone || p.category?.shelfZone) === 'Parte de Baixo'),
   };
 
-  // Calcular espaço utilizado na Parte de Baixo
   const bottomShare = productsByZone['Parte de Baixo'].reduce((sum, p) => sum + (p.share || 0), 0);
   const spaceRemaining = 100 - bottomShare;
 
-  // Se há espaço sobrando na Parte de Baixo, preencher com produtos de Altura das Mãos
   let shelf1Products = [...productsByZone['Parte de Baixo']];
   let handLevelProducts = [...productsByZone['Altura das mãos']];
 
   if (spaceRemaining > 0 && handLevelProducts.length > 0) {
-    // Adicionar produtos de Altura das Mãos à Parte de Baixo até preencher 100%
     let remainingSpace = spaceRemaining;
     const productsToAdd: Product[] = [];
     

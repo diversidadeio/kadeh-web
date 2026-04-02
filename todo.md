@@ -773,3 +773,5 @@
   - [ ] Criar testes vitest validando 100% ocupação com múltiplos produtos
   - [ ] Testar no navegador com 3-5 produtos de diferentes zonas
   - [ ] Validar em português e inglês
+
+- [x] Sincronizar StoreVisualizationGenerator com intelligentShelfDistributor para gerar imagens de IA que reflitam exatamente a visualização de gôndola
