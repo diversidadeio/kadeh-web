@@ -757,3 +757,19 @@
 - [x] Verificar se produtos estão sendo passados corretamente ao prompt
 - [x] Corrigir função distributeProductsToShelves que estava faltando
 - [x] Testar geração com 10 tipos de arroz múltiplas vezes
+
+- [ ] CRÍTICO: Implementar algoritmo inteligente de distribuição de produtos
+  - [ ] Respeitar percentuais recomendados de cada produto dentro de sua zona
+  - [ ] Preencher espaço vazio com produtos de zonas adjacentes
+  - [ ] Priorizar produtos com melhor relação margem/giro para preenchimento
+  - [ ] Validar distribuição com testes unitários
+  - [ ] Testar em múltiplos cenários (6, 7, 8 prateleiras)
+
+- [ ] CRÍTICO: Implementar distribuição inteligente com preenchimento de espaço
+  - [ ] Problema: Produtos com 25% ocupam apenas 25% de cada prateleira
+  - [ ] Solução: Preencher espaço vazio com cópias adicionais do mesmo produto ou produtos de melhor margem/giro
+  - [ ] Garantir 100% ocupação de cada prateleira
+  - [ ] Priorizar produtos com melhor relação margem/giro para preenchimento
+  - [ ] Criar testes vitest validando 100% ocupação com múltiplos produtos
+  - [ ] Testar no navegador com 3-5 produtos de diferentes zonas
+  - [ ] Validar em português e inglês

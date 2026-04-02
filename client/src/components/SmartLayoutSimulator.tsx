@@ -19,6 +19,7 @@ import SimulationHistory, { type Simulation } from "@/components/SimulationHisto
 import { generateRecommendation, getRecommendationExplanation } from "@/data/recommendationEngine";
 import GondolaVisualization from "@/components/GondolaVisualization";
 import GondolaFrontView from "@/components/GondolaFrontView";
+import GondolaFrontViewIntelligent from "@/components/GondolaFrontViewIntelligent";
 import GondolaVisualizationWithShelves from "@/components/GondolaVisualizationWithShelves";
 import GondolaShelvesVisualization from "@/components/GondolaShelvesVisualization";
 import ShelfZoneFilter from "@/components/ShelfZoneFilter";
@@ -970,7 +971,7 @@ export default function SmartLayoutSimulator() {
               size="sm"
             />
           </div>
-          <GondolaShelvesVisualization
+          <GondolaFrontViewIntelligent
             products={products.map((p: any) => {
               const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
               const zone = p.category.shelfZone || rec.zone;
@@ -985,9 +986,10 @@ export default function SmartLayoutSimulator() {
                 giro: giro,
                 margem: margem,
                 share: typeof rec.share === 'number' ? rec.share : 15,
+                quadrantes: 1,
               };
-            }) as ProductForDistribution[]}
-            gondolaWidth={gondolaWidth}
+            })}
+            totalWidth={gondolaWidth}
             numberOfShelves={shelves}
             language={language}
           />
