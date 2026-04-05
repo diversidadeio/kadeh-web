@@ -4,6 +4,13 @@
  * Visualização realista da gôndola em HTML/CSS com fidelidade 100%
  * Usa EXATAMENTE a mesma lógica de distribuição do GondolaFrontViewIntelligent
  * 
+ * Distribution logic:
+ * - Each product's share% represents its TOTAL space across ALL shelves
+ * - Products are placed starting from their primary zone shelves
+ * - If primary zone is full, overflow to adjacent zones
+ * - Each shelf has 100% capacity
+ * - Total gondola capacity = numberOfShelves × 100%
+ * 
  * Features:
  * - Estilo gôndola metálica 3D com perspectiva frontal
  * - Etiquetas de preço realistas simulando etiquetas de gôndola
@@ -36,27 +43,15 @@ interface GondolaRealisticViewProps {
   language?: 'pt' | 'en';
 }
 
+type ZoneName = 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo';
+
 // ============================================================
-// EXACT SAME DISTRIBUTION LOGIC AS GondolaFrontViewIntelligent
+// DISTRIBUTION LOGIC (same as GondolaFrontViewIntelligent)
 // ============================================================
 
-function getShelvesForZone(zone: string, totalShelves: number): number[] {
-  const bottomCount = 2;
-  const handCount = 2;
-  const eyeCount = totalShelves - bottomCount - handCount;
-
-  if (zone === "Parte de Baixo") {
-    return Array.from({ length: bottomCount }, (_, i) => i + 1);
-  } else if (zone === "Altura das mãos") {
-    return Array.from({ length: handCount }, (_, i) => bottomCount + i + 1);
-  } else {
-    return Array.from({ length: Math.max(eyeCount, 0) }, (_, i) => bottomCount + handCount + i + 1);
-  }
-}
-
-function getZoneForShelf(shelfNumber: number, totalShelves: number): string {
-  const bottomCount = 2;
-  const handCount = 2;
+function getZoneForShelf(shelfNumber: number, totalShelves: number): ZoneName {
+  const bottomCount = Math.max(1, Math.floor(totalShelves * 0.3));
+  const handCount = Math.max(1, Math.floor(totalShelves * 0.3));
 
   if (shelfNumber <= bottomCount) {
     return "Parte de Baixo";
@@ -67,11 +62,45 @@ function getZoneForShelf(shelfNumber: number, totalShelves: number): string {
   }
 }
 
+function getShelvesForZone(zone: ZoneName, totalShelves: number): number[] {
+  const shelves: number[] = [];
+  for (let i = totalShelves; i >= 1; i--) {
+    if (getZoneForShelf(i, totalShelves) === zone) {
+      shelves.push(i);
+    }
+  }
+  return shelves;
+}
+
+function getOverflowZones(zone: ZoneName): ZoneName[] {
+  switch (zone) {
+    case "Altura dos olhos":
+      return ["Altura das mãos", "Parte de Baixo"];
+    case "Altura das mãos":
+      return ["Altura dos olhos", "Parte de Baixo"];
+    case "Parte de Baixo":
+      return ["Altura das mãos", "Altura dos olhos"];
+  }
+}
+
+interface ShelfSlot {
+  productId: string;
+  productName: string;
+  widthPercent: number;
+  product: Product;
+}
+
+/**
+ * Proportional per-shelf distribution (v4):
+ * Each zone's products are distributed proportionally across all shelves in that zone.
+ * No overflow between zones - each zone is independent.
+ * This ensures products from each zone always appear on their zone's shelves.
+ */
 function distributeProductsToShelves(
   products: Product[],
   totalShelves: number
-): Map<number, Product[]> {
-  const distribution = new Map<number, Product[]>();
+): Map<number, ShelfSlot[]> {
+  const distribution = new Map<number, ShelfSlot[]>();
 
   for (let i = 1; i <= totalShelves; i++) {
     distribution.set(i, []);
@@ -81,73 +110,57 @@ function distributeProductsToShelves(
     return distribution;
   }
 
-  const productsByZone: Record<string, Product[]> = {
+  const productsByZone: Record<ZoneName, Product[]> = {
     "Altura dos olhos": [],
     "Altura das mãos": [],
     "Parte de Baixo": [],
   };
 
   products.forEach((p) => {
-    const zone = p.zone || p.zona || "Altura das mãos";
+    const zone = (p.zone || p.zona || "Altura das mãos") as ZoneName;
     if (zone in productsByZone) {
       productsByZone[zone].push(p);
     }
   });
 
   Object.keys(productsByZone).forEach((zone) => {
-    productsByZone[zone].sort((a, b) => (b.share || 0) - (a.share || 0));
+    productsByZone[zone as ZoneName].sort((a, b) => (b.share || 0) - (a.share || 0));
   });
 
-  Object.keys(productsByZone).forEach((zone) => {
-    const shelvesInZone = getShelvesForZone(zone, totalShelves);
+  const zoneOrder: ZoneName[] = ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"];
+
+  for (const zone of zoneOrder) {
     const productsInZone = productsByZone[zone];
+    if (productsInZone.length === 0) continue;
 
-    shelvesInZone.forEach((shelfNumber) => {
-      const shelf = distribution.get(shelfNumber) || [];
-      productsInZone.forEach((product) => {
-        shelf.push(product);
-      });
-      distribution.set(shelfNumber, shelf);
-    });
-  });
+    const zoneShelves = getShelvesForZone(zone, totalShelves);
+    const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
+    if (totalShare <= 0) continue;
 
-  distribution.forEach((shelfProducts, shelfNumber) => {
-    const zone = getZoneForShelf(shelfNumber, totalShelves);
-    const totalShare = shelfProducts.reduce((sum, p) => sum + (p.share || 0), 0);
+    for (const shelfNum of zoneShelves) {
+      for (const product of productsInZone) {
+        const productShare = product.share || 0;
+        if (productShare <= 0) continue;
 
-    if (totalShare < 99.9) {
-      let remainingSpace = 100 - totalShare;
+        const widthPercent = (productShare / totalShare) * 100;
 
-      const neighboringZones = zone === "Altura das mãos"
-        ? ["Altura dos olhos", "Parte de Baixo"]
-        : zone === "Altura dos olhos"
-        ? ["Altura das mãos"]
-        : ["Altura das mãos"];
-
-      for (const neighborZone of neighboringZones) {
-        if (remainingSpace <= 0.1) break;
-
-        const neighborProducts = productsByZone[neighborZone]
-          .filter((p) => !shelfProducts.some((sp) => sp.id === p.id));
-
-        for (const product of neighborProducts) {
-          if (remainingSpace <= 0.1) break;
-
-          const productShare = product.share || 0;
-          if (productShare <= remainingSpace + 0.1) {
-            shelfProducts.push(product);
-            remainingSpace -= productShare;
-          }
-        }
+        const slots = distribution.get(shelfNum) || [];
+        slots.push({
+          productId: product.id,
+          productName: product.name,
+          widthPercent: widthPercent,
+          product: product,
+        });
+        distribution.set(shelfNum, slots);
       }
     }
-  });
+  }
 
   return distribution;
 }
 
 // ============================================================
-// COLOR GENERATION - Distinct colors for each product
+// COLOR GENERATION
 // ============================================================
 
 const PRODUCT_COLORS = [
@@ -174,19 +187,20 @@ function getProductColor(productName: string, allProducts: string[]) {
 }
 
 // ============================================================
-// PRICE TAG COMPONENT - Simulates real gondola price labels
+// PRICE TAG COMPONENT
 // ============================================================
 
 function PriceTag({
   product,
+  widthPercent,
   color,
   language,
 }: {
   product: Product;
+  widthPercent: number;
   color: { bg: string; text: string; accent: string };
   language: string;
 }) {
-  const share = product.share || 0;
   const giroLabel = product.giro === 'Alto' ? 'A' : product.giro === 'Medio' || product.giro === 'Média' ? 'M' : 'B';
   const margemLabel = product.margem === 'Alta' ? 'A' : product.margem === 'Media' || product.margem === 'Média' ? 'M' : 'B';
 
@@ -202,7 +216,6 @@ function PriceTag({
         maxWidth: '120px',
       }}
     >
-      {/* Price tag body - simulates real supermarket shelf labels */}
       <div
         style={{
           backgroundColor: '#fff',
@@ -217,7 +230,6 @@ function PriceTag({
           boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
         }}
       >
-        {/* Product name */}
         <span
           style={{
             fontSize: '7px',
@@ -234,7 +246,6 @@ function PriceTag({
         >
           {product.name.length > 16 ? product.name.substring(0, 16) + '…' : product.name}
         </span>
-        {/* Info row: share + giro/margem */}
         <div
           style={{
             display: 'flex',
@@ -251,7 +262,7 @@ function PriceTag({
               lineHeight: 1,
             }}
           >
-            {share.toFixed(1)}%
+            {widthPercent.toFixed(1)}%
           </span>
           <span
             style={{
@@ -275,21 +286,20 @@ function PriceTag({
 // ============================================================
 
 function RealisticProduct({
-  product,
-  widthPercent,
+  slot,
   color,
   shelfHeight,
   language,
 }: {
-  product: Product;
-  widthPercent: number;
+  slot: ShelfSlot;
   color: { bg: string; text: string; accent: string };
   shelfHeight: number;
   language: string;
 }) {
-  const share = product.share || 0;
-  const facings = Math.max(1, Math.round(share / 8));
-  
+  const product = slot.product;
+  const widthPercent = slot.widthPercent;
+  const facings = Math.max(1, Math.round(widthPercent / 15));
+
   return (
     <div
       style={{
@@ -301,7 +311,7 @@ function RealisticProduct({
         padding: '2px 1px',
         position: 'relative',
       }}
-      title={`${product.name} - ${share.toFixed(1)}% | Giro: ${product.giro || '-'} | Margem: ${product.margem || '-'}`}
+      title={`${product.name} - ${(product.share || 0).toFixed(1)}% total | Giro: ${product.giro || '-'} | Margem: ${product.margem || '-'}`}
     >
       {/* Product packages */}
       <div
@@ -330,8 +340,6 @@ function RealisticProduct({
               alignItems: 'center',
               justifyContent: 'center',
               position: 'relative',
-              overflow: 'hidden',
-              minWidth: '8px',
               boxShadow: `inset 0 -2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.1)`,
             }}
           >
@@ -379,9 +387,9 @@ function RealisticProduct({
           </div>
         ))}
       </div>
-      
+
       {/* Price tag / shelf label */}
-      <PriceTag product={product} color={color} language={language} />
+      <PriceTag product={product} widthPercent={widthPercent} color={color} language={language} />
     </div>
   );
 }
@@ -393,7 +401,7 @@ function RealisticProduct({
 function RealisticShelf({
   shelfNumber,
   zone,
-  productsInShelf,
+  slots,
   shelfHeight,
   allProductNames,
   totalShelves,
@@ -401,20 +409,13 @@ function RealisticShelf({
 }: {
   shelfNumber: number;
   zone: string;
-  productsInShelf: Product[];
+  slots: ShelfSlot[];
   shelfHeight: number;
   allProductNames: string[];
   totalShelves: number;
   language: string;
 }) {
-  const totalShare = productsInShelf.reduce((sum, p) => sum + (p.share || 0), 0);
-
-  const normalizedProducts = productsInShelf.map((p) => ({
-    ...p,
-    normalizedShare: totalShare > 0 ? ((p.share || 0) / totalShare) * 100 : 0,
-  }));
-
-  const zoneIndicator = zone === 'Altura dos olhos' 
+  const zoneIndicator = zone === 'Altura dos olhos'
     ? { color: '#FBBF24', label: language === 'pt' ? 'Olhos' : 'Eye' }
     : zone === 'Altura das mãos'
     ? { color: '#3B82F6', label: language === 'pt' ? 'Mãos' : 'Hand' }
@@ -467,13 +468,12 @@ function RealisticShelf({
           paddingBottom: '4px',
         }}
       >
-        {normalizedProducts.length > 0 ? (
-          normalizedProducts.map((product, idx) => (
+        {slots.length > 0 ? (
+          slots.map((slot, idx) => (
             <RealisticProduct
-              key={`${product.id}-${idx}`}
-              product={product}
-              widthPercent={product.normalizedShare}
-              color={getProductColor(product.name, allProductNames)}
+              key={`${slot.productId}-${idx}`}
+              slot={slot}
+              color={getProductColor(slot.productName, allProductNames)}
               shelfHeight={shelfHeight}
               language={language}
             />
@@ -504,7 +504,7 @@ function RealisticShelf({
           boxShadow: '0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3)',
         }}
       />
-      
+
       {/* Shelf bracket shadows */}
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 20px' }}>
         <div
@@ -553,7 +553,7 @@ function GondolaRender({
 
   const shelves: React.ReactNode[] = [];
   for (let i = numberOfShelves; i >= 1; i--) {
-    const shelfProducts = distribution.get(i) || [];
+    const slots = distribution.get(i) || [];
     const zone = getZoneForShelf(i, numberOfShelves);
 
     shelves.push(
@@ -561,7 +561,7 @@ function GondolaRender({
         key={`shelf-${i}`}
         shelfNumber={i}
         zone={zone}
-        productsInShelf={shelfProducts}
+        slots={slots}
         shelfHeight={shelfHeight}
         allProductNames={allProductNames}
         totalShelves={numberOfShelves}

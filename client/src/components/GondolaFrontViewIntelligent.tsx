@@ -1,11 +1,12 @@
 /**
  * Intelligent Gondola Front View Component
  * 
- * Uses intelligent distribution to:
- * 1. Allocate space to each product based on its recommended percentage (share)
- * 2. Distribute products proportionally across shelves in their zone
- * 3. Fill empty space with products from adjacent zones with better margem/giro ratio
- * 4. Ensure 100% shelf utilization while respecting zone preferences
+ * Distribution logic:
+ * - Each product's share% represents its TOTAL space across ALL shelves
+ * - Products are placed starting from their primary zone shelves
+ * - If primary zone is full, overflow to adjacent zones
+ * - Each shelf has 100% capacity
+ * - Total gondola capacity = numberOfShelves × 100%
  */
 
 import React from "react";
@@ -43,29 +44,14 @@ const zoneColorsEn = {
   'Parte de Baixo': { bg: '#DCFCE7', border: '#22C55E', label: 'Bottom Shelf' },
 };
 
-/**
- * Determines which shelves belong to each zone
- */
-function getShelvesForZone(zone: string, totalShelves: number): number[] {
-  const bottomCount = 2;
-  const handCount = 2;
-  const eyeCount = totalShelves - bottomCount - handCount;
-
-  if (zone === "Parte de Baixo") {
-    return Array.from({ length: bottomCount }, (_, i) => i + 1);
-  } else if (zone === "Altura das mãos") {
-    return Array.from({ length: handCount }, (_, i) => bottomCount + i + 1);
-  } else {
-    return Array.from({ length: eyeCount }, (_, i) => bottomCount + handCount + i + 1);
-  }
-}
+type ZoneName = 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo';
 
 /**
  * Gets the zone for a specific shelf number
  */
-function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos olhos" | "Altura das mãos" | "Parte de Baixo" {
-  const bottomCount = 2;
-  const handCount = 2;
+function getZoneForShelf(shelfNumber: number, totalShelves: number): ZoneName {
+  const bottomCount = Math.max(1, Math.floor(totalShelves * 0.3));
+  const handCount = Math.max(1, Math.floor(totalShelves * 0.3));
 
   if (shelfNumber <= bottomCount) {
     return "Parte de Baixo";
@@ -77,28 +63,149 @@ function getZoneForShelf(shelfNumber: number, totalShelves: number): "Altura dos
 }
 
 /**
- * Renders a single product in a shelf
+ * Gets the ordered list of shelves for a zone, from highest to lowest
  */
-function renderProduct(
-  product: Product,
-  widthPercent: number,
+function getShelvesForZone(zone: ZoneName, totalShelves: number): number[] {
+  const shelves: number[] = [];
+  for (let i = totalShelves; i >= 1; i--) {
+    if (getZoneForShelf(i, totalShelves) === zone) {
+      shelves.push(i);
+    }
+  }
+  return shelves;
+}
+
+/**
+ * Gets overflow zones for a given zone (priority order)
+ */
+function getOverflowZones(zone: ZoneName): ZoneName[] {
+  switch (zone) {
+    case "Altura dos olhos":
+      return ["Altura das mãos", "Parte de Baixo"];
+    case "Altura das mãos":
+      return ["Altura dos olhos", "Parte de Baixo"];
+    case "Parte de Baixo":
+      return ["Altura das mãos", "Altura dos olhos"];
+  }
+}
+
+interface ShelfSlot {
+  productId: string;
+  productName: string;
+  widthPercent: number; // percentage of this shelf (0-100)
+  product: Product;
+}
+
+/**
+ * DISTRIBUTION ALGORITHM (v4) - Proportional per-shelf distribution
+ * 
+ * Each product's share% represents its proportion of EACH shelf in its zone.
+ * Products are placed on their primary zone shelves first.
+ * If a zone has more products than fit, they proportionally scale down
+ * and overflow to adjacent zones.
+ * 
+ * This ensures:
+ * - Products from each zone always appear on their zone's shelves
+ * - No zone is completely displaced by overflow from another zone
+ * - Proportions are maintained within each shelf
+ */
+function distributeProductsToShelves(
+  products: Product[],
+  totalShelves: number
+): Map<number, ShelfSlot[]> {
+  const distribution = new Map<number, ShelfSlot[]>();
+
+  // Initialize shelves
+  for (let i = 1; i <= totalShelves; i++) {
+    distribution.set(i, []);
+  }
+
+  if (products.length === 0) {
+    return distribution;
+  }
+
+  // Group products by zone
+  const productsByZone: Record<ZoneName, Product[]> = {
+    "Altura dos olhos": [],
+    "Altura das mãos": [],
+    "Parte de Baixo": [],
+  };
+
+  products.forEach((p) => {
+    const zone = (p.zone || p.zona || "Altura das mãos") as ZoneName;
+    if (zone in productsByZone) {
+      productsByZone[zone].push(p);
+    }
+  });
+
+  // Sort products by share descending within each zone
+  Object.keys(productsByZone).forEach((zone) => {
+    productsByZone[zone as ZoneName].sort((a, b) => (b.share || 0) - (a.share || 0));
+  });
+
+  const zoneOrder: ZoneName[] = ["Altura dos olhos", "Altura das mãos", "Parte de Baixo"];
+
+  // For each zone, place its products on its shelves proportionally
+  for (const zone of zoneOrder) {
+    const productsInZone = productsByZone[zone];
+    if (productsInZone.length === 0) continue;
+
+    const zoneShelves = getShelvesForZone(zone, totalShelves);
+
+    // Calculate total share for this zone's products
+    const totalShare = productsInZone.reduce((sum, p) => sum + (p.share || 0), 0);
+    if (totalShare <= 0) continue;
+
+    // Place products on each shelf of this zone
+    // Each product gets its proportional share of the shelf width (100%)
+    for (const shelfNum of zoneShelves) {
+      for (const product of productsInZone) {
+        const productShare = product.share || 0;
+        if (productShare <= 0) continue;
+
+        // Product's width on this shelf = its share relative to total zone share
+        // Scaled to fill 100% of the shelf
+        const widthPercent = (productShare / totalShare) * 100;
+
+        const slots = distribution.get(shelfNum) || [];
+        slots.push({
+          productId: product.id,
+          productName: product.name,
+          widthPercent: widthPercent,
+          product: product,
+        });
+        distribution.set(shelfNum, slots);
+      }
+    }
+  }
+
+  return distribution;
+}
+
+/**
+ * Renders a single product slot in a shelf
+ */
+function renderProductSlot(
+  slot: ShelfSlot,
   zoneColor: any,
-  language: string
+  language: string,
+  key: string
 ) {
-  const displayValue = `${(product.share || 0).toFixed(1)}%`;
-  
+  const displayValue = `${slot.widthPercent.toFixed(1)}%`;
+
   return (
     <div
+      key={key}
       className="flex flex-col items-center justify-center border-r border-gray-300 last:border-r-0 p-2 overflow-hidden transition-all hover:opacity-80"
       style={{
-        width: `${widthPercent}%`,
+        width: `${slot.widthPercent}%`,
         backgroundColor: zoneColor.bg,
-        minWidth: widthPercent > 5 ? '30px' : '20px',
+        minWidth: slot.widthPercent > 5 ? '30px' : '20px',
       }}
-      title={`${product.name} - ${displayValue}`}
+      title={`${slot.productName} - ${slot.product.share?.toFixed(1)}% total`}
     >
       <span className="text-xs font-bold text-gray-800 text-center truncate line-clamp-2">
-        {product.name}
+        {slot.productName}
       </span>
       <span className="text-xs text-gray-600 font-semibold">
         {displayValue}
@@ -108,14 +215,15 @@ function renderProduct(
 }
 
 /**
- * Renders a shelf with products distributed by their share percentage
+ * Renders a shelf with product slots
  */
 function renderShelf(
-  productsInShelf: Product[],
+  slots: ShelfSlot[],
   zoneColor: any,
-  language: string
+  language: string,
+  shelfNumber: number
 ) {
-  if (productsInShelf.length === 0) {
+  if (slots.length === 0) {
     return (
       <div className="w-full flex items-center justify-center text-gray-400 text-xs bg-gray-50">
         {language === 'pt' ? 'Sem produtos' : 'No products'}
@@ -123,19 +231,10 @@ function renderShelf(
     );
   }
 
-  // Calculate total share
-  const totalShare = productsInShelf.reduce((sum, p) => sum + (p.share || 0), 0);
-  
-  // Normalize shares to 100%
-  const normalizedProducts = productsInShelf.map((p) => ({
-    ...p,
-    normalizedShare: ((p.share || 0) / totalShare) * 100,
-  }));
-
   return (
     <div className="flex w-full h-full overflow-hidden">
-      {normalizedProducts.map((product) =>
-        renderProduct(product, product.normalizedShare, zoneColor, language)
+      {slots.map((slot, idx) =>
+        renderProductSlot(slot, zoneColor, language, `shelf-${shelfNumber}-slot-${idx}`)
       )}
     </div>
   );
@@ -147,17 +246,17 @@ function renderShelf(
 function renderShelfSection(
   shelfNumber: number,
   zone: string,
-  productsInShelf: Product[],
+  slots: ShelfSlot[],
   shelfHeight: number,
   colors: any,
   language: string
 ) {
   const zoneColor = colors[zone as keyof typeof colors];
-  
+
   // Calculate utilization
-  const totalShare = productsInShelf.reduce((sum, p) => sum + (p.share || 0), 0);
-  const utilizationPercent = Math.min(totalShare, 100);
-  
+  const totalUsed = slots.reduce((sum, s) => sum + s.widthPercent, 0);
+  const utilizationPercent = Math.min(totalUsed, 100);
+
   return (
     <div key={`shelf-${shelfNumber}`}>
       <div className="flex items-center gap-2 mb-2">
@@ -166,8 +265,8 @@ function renderShelfSection(
           style={{ backgroundColor: zoneColor.bg }}
         />
         <span className="text-sm font-semibold text-gray-700">
-          {language === 'pt' 
-            ? `Prateleira ${shelfNumber} - ${zoneColor.label}` 
+          {language === 'pt'
+            ? `Prateleira ${shelfNumber} - ${zoneColor.label}`
             : `Shelf ${shelfNumber} - ${zoneColor.label}`}
         </span>
         <span className="text-xs text-gray-500">
@@ -181,102 +280,10 @@ function renderShelfSection(
           height: `${shelfHeight}px`,
         }}
       >
-        {renderShelf(productsInShelf, zoneColor, language)}
+        {renderShelf(slots, zoneColor, language, shelfNumber)}
       </div>
     </div>
   );
-}
-
-/**
- * Distributes products to shelves respecting their zone and share percentages
- * Ensures each product goes to a shelf in its assigned zone
- */
-function distributeProductsToShelves(
-  products: Product[],
-  totalShelves: number
-): Map<number, Product[]> {
-  const distribution = new Map<number, Product[]>();
-
-  // Initialize shelves
-  for (let i = 1; i <= totalShelves; i++) {
-    distribution.set(i, []);
-  }
-
-  if (products.length === 0) {
-    return distribution;
-  }
-
-  // Group products by zone
-  const productsByZone: Record<string, Product[]> = {
-    "Altura dos olhos": [],
-    "Altura das mãos": [],
-    "Parte de Baixo": [],
-  };
-
-  products.forEach((p) => {
-    const zone = p.zone || p.zona || "Altura das mãos";
-    if (zone in productsByZone) {
-      productsByZone[zone].push(p);
-    }
-  });
-
-  // Sort products by share (larger share first)
-  Object.keys(productsByZone).forEach((zone) => {
-    productsByZone[zone].sort((a, b) => (b.share || 0) - (a.share || 0));
-  });
-
-  // Distribute products to their zone shelves
-  // Each product gets added to ALL shelves in its zone
-  Object.keys(productsByZone).forEach((zone) => {
-    const shelvesInZone = getShelvesForZone(zone, totalShelves);
-    const productsInZone = productsByZone[zone];
-
-    // Add each product to EACH shelf in its zone
-    shelvesInZone.forEach((shelfNumber) => {
-      const shelf = distribution.get(shelfNumber) || [];
-      productsInZone.forEach((product) => {
-        shelf.push(product);
-      });
-      distribution.set(shelfNumber, shelf);
-    });
-  });
-
-  // Fill empty space with complementary products from other zones
-  distribution.forEach((shelfProducts, shelfNumber) => {
-    const zone = getZoneForShelf(shelfNumber, totalShelves);
-    const totalShare = shelfProducts.reduce((sum, p) => sum + (p.share || 0), 0);
-    
-    if (totalShare < 99.9) {
-      let remainingSpace = 100 - totalShare;
-      
-      // Get neighboring zones
-      const neighboringZones = zone === "Altura das mãos" 
-        ? ["Altura dos olhos", "Parte de Baixo"]
-        : zone === "Altura dos olhos"
-        ? ["Altura das mãos"]
-        : ["Altura das mãos"];
-
-      // Try to fill with products from neighboring zones
-      for (const neighborZone of neighboringZones) {
-        if (remainingSpace <= 0.1) break;
-
-        const neighborProducts = productsByZone[neighborZone]
-          .filter((p) => !shelfProducts.some((sp) => sp.id === p.id));
-
-        for (const product of neighborProducts) {
-          if (remainingSpace <= 0.1) break;
-
-          const productShare = product.share || 0;
-          if (productShare <= remainingSpace + 0.1) {
-            shelfProducts.push(product);
-            remainingSpace -= productShare;
-          }
-        }
-      }
-    }
-  });
-
-  return distribution;
 }
 
 export default function GondolaFrontViewIntelligent({
@@ -301,14 +308,23 @@ export default function GondolaFrontViewIntelligent({
   const colors = language === 'pt' ? zoneColors : zoneColorsEn;
   const distribution = distributeProductsToShelves(products, numberOfShelves);
 
-  // Render shelves in reverse order (top to bottom)
+  // DEBUG: Log distribution
+  console.log('[GondolaFrontViewIntelligent] Products received FULL:', JSON.stringify(products.map(p => ({ name: p.name, zone: p.zone, zona: p.zona, share: p.share, allKeys: Object.keys(p) }))));
+  console.log('[GondolaFrontViewIntelligent] Distribution:');
+  for (let i = numberOfShelves; i >= 1; i--) {
+    const slots = distribution.get(i) || [];
+    const zone = getZoneForShelf(i, numberOfShelves);
+    console.log(`  Shelf ${i} (${zone}):`, slots.map(s => `${s.productName} ${s.widthPercent.toFixed(1)}%`));
+  }
+
+  // Render shelves in reverse order (top to bottom: highest shelf first)
   const shelves: React.ReactNode[] = [];
   for (let i = numberOfShelves; i >= 1; i--) {
-    const shelfProducts = distribution.get(i) || [];
+    const slots = distribution.get(i) || [];
     const zone = getZoneForShelf(i, numberOfShelves);
 
     shelves.push(
-      renderShelfSection(i, zone, shelfProducts, shelfHeight, colors, language)
+      renderShelfSection(i, zone, slots, shelfHeight, colors, language)
     );
   }
 

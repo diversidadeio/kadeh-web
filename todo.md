@@ -855,3 +855,17 @@
   - [x] Botão "Comparar Antes/Depois" para exibir lado a lado
   - [x] Estatísticas de diferença (total produtos, por zona)
   - [x] Botão "Limpar" para resetar comparação
+
+- [ ] CORRECAO CRITICA: Lógica de distribuição de produtos nas prateleiras
+  - [ ] Percentual sugerido deve ser o TOTAL somando todas as prateleiras
+  - [ ] Produto com 35% deve ocupar 35% do espaço total (não 35% em cada prateleira)
+  - [ ] Preenchimento prioritário na zona principal (ex: olhos primeiro)
+  - [ ] Transbordamento para zonas adjacentes quando necessário
+  - [ ] Testar com preset de Feijão (11 produtos, 100% utilizado)
+
+- [x] Fix zone assignment bug in SmartLayoutSimulator - products were getting wrong zones
+  - [x] Root cause: calculateShelfZone received ABC curve values ("A","B","C") but expected descriptive names ("Alta","Média","Baixa")
+  - [x] Fix: Always use rec.zone from getRecommendationByABCCurves which correctly maps ABC curves to zones
+  - [x] Applied fix to both GondolaFrontViewIntelligent and GondolaRealisticView product mappings
+  - [x] Verified: Azeite de Oliva (B-A) now correctly placed in "Altura dos olhos" (shelves 5,4,3)
+  - [x] Verified: Farinha de Trigo (C-C) correctly placed in "Parte de Baixo" (shelf 1)

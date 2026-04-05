@@ -1003,7 +1003,10 @@ export default function SmartLayoutSimulator() {
           <GondolaFrontViewIntelligent
             products={products.map((p: any) => {
               const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
-              const zone = p.category.shelfZone || rec.zone;
+              // ALWAYS use rec.zone from getRecommendationByABCCurves - it correctly maps ABC curves to zones
+              // p.category.shelfZone was incorrectly calculated by calculateShelfZone which receives ABC values ("A","B","C")
+              // but expects descriptive names ("Alta","Média","Baixa"), causing wrong zone assignments
+              const zone = rec.zone as 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo';
               const giro = p.category.curvaFaturamento === 'A' ? 'Alto' : p.category.curvaFaturamento === 'B' ? 'Medio' : 'Baixo';
               const margem = p.category.curvaLucratividade === 'A' ? 'Alta' : p.category.curvaLucratividade === 'B' ? 'Media' : 'Baixa';
               return {
@@ -1038,7 +1041,8 @@ export default function SmartLayoutSimulator() {
       <GondolaRealisticView
         products={products.map((p: any) => {
           const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
-          const zone = p.category.shelfZone || rec.zone;
+          // ALWAYS use rec.zone - same fix as GondolaFrontViewIntelligent
+          const zone = rec.zone as 'Altura dos olhos' | 'Altura das mãos' | 'Parte de Baixo';
           const giro = p.category.curvaFaturamento === 'A' ? 'Alto' : p.category.curvaFaturamento === 'B' ? 'Medio' : 'Baixo';
           const margem = p.category.curvaLucratividade === 'A' ? 'Alta' : p.category.curvaLucratividade === 'B' ? 'Media' : 'Baixa';
           return {
