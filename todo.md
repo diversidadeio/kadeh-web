@@ -845,3 +845,13 @@
   - [x] Fidelidade 100% - mesmos produtos, mesmas proporções, mesma ordem
   - [x] Integrar no SmartLayoutSimulator no lugar do StoreVisualizationGeneratorV2
   - [x] Testar com múltiplos presets
+
+- [x] Rótulos de preço nos produtos da visualização realista
+  - [x] Exibir nome, percentual, giro e margem abaixo de cada bloco de produto
+  - [x] Simular etiquetas de gôndola reais com borda colorida
+  - [x] Adaptável para dados de preço quando disponíveis
+- [x] Modo de comparação lado a lado (antes/depois)
+  - [x] Botão "Salvar como Antes" para capturar estado
+  - [x] Botão "Comparar Antes/Depois" para exibir lado a lado
+  - [x] Estatísticas de diferença (total produtos, por zona)
+  - [x] Botão "Limpar" para resetar comparação
