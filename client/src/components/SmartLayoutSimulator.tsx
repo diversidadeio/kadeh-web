@@ -28,7 +28,7 @@ import ExposureAreaModal from "@/components/ExposureAreaModal";
 import { exportPlanogramToPDF } from "@/components/PlanogramPDFExporter";
 import { generatePlanogramPDF, preparePlanogramData, type ShelfConfig } from "@/lib/planogramPdfGenerator";
 import { ConfiguracaoAreaExposicao, type MedidasAreaExposicao, type TipoAreaExposicao } from "@/components/ConfiguracaoAreaExposicao";
-import StoreVisualizationGeneratorV2 from "@/components/StoreVisualizationGeneratorV2";
+import GondolaRealisticView from "@/components/GondolaRealisticView";
 import FinancialImpactDashboard from "@/components/FinancialImpactDashboard";
 import HelpButton from "@/components/HelpButton";
 import ProductFormModal, { type ProductFormData } from "@/components/ProductFormModal";
@@ -1034,10 +1034,28 @@ export default function SmartLayoutSimulator() {
         />
       )}
 
-      {/* Visualização da Loja com IA - NOVA VERSÃO V2 */}
-      <StoreVisualizationGeneratorV2
-        products={products}
+      {/* Visualização Realista da Gôndola - HTML/CSS com fidelidade 100% */}
+      <GondolaRealisticView
+        products={products.map((p: any) => {
+          const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+          const zone = p.category.shelfZone || rec.zone;
+          const giro = p.category.curvaFaturamento === 'A' ? 'Alto' : p.category.curvaFaturamento === 'B' ? 'Medio' : 'Baixo';
+          const margem = p.category.curvaLucratividade === 'A' ? 'Alta' : p.category.curvaLucratividade === 'B' ? 'Media' : 'Baixa';
+          return {
+            id: p.id,
+            name: p.name,
+            largura: p.largura || 10,
+            comprimento: p.comprimento || 5,
+            zone: zone,
+            giro: giro,
+            margem: margem,
+            share: typeof rec.share === 'number' ? rec.share : 15,
+            quadrantes: 1,
+          };
+        })}
         numberOfShelves={shelves}
+        totalWidth={gondolaWidth}
+        language={language}
       />
 
       {/* Financial Impact Dashboard */}

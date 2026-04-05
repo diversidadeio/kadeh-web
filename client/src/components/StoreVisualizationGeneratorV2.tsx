@@ -1,13 +1,15 @@
 /**
  * StoreVisualizationGeneratorV2 Component
- * VERSÃO SIMPLES E SINCRONIZADA
- * Gera imagem IA que corresponde EXATAMENTE à visualização frontal
+ * VERSÃO SINCRONIZADA COM GondolaFrontViewIntelligent
+ * 
+ * Usa EXATAMENTE a mesma lógica de distribuição do GondolaFrontViewIntelligent
+ * para garantir que a imagem IA represente fielmente a visualização frontal.
  * 
  * PRINCÍPIOS:
- * 1. Usa EXATAMENTE os mesmos dados da visualização frontal
- * 2. Prompt IA é gerado de forma SIMPLES e CLARA
- * 3. Sem lógica complexa que causa erros
- * 4. Sincronização 100% garantida
+ * 1. Recebe os dados JÁ PROCESSADOS (mesmos que vão para GondolaFrontViewIntelligent)
+ * 2. Usa a mesma função distributeProductsToShelves
+ * 3. Prompt descreve CADA prateleira individualmente com produtos e proporções exatas
+ * 4. Nenhuma prateleira fica vazia na imagem IA
  */
 
 import { useState } from "react";
@@ -19,18 +21,25 @@ import { trpc } from "@/lib/trpc";
 interface Product {
   id: string;
   name: string;
-  category: {
-    name: string;
-    mainCategory: string;
+  zone?: string;
+  zona?: string;
+  share?: number;
+  quadrantes?: number;
+  largura?: number;
+  comprimento?: number;
+  giro?: string;
+  margem?: string;
+  category?: {
+    name?: string;
+    mainCategory?: string;
     shelfZone?: string;
   };
-  zone?: string;
-  share?: number;
 }
 
 interface StoreVisualizationGeneratorV2Props {
   products: Product[];
   numberOfShelves?: number;
+  totalWidth?: number;
 }
 
 const TRANSLATIONS = {
@@ -56,114 +65,202 @@ const TRANSLATIONS = {
   },
 };
 
-/**
- * Organiza produtos por prateleira (de 1 até numberOfShelves)
- * Retorna array de arrays: [[prateleira1], [prateleira2], ...]
- */
-function organizeProductsByShelf(products: Product[], numberOfShelves: number = 7): Product[][] {
-  const shelves: Product[][] = Array.from({ length: numberOfShelves }, () => []);
+// ============================================================
+// EXACT SAME DISTRIBUTION LOGIC AS GondolaFrontViewIntelligent
+// ============================================================
 
-  // Agrupar produtos por zona
-  const byZone = {
-    'Altura dos olhos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura dos olhos'),
-    'Altura das mãos': products.filter(p => (p.zone || p.category?.shelfZone) === 'Altura das mãos'),
-    'Parte de Baixo': products.filter(p => (p.zone || p.category?.shelfZone) === 'Parte de Baixo'),
+function getShelvesForZone(zone: string, totalShelves: number): number[] {
+  const bottomCount = 2;
+  const handCount = 2;
+  const eyeCount = totalShelves - bottomCount - handCount;
+
+  if (zone === "Parte de Baixo") {
+    return Array.from({ length: bottomCount }, (_, i) => i + 1);
+  } else if (zone === "Altura das mãos") {
+    return Array.from({ length: handCount }, (_, i) => bottomCount + i + 1);
+  } else {
+    return Array.from({ length: Math.max(eyeCount, 0) }, (_, i) => bottomCount + handCount + i + 1);
+  }
+}
+
+function getZoneForShelf(shelfNumber: number, totalShelves: number): string {
+  const bottomCount = 2;
+  const handCount = 2;
+
+  if (shelfNumber <= bottomCount) {
+    return "Parte de Baixo";
+  } else if (shelfNumber <= bottomCount + handCount) {
+    return "Altura das mãos";
+  } else {
+    return "Altura dos olhos";
+  }
+}
+
+function distributeProductsToShelves(
+  products: Product[],
+  totalShelves: number
+): Map<number, Product[]> {
+  const distribution = new Map<number, Product[]>();
+
+  for (let i = 1; i <= totalShelves; i++) {
+    distribution.set(i, []);
+  }
+
+  if (products.length === 0) {
+    return distribution;
+  }
+
+  // Group products by zone
+  const productsByZone: Record<string, Product[]> = {
+    "Altura dos olhos": [],
+    "Altura das mãos": [],
+    "Parte de Baixo": [],
   };
 
-  // Distribuição simples: Prateleira 1-2 (Parte de Baixo), 3-4 (Altura das mãos), 5+ (Altura dos olhos)
-  let shelfIndex = 0;
+  products.forEach((p) => {
+    const zone = p.zone || p.zona || "Altura das mãos";
+    if (zone in productsByZone) {
+      productsByZone[zone].push(p);
+    }
+  });
 
-  // Prateleiras 1-2: Parte de Baixo
-  for (const product of byZone['Parte de Baixo']) {
-    shelves[shelfIndex].push(product);
-    shelfIndex = (shelfIndex + 1) % 2; // Alterna entre 0 e 1
-  }
+  // Sort products by share (larger share first)
+  Object.keys(productsByZone).forEach((zone) => {
+    productsByZone[zone].sort((a, b) => (b.share || 0) - (a.share || 0));
+  });
 
-  // Prateleiras 3-4: Altura das mãos
-  shelfIndex = 2;
-  for (const product of byZone['Altura das mãos']) {
-    shelves[shelfIndex].push(product);
-    shelfIndex = (shelfIndex + 1) % 2 + 2; // Alterna entre 2 e 3
-  }
+  // Distribute products to their zone shelves
+  // Each product gets added to ALL shelves in its zone
+  Object.keys(productsByZone).forEach((zone) => {
+    const shelvesInZone = getShelvesForZone(zone, totalShelves);
+    const productsInZone = productsByZone[zone];
 
-  // Prateleiras 5+: Altura dos olhos
-  shelfIndex = 4;
-  for (const product of byZone['Altura dos olhos']) {
-    if (shelfIndex < numberOfShelves) {
-      shelves[shelfIndex].push(product);
-      shelfIndex++;
+    shelvesInZone.forEach((shelfNumber) => {
+      const shelf = distribution.get(shelfNumber) || [];
+      productsInZone.forEach((product) => {
+        shelf.push(product);
+      });
+      distribution.set(shelfNumber, shelf);
+    });
+  });
+
+  // Fill empty space with complementary products from other zones
+  distribution.forEach((shelfProducts, shelfNumber) => {
+    const zone = getZoneForShelf(shelfNumber, totalShelves);
+    const totalShare = shelfProducts.reduce((sum, p) => sum + (p.share || 0), 0);
+
+    if (totalShare < 99.9) {
+      let remainingSpace = 100 - totalShare;
+
+      const neighboringZones = zone === "Altura das mãos"
+        ? ["Altura dos olhos", "Parte de Baixo"]
+        : zone === "Altura dos olhos"
+        ? ["Altura das mãos"]
+        : ["Altura das mãos"];
+
+      for (const neighborZone of neighboringZones) {
+        if (remainingSpace <= 0.1) break;
+
+        const neighborProducts = productsByZone[neighborZone]
+          .filter((p) => !shelfProducts.some((sp) => sp.id === p.id));
+
+        for (const product of neighborProducts) {
+          if (remainingSpace <= 0.1) break;
+
+          const productShare = product.share || 0;
+          if (productShare <= remainingSpace + 0.1) {
+            shelfProducts.push(product);
+            remainingSpace -= productShare;
+          }
+        }
+      }
+    }
+  });
+
+  return distribution;
+}
+
+// ============================================================
+// PROMPT GENERATION - Describes each shelf exactly
+// ============================================================
+
+function buildDetailedPrompt(
+  products: Product[],
+  numberOfShelves: number,
+  totalWidth: number,
+  language: string
+): string {
+  const distribution = distributeProductsToShelves(products, numberOfShelves);
+
+  // Get category name from first product
+  const categoryName = products.length > 0
+    ? (products[0].category?.mainCategory || products[0].category?.name || 'Produtos')
+    : 'Produtos';
+
+  // Build detailed description for each shelf (from top to bottom)
+  let shelfDetails = '';
+
+  for (let i = numberOfShelves; i >= 1; i--) {
+    const shelfProducts = distribution.get(i) || [];
+    const zone = getZoneForShelf(i, numberOfShelves);
+
+    const zoneLabelPt: Record<string, string> = {
+      'Altura dos olhos': 'Altura dos olhos (TOPO)',
+      'Altura das mãos': 'Altura das mãos (MEIO)',
+      'Parte de Baixo': 'Parte de Baixo (BASE)',
+    };
+
+    const zoneLabel = zoneLabelPt[zone] || zone;
+
+    if (shelfProducts.length > 0) {
+      // Calculate total share for normalization
+      const totalShare = shelfProducts.reduce((sum, p) => sum + (p.share || 0), 0);
+
+      // Build product list with normalized percentages
+      const productDescriptions = shelfProducts.map(p => {
+        const normalizedPercent = totalShare > 0
+          ? ((p.share || 0) / totalShare * 100).toFixed(0)
+          : '0';
+        const widthCm = totalShare > 0
+          ? ((p.share || 0) / totalShare * totalWidth).toFixed(0)
+          : '0';
+        return `"${p.name}" ocupando ${normalizedPercent}% da prateleira (${widthCm}cm)`;
+      });
+
+      shelfDetails += `PRATELEIRA ${i} - ${zoneLabel}:\n`;
+      shelfDetails += `  Produtos (da esquerda para a direita): ${productDescriptions.join(', ')}\n`;
+      shelfDetails += `  Utilização total: ${Math.min(totalShare, 100).toFixed(0)}%\n\n`;
+    } else {
+      shelfDetails += `PRATELEIRA ${i} - ${zoneLabel}:\n`;
+      shelfDetails += `  Sem produtos (preencher com produtos das prateleiras adjacentes)\n\n`;
     }
   }
 
-  return shelves;
-}
+  // Get all unique product names
+  const uniqueProducts = Array.from(new Set(products.map(p => p.name)));
 
-/**
- * Gera prompt IA SIMPLES e CLARO
- * Descreve exatamente como a gôndola deve aparecer
- */
-function generateSimplePrompt(products: Product[], numberOfShelves: number, language: string): string {
-  const shelves = organizeProductsByShelf(products, numberOfShelves);
-  
-  // Construir descrição visual de cada prateleira
-  let shelfDescriptions = '';
-  
-  for (let i = numberOfShelves - 1; i >= 0; i--) {
-    const shelfNum = i + 1;
-    const shelfProducts = shelves[i];
-    let zoneLabel = '';
-    
-    if (shelfNum <= 2) zoneLabel = 'Bottom shelf';
-    else if (shelfNum <= 4) zoneLabel = 'Hand level';
-    else zoneLabel = 'Eye level';
+  const prompt = `Fotografia profissional e realista de uma gôndola de supermercado vista de frente, categoria "${categoryName}".
 
-    const productList = shelfProducts.length > 0
-      ? shelfProducts.map(p => `${p.name} (${(p.share || 0).toFixed(0)}%)`).join(', ')
-      : 'Empty';
+A gôndola tem ${numberOfShelves} prateleiras, ${totalWidth}cm de largura total.
 
-    shelfDescriptions += `Shelf ${shelfNum} (${zoneLabel}): ${productList}\n`;
-  }
+DISTRIBUIÇÃO EXATA DOS PRODUTOS POR PRATELEIRA (de cima para baixo):
 
-  const categoryName = products.length > 0 ? (products[0].category?.mainCategory || 'Products') : 'Products';
-  const productNames = Array.from(new Set(products.map(p => p.name))).join(', ');
+${shelfDetails}
 
-  const prompt = language === 'pt'
-    ? `GERAR IMAGEM DE GÔNDOLA DE VAREJO
+PRODUTOS QUE DEVEM APARECER NA IMAGEM (SOMENTE ESTES):
+${uniqueProducts.map(name => `- ${name}`).join('\n')}
 
-CATEGORIA: ${categoryName}
-
-PRODUTOS PERMITIDOS (SOMENTE ESTES):
-${productNames}
-
-DISTRIBUIÇÃO POR PRATELEIRA (DE CIMA PARA BAIXO):
-${shelfDescriptions}
-
-INSTRUÇÕES CRÍTICAS:
-1. Mostrar APENAS os produtos listados acima
-2. Nenhum outro produto, marca ou categoria
-3. Prateleira ${numberOfShelves} no TOPO da imagem
-4. Prateleira 1 na BASE da imagem
-5. Produtos em ordem de cima para baixo conforme listado
-6. Fotografia realista de gôndola de supermercado
-7. Iluminação profissional, sem sombras excessivas`
-    : `GENERATE RETAIL SHELF IMAGE
-
-CATEGORY: ${categoryName}
-
-ALLOWED PRODUCTS (ONLY THESE):
-${productNames}
-
-SHELF DISTRIBUTION (TOP TO BOTTOM):
-${shelfDescriptions}
-
-CRITICAL INSTRUCTIONS:
-1. Show ONLY the products listed above
-2. No other products, brands, or categories
-3. Shelf ${numberOfShelves} at the TOP of the image
-4. Shelf 1 at the BOTTOM of the image
-5. Products in order from top to bottom as listed
-6. Realistic supermarket shelf photograph
-7. Professional lighting, no excessive shadows`;
+REGRAS VISUAIS OBRIGATÓRIAS:
+1. TODAS as ${numberOfShelves} prateleiras devem ter produtos - NENHUMA prateleira vazia
+2. Cada produto deve ocupar o espaço proporcional ao seu percentual na prateleira
+3. Produtos com maior percentual devem ter MAIS embalagens visíveis
+4. Produtos com menor percentual (ex: 5%) devem ter MENOS embalagens, mas ainda visíveis
+5. A prateleira ${numberOfShelves} fica no TOPO e a prateleira 1 na BASE
+6. As embalagens devem ter rótulos legíveis com o nome do produto
+7. Iluminação profissional de supermercado, fundo desfocado de corredor
+8. Vista frontal direta da gôndola, sem ângulo
+9. Cada prateleira deve ter os produtos na ordem listada (esquerda para direita)
+10. Os produtos devem ser claramente diferentes entre si (cores e embalagens distintas)`;
 
   return prompt;
 }
@@ -171,14 +268,15 @@ CRITICAL INSTRUCTIONS:
 export default function StoreVisualizationGeneratorV2({
   products,
   numberOfShelves = 7,
+  totalWidth = 280,
 }: StoreVisualizationGeneratorV2Props) {
   const { language } = useLanguage();
   const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS] || TRANSLATIONS.pt;
-  
+
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
 
   const handleGenerateVisualization = async () => {
@@ -191,8 +289,10 @@ export default function StoreVisualizationGeneratorV2({
     setError(null);
 
     try {
-      const prompt = generateSimplePrompt(products, numberOfShelves, language);
-      
+      const prompt = buildDetailedPrompt(products, numberOfShelves, totalWidth, language);
+
+      console.log('[StoreVisualizationV2] Prompt gerado:', prompt);
+
       const result = await generateMutation.mutateAsync({
         prompt,
       });

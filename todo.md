@@ -838,3 +838,10 @@
   - [x] CAUSA RAIZ: flex-col-reverse no container de GondolaFrontViewIntelligent.tsx estava invertendo a ordem visual
   - [x] SOLUCAO: Removido flex-col-reverse, mantendo loop decrescente [5,4,3,2,1]
   - [x] Testado com preset de Refrigerantes - FUNCIONANDO CORRETAMENTE
+
+- [x] Substituir geração de imagem IA por visualização HTML/CSS realista (fidelidade 100%)
+  - [x] Criar componente GondolaRealisticView com estilo 3D/fotográfico em HTML/CSS
+  - [x] Usar EXATAMENTE os mesmos dados de distribuição do GondolaFrontViewIntelligent
+  - [x] Fidelidade 100% - mesmos produtos, mesmas proporções, mesma ordem
+  - [x] Integrar no SmartLayoutSimulator no lugar do StoreVisualizationGeneratorV2
+  - [x] Testar com múltiplos presets
