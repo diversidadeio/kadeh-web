@@ -869,3 +869,7 @@
   - [x] Applied fix to both GondolaFrontViewIntelligent and GondolaRealisticView product mappings
   - [x] Verified: Azeite de Oliva (B-A) now correctly placed in "Altura dos olhos" (shelves 5,4,3)
   - [x] Verified: Farinha de Trigo (C-C) correctly placed in "Parte de Baixo" (shelf 1)
+- [x] Criar teste automatizado Vitest para validar mapeamento de zonas ABC
+  - [x] Testar todas as 9 combinações de curvas ABC (A-A, A-B, A-C, B-A, B-B, B-C, C-A, C-B, C-C)
+  - [x] Validar que getRecommendationByABCCurves retorna zonas corretas
+  - [x] Executar testes com sucesso (65/65 passando)
