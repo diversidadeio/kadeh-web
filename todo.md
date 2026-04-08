@@ -885,3 +885,15 @@
   - [x] Criar componente com overlay posicionado sobre o Heat Map
   - [x] Integrar overlay na página de Kadeh Picking
   - [x] Testar visualmente e validar renderização
+
+- [ ] Implementar seletor de período interativo no Heat Map
+  - [ ] Criar dados simulados de fluxo para turnos (manhã/tarde/noite) e períodos (dia/semana/mês)
+  - [ ] Implementar componente de seletor com botões para turnos e períodos
+  - [ ] Adicionar animação CSS de transição suave entre estados
+  - [ ] Integrar ao Heat Map e testar visualmente
+
+- [x] Implementar seletor de período interativo no Heat Map
+  - [x] Criar dados simulados de fluxo para diferentes turnos e períodos
+  - [x] Implementar botões de seleção (manhã/tarde/noite e dia/semana/mês)
+  - [x] Adicionar animação CSS de transição suave entre estados
+  - [x] Testar interatividade e validar mudanças de opacidade

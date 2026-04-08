@@ -4,6 +4,7 @@
  * SEO: Optimized for picking, warehouse, e-commerce keywords
  */
 
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import Header from "@/components/Header";
@@ -24,6 +25,24 @@ import {
 export default function Picking() {
   const { language } = useLanguage();
   const t = translations[language];
+  const [selectedShift, setSelectedShift] = useState('morning');
+  const [selectedPeriod, setSelectedPeriod] = useState('day');
+  const [heatMapOpacity, setHeatMapOpacity] = useState(0.7);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.5);
+
+  // Update opacity based on selected shift
+  useEffect(() => {
+    if (selectedShift === 'morning') {
+      setHeatMapOpacity(0.5);
+      setOverlayOpacity(0.4);
+    } else if (selectedShift === 'afternoon') {
+      setHeatMapOpacity(0.7);
+      setOverlayOpacity(0.5);
+    } else {
+      setHeatMapOpacity(0.6);
+      setOverlayOpacity(0.45);
+    }
+  }, [selectedShift]);
 
   const pickingFeatures = [
     {
@@ -469,9 +488,50 @@ export default function Picking() {
             </p>
           </div>
 
-          <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-lg bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4">
-            {/* SVG Heat Map Grid */}
-            <svg className="w-full h-auto relative z-10" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+          {/* Period Selector */}
+          <div className="mb-8 space-y-4">
+            {/* Shift Selector */}
+            <div className="flex flex-wrap gap-2">
+              {['morning', 'afternoon', 'night'].map((shift) => (
+                <button
+                  key={shift}
+                  onClick={() => setSelectedShift(shift)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    selectedShift === shift
+                      ? 'bg-blue-600 text-white shadow-lg scale-105'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {language === 'pt'
+                    ? shift === 'morning' ? '🌅 Manhã' : shift === 'afternoon' ? '☀️ Tarde' : '🌙 Noite'
+                    : shift === 'morning' ? '🌅 Morning' : shift === 'afternoon' ? '☀️ Afternoon' : '🌙 Night'}
+                </button>
+              ))}
+            </div>
+
+            {/* Time Period Selector */}
+            <div className="flex flex-wrap gap-2">
+              {['day', 'week', 'month'].map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setSelectedPeriod(period)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    selectedPeriod === period
+                      ? 'bg-green-600 text-white shadow-lg scale-105'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {language === 'pt'
+                    ? period === 'day' ? '📅 Dia' : period === 'week' ? '📊 Semana' : '📈 Mês'
+                    : period === 'day' ? '📅 Day' : period === 'week' ? '📊 Week' : '📈 Month'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-lg bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4 transition-all duration-500">
+            {/* SVG Heat Map Grid with Dynamic Opacity */}
+            <svg className="w-full h-auto relative z-10 transition-opacity duration-500" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" style={{ opacity: heatMapOpacity }}>
                 {/* Gradient definitions */}
                 <defs>
                   <linearGradient id="heatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -510,14 +570,23 @@ export default function Picking() {
                 <text x="450" y="570" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Zona de Alto Fluxo' : 'High Traffic Zone'}</text>
             </svg>
 
-            {/* Overlay Image with 50% Transparency */}
-            <div className="absolute inset-0 opacity-50 pointer-events-none z-0">
+            {/* Overlay Image with Dynamic Transparency */}
+            <div className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-500" style={{ opacity: overlayOpacity }}>
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/plantabaixadesupermercados-exemploII_ed476e79.png"
                 alt={language === 'pt' ? 'Layout de Supermercado' : 'Supermarket Layout'}
                 className="w-full h-full object-cover"
               />
             </div>
+          </div>
+
+          {/* Period Info Display */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-gray-700">
+              {language === 'pt'
+                ? `Exibindo fluxo de: ${selectedShift === 'morning' ? 'Manhã (6h-12h)' : selectedShift === 'afternoon' ? 'Tarde (12h-18h)' : 'Noite (18h-23h)'} | Período: ${selectedPeriod === 'day' ? 'Hoje' : selectedPeriod === 'week' ? 'Esta semana' : 'Este mês'}`
+                : `Showing flow for: ${selectedShift === 'morning' ? 'Morning (6am-12pm)' : selectedShift === 'afternoon' ? 'Afternoon (12pm-6pm)' : 'Night (6pm-11pm)'} | Period: ${selectedPeriod === 'day' ? 'Today' : selectedPeriod === 'week' ? 'This week' : 'This month'}`}
+            </p>
           </div>
 
           {/* Legend */}
