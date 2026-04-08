@@ -873,3 +873,9 @@
   - [x] Testar todas as 9 combinações de curvas ABC (A-A, A-B, A-C, B-A, B-B, B-C, C-A, C-B, C-C)
   - [x] Validar que getRecommendationByABCCurves retorna zonas corretas
   - [x] Executar testes com sucesso (65/65 passando)
+
+- [x] Adicionar seção de eficiência de repositores na página de Kadeh Picking
+  - [x] Fazer upload da imagem do mapa de reposição para CDN
+  - [x] Criar seção com layout imagem à esquerda e texto à direita
+  - [x] Adicionar 3 pontos principais: autonomia, velocidade, separação acelerada
+  - [x] Testar visualmente e validar renderização

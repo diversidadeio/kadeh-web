@@ -219,6 +219,94 @@ export default function Picking() {
         columns={3}
       />
 
+      {/* Eficiência de Repositores e Picking */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Imagem à esquerda */}
+            <div className="flex justify-center">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/Mapadereposiçãonomercado_b5087e5e.png"
+                alt={language === 'pt' ? "Kadeh Picking - Eficiência de Repositores" : "Kadeh Picking - Repositor Efficiency"}
+                className="w-full max-w-md rounded-lg shadow-lg object-contain"
+              />
+            </div>
+
+            {/* Texto técnico/profissional à direita */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+                  {language === 'pt'
+                    ? "Repositores e Promotores Mais Eficientes"
+                    : "More Efficient Repositors and Promoters"}
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  {language === 'pt'
+                    ? "Kadeh Picking transforma a reposição de produtos em um processo estruturado e independente. Repositores e promotores recebem rotas otimizadas que minimizam deslocamentos desnecessários, permitindo autonomia total na reposição de categorias, devolução de produtos abandonados em carrinhos e caixas."
+                    : "Kadeh Picking transforms product replenishment into a structured and independent process. Repositors and promoters receive optimized routes that minimize unnecessary movements, enabling full autonomy in category replenishment, return of abandoned products in carts and checkouts."}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-primary text-white">
+                      <CheckCircle className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      {language === 'pt' ? "Autonomia Operacional" : "Operational Autonomy"}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {language === 'pt'
+                        ? "Repositores trabalham de forma independente com rotas claras e direcionadas, reduzindo dependência de supervisão constante."
+                        : "Repositors work independently with clear and directed routes, reducing dependence on constant supervision."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-primary text-white">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      {language === 'pt' ? "Velocidade de Reposição" : "Replenishment Speed"}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {language === 'pt'
+                        ? "Rotas otimizadas reduzem o tempo de reposição em até 35%, garantindo gôndolas sempre abastecidas e prateleiras vazias minimizadas."
+                        : "Optimized routes reduce replenishment time by up to 35%, ensuring shelves are always stocked and empty shelves minimized."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-primary text-white">
+                      <BarChart3 className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      {language === 'pt' ? "Separação de Pedidos Acelerada" : "Accelerated Order Separation"}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {language === 'pt'
+                        ? "Para e-commerce, a ferramenta traça rotas eficientes para montagem de pedidos, aumentando velocidade e precisão na separação com redução de até 40% no tempo de processamento."
+                        : "For e-commerce, the tool traces efficient routes for order assembly, increasing speed and accuracy in separation with up to 40% reduction in processing time."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Como Funciona */}
       <section className="bg-secondary/20 py-20 lg:py-32 border-t border-border">
         <div className="container">
