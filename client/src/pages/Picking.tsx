@@ -469,11 +469,9 @@ export default function Picking() {
             </p>
           </div>
 
-          <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-lg">
-            {/* Heat Map Background */}
-            <div className="relative w-full bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4">
-              {/* SVG Heat Map Grid */}
-              <svg className="w-full h-auto" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+          <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-lg bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4">
+            {/* SVG Heat Map Grid */}
+            <svg className="w-full h-auto relative z-10" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
                 {/* Gradient definitions */}
                 <defs>
                   <linearGradient id="heatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -510,11 +508,10 @@ export default function Picking() {
                 <text x="50" y="30" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Entrada' : 'Entrance'}</text>
                 <text x="850" y="30" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Caixas' : 'Checkouts'}</text>
                 <text x="450" y="570" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Zona de Alto Fluxo' : 'High Traffic Zone'}</text>
-              </svg>
-            </div>
+            </svg>
 
             {/* Overlay Image with 50% Transparency */}
-            <div className="absolute inset-0 opacity-50 pointer-events-none">
+            <div className="absolute inset-0 opacity-50 pointer-events-none z-0">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/plantabaixadesupermercados-exemploII_ed476e79.png"
                 alt={language === 'pt' ? 'Layout de Supermercado' : 'Supermarket Layout'}
