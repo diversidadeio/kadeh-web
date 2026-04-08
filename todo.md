@@ -879,3 +879,9 @@
   - [x] Criar seção com layout imagem à esquerda e texto à direita
   - [x] Adicionar 3 pontos principais: autonomia, velocidade, separação acelerada
   - [x] Testar visualmente e validar renderização
+
+- [x] Adicionar overlay de layout de supermercado com 50% transparência ao Heat Map de Navegação
+  - [x] Fazer upload da imagem do layout de supermercado para CDN
+  - [x] Criar componente com overlay posicionado sobre o Heat Map
+  - [x] Integrar overlay na página de Kadeh Picking
+  - [x] Testar visualmente e validar renderização

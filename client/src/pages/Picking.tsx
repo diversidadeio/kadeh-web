@@ -455,6 +455,96 @@ export default function Picking() {
         </div>
       </section>
 
+      {/* Heat Map de Navegação */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <div className="mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              {language === 'pt' ? "Heat Map de Navegação (Simulado)" : "Navigation Heat Map (Simulated)"}
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              {language === 'pt'
+                ? "Visualize padrões de movimento e fluxo de clientes com nosso heat map inteligente. A sobreposição mostra a densidade de navegação em diferentes áreas da loja."
+                : "Visualize movement patterns and customer flow with our intelligent heat map. The overlay shows navigation density in different store areas."}
+            </p>
+          </div>
+
+          <div className="relative w-full rounded-lg overflow-hidden border border-border shadow-lg">
+            {/* Heat Map Background */}
+            <div className="relative w-full bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4">
+              {/* SVG Heat Map Grid */}
+              <svg className="w-full h-auto" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+                {/* Gradient definitions */}
+                <defs>
+                  <linearGradient id="heatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 0.3}} />
+                    <stop offset="25%" style={{stopColor: '#10b981', stopOpacity: 0.3}} />
+                    <stop offset="50%" style={{stopColor: '#f59e0b', stopOpacity: 0.3}} />
+                    <stop offset="75%" style={{stopColor: '#ef4444', stopOpacity: 0.3}} />
+                    <stop offset="100%" style={{stopColor: '#dc2626', stopOpacity: 0.4}} />
+                  </linearGradient>
+                </defs>
+
+                {/* Heat map zones */}
+                <circle cx="200" cy="150" r="120" fill="#3b82f6" opacity="0.15" />
+                <circle cx="500" cy="200" r="150" fill="#10b981" opacity="0.15" />
+                <circle cx="800" cy="180" r="140" fill="#f59e0b" opacity="0.15" />
+                <circle cx="350" cy="400" r="130" fill="#ef4444" opacity="0.15" />
+                <circle cx="650" cy="420" r="120" fill="#dc2626" opacity="0.2" />
+                <circle cx="500" cy="500" r="100" fill="#f59e0b" opacity="0.15" />
+
+                {/* Grid lines */}
+                <line x1="0" y1="0" x2="1000" y2="0" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="0" y1="150" x2="1000" y2="150" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="0" y1="300" x2="1000" y2="300" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="0" y1="450" x2="1000" y2="450" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="0" y1="600" x2="1000" y2="600" stroke="#e5e7eb" strokeWidth="1" />
+
+                <line x1="0" y1="0" x2="0" y2="600" stroke="#e5e7eb" strokeWidth="1" />
+                <line x1="250" y1="0" x2="250" y2="600" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="500" y1="0" x2="500" y2="600" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="750" y1="0" x2="750" y2="600" stroke="#e5e7eb" strokeWidth="1" opacity="0.5" />
+                <line x1="1000" y1="0" x2="1000" y2="600" stroke="#e5e7eb" strokeWidth="1" />
+
+                {/* Labels */}
+                <text x="50" y="30" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Entrada' : 'Entrance'}</text>
+                <text x="850" y="30" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Caixas' : 'Checkouts'}</text>
+                <text x="450" y="570" fontSize="14" fill="#6b7280" fontWeight="bold">{language === 'pt' ? 'Zona de Alto Fluxo' : 'High Traffic Zone'}</text>
+              </svg>
+            </div>
+
+            {/* Overlay Image with 50% Transparency */}
+            <div className="absolute inset-0 opacity-50 pointer-events-none">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/plantabaixadesupermercados-exemploII_ed476e79.png"
+                alt={language === 'pt' ? 'Layout de Supermercado' : 'Supermarket Layout'}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-blue-400 opacity-40"></div>
+              <span className="text-sm text-muted-foreground">{language === 'pt' ? 'Baixo fluxo' : 'Low traffic'}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-green-400 opacity-40"></div>
+              <span className="text-sm text-muted-foreground">{language === 'pt' ? 'Fluxo moderado' : 'Moderate traffic'}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-yellow-400 opacity-40"></div>
+              <span className="text-sm text-muted-foreground">{language === 'pt' ? 'Fluxo alto' : 'High traffic'}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-red-600 opacity-50"></div>
+              <span className="text-sm text-muted-foreground">{language === 'pt' ? 'Fluxo muito alto' : 'Very high traffic'}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <FAQSection
         id="faq"
