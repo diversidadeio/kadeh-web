@@ -897,3 +897,10 @@
   - [x] Implementar botões de seleção (manhã/tarde/noite e dia/semana/mês)
   - [x] Adicionar animação CSS de transição suave entre estados
   - [x] Testar interatividade e validar mudanças de opacidade
+
+- [x] Adicionar aviso de desconto promocional 75% na página Kadeh Ads
+  - [x] Localizar simulador de custos na página
+  - [x] Criar componente de aviso com destaque visual
+  - [x] Informar sobre desconto de 75% durante testes
+  - [x] Informar que após testes seguirá preço normal
+  - [x] Testar em português e inglês

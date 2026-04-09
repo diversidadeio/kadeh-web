@@ -137,6 +137,28 @@ export default function KadehAdsCampaignPage() {
       {/* Cost Simulator Section */}
       <section className="py-16 md:py-24 bg-gray-50 border-t border-gray-200">
         <div className="container max-w-6xl mx-auto px-4">
+          {/* Promotional Warning Banner */}
+          <div className="mb-12 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-lg p-6 md:p-8 shadow-md">
+            <div className="flex items-start gap-4">
+              <div className="text-3xl">⚠️</div>
+              <div className="flex-1">
+                <h3 className="text-xl md:text-2xl font-bold text-amber-900 mb-2">
+                  {language === "pt" ? "Promoção Especial de Testes" : "Special Testing Promotion"}
+                </h3>
+                <p className="text-amber-800 mb-3 text-base md:text-lg">
+                  {language === "pt"
+                    ? "Os valores apresentados no simulador incluem um desconto promocional de 75% válido durante o período de testes."
+                    : "The values shown in the simulator include a promotional discount of 75% valid during the testing period."}
+                </p>
+                <p className="text-amber-800 font-semibold text-base md:text-lg">
+                  {language === "pt"
+                    ? "Após o término do período de testes, os investimentos seguirão a tabela de preços normal."
+                    : "After the testing period ends, investments will follow the standard pricing table."}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
             {language === "pt" ? "Simulador de Custos Detalhado" : "Detailed Cost Simulator"}
           </h2>
