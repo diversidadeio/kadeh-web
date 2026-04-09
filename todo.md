@@ -227,6 +227,7 @@
 - [x] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
 - [x] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
 - [ ] CRÍTICA: Validar em português e inglês
+- [x] BUG: Imagem por IA não se atualiza quando produtos são adicionados/removidos da simulação
 - [x] Remover percentual da visualização realista da gôndola
 - [x] Reduzir tamanho do nome do produto para melhor visibilidade
 - [x] Upload large product images to S3 using manus-upload-file --webdev (15 files, 5-6MB each)

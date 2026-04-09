@@ -4,7 +4,7 @@
  * Uses the same distribution logic as GondolaFrontView to ensure fidelity
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Image as ImageIcon, AlertCircle, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -385,6 +385,13 @@ export default function StoreVisualizationGenerator({
   const [regenerationAttempts, setRegenerationAttempts] = useState(0);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
   const generateMutation = trpc.system.generateStoreVisualization.useMutation();
+
+  // Clear generated image when products change
+  useEffect(() => {
+    setGeneratedImage(null);
+    setValidationStatus('idle');
+    setValidationMessage('');
+  }, [products, gondolaWidth, shelfHeight, shelfDepth, numberOfShelves]);
 
   // Usar a função local distributeProductsToShelves
 
