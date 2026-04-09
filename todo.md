@@ -917,3 +917,9 @@
   - [x] Posicionar abaixo da visualização principal
   - [x] Validar renderização da imagem de gôndola com IA
   - [x] Testar com diferentes produtos
+
+- [x] Adicionar vídeo YouTube Shorts no topo da página Mídia
+  - [x] Localizar arquivo da página Mídia
+  - [x] Adicionar embed do vídeo YouTube Shorts
+  - [x] Testar reprodução do vídeo
+  - [x] Validar responsividade em mobile

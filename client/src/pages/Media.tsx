@@ -47,6 +47,29 @@ export default function Media() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
+      {/* YouTube Shorts Section */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-background border-b border-border">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-8 text-center">
+            {language === 'pt' ? 'Veja o Kadeh em Ação' : 'See Kadeh in Action'}
+          </h2>
+          <div className="flex justify-center">
+            <div className="w-full max-w-sm">
+              <iframe
+                width="100%"
+                height="600"
+                src="https://www.youtube.com/embed/EqiXrlukPpg"
+                title={language === 'pt' ? 'Kadeh - Demonstração' : 'Kadeh - Demo'}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="rounded-lg shadow-lg"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-background/50">
         <div className="max-w-4xl mx-auto text-center">
