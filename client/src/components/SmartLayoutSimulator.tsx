@@ -38,6 +38,7 @@ import { generateOptimizationSuggestions, type OptimizationResult } from "@/util
 import ExposureMetricsDashboard from "@/components/ExposureMetricsDashboard";
 import PreCadastro from "@/components/PreCadastro";
 import { GondolaRealisticVisualization } from "@/components/GondolaRealisticVisualization";
+import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 type ViewMode = "simulator" | "precadastro";
@@ -1147,7 +1148,40 @@ export default function SmartLayoutSimulator() {
         </div>
       )}
 
-      {/* Zone Distribution Chart */}
+      {/* AI Store Visualization Generator */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-2xl">🤖</span>
+            <h3 className="text-lg font-semibold text-foreground">
+              {language === 'pt' ? 'Gerador de Visualizacao de Loja com IA' : 'AI Store Visualization Generator'}
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            {language === 'pt'
+              ? 'Gere uma representacao realista e fotografica da gondola com os produtos simulados usando inteligencia artificial.'
+              : 'Generate a realistic photographic representation of the gondola with simulated products using artificial intelligence.'}
+          </p>
+          <StoreVisualizationGenerator
+            products={products.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              category: {
+                name: p.category.name || 'Produtos',
+                mainCategory: p.category.mainCategory || 'Alimentar',
+              },
+              share: 25,
+            }))}
+            gondolaWidth={gondolaWidth}
+            shelfHeight={shelfHeight}
+            shelfDepth={shelfDepth}
+            exposureType="Gondola"
+            numberOfShelves={shelves}
+          />
+        </div>
+      )}
+
+      {/* Save Simulation Section */}
       {products.length > 0 && (
         <ZoneDistributionChart
           stats={calculateZoneStats()}

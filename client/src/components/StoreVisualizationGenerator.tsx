@@ -494,24 +494,30 @@ ${(() => {
 3. Nenhum produto similar, genérico ou substituto
 4. Prateleira ${numberOfShelves} DEVE estar no TOPO da imagem
 5. Prateleira 1 DEVE estar na BASE da imagem
-6. Cada produto ocupa exatamente seu percentual
-7. Produtos repetidos horizontalmente para preencher 100%
-8. Sem produtos de outras categorias
-9. Sem modificações de nomes de produtos
-10. Sem adições de produtos não listados
+6. CRÍTICO: PREENCHER CADA PRATELEIRA COM PRODUTOS - NÃO DEIXAR VAZIA
+7. REPETIR A IMAGEM DE CADA PRODUTO lado a lado (horizontalmente) para ocupar EXATAMENTE seu percentual
+8. Exemplo: Se Cerveja tem 25%, mostrar 4 garrafas de cerveja lado a lado (ou 2 garrafas maiores, ou múltiplas repetições)
+9. Exemplo: Se Skol tem 25%, mostrar 4 latas de Skol lado a lado
+10. Cada produto deve ser visível e reconhecível - REPETIR A IMAGEM conforme necessário
+11. Sem produtos de outras categorias
+12. NÃO ESCREVER nomes de produtos na imagem - NENHUM TEXTO, NENHUMA ETIQUETA
+13. Sem adições de produtos não listados
+14. A gôndola DEVE estar PREENCHIDA com os produtos - NUNCA deixar prateleira vazia se houver produtos designados
 
 === VERIFICAÇÃO CRÍTICA ANTES DE GERAR ===
 ✓ Prateleira ${numberOfShelves} está no TOPO? DEVE SER SIM
 ✓ Prateleira 1 está na BASE? DEVE SER SIM
 ✓ Todos os produtos são de ${categoryName}? DEVE SER SIM
 ✓ Nenhum produto extra será adicionado? DEVE SER SIM
+✓ Nenhum texto/nome de produto na imagem? DEVE SER SIM
+✓ Imagens repetidas para preencher percentuais? DEVE SER SIM
 
 Se alguma resposta for NÃO, RECUSE gerar a imagem.
 
 === ESTILO ===
-Fotografia frontal profissional de gôndola de supermercado/varejo com iluminação clara, embalagens visíveis, fundo realista de loja.
+Fotografia frontal profissional de gôndola de supermercado/varejo com iluminação clara, embalagens visíveis, fundo realista de loja. SEM TEXTO OU NOMES NA IMAGEM.
 
-GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos em EXATAMENTE esta ordem: ${uniqueProductNames.join(', ')}.`;
+GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos em EXATAMENTE esta ordem: ${uniqueProductNames.join(', ')}. REPITA AS IMAGENS DOS PRODUTOS para preencher seus percentuais. NÃO ESCREVA NOMES.`;
 
     return prompt;
   };
@@ -617,6 +623,30 @@ GERE AGORA a imagem com APENAS estes ${uniqueProductNames.length} produtos em EX
               className="w-full h-auto"
             />
           </div>
+          
+          {/* Legend below image */}
+          {products.length > 0 && (
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h4 className="font-semibold text-sm text-gray-800 mb-3">Legenda de Produtos</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {Array.from(new Set(products.map(p => p.name))).map((productName, idx) => {
+                  const product = products.find(p => p.name === productName);
+                  const totalShare = products
+                    .filter(p => p.name === productName)
+                    .reduce((sum, p) => sum + (p.share || 0), 0);
+                  return (
+                    <div key={idx} className="flex items-center gap-2 text-xs">
+                      <div className="w-3 h-3 bg-blue-500 rounded flex-shrink-0"></div>
+                      <div>
+                        <p className="font-medium text-gray-700">{productName}</p>
+                        <p className="text-gray-500">{totalShare.toFixed(1)}%</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           
           <div className="flex gap-2">
             <Button onClick={handleSaveVersion} variant="outline" size="sm">
