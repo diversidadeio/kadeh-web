@@ -227,6 +227,9 @@
 - [x] CRÍTICA: Reconstruir componentes Kadeh Ads com procedures corretos
 - [x] CRÍTICA: Testar fluxo completo: Smart Layout + ProductFormModal + Geração IA + Visualização Gôndola
 - [ ] CRÍTICA: Validar em português e inglês
+- [x] Upload large product images to S3 using manus-upload-file --webdev (15 files, 5-6MB each)
+- [x] Replace local image paths with CDN URLs in GondolaRealisticVisualization
+- [x] Verify product images render correctly on gondola shelves
 
 - [x] Corrigir GondolaFrontView com as 3 regras de distribuição
   - [x] Regra 1: Um produto ocupa todo o espaço em todas as prateleiras
@@ -923,3 +926,9 @@
   - [x] Adicionar embed do vídeo YouTube Shorts
   - [x] Testar reprodução do vídeo
   - [x] Validar responsividade em mobile
+
+- [ ] Criar visualização realista de gôndola com embalagens de produtos
+  - [ ] Gerar imagens de embalagens realistas para bebidas e alimentos
+  - [ ] Criar componente de gôndola com prateleiras proporcionais
+  - [ ] Integrar na página Smart Layout substituindo tabela atual
+  - [ ] Testar proporções e validar distribuição de produtos

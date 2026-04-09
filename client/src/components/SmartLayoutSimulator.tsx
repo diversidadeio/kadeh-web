@@ -37,6 +37,7 @@ import { ProductOptimizationSuggestions } from "@/components/ProductOptimization
 import { generateOptimizationSuggestions, type OptimizationResult } from "@/utils/productOptimizer";
 import ExposureMetricsDashboard from "@/components/ExposureMetricsDashboard";
 import PreCadastro from "@/components/PreCadastro";
+import { GondolaRealisticVisualization } from "@/components/GondolaRealisticVisualization";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 type ViewMode = "simulator" | "precadastro";
@@ -1037,6 +1038,111 @@ export default function SmartLayoutSimulator() {
               numberOfShelves={shelves}
               language={language}
             />
+          </div>
+
+          {/* Realistic Gondola Visualization */}
+          <div className="mt-12 mb-8">
+            <div className="mb-4">
+              <h3 className="text-2xl font-bold text-foreground mb-2">
+                {language === 'pt' ? '🛒 Visualização Realista da Gôndola' : '🛒 Realistic Gondola Visualization'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {language === 'pt' 
+                  ? 'Representação visual realista da distribuição de produtos nas prateleiras com embalagens proporcionais aos percentuais designados.' 
+                  : 'Realistic visual representation of product distribution on shelves with packaging proportional to assigned percentages.'}
+              </p>
+            </div>
+            {products.length > 0 && (
+              <GondolaRealisticVisualization
+                shelves={[
+                  {
+                    id: 'shelf-5',
+                    name: language === 'pt' ? 'Prateleira 5 - Altura dos olhos' : 'Shelf 5 - Eye Level',
+                    zone: 'Altura dos olhos',
+                    backgroundColor: '#FFD700',
+                    products: products
+                      .filter((p: any) => {
+                        const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                        return rec.zone === 'Altura dos olhos';
+                      })
+                      .map((p: any) => ({
+                        name: p.name,
+                        percentage: 25,
+                        color: '#FFD700',
+                        imagePath: `/products/${p.name.toLowerCase().replace(/\s+/g, '-')}-bottle.png`,
+                      })),
+                  },
+                  {
+                    id: 'shelf-4',
+                    name: language === 'pt' ? 'Prateleira 4 - Altura dos olhos' : 'Shelf 4 - Eye Level',
+                    zone: 'Altura dos olhos',
+                    backgroundColor: '#FFD700',
+                    products: products
+                      .filter((p: any) => {
+                        const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                        return rec.zone === 'Altura dos olhos';
+                      })
+                      .map((p: any) => ({
+                        name: p.name,
+                        percentage: 25,
+                        color: '#FFD700',
+                        imagePath: `/products/${p.name.toLowerCase().replace(/\s+/g, '-')}-bottle.png`,
+                      })),
+                  },
+                  {
+                    id: 'shelf-3',
+                    name: language === 'pt' ? 'Prateleira 3 - Altura dos olhos' : 'Shelf 3 - Eye Level',
+                    zone: 'Altura dos olhos',
+                    backgroundColor: '#FFD700',
+                    products: products
+                      .filter((p: any) => {
+                        const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                        return rec.zone === 'Altura dos olhos';
+                      })
+                      .map((p: any) => ({
+                        name: p.name,
+                        percentage: 25,
+                        color: '#FFD700',
+                        imagePath: `/products/${p.name.toLowerCase().replace(/\s+/g, '-')}-bottle.png`,
+                      })),
+                  },
+                  {
+                    id: 'shelf-2',
+                    name: language === 'pt' ? 'Prateleira 2 - Altura das mãos' : 'Shelf 2 - Hand Level',
+                    zone: 'Altura das mãos',
+                    backgroundColor: '#B3E5FC',
+                    products: products
+                      .filter((p: any) => {
+                        const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                        return rec.zone === 'Altura das mãos';
+                      })
+                      .map((p: any) => ({
+                        name: p.name,
+                        percentage: 100,
+                        color: '#B3E5FC',
+                        imagePath: `/products/${p.name.toLowerCase().replace(/\s+/g, '-')}-bottle.png`,
+                      })),
+                  },
+                  {
+                    id: 'shelf-1',
+                    name: language === 'pt' ? 'Prateleira 1 - Parte de Baixo' : 'Shelf 1 - Bottom',
+                    zone: 'Parte de Baixo',
+                    backgroundColor: '#C8E6C9',
+                    products: products
+                      .filter((p: any) => {
+                        const rec = getRecommendationByABCCurves(p.category.curvaFaturamento, p.category.curvaLucratividade);
+                        return rec.zone === 'Parte de Baixo';
+                      })
+                      .map((p: any) => ({
+                        name: p.name,
+                        percentage: 100,
+                        color: '#C8E6C9',
+                        imagePath: `/products/${p.name.toLowerCase().replace(/\s+/g, '-')}-bottle.png`,
+                      })),
+                  },
+                ]}
+              />
+            )}
           </div>
         </div>
       )}
