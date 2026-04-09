@@ -904,3 +904,16 @@
   - [x] Informar sobre desconto de 75% durante testes
   - [x] Informar que após testes seguirá preço normal
   - [x] Testar em português e inglês
+
+- [ ] Reativar visibilidade por IA na página Smart Layout
+  - [ ] Localizar e reativar componente de visibilidade por IA
+  - [ ] Posicionar campo abaixo da visualização principal
+  - [ ] Validar que imagem representa fielmente a gôndola
+  - [ ] Testar renderização e interatividade
+
+- [x] Reativar visibilidade por IA no Smart Layout como campo adicional
+  - [x] Localizar componente GondolaFrontViewIntelligent
+  - [x] Adicionar título "Visibilidade por IA"
+  - [x] Posicionar abaixo da visualização principal
+  - [x] Validar renderização da imagem de gôndola com IA
+  - [x] Testar com diferentes produtos
