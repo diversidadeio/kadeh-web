@@ -116,11 +116,10 @@ export const GondolaRealisticVisualization: React.FC<GondolaRealisticVisualizati
                   <div
                     className="absolute bottom-1 left-1 right-1 bg-white bg-opacity-90 rounded px-1 py-0.5 text-center"
                     style={{
-                      fontSize: '10px',
+                      fontSize: '8px',
                     }}
                   >
                     <p className="font-semibold text-gray-800 truncate">{product.name}</p>
-                    <p className="text-gray-600">{product.percentage.toFixed(1)}%</p>
                   </div>
                 </div>
               );
