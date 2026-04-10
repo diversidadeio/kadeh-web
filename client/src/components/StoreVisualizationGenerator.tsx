@@ -502,14 +502,18 @@ ${(() => {
 4. Prateleira ${numberOfShelves} DEVE estar no TOPO da imagem
 5. Prateleira 1 DEVE estar na BASE da imagem
 6. CRÍTICO: PREENCHER CADA PRATELEIRA COM PRODUTOS - NÃO DEIXAR VAZIA
-7. REPETIR A IMAGEM DE CADA PRODUTO lado a lado (horizontalmente) para ocupar EXATAMENTE seu percentual
-8. Exemplo: Se Cerveja tem 25%, mostrar 4 garrafas de cerveja lado a lado (ou 2 garrafas maiores, ou múltiplas repetições)
-9. Exemplo: Se Skol tem 25%, mostrar 4 latas de Skol lado a lado
-10. Cada produto deve ser visível e reconhecível - REPETIR A IMAGEM conforme necessário
-11. Sem produtos de outras categorias
-12. NÃO ESCREVER nomes de produtos na imagem - NENHUM TEXTO, NENHUMA ETIQUETA
-13. Sem adições de produtos não listados
-14. A gôndola DEVE estar PREENCHIDA com os produtos - NUNCA deixar prateleira vazia se houver produtos designados
+
+=== INSTRUÇÕES SIMPLES DE PREENCHIMENTO ===
+Cada prateleira DEVE ser preenchida com os produtos listados:
+
+7. Preencher cada prateleira com as embalagens dos produtos
+8. Cada produto deve ser visível e reconhecível
+9. Sem produtos de outras categorias
+10. NÃO ESCREVER nomes de produtos na imagem - NENHUM TEXTO, NENHUMA ETIQUETA
+11. Sem adições de produtos não listados
+12. A gôndola DEVE estar PREENCHIDA com os produtos - NUNCA deixar prateleira vazia
+13. Espaçamento natural entre produtos (como em uma gôndola real)
+14. Embalagens devem ser claramente visíveis e identificáveis
 
 === VERIFICAÇÃO CRÍTICA ANTES DE GERAR ===
 ✓ Prateleira ${numberOfShelves} está no TOPO? DEVE SER SIM
