@@ -14,6 +14,7 @@ import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import SmartLayoutWithSaveFeature from "@/components/SmartLayoutWithSaveFeature";
 import ImageZoomModal from "@/components/ImageZoomModal";
+import HeatMapNavigation from "@/components/HeatMapNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -454,6 +455,21 @@ export default function SmartLayout() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Heat Map de Navegação */}
+      <section className="bg-white py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <HeatMapNavigation
+            title={language === 'pt' ? "Heat Map de Navegação (Simulado)" : "Navigation Heat Map (Simulated)"}
+            description={language === 'pt'
+              ? "Visualize padrões de movimento e fluxo de clientes com nosso heat map inteligente. A sobreposição mostra a densidade de navegação em diferentes áreas da loja."
+              : "Visualize movement patterns and customer flow with our intelligent heat map. The overlay shows navigation density in different store areas."}
+            showLegend={true}
+            showPeriodInfo={true}
+            compact={false}
+          />
         </div>
       </section>
 

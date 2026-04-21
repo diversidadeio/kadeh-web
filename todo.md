@@ -935,3 +935,5 @@
   - [ ] Criar componente de gôndola com prateleiras proporcionais
   - [ ] Integrar na página Smart Layout substituindo tabela atual
   - [ ] Testar proporções e validar distribuição de produtos
+- [x] Transferir imagem Heat Map de Navegação da página Picking para Smart Layout (bloco 2)
+- [x] Integrar filtros de período (Manhã, Tarde, Noite, Dia, Semana, Mês) no Heat Map
