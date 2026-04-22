@@ -937,3 +937,9 @@
   - [ ] Testar proporções e validar distribuição de produtos
 - [x] Transferir imagem Heat Map de Navegação da página Picking para Smart Layout (bloco 2)
 - [x] Integrar filtros de período (Manhã, Tarde, Noite, Dia, Semana, Mês) no Heat Map
+- [ ] Criar sistema de recomendações automáticas baseado em Margem x Giro
+- [ ] Implementar matriz BCG (Estrelas, Vacas Leiteiras, Pontos de Interrogação, Abacaxis)
+- [ ] Criar algoritmo de recomendação de zona de exposição por quadrante
+- [ ] Implementar componente UI de recomendações
+- [ ] Integrar recomendações no SmartLayoutSimulator
+- [ ] Testar sistema de recomendações em português e inglês

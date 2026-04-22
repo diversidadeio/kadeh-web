@@ -39,6 +39,8 @@ import ExposureMetricsDashboard from "@/components/ExposureMetricsDashboard";
 import PreCadastro from "@/components/PreCadastro";
 import { GondolaRealisticVisualization } from "@/components/GondolaRealisticVisualization";
 import StoreVisualizationGenerator from "@/components/StoreVisualizationGenerator";
+import RecommendationPanel from "@/components/RecommendationPanel";
+import { generateBulkRecommendations, type ProductMetrics } from "@/utils/productRecommendationEngine";
 
 type CategoryType = "Alimentar" | "Não-Alimentar";
 type ViewMode = "simulator" | "precadastro";
@@ -255,6 +257,8 @@ export default function SmartLayoutSimulator() {
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [showOptimization, setShowOptimization] = useState(false);
   const [isApplyingOptimization, setIsApplyingOptimization] = useState(false);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [showRecommendationsPanel, setShowRecommendationsPanel] = useState(false);
 
   // Load simulations from localStorage on mount
   useEffect(() => {
@@ -1145,6 +1149,62 @@ export default function SmartLayoutSimulator() {
               />
             )}
           </div>
+        </div>
+      )}
+
+      {/* Generate Recommendations Section */}
+      {products.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <div className="flex items-center justify-between gap-2 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">💡</span>
+              <h3 className="text-lg font-semibold text-foreground">
+                {language === 'pt' ? 'Recomendacoes de Posicionamento' : 'Positioning Recommendations'}
+              </h3>
+            </div>
+            <Button
+              onClick={() => {
+                const marginMap: Record<string, number> = { 'Baixa': 15, 'Média': 50, 'Alta': 85 };
+                const velocityMap: Record<string, number> = { 'Baixo': 15, 'Médio': 50, 'Alto': 85 };
+                
+                const productMetrics: ProductMetrics[] = products.map((p: any) => {
+                  const marginText = p.category.defaultMargem?.toString() || 'Média';
+                  const velocityText = p.category.defaultGiro?.toString() || 'Médio';
+                  
+                  return {
+                    productId: p.id,
+                    productName: p.name,
+                    margin: marginMap[marginText] || 50,
+                    velocity: velocityMap[velocityText] || 50,
+                  };
+                });
+                const recs = generateBulkRecommendations(productMetrics);
+                setRecommendations(recs);
+                setShowRecommendationsPanel(true);
+              }}
+              className="bg-green-600 hover:bg-green-700 gap-2"
+            >
+              <Lightbulb className="w-4 h-4" />
+              {language === 'pt' ? 'Gerar Recomendacoes' : 'Generate Recommendations'}
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            {language === 'pt'
+              ? 'Gere recomendacoes automaticas de posicionamento baseadas na matriz de margem x giro.'
+              : 'Generate automatic positioning recommendations based on the margin x velocity matrix.'}
+          </p>
+        </div>
+      )}
+
+      {/* Recommendations Panel */}
+      {showRecommendationsPanel && recommendations.length > 0 && (
+        <div className="bg-card p-6 rounded-md border border-border">
+          <RecommendationPanel
+            recommendations={recommendations}
+            onApplyRecommendation={(rec) => {
+              console.log('Applying recommendation:', rec);
+            }}
+          />
         </div>
       )}
 
