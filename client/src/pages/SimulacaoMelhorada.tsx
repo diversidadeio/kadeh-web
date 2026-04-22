@@ -1,9 +1,9 @@
 /**
- * Simulação Page — Kadeh Simulação (Melhorada)
- * Interactive supermarket map with realistic gondolas and intelligent pathfinding
+ * Simulação Page — Kadeh Simulação (Com Mapa Realista)
+ * Interactive supermarket map with realistic floor plan and intelligent pathfinding
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -65,24 +65,6 @@ interface RouteAnimation {
 
 // Simple A* pathfinding algorithm
 function findPath(start: RoutePoint, end: RoutePoint, obstacles: typeof GONDOLAS): RoutePoint[] {
-  // Create a grid-based pathfinding
-  const gridSize = 20;
-  const width = 1000;
-  const height = 500;
-  const cols = Math.ceil(width / gridSize);
-  const rows = Math.ceil(height / gridSize);
-
-  // Mark blocked cells
-  const blocked = new Set<string>();
-  obstacles.forEach((obs) => {
-    for (let x = Math.floor(obs.x / gridSize); x < Math.ceil((obs.x + obs.width) / gridSize); x++) {
-      for (let y = Math.floor(obs.y / gridSize); y < Math.ceil((obs.y + obs.height) / gridSize); y++) {
-        blocked.add(`${x},${y}`);
-      }
-    }
-  });
-
-  // Simple path: go around obstacles
   const path: RoutePoint[] = [start];
 
   // Add intermediate waypoints to avoid obstacles
@@ -344,52 +326,27 @@ export default function SimulacaoMelhorada() {
             </div>
           </div>
 
-          {/* Supermarket Map */}
+          {/* Supermarket Map with Realistic Floor Plan */}
           <div className="bg-white rounded-lg shadow-lg p-8 overflow-auto">
             <svg
               width="100%"
               height="600"
               viewBox="0 0 1000 500"
-              className="border border-slate-200 rounded-lg bg-gradient-to-br from-slate-50 to-slate-100"
+              className="border border-slate-200 rounded-lg"
+              style={{ backgroundColor: "#f8fafc" }}
             >
-              {/* Background */}
-              <rect width="1000" height="500" fill="#f8fafc" />
+              {/* Background Image */}
+              <image
+                href="https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/ChatGPTImage22deabr.de2026,14_34_09_9fcc9b7f.png"
+                x="0"
+                y="0"
+                width="1000"
+                height="500"
+                preserveAspectRatio="xMidYMid slice"
+                opacity="0.3"
+              />
 
-              {/* Grid pattern */}
-              <defs>
-                <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e2e8f0" strokeWidth="0.5" />
-                </pattern>
-              </defs>
-              <rect width="1000" height="500" fill="url(#grid)" />
-
-              {/* Gondolas (obstacles) */}
-              {GONDOLAS.map((gondola) => (
-                <g key={gondola.id}>
-                  <rect
-                    x={gondola.x}
-                    y={gondola.y}
-                    width={gondola.width}
-                    height={gondola.height}
-                    fill="#d4a574"
-                    stroke="#8b7355"
-                    strokeWidth="2"
-                    opacity="0.8"
-                  />
-                  <text
-                    x={gondola.x + gondola.width / 2}
-                    y={gondola.y + gondola.height / 2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="text-xs font-bold fill-white pointer-events-none"
-                    fontSize="10"
-                  >
-                    {gondola.label}
-                  </text>
-                </g>
-              ))}
-
-              {/* Sectors */}
+              {/* Sectors - Positioned on top of the floor plan */}
               {SECTORS.map((sector) => (
                 <g key={sector.id}>
                   <circle
@@ -507,21 +464,24 @@ export default function SimulacaoMelhorada() {
 
               <div>
                 <h4 className="font-semibold text-slate-700 mb-3">
-                  {language === "pt" ? "Obstáculos" : "Obstacles"}
+                  {language === "pt" ? "Funcionalidades" : "Features"}
                 </h4>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-amber-700" style={{ opacity: 0.8 }} />
-                    <span className="text-sm text-slate-700">
-                      {language === "pt" ? "Gôndolas" : "Gondolas"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-blue-300" style={{ opacity: 0.8 }} />
-                    <span className="text-sm text-slate-700">
-                      {language === "pt" ? "Freezers" : "Freezers"}
-                    </span>
-                  </div>
+                  <p className="text-sm text-slate-700">
+                    {language === "pt" 
+                      ? "✓ Pathfinding inteligente" 
+                      : "✓ Intelligent pathfinding"}
+                  </p>
+                  <p className="text-sm text-slate-700">
+                    {language === "pt" 
+                      ? "✓ Desvio automático de gôndolas" 
+                      : "✓ Automatic gondola avoidance"}
+                  </p>
+                  <p className="text-sm text-slate-700">
+                    {language === "pt" 
+                      ? "✓ Animação em tempo real" 
+                      : "✓ Real-time animation"}
+                  </p>
                 </div>
               </div>
 
