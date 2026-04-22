@@ -27,7 +27,7 @@ export default function PresentationCarousel({
     if (isOpen && presentationName) {
       // Determine starting page and total pages based on presentation name
       const pageConfig: Record<string, { start: number; total: number }> = {
-        'kadeh-varejo': { start: 2, total: 26 },
+        'kadeh-lojas-mercados': { start: 2, total: 26 },
         'kadeh-shopping': { start: 2, total: 12 },
         'kadeh-saude': { start: 1, total: 8 },
         'kadeh-localiza': { start: 1, total: 14 },
@@ -45,7 +45,7 @@ export default function PresentationCarousel({
 
   const getStartPage = () => {
     const pageConfig: Record<string, { start: number }> = {
-      'kadeh-varejo': { start: 2 },
+      'kadeh-lojas-mercados': { start: 2 },
       'kadeh-shopping': { start: 2 },
       'kadeh-saude': { start: 1 },
       'kadeh-localiza': { start: 1 },

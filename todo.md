@@ -158,7 +158,7 @@
 - [x] Integrar GondolaFrontView no SmartLayoutSimulator
 - [x] Testar visualização em português e inglês
 
-- [x] Investigar por que apresentação do Kadeh Varejo não abre na página de soluções
+- [x] Investigar por que apresentação do Kadeh Lojas & Mercados não abre na página de soluções
 - [x] Corrigir problema de abertura de apresentação (TODAS ESTÃO FUNCIONANDO!)
 - [x] Testar abertura em português e inglês
 
@@ -173,7 +173,7 @@
 - [ ] Kadeh Ads: Integrar pagamento Stripe com geração de recibo
 - [ ] Kadeh Ads: Implementar sistema de pausa com aviso prévio de 24h
 - [ ] Kadeh Ads: Criar dashboard de analytics (impressões, cliques, conversões)
-- [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Varejo
+- [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Lojas & Mercados
 - [ ] Kadeh Ads: Implementar exibição de anúncios no Kadeh Shopping
 - [ ] Kadeh Ads: Testar fluxo completo em portugués e inglês
 - [x] Corrigir erro ao gerar visualização da loja por IA com 9 produtos

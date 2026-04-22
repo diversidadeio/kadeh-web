@@ -39,15 +39,15 @@ export default function Home() {
   const [presentationTitle, setPresentationTitle] = useState<string>("");
 
   const handlePresentationClick = (url: string) => {
-    let name = 'kadeh-varejo';
-    let title = 'Kadeh Varejo';
+    let name = 'kadeh-lojas-mercados';
+    let title = 'Kadeh Lojas & Mercados';
     
     if (url.includes('shopping')) {
       name = 'kadeh-shopping';
       title = 'Kadeh Shopping';
-    } else if (url.includes('saude')) {
-      name = 'kadeh-saude';
-      title = 'Kadeh Saúde';
+    } else if (url.includes('lojas-mercados')) {
+      name = 'kadeh-lojas-mercados';
+      title = 'Kadeh Lojas & Mercados';
     } else if (url.includes('localiza')) {
       name = 'kadeh-localiza';
       title = 'Kadeh Localiza';
@@ -93,7 +93,7 @@ export default function Home() {
   };
 
   const solutionUrls = [
-    { presentationUrl: "/presentation-images/kadeh-varejo" },
+    { presentationUrl: "/presentation-images/kadeh-lojas-mercados" },
     { presentationUrl: "/presentation-images/kadeh-shopping" },
     { presentationUrl: "/presentation-images/kadeh-eventos" },
     { presentationUrl: "/presentation-images/kadeh-saude" },

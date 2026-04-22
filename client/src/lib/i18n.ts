@@ -50,7 +50,7 @@ export const translations = {
       title: 'Soluções desenhadas para cada ambiente',
       items: [
         {
-          title: 'Kadeh Varejo',
+          title: 'Kadeh Lojas & Mercados',
           description: 'Localize produtos, aumente conversão e gere eficiência operacional com dados em tempo real.',
         },
         {
@@ -262,7 +262,7 @@ export const translations = {
       legal: 'Legal',
       
       // Solutions
-      retail: 'Kadeh Varejo',
+      retail: 'Kadeh Lojas & Mercados',
       shopping: 'Kadeh Shopping',
       events: 'Kadeh Eventos',
       healthcare: 'Kadeh Saúde',
@@ -332,7 +332,7 @@ export const translations = {
       title: 'Solutions designed for each environment',
       items: [
         {
-          title: 'Kadeh Retail',
+          title: 'Kadeh Stores & Markets',
           description: 'Locate products, increase conversion and generate operational efficiency with real-time data.',
         },
         {
@@ -544,7 +544,7 @@ export const translations = {
       legal: 'Legal',
       
       // Solutions
-      retail: 'Kadeh Retail',
+      retail: 'Kadeh Stores & Markets',
       shopping: 'Kadeh Shopping',
       events: 'Kadeh Events',
       healthcare: 'Kadeh Healthcare',
