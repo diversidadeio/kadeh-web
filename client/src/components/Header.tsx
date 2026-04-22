@@ -25,7 +25,7 @@ export default function Header() {
     { href: "/how-it-works", label: t.header.howItWorks },
     { href: "/media", label: t.header.media },
     { href: "/faq", label: t.header.faq },
-    { href: "/categories/performance", label: t.header.performanceDashboard },
+    { href: "/simulacao", label: t.header.simulacao },
     { href: "/kadeh-ads-campaign", label: "Kadeh Ads", special: true },
   ];
 

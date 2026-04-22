@@ -12,6 +12,7 @@ import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import DataIntelligenceDashboard from "@/components/DataIntelligenceDashboard";
 import MarginAnalysisByStore from "@/components/MarginAnalysisByStore";
+import CategoryPerformanceDashboard from "@/pages/CategoryPerformanceDashboard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/lib/i18n";
 import {
@@ -377,6 +378,13 @@ export default function DataIntelligence() {
 
       {/* Margin Analysis */}
       <MarginAnalysisByStore />
+
+      {/* Category Performance Dashboard */}
+      <section className="bg-slate-50 py-20 lg:py-32 border-t border-border">
+        <div className="container">
+          <CategoryPerformanceDashboard />
+        </div>
+      </section>
 
       {/* AI Recommendations */}
       <section className="bg-card py-20 lg:py-32 border-t border-border">

@@ -943,3 +943,11 @@
 - [ ] Implementar componente UI de recomendações
 - [ ] Integrar recomendações no SmartLayoutSimulator
 - [ ] Testar sistema de recomendações em português e inglês
+
+## Reestruturação de Páginas (Performance → Simulação)
+- [ ] Mesclar conteúdo de Performance em Intelligence
+- [ ] Remover página Performance da navegação
+- [ ] Criar página Simulação com mapa do supermercado
+- [ ] Implementar seletores de sessão (atual e destino)
+- [ ] Implementar animação de seta de rota
+- [ ] Testar navegação e animações
