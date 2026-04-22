@@ -91,7 +91,7 @@ export function KadehAdsCostSimulator() {
         "10": "https://buy.stripe.com/14AaEXb8I0Lp2Nf8N70Ba1N",
       },
     },
-    "7days": {
+    "5days": {
       "1-5": {
         "1": "https://buy.stripe.com/14A4gzdgQalZbjLe7r0Ba2k",
         "3": "https://buy.stripe.com/14AbJ10u479N2Nf0gB0Ba2l",
@@ -117,7 +117,7 @@ export function KadehAdsCostSimulator() {
         "10": "https://buy.stripe.com/aFadR9gt2fGj3Rj0gB0Ba2z",
       },
     },
-    "14days": {
+    "7days": {
       "1-5": {
         "1": "https://buy.stripe.com/3cI6oHgt2fGj2Nf7J30Ba24",
         "3": "https://buy.stripe.com/eVqfZh7WwfGj9bDd3n0Ba25",

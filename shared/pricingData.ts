@@ -5,10 +5,10 @@
  */
 
 export const DURATION_PRICES = {
-  "1day": 500,
-  "3days": 1200,
-  "7days": 2450,
-  "14days": 3500,
+  "1day": 1000,
+  "3days": 2700,
+  "5days": 4000,
+  "7days": 4900,
 } as const;
 
 export const STORE_MULTIPLIERS = {
@@ -28,8 +28,8 @@ export const PRODUCT_PACKAGES = {
 export const DURATION_LABELS = {
   "1day": "1 dia",
   "3days": "3 dias",
+  "5days": "5 dias",
   "7days": "7 dias",
-  "14days": "14 dias",
 } as const;
 
 export const STORE_LABELS = {

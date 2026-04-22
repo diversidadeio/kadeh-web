@@ -29,12 +29,12 @@ export default function KadehAdsFull() {
     return 100;
   };
 
-  // Multiplicadores por duração da campanha
-  const durationMultipliers: { [key: number]: number } = {
-    1: 1.0,
-    3: 1.1,
-    7: 1.2,
-    14: 1.4,
+  // Preços fixos por duração da campanha (novos valores)
+  const durationPrices: { [key: number]: number } = {
+    1: 1000,    // 1 dia: R$ 1.000,00
+    3: 2700,    // 3 dias: R$ 2.700,00
+    5: 4000,    // 5 dias: R$ 4.000,00
+    7: 4900,    // 7 dias: R$ 4.900,00
   };
 
   // Multiplicadores por quantidade de lojas
@@ -48,11 +48,13 @@ export default function KadehAdsFull() {
   // Calcular valor total
   const selectedProducts = customProducts ? parseInt(customProducts) || 1 : products;
   const pricePerProduct = getProductPrice(selectedProducts);
-  const durationMultiplier = durationMultipliers[duration] || 1.0;
+  const durationPrice = durationPrices[duration] || 1000;
   const storeMultiplier = storeMultipliers[stores] || 1.0;
   
-  // Fórmula: Preço por Produto × Número de Produtos × Multiplicador Duração × Multiplicador Lojas
-  const totalValue = pricePerProduct * selectedProducts * durationMultiplier * storeMultiplier;
+  // Fórmula: (Preço da Duração × Multiplicador Lojas) + (Preço por Produto × Número de Produtos)
+  const basePrice = durationPrice * storeMultiplier;
+  const productsPrice = pricePerProduct * selectedProducts;
+  const totalValue = basePrice + productsPrice;
   const originalValue = 100 * selectedProducts * duration * stores;
   const savings = originalValue - totalValue;
 
@@ -233,7 +235,7 @@ export default function KadehAdsFull() {
                 <div>
                   <h3 className="font-bold text-xl mb-2">Crie seu Anúncio</h3>
                   <p className="text-gray-300">
-                    Faça upload de imagens, defina categorias correlacionadas e escolha a duração (1, 3, 7 ou 14 dias)
+                    Faça upload de imagens, defina categorias correlacionadas e escolha a duração (1, 3, 5 ou 7 dias)
                   </p>
                 </div>
               </div>
@@ -283,7 +285,7 @@ export default function KadehAdsFull() {
               <div>
                 <label className="block text-sm font-semibold mb-3">Duração da Campanha</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {[1, 3, 7, 14].map((days) => (
+                  {[1, 3, 5, 7].map((days) => (
                     <button
                       key={days}
                       onClick={() => setDuration(days)}
@@ -369,20 +371,28 @@ export default function KadehAdsFull() {
                   <span className="font-semibold">{selectedProducts}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Multiplicador Duração ({duration} dias):</span>
-                  <span className="font-semibold">x {durationMultiplier.toFixed(1)}</span>
+                  <span>Valor da duração ({duration} dias):</span>
+                  <span className="font-semibold">R$ {durationPrice.toLocaleString('pt-BR')}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Multiplicador Lojas:</span>
-                  <span className="font-semibold">x {storeMultiplier.toFixed(1)}</span>
+                  <span>Multiplicador de lojas:</span>
+                  <span className="font-semibold">x{storeMultiplier}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Subtotal (Duração × Lojas):</span>
+                  <span className="font-semibold text-blue-600">R$ {basePrice.toLocaleString('pt-BR')}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Valor dos produtos ({selectedProducts} produto{selectedProducts > 1 ? 's' : ''}):</span>
+                  <span className="font-semibold text-purple-600">R$ {productsPrice.toLocaleString('pt-BR')}</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between font-bold text-lg">
                   <span>Investimento Total:</span>
-                  <span className="text-blue-600">R$ {totalValue.toFixed(2)}</span>
+                  <span className="text-blue-600">R$ {totalValue.toLocaleString('pt-BR')}</span>
                 </div>
                 {savings > 0 && (
                   <div className="text-sm text-green-600 font-semibold">
-                    Economia: R$ {savings.toFixed(2)}
+                    Economia: R$ {savings.toLocaleString('pt-BR')}
                   </div>
                 )}
               </div>
