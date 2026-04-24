@@ -26,7 +26,7 @@ import KadehAdsManual from "./pages/KadehAdsManual";
 import StoreMapping from "./pages/StoreMapping";
 import AdminCategories from "./pages/AdminCategories";
 import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
-import SimulacaoAvancada from "./pages/SimulacaoAvancada";
+import SimulacaoPixelBased from "./pages/SimulacaoPixelBased";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -54,7 +54,7 @@ function Router() {
       <Route path="/pt/store-mapping" component={StoreMapping} />
       <Route path="/pt/admin/categories" component={AdminCategories} />
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
-      <Route path="/pt/simulacao" component={SimulacaoAvancada} />
+      <Route path="/pt/simulacao" component={SimulacaoPixelBased} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -77,7 +77,7 @@ function Router() {
       <Route path="/en/store-mapping" component={StoreMapping} />
       <Route path="/en/admin/categories" component={AdminCategories} />
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
-      <Route path="/en/simulacao" component={SimulacaoAvancada} />
+      <Route path="/en/simulacao" component={SimulacaoPixelBased} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -95,7 +95,7 @@ function Router() {
       <Route path="/store-mapping" component={StoreMapping} />
       <Route path="/admin/categories" component={AdminCategories} />
       <Route path="/categories/performance" component={CategoryPerformanceDashboard} />
-      <Route path="/simulacao" component={SimulacaoAvancada} />
+      <Route path="/simulacao" component={SimulacaoPixelBased} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
