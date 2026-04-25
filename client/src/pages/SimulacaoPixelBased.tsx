@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { getTranslation } from '@/lib/i18n';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PixelPathfinder, type Point } from '@/lib/pixelPathfinding';
 
 interface Sector {
   name: string;
@@ -26,89 +27,21 @@ const SECTORS: Sector[] = [
   { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 850, y: 520, radius: 30 },
 ];
 
-// Utility function to check if a point is on a white area (navigable)
-const isWhitePixel = (imageData: ImageData, x: number, y: number): boolean => {
-  const index = (Math.floor(y) * imageData.width + Math.floor(x)) * 4;
-  const r = imageData.data[index];
-  const g = imageData.data[index + 1];
-  const b = imageData.data[index + 2];
-  const a = imageData.data[index + 3];
-
-  // White pixels have high R, G, B values and full alpha
-  // Also check for light gray (corridors)
-  return a > 200 && r > 200 && g > 200 && b > 200;
-};
-
-// A* pathfinding algorithm that respects white pixels only
-const findPathOnWhitePixels = (
-  start: { x: number; y: number },
-  end: { x: number; y: number },
-  imageData: ImageData,
-  maxIterations: number = 10000
-): { x: number; y: number }[] => {
-  const path: { x: number; y: number }[] = [];
-  const visited = new Set<string>();
-  const queue: Array<{ x: number; y: number; parent?: { x: number; y: number } }> = [{ x: start.x, y: start.y }];
-
-  let iterations = 0;
-
-  while (queue.length > 0 && iterations < maxIterations) {
-    iterations++;
-    const current = queue.shift()!;
-    const key = `${Math.round(current.x)},${Math.round(current.y)}`;
-
-    if (visited.has(key)) continue;
-    visited.add(key);
-
-    // Check if we reached the destination
-    const distance = Math.hypot(current.x - end.x, current.y - end.y);
-    if (distance < 20) {
-      // Reconstruct path
-      let node: any = current;
-      while (node) {
-        path.unshift({ x: node.x, y: node.y });
-        node = node.parent;
-      }
-      return path;
-    }
-
-    // Explore neighbors in 8 directions
-    const directions = [
-      { dx: 5, dy: 0 }, { dx: -5, dy: 0 }, { dx: 0, dy: 5 }, { dx: 0, dy: -5 },
-      { dx: 5, dy: 5 }, { dx: -5, dy: 5 }, { dx: 5, dy: -5 }, { dx: -5, dy: -5 }
-    ];
-
-    for (const dir of directions) {
-      const newX = current.x + dir.dx;
-      const newY = current.y + dir.dy;
-      const newKey = `${Math.round(newX)},${Math.round(newY)}`;
-
-      if (!visited.has(newKey) && isWhitePixel(imageData, newX, newY)) {
-        queue.push({ x: newX, y: newY, parent: current });
-      }
-    }
-  }
-
-  // If no path found, return direct line as fallback
-  return [
-    { x: start.x, y: start.y },
-    { x: end.x, y: end.y }
-  ];
-};
-
 export default function SimulacaoPixelBased() {
   const { language } = useLanguage();
   const [currentSector, setCurrentSector] = useState('Açougue');
   const [destinationSector, setDestinationSector] = useState('Hortifrutí');
   const [isAnimating, setIsAnimating] = useState(false);
-  const [path, setPath] = useState<{ x: number; y: number }[]>([]);
+  const [path, setPath] = useState<Point[]>([]);
   const [routeDescription, setRouteDescription] = useState('');
   const [animationProgress, setAnimationProgress] = useState(0);
   const [distance, setDistance] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [error, setError] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const imageDataRef = useRef<ImageData | null>(null);
+  const pathfinderRef = useRef<PixelPathfinder | null>(null);
 
   // Load the floor plan image and extract pixel data
   useEffect(() => {
@@ -127,15 +60,28 @@ export default function SimulacaoPixelBased() {
       if (ctx) {
         ctx.drawImage(img, 0, 0);
         imageDataRef.current = ctx.getImageData(0, 0, img.width, img.height);
+        
+        // Initialize pathfinder with image data
+        pathfinderRef.current = new PixelPathfinder({
+          imageData: imageDataRef.current,
+          brightnessThreshold: 140,
+          saturationThreshold: 0.2,
+          cellSize: 4,
+        });
+        
         console.log('Floor plan image loaded successfully', img.width, 'x', img.height);
         setImageLoaded(true);
+        setError('');
       }
     };
     
     img.onerror = () => {
       console.error('Failed to load floor plan image');
+      setError(language === 'pt' 
+        ? 'Erro ao carregar a imagem da planta' 
+        : 'Error loading floor plan image');
     };
-  }, []);
+  }, [language]);
 
   // Draw image when it loads
   useEffect(() => {
@@ -156,8 +102,10 @@ export default function SimulacaoPixelBased() {
   }, [imageLoaded]);
 
   const handleStartNavigation = () => {
-    if (!imageRef.current) {
-      alert(language === 'pt' ? 'Imagem da planta ainda está carregando. Tente novamente.' : 'Floor plan image is still loading. Please try again.');
+    if (!imageRef.current || !pathfinderRef.current) {
+      setError(language === 'pt' 
+        ? 'Imagem da planta ainda está carregando. Tente novamente.' 
+        : 'Floor plan image is still loading. Please try again.');
       return;
     }
 
@@ -167,42 +115,68 @@ export default function SimulacaoPixelBased() {
     if (!startSector || !endSector) return;
 
     setIsAnimating(true);
+    setError('');
 
-    // Create a simple path with waypoints
-    const calculatedPath: { x: number; y: number }[] = [
-      { x: startSector.x, y: startSector.y },
-      { x: startSector.x + (endSector.x - startSector.x) * 0.3, y: startSector.y + (endSector.y - startSector.y) * 0.3 },
-      { x: startSector.x + (endSector.x - startSector.x) * 0.7, y: startSector.y + (endSector.y - startSector.y) * 0.3 },
-      { x: endSector.x, y: endSector.y }
-    ];
+    try {
+      // Use pixel pathfinder to calculate path
+      const calculatedPath = pathfinderRef.current.findPath(
+        { x: startSector.x, y: startSector.y },
+        { x: endSector.x, y: endSector.y }
+      );
 
-    setPath(calculatedPath);
-
-    // Calculate distance
-    let totalDistance = 0;
-    for (let i = 1; i < calculatedPath.length; i++) {
-      const dx = calculatedPath[i].x - calculatedPath[i - 1].x;
-      const dy = calculatedPath[i].y - calculatedPath[i - 1].y;
-      totalDistance += Math.hypot(dx, dy);
-    }
-    setDistance(Math.round(totalDistance));
-
-    // Generate route description
-    const description = language === 'pt'
-      ? `Saia do setor ${currentSector}, siga pelos corredores até o setor ${destinationSector}.`
-      : `Leave the ${currentSector} sector, follow the corridors to the ${destinationSector} sector.`;
-    setRouteDescription(description);
-
-    // Animate the path
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 0.05;
-      setAnimationProgress(progress);
-      if (progress >= 1) {
-        clearInterval(interval);
-        setIsAnimating(false);
+      if (!calculatedPath) {
+        // Fallback to simple path if pathfinding fails
+        const fallbackPath: Point[] = [
+          { x: startSector.x, y: startSector.y },
+          { x: startSector.x + (endSector.x - startSector.x) * 0.3, y: startSector.y + (endSector.y - startSector.y) * 0.3 },
+          { x: startSector.x + (endSector.x - startSector.x) * 0.7, y: startSector.y + (endSector.y - startSector.y) * 0.3 },
+          { x: endSector.x, y: endSector.y }
+        ];
+        setPath(fallbackPath);
+        setError(language === 'pt'
+          ? 'Rota não encontrada. Exibindo rota aproximada.'
+          : 'Route not found. Showing approximate route.');
+      } else {
+        setPath(calculatedPath);
       }
-    }, 50);
+
+      // Calculate distance
+      let totalDistance = 0;
+      const displayPath = calculatedPath || [
+        { x: startSector.x, y: startSector.y },
+        { x: endSector.x, y: endSector.y }
+      ];
+      
+      for (let i = 1; i < displayPath.length; i++) {
+        const dx = displayPath[i].x - displayPath[i - 1].x;
+        const dy = displayPath[i].y - displayPath[i - 1].y;
+        totalDistance += Math.hypot(dx, dy);
+      }
+      setDistance(Math.round(totalDistance));
+
+      // Generate route description
+      const description = language === 'pt'
+        ? `Saia do setor ${currentSector}, siga pelos corredores até o setor ${destinationSector}.`
+        : `Leave the ${currentSector} sector, follow the corridors to the ${destinationSector} sector.`;
+      setRouteDescription(description);
+
+      // Animate the path
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 0.05;
+        setAnimationProgress(progress);
+        if (progress >= 1) {
+          clearInterval(interval);
+          setIsAnimating(false);
+        }
+      }, 50);
+    } catch (err) {
+      console.error('Pathfinding error:', err);
+      setError(language === 'pt'
+        ? 'Erro ao calcular rota. Tente novamente.'
+        : 'Error calculating route. Please try again.');
+      setIsAnimating(false);
+    }
   };
 
   // Draw the floor plan with the path
@@ -272,6 +246,13 @@ export default function SimulacaoPixelBased() {
             : 'Realistic routes respecting only white corridors and avoiding gondolas'}
         </p>
 
+        {/* Error message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
         {/* Controls */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
@@ -313,7 +294,7 @@ export default function SimulacaoPixelBased() {
 
             <Button
               onClick={handleStartNavigation}
-              disabled={isAnimating}
+              disabled={isAnimating || !imageLoaded}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               {language === 'pt' ? 'Iniciar Navegação' : 'Start Navigation'}
