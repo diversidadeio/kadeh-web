@@ -67,7 +67,7 @@ export default function SimulacaoCompleta() {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     // Using the high-resolution floor plan from the attachment
-    img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/supermarket_floor_plan_detailed_1918x1079.png';
+    img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/pasted_file_h1C8DW_image_a64ee5f4.png';
     
     img.onload = () => {
       imageRef.current = img;
