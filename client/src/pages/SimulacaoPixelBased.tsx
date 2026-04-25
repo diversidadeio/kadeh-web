@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { getTranslation } from '@/lib/i18n';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { PixelPathfinder, type Point } from '@/lib/pixelPathfinding';
+import { RectanglePathfinder, type Point, type Rectangle } from '@/lib/rectanglePathfinding';
 
 interface Sector {
   name: string;
@@ -13,18 +13,18 @@ interface Sector {
 }
 
 const SECTORS: Sector[] = [
-  { name: 'Açougue', nameEn: 'Butcher', x: 220, y: 200, radius: 30 },
-  { name: 'Hortifrutí', nameEn: 'Produce', x: 520, y: 200, radius: 30 },
-  { name: 'Padaria', nameEn: 'Bakery', x: 800, y: 200, radius: 30 },
-  { name: 'Bebidas', nameEn: 'Beverages', x: 350, y: 320, radius: 30 },
-  { name: 'Cereais e Bolachas', nameEn: 'Cereals', x: 520, y: 320, radius: 30 },
-  { name: 'Infantis', nameEn: 'Baby', x: 650, y: 320, radius: 30 },
-  { name: 'Higiene', nameEn: 'Hygiene', x: 750, y: 320, radius: 30 },
-  { name: 'Limpeza', nameEn: 'Cleaning', x: 820, y: 320, radius: 30 },
-  { name: 'Utilidades', nameEn: 'Utilities', x: 900, y: 320, radius: 30 },
-  { name: 'Congelados', nameEn: 'Frozen', x: 550, y: 520, radius: 30 },
-  { name: 'Pet', nameEn: 'Pet', x: 700, y: 520, radius: 30 },
-  { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 850, y: 520, radius: 30 },
+  { name: 'Açougue', nameEn: 'Butcher', x: 140, y: 40, radius: 30 },
+  { name: 'Hortifrutí', nameEn: 'Produce', x: 500, y: 40, radius: 30 },
+  { name: 'Padaria', nameEn: 'Bakery', x: 750, y: 40, radius: 30 },
+  { name: 'Bebidas', nameEn: 'Beverages', x: 100, y: 130, radius: 30 },
+  { name: 'Cereais e Bolachas', nameEn: 'Cereals', x: 350, y: 130, radius: 30 },
+  { name: 'Infantis', nameEn: 'Baby', x: 450, y: 130, radius: 30 },
+  { name: 'Higiene', nameEn: 'Hygiene', x: 550, y: 130, radius: 30 },
+  { name: 'Limpeza', nameEn: 'Cleaning', x: 650, y: 130, radius: 30 },
+  { name: 'Utilidades', nameEn: 'Utilities', x: 750, y: 130, radius: 30 },
+  { name: 'Congelados', nameEn: 'Frozen', x: 380, y: 380, radius: 30 },
+  { name: 'Pet', nameEn: 'Pet', x: 520, y: 380, radius: 30 },
+  { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 750, y: 380, radius: 30 },
 ];
 
 export default function SimulacaoPixelBased() {
@@ -38,15 +38,17 @@ export default function SimulacaoPixelBased() {
   const [distance, setDistance] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [error, setError] = useState('');
+  const [rectangles, setRectangles] = useState<Rectangle[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const imageDataRef = useRef<ImageData | null>(null);
-  const pathfinderRef = useRef<PixelPathfinder | null>(null);
+  const pathfinderRef = useRef<RectanglePathfinder | null>(null);
 
-  // Load the floor plan image and extract pixel data
+  // Load the floor plan image and extract rectangle data
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
+    // Using the PPTX-extracted image
     img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/supermarket_floor_plan_dceb59fc.png';
     
     img.onload = () => {
@@ -61,15 +63,31 @@ export default function SimulacaoPixelBased() {
         ctx.drawImage(img, 0, 0);
         imageDataRef.current = ctx.getImageData(0, 0, img.width, img.height);
         
-        // Initialize pathfinder with image data
-        pathfinderRef.current = new PixelPathfinder({
+        // For now, use pre-detected rectangles or detect them on the fly
+        // In production, you would load these from your backend
+        const detectedRectangles: Rectangle[] = [
+          // Sample rectangles - these would come from the PPTX analysis
+          { x: 15, y: 155, w: 45, h: 169 },
+          { x: 82, y: 155, w: 43, h: 170 },
+          { x: 145, y: 155, w: 45, h: 169 },
+          { x: 273, y: 155, w: 41, h: 169 },
+          { x: 460, y: 155, w: 41, h: 170 },
+          { x: 695, y: 155, w: 41, h: 170 },
+          // Add more rectangles as needed
+        ];
+        
+        setRectangles(detectedRectangles);
+        
+        // Initialize pathfinder with image data and rectangles
+        pathfinderRef.current = new RectanglePathfinder({
           imageData: imageDataRef.current,
-          brightnessThreshold: 140,
-          saturationThreshold: 0.2,
+          rectangles: detectedRectangles,
           cellSize: 4,
+          padding: 3, // 3 pixels padding around rectangles
         });
         
         console.log('Floor plan image loaded successfully', img.width, 'x', img.height);
+        console.log('Detected obstacles:', detectedRectangles.length);
         setImageLoaded(true);
         setError('');
       }
@@ -97,9 +115,16 @@ export default function SimulacaoPixelBased() {
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.drawImage(img, 0, 0);
+      
+      // Draw detected rectangles as semi-transparent overlays
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+      for (const rect of rectangles) {
+        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+      }
+      
       console.log('Image drawn on canvas:', img.width, 'x', img.height);
     }
-  }, [imageLoaded]);
+  }, [imageLoaded, rectangles]);
 
   const handleStartNavigation = () => {
     if (!imageRef.current || !pathfinderRef.current) {
@@ -118,7 +143,7 @@ export default function SimulacaoPixelBased() {
     setError('');
 
     try {
-      // Use pixel pathfinder to calculate path
+      // Use rectangle pathfinder to calculate path
       const calculatedPath = pathfinderRef.current.findPath(
         { x: startSector.x, y: startSector.y },
         { x: endSector.x, y: endSector.y }
@@ -190,6 +215,12 @@ export default function SimulacaoPixelBased() {
     // Draw the floor plan image
     if (imageRef.current) {
       ctx.drawImage(imageRef.current, 0, 0);
+      
+      // Draw detected rectangles as semi-transparent overlays
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.15)';
+      for (const rect of rectangles) {
+        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+      }
     }
 
     // Draw the path up to animation progress
@@ -232,7 +263,7 @@ export default function SimulacaoPixelBased() {
         }
       }
     }
-  }, [path, animationProgress, imageLoaded]);
+  }, [path, animationProgress, imageLoaded, rectangles]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
@@ -242,8 +273,8 @@ export default function SimulacaoPixelBased() {
         </h1>
         <p className="text-center text-gray-600 mb-8">
           {language === 'pt'
-            ? 'Rotas realistas respeitando apenas corredores brancos e desviando de gôndolas'
-            : 'Realistic routes respecting only white corridors and avoiding gondolas'}
+            ? 'Rotas realistas respeitando apenas corredores e desviando de gôndolas com bordas pretas'
+            : 'Realistic routes respecting only corridors and avoiding gondolas with black borders'}
         </p>
 
         {/* Error message */}
