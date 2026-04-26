@@ -45,19 +45,31 @@ export function StoreLayoutEditor() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState('#3b82f6');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [routes, setRoutes] = useState<any[]>([]);
+  const [editingRouteId, setEditingRouteId] = useState<number | null>(null);
+  const [editingRoutePoints, setEditingRoutePoints] = useState<RoutePoint[]>([]);
 
-  // Fetch categories
+  // Fetch categories and routes
   const { data: fetchedCategories } = trpc.storeLayout.categories.list.useQuery();
+  const { data: fetchedRoutes } = trpc.storeLayout.routes.list.useQuery();
   const createCategoryMutation = trpc.storeLayout.categories.create.useMutation();
   const deleteCategoryMutation = trpc.storeLayout.categories.delete.useMutation();
   const updateCategoryMutation = trpc.storeLayout.categories.update.useMutation();
   const createRouteMutation = trpc.storeLayout.routes.create.useMutation();
+  const updateRouteMutation = trpc.storeLayout.routes.update.useMutation();
+  const deleteRouteMutation = trpc.storeLayout.routes.delete.useMutation();
 
   useEffect(() => {
     if (fetchedCategories) {
       setCategories(fetchedCategories);
     }
   }, [fetchedCategories]);
+
+  useEffect(() => {
+    if (fetchedRoutes) {
+      setRoutes(fetchedRoutes);
+    }
+  }, [fetchedRoutes]);
 
   // Load floor plan image
   useEffect(() => {
@@ -242,6 +254,57 @@ export function StoreLayoutEditor() {
     });
   };
 
+  const handleEditRoute = (routeId: number) => {
+    const route = routes.find(r => r.id === routeId);
+    if (route) {
+      setEditingRouteId(routeId);
+      setEditingRoutePoints(route.pathPoints);
+      setDrawingRoute({
+        fromCategoryId: null,
+        points: route.pathPoints,
+        isDrawing: false,
+      });
+    }
+  };
+
+  const handleSaveEditedRoute = async () => {
+    if (editingRouteId === null || editingRoutePoints.length < 2) return;
+
+    try {
+      let distance = 0;
+      for (let i = 1; i < editingRoutePoints.length; i++) {
+        const dx = editingRoutePoints[i].x - editingRoutePoints[i - 1].x;
+        const dy = editingRoutePoints[i].y - editingRoutePoints[i - 1].y;
+        distance += Math.hypot(dx, dy);
+      }
+
+      await updateRouteMutation.mutateAsync({
+        id: editingRouteId,
+        pathPoints: editingRoutePoints,
+        distance: Math.round(distance),
+      });
+
+      setEditingRouteId(null);
+      setEditingRoutePoints([]);
+      setDrawingRoute({
+        fromCategoryId: null,
+        points: [],
+        isDrawing: false,
+      });
+    } catch (error) {
+      console.error('Failed to save edited route:', error);
+    }
+  };
+
+  const handleDeleteRoute = async (routeId: number) => {
+    try {
+      await deleteRouteMutation.mutateAsync({ id: routeId });
+      setRoutes((prev) => prev.filter((r) => r.id !== routeId));
+    } catch (error) {
+      console.error('Failed to delete route:', error);
+    }
+  };
+
   return (
     <div className="w-full space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
@@ -340,6 +403,98 @@ export function StoreLayoutEditor() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Routes list */}
+        <div className="mt-6">
+          <h3 className="font-semibold mb-3">
+            {language === 'pt' ? `Rotas Salvas (${routes.length})` : `Saved Routes (${routes.length})`}
+          </h3>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {routes.length === 0 ? (
+              <p className="text-gray-500 text-sm">
+                {language === 'pt' ? 'Nenhuma rota salva ainda' : 'No routes saved yet'}
+              </p>
+            ) : (
+              routes.map((route) => {
+                const fromCat = categories.find(c => c.id === route.fromCategoryId);
+                const toCat = categories.find(c => c.id === route.toCategoryId);
+                const isEditing = editingRouteId === route.id;
+
+                return (
+                  <div
+                    key={route.id}
+                    className={`p-3 rounded border-2 ${
+                      isEditing ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="font-semibold text-sm">
+                          {fromCat?.code} → {toCat?.code}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {fromCat?.name} para {toCat?.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {language === 'pt' ? 'Distância' : 'Distance'}: {route.distance} px
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleEditRoute(route.id)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          {language === 'pt' ? 'Editar' : 'Edit'}
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteRoute(route.id)}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          {language === 'pt' ? 'Deletar' : 'Delete'}
+                        </Button>
+                      </div>
+                    </div>
+                    {isEditing && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <p className="text-xs text-blue-700 mb-2">
+                          {language === 'pt'
+                            ? 'Clique no mapa para adicionar/modificar pontos da rota'
+                            : 'Click on the map to add/modify route points'}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleSaveEditedRoute}
+                            size="sm"
+                            className="flex-1"
+                          >
+                            {language === 'pt' ? 'Salvar Edição' : 'Save Edit'}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setEditingRouteId(null);
+                              setEditingRoutePoints([]);
+                              setDrawingRoute({
+                                fromCategoryId: null,
+                                points: [],
+                                isDrawing: false,
+                              });
+                            }}
+                            variant="outline"
+                            size="sm"
+                          >
+                            {language === 'pt' ? 'Cancelar' : 'Cancel'}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
