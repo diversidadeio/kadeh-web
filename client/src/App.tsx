@@ -28,6 +28,7 @@ import AdminCategories from "./pages/AdminCategories";
 import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
 import SimulacaoPixelBased from "./pages/SimulacaoPixelBased";
 import SimulacaoCompleta from "./pages/SimulacaoCompleta";
+import AdminStoreLayout from "./pages/AdminStoreLayout";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/pt/admin/categories" component={AdminCategories} />
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/pt/simulacao" component={SimulacaoCompleta} />
+      <Route path="/pt/admin/store-layout" component={AdminStoreLayout} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -79,6 +81,7 @@ function Router() {
       <Route path="/en/admin/categories" component={AdminCategories} />
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/en/simulacao" component={SimulacaoCompleta} />
+      <Route path="/en/admin/store-layout" component={AdminStoreLayout} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -97,6 +100,7 @@ function Router() {
       <Route path="/admin/categories" component={AdminCategories} />
       <Route path="/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/simulacao" component={SimulacaoCompleta} />
+      <Route path="/admin/store-layout" component={AdminStoreLayout} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}

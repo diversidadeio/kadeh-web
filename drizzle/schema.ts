@@ -27,6 +27,58 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 // ============================================================================
+// KADEH SMART LAYOUT - Store Layout Management
+// ============================================================================
+
+/**
+ * Store Layout Categories - Categorias posicionadas na planta baixa da loja
+ * Cada categoria tem um código alfanumérico único (ex: A1, B2, C3)
+ */
+export const storeLayoutCategories = mysqlTable("storeLayoutCategories", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário da loja
+  code: varchar("code", { length: 10 }).notNull(), // Código alfanumérico (ex: A1, B2)
+  name: varchar("name", { length: 100 }).notNull(), // Nome da categoria (ex: Açougue, Hortifrutí)
+  nameEn: varchar("nameEn", { length: 100 }), // Nome em inglês
+  x: int("x").notNull(), // Posição X na imagem (pixels)
+  y: int("y").notNull(), // Posição Y na imagem (pixels)
+  radius: int("radius").default(20).notNull(), // Raio do marcador (pixels)
+  color: varchar("color", { length: 7 }).default("#3b82f6").notNull(), // Cor do marcador (hex)
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("storeLayoutCategories_user_idx").on(table.userId),
+  codeIdx: index("storeLayoutCategories_code_idx").on(table.code),
+}));
+
+export type StoreLayoutCategory = typeof storeLayoutCategories.$inferSelect;
+export type InsertStoreLayoutCategory = typeof storeLayoutCategories.$inferInsert;
+
+/**
+ * Store Layout Routes - Rotas desenhadas entre categorias
+ * Armazena os pontos que definem a rota de um ponto a outro
+ */
+export const storeLayoutRoutes = mysqlTable("storeLayoutRoutes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário da loja
+  fromCategoryId: int("fromCategoryId").notNull(), // Categoria de origem
+  toCategoryId: int("toCategoryId").notNull(), // Categoria de destino
+  pathPoints: json("pathPoints").$type<Array<{x: number, y: number}>>().notNull(), // Array de pontos da rota
+  distance: int("distance").notNull(), // Distância em pixels
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("storeLayoutRoutes_user_idx").on(table.userId),
+  fromIdx: index("storeLayoutRoutes_from_idx").on(table.fromCategoryId),
+  toIdx: index("storeLayoutRoutes_to_idx").on(table.toCategoryId),
+}));
+
+export type StoreLayoutRoute = typeof storeLayoutRoutes.$inferSelect;
+export type InsertStoreLayoutRoute = typeof storeLayoutRoutes.$inferInsert;
+
+// ============================================================================
 // KADEH ADS - Advertising System
 // ============================================================================
 
