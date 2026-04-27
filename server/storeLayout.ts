@@ -12,7 +12,14 @@ export async function createCategory(data: InsertStoreLayoutCategory): Promise<S
 
   try {
     const result = await db.insert(storeLayoutCategories).values(data);
-    const categoryId = result[0];
+    
+    // Get the inserted ID from the result
+    const categoryId = (result as any).insertId || (result as any)[0];
+    
+    if (!categoryId) {
+      console.error("[DB] No ID returned from insert");
+      return null;
+    }
     
     // Fetch and return the created category
     const created = await db.select().from(storeLayoutCategories).where(eq(storeLayoutCategories.id, categoryId)).limit(1);
@@ -88,7 +95,14 @@ export async function createRoute(data: InsertStoreLayoutRoute): Promise<StoreLa
 
   try {
     const result = await db.insert(storeLayoutRoutes).values(data);
-    const routeId = result[0];
+    
+    // Get the inserted ID from the result
+    const routeId = (result as any).insertId || (result as any)[0];
+    
+    if (!routeId) {
+      console.error("[DB] No ID returned from insert");
+      return null;
+    }
     
     // Fetch and return the created route
     const created = await db.select().from(storeLayoutRoutes).where(eq(storeLayoutRoutes.id, routeId)).limit(1);

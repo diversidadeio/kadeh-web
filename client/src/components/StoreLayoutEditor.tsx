@@ -48,6 +48,8 @@ export function StoreLayoutEditor() {
   const [routes, setRoutes] = useState<any[]>([]);
   const [editingRouteId, setEditingRouteId] = useState<number | null>(null);
   const [editingRoutePoints, setEditingRoutePoints] = useState<RoutePoint[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Fetch categories and routes
   const { data: fetchedCategories } = trpc.storeLayout.categories.list.useQuery();
@@ -217,9 +219,13 @@ export function StoreLayoutEditor() {
   };
 
   const handleAddCategory = async () => {
-    if (!newCategoryCode || !newCategoryName) return;
+    if (!newCategoryCode || !newCategoryName) {
+      setError(language === 'pt' ? 'Preencha código e nome' : 'Fill in code and name');
+      return;
+    }
 
     try {
+      setError(null);
       const newCategory = await createCategoryMutation.mutateAsync({
         code: newCategoryCode,
         name: newCategoryName,
@@ -228,21 +234,32 @@ export function StoreLayoutEditor() {
         color: newCategoryColor,
       });
 
-      setCategories((prev) => [...prev, newCategory]);
-      setNewCategoryCode('');
-      setNewCategoryName('');
-      setNewCategoryColor('#3b82f6');
-    } catch (error) {
-      console.error('Failed to add category:', error);
+      if (newCategory) {
+        setCategories((prev) => [...prev, newCategory]);
+        setNewCategoryCode('');
+        setNewCategoryName('');
+        setNewCategoryColor('#3b82f6');
+        setSuccess(language === 'pt' ? 'Categoria adicionada com sucesso!' : 'Category added successfully!');
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError(language === 'pt' ? 'Erro ao adicionar categoria' : 'Failed to add category');
+      }
+    } catch (err: any) {
+      console.error('Failed to add category:', err);
+      setError(err.message || (language === 'pt' ? 'Erro ao adicionar categoria' : 'Failed to add category'));
     }
   };
 
   const handleDeleteCategory = async (id: number) => {
     try {
+      setError(null);
       await deleteCategoryMutation.mutateAsync({ id });
       setCategories((prev) => prev.filter((cat) => cat.id !== id));
-    } catch (error) {
-      console.error('Failed to delete category:', error);
+      setSuccess(language === 'pt' ? 'Categoria deletada com sucesso!' : 'Category deleted successfully!');
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      console.error('Failed to delete category:', err);
+      setError(err.message || (language === 'pt' ? 'Erro ao deletar categoria' : 'Failed to delete category'));
     }
   };
 
@@ -311,6 +328,18 @@ export function StoreLayoutEditor() {
         <h2 className="text-2xl font-bold mb-4">
           {language === 'pt' ? 'Editor de Layout da Loja' : 'Store Layout Editor'}
         </h2>
+
+        {/* Error and Success Messages */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800 font-semibold">{error}</p>
+          </div>
+        )}
+        {success && (
+          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-800 font-semibold">{success}</p>
+          </div>
+        )}
 
         {/* Canvas */}
         <div className="mb-6 border-2 border-gray-300 rounded-lg overflow-hidden">
