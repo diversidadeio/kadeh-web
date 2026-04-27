@@ -826,3 +826,52 @@ export const stripeCustomers = mysqlTable("stripeCustomers", {
 
 export type StripeCustomer = typeof stripeCustomers.$inferSelect;
 export type InsertStripeCustomer = typeof stripeCustomers.$inferInsert;
+
+/**
+ * Gondolas - Gôndolas/expositores na loja
+ * Cada gôndola tem um número único e pode ter múltiplas posições
+ */
+export const gondolas = mysqlTable("gondolas", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  gondolaNumber: int("gondolaNumber").notNull(),
+  name: varchar("name", { length: 100 }),
+  categoryId: int("categoryId"),
+  totalPositions: int("totalPositions").default(6).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("gondolas_user_idx").on(table.userId),
+  gondolaNumberIdx: index("gondolas_number_idx").on(table.gondolaNumber),
+  categoryIdx: index("gondolas_category_idx").on(table.categoryId),
+}));
+
+export type Gondola = typeof gondolas.$inferSelect;
+export type InsertGondola = typeof gondolas.$inferInsert;
+
+/**
+ * Products - Produtos cadastrados em massa
+ * Cada produto tem código único, gôndola, posição, categoria e subcategoria
+ */
+export const products = mysqlTable("products", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  productCode: varchar("productCode", { length: 50 }).notNull(),
+  gondolaNumber: int("gondolaNumber").notNull(),
+  position: varchar("position", { length: 20 }).notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  subcategory: varchar("subcategory", { length: 100 }).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("products_user_idx").on(table.userId),
+  productCodeIdx: index("products_code_idx").on(table.productCode),
+  gondolaIdx: index("products_gondola_idx").on(table.gondolaNumber),
+  categoryIdx: index("products_category_idx").on(table.category),
+  subcategoryIdx: index("products_subcategory_idx").on(table.subcategory),
+}));
+
+export type Product = typeof products.$inferSelect;
+export type InsertProduct = typeof products.$inferInsert;

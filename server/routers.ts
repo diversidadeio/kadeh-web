@@ -13,6 +13,7 @@ import { productsRouter } from "./productsRouter";
 import { adsPaymentRouter } from "./adsPaymentRouter";
 import { stripeRouter } from "./stripeRouter";
 import { storeLayoutRouter } from "./storeLayoutRouter";
+import { bulkProductsRouter } from "./bulkProductsRouter";
 import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
 import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -26,6 +27,7 @@ export const appRouter = router({
   categories: categoriesRouter,
   products: productsRouter,
   storeLayout: storeLayoutRouter,
+  bulkProducts: bulkProductsRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

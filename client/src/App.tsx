@@ -29,6 +29,7 @@ import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
 import SimulacaoPixelBased from "./pages/SimulacaoPixelBased";
 import SimulacaoCompleta from "./pages/SimulacaoCompleta";
 import AdminStoreLayout from "./pages/AdminStoreLayout";
+import AdminBulkProducts from "./pages/AdminBulkProducts";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/pt/simulacao" component={SimulacaoCompleta} />
       <Route path="/pt/admin/store-layout" component={AdminStoreLayout} />
+      <Route path="/pt/admin/bulk-products" component={AdminBulkProducts} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -82,6 +84,7 @@ function Router() {
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/en/simulacao" component={SimulacaoCompleta} />
       <Route path="/en/admin/store-layout" component={AdminStoreLayout} />
+      <Route path="/en/admin/bulk-products" component={AdminBulkProducts} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -101,6 +104,7 @@ function Router() {
       <Route path="/categories/performance" component={CategoryPerformanceDashboard} />
       <Route path="/simulacao" component={SimulacaoCompleta} />
       <Route path="/admin/store-layout" component={AdminStoreLayout} />
+      <Route path="/admin/bulk-products" component={AdminBulkProducts} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
