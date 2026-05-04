@@ -46,8 +46,8 @@ const SUBCATEGORIES_BY_DEPT = getSubcategoriesByDepartment();
 // Get route from pre-calculated data
 const getPreCalculatedRoute = (fromCode: string, toCode: string): [number, number][] | null => {
   const routeKey = `${fromCode}-${toCode}`;
-  const route = routesData.find((r: any) => r.from === fromCode && r.to === toCode);
-  return route ? route.path : null;
+  const route = (routesData as any).routes?.find((r: any) => r.from_code === fromCode && r.to_code === toCode);
+  return route ? route.waypoints : null;
 };
 
 export default function SimulacaoCompleta() {
@@ -66,7 +66,7 @@ export default function SimulacaoCompleta() {
   // Load image
   useEffect(() => {
     const img = new Image();
-    img.src = '/floor-plan.png';
+    img.src = '/improved_floor_plan.webp';
     
     img.onload = () => {
       imageRef.current = img;
