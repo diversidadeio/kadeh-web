@@ -11,6 +11,7 @@ import {
 } from "../drizzle/schema";
 import { eq, and, desc, lte, gte } from "drizzle-orm";
 import { invokeLLM } from "./_core/llm";
+import crypto from "crypto";
 // Stripe será configurado quando as credenciais forem fornecidas
 // import Stripe from "stripe";
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2023-10-16" } as any);
@@ -459,6 +460,186 @@ export const requestAdPause = protectedProcedure
     }
   });
 
+/**
+ * Procedimento para gerar link de promoção único com código do varejista
+ */
+export const generatePromotionLink = protectedProcedure
+  .input(
+    z.object({
+      advertisementId: z.number().min(1),
+      storeCount: z.number().min(1),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    try {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Verificar se o anúncio pertence ao usuário
+      const ad = await db
+        .select()
+        .from(advertisements)
+        .innerJoin(advertisers, eq(advertisements.advertiserId, advertisers.id))
+        .where(
+          and(
+            eq(advertisements.id, input.advertisementId),
+            eq(advertisers.userId, ctx.user!.id)
+          )
+        )
+        .limit(1);
+
+      if (ad.length === 0) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Advertisement not found or unauthorized" });
+      }
+
+      // Gerar código único do varejista (ex: KADEH-ABC123)
+      const randomSuffix = crypto.randomBytes(3).toString("hex").toUpperCase();
+      const retailerCode = `KADEH-${randomSuffix}`;
+      
+      // Gerar link de promoção
+      const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL || "https://kadeh.io";
+      const promotionLink = `${baseUrl}/ads/promo/${retailerCode}`;
+
+      // Atualizar anúncio com código e link
+      await db
+        .update(advertisements)
+        .set({
+          retailerCode,
+          promotionLink,
+          storeCount: input.storeCount,
+        })
+        .where(eq(advertisements.id, input.advertisementId));
+
+      return {
+        success: true,
+        retailerCode,
+        promotionLink,
+        message: "Link de promoção gerado com sucesso!",
+      };
+    } catch (error) {
+      console.error("Error generating promotion link:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to generate promotion link",
+      });
+    }
+  });
+
+/**
+ * Procedimento para obter estatísticas do varejista (código único)
+ */
+export const getRetailerStats = publicProcedure
+  .input(
+    z.object({
+      retailerCode: z.string().min(1),
+    })
+  )
+  .query(async ({ input }) => {
+    try {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Buscar anúncio pelo código do varejista
+      const ad = await db
+        .select()
+        .from(advertisements)
+        .where(eq(advertisements.retailerCode, input.retailerCode))
+        .limit(1);
+
+      if (ad.length === 0) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Retailer code not found" });
+      }
+
+      const advertisement = ad[0];
+
+      return {
+        success: true,
+        retailerCode: advertisement.retailerCode,
+        storeCount: advertisement.storeCount,
+        productCount: advertisement.productCount,
+        advertisedProductCount: advertisement.advertisedProductCount,
+        promotionLink: advertisement.promotionLink,
+        status: advertisement.status,
+        createdAt: advertisement.createdAt,
+      };
+    } catch (error) {
+      console.error("Error getting retailer stats:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get retailer stats",
+      });
+    }
+  });
+
+/**
+ * Procedimento para atualizar estatísticas do varejista
+ */
+export const updateRetailerStats = protectedProcedure
+  .input(
+    z.object({
+      advertisementId: z.number().min(1),
+      productCount: z.number().min(0).optional(),
+      advertisedProductCount: z.number().min(0).optional(),
+      storeCount: z.number().min(1).optional(),
+    })
+  )
+  .mutation(async ({ input, ctx }) => {
+    try {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
+
+      // Verificar se o anúncio pertence ao usuário
+      const ad = await db
+        .select()
+        .from(advertisements)
+        .innerJoin(advertisers, eq(advertisements.advertiserId, advertisers.id))
+        .where(
+          and(
+            eq(advertisements.id, input.advertisementId),
+            eq(advertisers.userId, ctx.user!.id)
+          )
+        )
+        .limit(1);
+
+      if (ad.length === 0) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Advertisement not found or unauthorized" });
+      }
+
+      // Preparar dados para atualizar
+      const updateData: any = {};
+      if (input.productCount !== undefined) updateData.productCount = input.productCount;
+      if (input.advertisedProductCount !== undefined) updateData.advertisedProductCount = input.advertisedProductCount;
+      if (input.storeCount !== undefined) updateData.storeCount = input.storeCount;
+
+      // Atualizar anúncio
+      await db
+        .update(advertisements)
+        .set(updateData)
+        .where(eq(advertisements.id, input.advertisementId));
+
+      // Buscar dados atualizados
+      const updated = await db
+        .select()
+        .from(advertisements)
+        .where(eq(advertisements.id, input.advertisementId))
+        .limit(1);
+
+      return {
+        success: true,
+        retailerCode: updated[0].retailerCode,
+        storeCount: updated[0].storeCount,
+        productCount: updated[0].productCount,
+        advertisedProductCount: updated[0].advertisedProductCount,
+      };
+    } catch (error) {
+      console.error("Error updating retailer stats:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to update retailer stats",
+      });
+    }
+  });
+
 // Export router
 export const adsRouter = router({
   suggestCorrelatedCategories,
@@ -467,4 +648,7 @@ export const adsRouter = router({
   // confirmPayment, // TODO: Enable after Stripe configuration
   getAdAnalytics,
   requestAdPause,
+  generatePromotionLink,
+  getRetailerStats,
+  updateRetailerStats,
 });

@@ -171,12 +171,19 @@ export const advertisements = mysqlTable("advertisements", {
   totalCost: decimal("totalCost", { precision: 10, scale: 2 }).notNull(),
   paymentIntentId: varchar("paymentIntentId", { length: 255 }), // Stripe Payment Intent ID
   invoiceUrl: varchar("invoiceUrl", { length: 500 }), // URL do recibo/nota fiscal
+  // Promotion Link System - Código único do varejista e estatísticas
+  retailerCode: varchar("retailerCode", { length: 50 }).unique(), // Código único do varejista (ex: KADEH-ABC123)
+  promotionLink: varchar("promotionLink", { length: 500 }), // Link de promoção gerado
+  storeCount: int("storeCount").default(1).notNull(), // Quantidade de lojas
+  productCount: int("productCount").default(0).notNull(), // Quantidade total de produtos
+  advertisedProductCount: int("advertisedProductCount").default(0).notNull(), // Quantidade de produtos anunciados
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
   advertiserIdx: index("advertisements_advertiser_idx").on(table.advertiserId),
   statusIdx: index("advertisements_status_idx").on(table.status),
   categoryIdx: index("advertisements_category_idx").on(table.productCategory),
+  retailerCodeIdx: index("advertisements_retailerCode_idx").on(table.retailerCode),
 }));
 
 export type Advertisement = typeof advertisements.$inferSelect;
@@ -346,6 +353,43 @@ export const adPaymentsRelations = relations(adPayments, ({ one }) => ({
   advertisement: one(advertisements, {
     fields: [adPayments.advertisementId],
     references: [advertisements.id],
+  }),
+}));
+
+export const adCampaignsRelations = relations(adCampaigns, ({ one, many }) => ({
+  advertiser: one(advertisers, {
+    fields: [adCampaigns.advertiserId],
+    references: [advertisers.id],
+  }),
+  products: many(campaignProducts),
+  payments: many(adBankPayments),
+}));
+
+export const campaignProductsRelations = relations(campaignProducts, ({ one }) => ({
+  campaign: one(adCampaigns, {
+    fields: [campaignProducts.campaignId],
+    references: [adCampaigns.id],
+  }),
+}));
+
+export const adBankPaymentsRelations = relations(adBankPayments, ({ one }) => ({
+  campaign: one(adCampaigns, {
+    fields: [adBankPayments.campaignId],
+    references: [adCampaigns.id],
+  }),
+}));
+
+export const storeLayoutCategoriesRelations = relations(storeLayoutCategories, ({ one }) => ({
+  user: one(users, {
+    fields: [storeLayoutCategories.userId],
+    references: [users.id],
+  }),
+}));
+
+export const storeLayoutRoutesRelations = relations(storeLayoutRoutes, ({ one }) => ({
+  user: one(users, {
+    fields: [storeLayoutRoutes.userId],
+    references: [users.id],
   }),
 }));
 

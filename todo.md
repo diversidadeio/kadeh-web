@@ -951,3 +951,15 @@
 - [ ] Implementar seletores de sessão (atual e destino)
 - [ ] Implementar animação de seta de rota
 - [ ] Testar navegação e animações
+
+## Kadeh.io Ads - Promotion Link System (NEW)
+- [x] Update database schema: Add retailer_code (unique), store_count, product_count, advertised_product_count to ads table
+- [x] Create tRPC procedure: ads.generatePromotionLink (generates unique retailer code + link)
+- [x] Create tRPC procedure: ads.getRetailerStats (returns store_count, product_count, advertised_product_count)
+- [x] Create tRPC procedure: ads.updateRetailerStats (updates counts when products are added/removed)
+- [x] Build Ads Dashboard UI: Show retailer code, promotion link, and stats (store count, product count, advertised products)
+- [x] Implement promotion link sharing: Copy to clipboard, QR code, social media share
+- [x] Create promotion link landing page: Shows retailer info and promoted products
+- [ ] Integrate with existing ads system: Link promotion to active campaigns
+- [ ] Test promotion link generation and sharing in Portuguese and English
+- [ ] Test retailer stats calculation and updates
