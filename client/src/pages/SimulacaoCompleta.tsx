@@ -2,7 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
-import { RectanglePathfinder, type Point, type Rectangle } from '@/lib/rectanglePathfinding';
+import { AdvancedPathfinder } from '@/lib/advancedPathfinding';
+
+interface Point {
+  x: number;
+  y: number;
+}
 
 // Fallback department data (used if database is empty)
 const FALLBACK_DEPARTMENTS = [
@@ -22,24 +27,7 @@ const FALLBACK_DEPARTMENTS = [
   { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 750, y: 380 },
 ];
 
-// Fallback obstacle data
-const FALLBACK_OBSTACLES: Rectangle[] = [
-  { x: 34, y: 3, w: 673, h: 113 },
-  { x: 1475, y: 3, w: 408, h: 114 },
-  { x: 64, y: 363, w: 109, h: 408 },
-  { x: 220, y: 364, w: 111, h: 407 },
-  { x: 372, y: 365, w: 112, h: 407 },
-  { x: 520, y: 365, w: 112, h: 407 },
-  { x: 672, y: 367, w: 108, h: 407 },
-  { x: 827, y: 363, w: 109, h: 408 },
-  { x: 968, y: 363, w: 109, h: 408 },
-  { x: 1109, y: 363, w: 109, h: 408 },
-  { x: 1251, y: 363, w: 108, h: 408 },
-  { x: 1392, y: 363, w: 108, h: 408 },
-  { x: 1533, y: 363, w: 109, h: 408 },
-  { x: 1674, y: 363, w: 108, h: 408 },
-  { x: 1632, y: 915, w: 276, h: 156 },
-];
+// Fallback obstacle data (no longer needed with AdvancedPathfinder)
 
 interface DatabaseCategory {
   id: number;
@@ -78,11 +66,31 @@ export default function SimulacaoCompleta() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const imageDataRef = useRef<ImageData | null>(null);
-  const pathfinderRef = useRef<RectanglePathfinder | null>(null);
+  const pathfinderRef = useRef<AdvancedPathfinder | null>(null);
 
   // Fetch categories and routes from database
   const { data: dbCategories } = trpc.storeLayout.categories.list.useQuery();
   const { data: dbRoutes } = trpc.storeLayout.routes.list.useQuery();
+
+  // Initialize advanced pathfinder
+  useEffect(() => {
+    const initPathfinder = async () => {
+      if (!imageLoaded) return;
+      
+      const pathfinder = new AdvancedPathfinder();
+      const imageUrl = 'https://manus-webdev.s3.amazonaws.com/pasted_file_h1C8DW_image_a64ee5f4.png';
+      
+      const initialized = await pathfinder.initialize(imageUrl);
+      if (initialized) {
+        pathfinderRef.current = pathfinder;
+        console.log('[Simulação] Advanced pathfinder initialized');
+      } else {
+        setError('Failed to initialize pathfinding engine');
+      }
+    };
+    
+    initPathfinder();
+  }, [imageLoaded]);
 
   // Update departments from database
   useEffect(() => {
@@ -123,12 +131,7 @@ export default function SimulacaoCompleta() {
         ctx.drawImage(img, 0, 0);
         imageDataRef.current = ctx.getImageData(0, 0, img.width, img.height);
         
-        pathfinderRef.current = new RectanglePathfinder({
-          imageData: imageDataRef.current,
-          rectangles: FALLBACK_OBSTACLES,
-          cellSize: 4,
-          padding: 5,
-        });
+        // AdvancedPathfinder will be initialized separately
         
         setImageLoaded(true);
         setError('');
