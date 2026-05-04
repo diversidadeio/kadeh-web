@@ -86,6 +86,7 @@ export default function SimulacaoCompleta() {
       if (!imageLoaded) return;
       
       const pathfinder = new AdvancedPathfinder();
+      // Use modified map with corridors for pathfinding
       const imageUrl = '/floor-plan.png';
       
       const initialized = await pathfinder.initialize(imageUrl);
@@ -133,7 +134,7 @@ export default function SimulacaoCompleta() {
   // Load the floor plan image
   useEffect(() => {
     const img = new Image();
-    img.src = '/floor-plan.png';
+    img.src = '/floor-plan-real.webp';
     
     img.onload = () => {
       imageRef.current = img;
