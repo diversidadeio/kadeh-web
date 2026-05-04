@@ -2,22 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import routesData from '../routes_with_corridors.json';
 import productsData from '../products_data.json';
 
-// Department definitions with coordinates from the real map
+// Department definitions with coordinates from the real map (2048x1150)
 const DEPARTMENTS = [
-  { code: 'A', name: 'Açougue', color: '#ff0000', x: 200, y: 200 },
-  { code: 'H', name: 'Hortifruti', color: '#0066ff', x: 900, y: 250 },
-  { code: 'P', name: 'Padaria', color: '#ff9900', x: 1400, y: 200 },
-  { code: 'L', name: 'Laticionios Especiais', color: '#ffff00', x: 300, y: 500 },
-  { code: 'R', name: 'Refrigerantes e Xaropes', color: '#00cc00', x: 700, y: 500 },
-  { code: 'C', name: 'Cereais', color: '#00cccc', x: 1100, y: 500 },
-  { code: 'I', name: 'Produtos Infantis', color: '#0099ff', x: 1600, y: 500 },
-  { code: 'G', name: 'Higiene Pessoal', color: '#ff00ff', x: 400, y: 800 },
-  { code: 'K', name: 'Materiais de Limpeza', color: '#ff0099', x: 900, y: 800 },
-  { code: 'U', name: 'Utilidades', color: '#99ff00', x: 1400, y: 800 },
-  { code: 'O', name: 'Orgânicos', color: '#ff6600', x: 200, y: 1000 },
-  { code: 'F', name: 'Caarnes e fritas congeladas', color: '#6600ff', x: 700, y: 1000 },
-  { code: 'T', name: ' Talheres', color: '#ff0066', x: 1100, y: 1000 },
-  { code: 'B', name: 'Bebidas Alcoólicas', color: '#8b4513', x: 1600, y: 1000 },
+  { code: 'A', name: 'Açougue', color: '#ff0000', x: 270, y: 45 },
+  { code: 'H', name: 'Hortifruti', color: '#0066ff', x: 830, y: 45 },
+  { code: 'P', name: 'Padaria', color: '#ff9900', x: 1400, y: 45 },
+  { code: 'L', name: 'Laticionios Especiais', color: '#ffff00', x: 140, y: 230 },
+  { code: 'R', name: 'Refrigerantes e Xaropes', color: '#00cc00', x: 460, y: 230 },
+  { code: 'C', name: 'Cereais', color: '#00cccc', x: 700, y: 230 },
+  { code: 'I', name: 'Produtos Infantis', color: '#0099ff', x: 900, y: 230 },
+  { code: 'G', name: 'Higiene Pessoal', color: '#ff00ff', x: 820, y: 480 },
+  { code: 'K', name: 'Materiais de Limpeza', color: '#ff0099', x: 1100, y: 480 },
+  { code: 'U', name: 'Utilidades', color: '#99ff00', x: 1340, y: 480 },
+  { code: 'O', name: 'Orgânicos', color: '#ff6600', x: 710, y: 730 },
+  { code: 'F', name: 'Caarnes e fritas congeladas', color: '#6600ff', x: 350, y: 730 },
+  { code: 'T', name: 'Talheres', color: '#ff0066', x: 1050, y: 690 },
+  { code: 'B', name: 'Bebidas Alcoólicas', color: '#8b4513', x: 1340, y: 690 },
 ];
 
 // Extract unique subcategories from products data

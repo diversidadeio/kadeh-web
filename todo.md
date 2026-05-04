@@ -963,3 +963,9 @@
 - [ ] Integrate with existing ads system: Link promotion to active campaigns
 - [ ] Test promotion link generation and sharing in Portuguese and English
 - [ ] Test retailer stats calculation and updates
+
+## Simulação - Atualização da Planta e Correção de Rota
+- [x] Atualizar imagem da planta com nova versão fornecida pelo usuário
+- [x] Corrigir pathfinding da rota para não passar por cima de gôndolas
+- [x] Recalcular 182 rotas com algoritmo Dijkstra usando corredores válidos
+- [x] Atualizar coordenadas dos departamentos para nova planta (2048x1150)
