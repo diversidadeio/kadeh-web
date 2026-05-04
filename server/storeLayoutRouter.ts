@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { storeLayoutCategories, storeLayoutRoutes } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
 import { getDb } from "./db";
 import {
   createCategory,
@@ -127,9 +127,14 @@ export const storeLayoutRouter = router({
   // ========== CATEGORIES ==========
   
   categories: router({
-    list: protectedProcedure.query(async ({ ctx }) => {
-      const categories = await getCategoriesByUser(ctx.user.id);
-      return categories;
+    list: publicProcedure.query(async ({ ctx }) => {
+      // If user is authenticated, return their categories
+      if (ctx.user) {
+        const categories = await getCategoriesByUser(ctx.user.id);
+        return categories;
+      }
+      // Return empty array for public access
+      return [];
     }),
 
     create: protectedProcedure
@@ -219,9 +224,14 @@ export const storeLayoutRouter = router({
   // ========== ROUTES ==========
 
   routes: router({
-    list: protectedProcedure.query(async ({ ctx }) => {
-      const routes = await getRoutesByUser(ctx.user.id);
-      return routes;
+    list: publicProcedure.query(async ({ ctx }) => {
+      // If user is authenticated, return their routes
+      if (ctx.user) {
+        const routes = await getRoutesByUser(ctx.user.id);
+        return routes;
+      }
+      // Return empty array for public access
+      return [];
     }),
 
     create: protectedProcedure
