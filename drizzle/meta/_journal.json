@@ -92,6 +92,13 @@
       "when": 1777296253646,
       "tag": "0012_yielding_major_mapleleaf",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1777898524992,
+      "tag": "0013_hot_zarda",
+      "breakpoints": true
     }
   ]
 }

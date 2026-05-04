@@ -875,3 +875,118 @@ export const products = mysqlTable("products", {
 
 export type Product = typeof products.$inferSelect;
 export type InsertProduct = typeof products.$inferInsert;
+
+
+// ============================================================================
+// PRODUCT CATEGORIES & SUBCATEGORIES - Categorias e Subcategorias de Produtos
+// ============================================================================
+
+/**
+ * Categorias de Produtos - Mapeamento entre categorias Excel e departamentos do mapa
+ * Exemplo: "Óleos Molhos e Azeites" → "Cereais e Bolachas"
+ */
+export const productSubcategoryMappings = mysqlTable("productSubcategoryMappings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário da loja
+  
+  // Identificação
+  excelCategory: varchar("excelCategory", { length: 255 }).notNull(), // Categoria do Excel
+  subcategory: varchar("subcategory", { length: 255 }).notNull(), // Subcategoria do Excel
+  
+  // Mapeamento para departamento do mapa
+  departmentName: varchar("departmentName", { length: 100 }).notNull(), // Departamento do mapa (ex: "Açougue")
+  departmentNameEn: varchar("departmentNameEn", { length: 100 }), // Em inglês
+  
+  // Metadados
+  productCount: int("productCount").default(0).notNull(), // Quantidade de produtos
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("productSubcategoryMappings_user_idx").on(table.userId),
+  excelCategoryIdx: index("productSubcategoryMappings_excelCategory_idx").on(table.excelCategory),
+  departmentIdx: index("productSubcategoryMappings_department_idx").on(table.departmentName),
+  subcategoryIdx: index("productSubcategoryMappings_subcategory_idx").on(table.subcategory),
+}));
+
+export type ProductSubcategoryMapping = typeof productSubcategoryMappings.$inferSelect;
+export type InsertProductSubcategoryMapping = typeof productSubcategoryMappings.$inferInsert;
+
+/**
+ * Produtos com Localização - Produtos com código, gôndola e posição
+ * Importado do Excel com correlação automática para departamentos
+ */
+export const productLocations = mysqlTable("productLocations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário da loja
+  
+  // Identificação do Produto
+  productCode: varchar("productCode", { length: 50 }).notNull(), // Código do produto (ex: A1, B2)
+  productName: varchar("productName", { length: 255 }), // Nome do produto
+  
+  // Localização na Loja
+  gondolaNumber: int("gondolaNumber").notNull(), // Número da gôndola
+  gondolaPosition: varchar("gondolaPosition", { length: 50 }), // Posição na gôndola (ex: "Term 1", "A", "B", "C")
+  
+  // Categorização
+  excelCategory: varchar("excelCategory", { length: 255 }).notNull(), // Categoria do Excel
+  subcategory: varchar("subcategory", { length: 255 }), // Subcategoria
+  departmentName: varchar("departmentName", { length: 100 }).notNull(), // Departamento do mapa
+  
+  // Coordenadas no mapa (calculadas automaticamente)
+  mapX: int("mapX"), // Coordenada X estimada
+  mapY: int("mapY"), // Coordenada Y estimada
+  
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("productLocations_user_idx").on(table.userId),
+  productCodeIdx: index("productLocations_productCode_idx").on(table.productCode),
+  gondolaIdx: index("productLocations_gondola_idx").on(table.gondolaNumber),
+  departmentIdx: index("productLocations_department_idx").on(table.departmentName),
+  subcategoryIdx: index("productLocations_subcategory_idx").on(table.subcategory),
+}));
+
+export type ProductLocation = typeof productLocations.$inferSelect;
+export type InsertProductLocation = typeof productLocations.$inferInsert;
+
+/**
+ * Rotas de Navegação por Subcategoria - Rotas pré-calculadas entre subcategorias
+ * Permite navegação rápida entre produtos específicos
+ */
+export const subcategoryRoutes = mysqlTable("subcategoryRoutes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário da loja
+  
+  // Origem e Destino
+  fromSubcategory: varchar("fromSubcategory", { length: 255 }).notNull(),
+  toSubcategory: varchar("toSubcategory", { length: 255 }).notNull(),
+  
+  // Departamentos
+  fromDepartment: varchar("fromDepartment", { length: 100 }).notNull(),
+  toDepartment: varchar("toDepartment", { length: 100 }).notNull(),
+  
+  // Rota
+  pathPoints: json("pathPoints").$type<Array<{x: number, y: number}>>().notNull(), // Array de pontos
+  distance: int("distance").notNull(), // Distância em pixels
+  estimatedTime: int("estimatedTime").notNull(), // Tempo estimado em segundos
+  
+  // Metadados
+  isActive: boolean("isActive").default(true).notNull(),
+  usageCount: int("usageCount").default(0).notNull(), // Quantas vezes foi usada
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("subcategoryRoutes_user_idx").on(table.userId),
+  fromSubcategoryIdx: index("subcategoryRoutes_from_idx").on(table.fromSubcategory),
+  toSubcategoryIdx: index("subcategoryRoutes_to_idx").on(table.toSubcategory),
+  fromDepartmentIdx: index("subcategoryRoutes_fromDept_idx").on(table.fromDepartment),
+  toDepartmentIdx: index("subcategoryRoutes_toDept_idx").on(table.toDepartment),
+}));
+
+export type SubcategoryRoute = typeof subcategoryRoutes.$inferSelect;
+export type InsertSubcategoryRoute = typeof subcategoryRoutes.$inferInsert;
