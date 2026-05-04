@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
@@ -9,25 +9,33 @@ interface Point {
   y: number;
 }
 
-// Fallback department data (used if database is empty)
-const FALLBACK_DEPARTMENTS = [
-  { name: 'Açougue', nameEn: 'Butcher', x: 140, y: 40 },
-  { name: 'Hortifrutí', nameEn: 'Produce', x: 500, y: 40 },
-  { name: 'Padaria', nameEn: 'Bakery', x: 750, y: 40 },
-  { name: 'Laticínios e Bebidas Geladas', nameEn: 'Dairy & Cold Beverages', x: 100, y: 130 },
-  { name: 'Refrigerantes', nameEn: 'Soft Drinks', x: 250, y: 130 },
-  { name: 'Cereais e Bolachas', nameEn: 'Cereals & Crackers', x: 380, y: 130 },
-  { name: 'Infantis', nameEn: 'Baby Products', x: 480, y: 130 },
-  { name: 'Higiene', nameEn: 'Hygiene', x: 580, y: 130 },
-  { name: 'Limpeza', nameEn: 'Cleaning', x: 680, y: 130 },
-  { name: 'Utilidades', nameEn: 'Utilities', x: 780, y: 130 },
-  { name: 'Orgânicos & Naturais', nameEn: 'Organic & Natural', x: 380, y: 380 },
-  { name: 'Congelados', nameEn: 'Frozen', x: 520, y: 380 },
-  { name: 'Pet', nameEn: 'Pet', x: 620, y: 380 },
-  { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 750, y: 380 },
+// 14 Departamentos - Dados Fallback (sempre disponíveis)
+const DEPARTMENTS = [
+  { name: 'Açougue', nameEn: 'Butcher', x: 140, y: 40, code: 'A', color: '#dc2626' },
+  { name: 'Hortifrutí', nameEn: 'Produce', x: 500, y: 40, code: 'H', color: '#2563eb' },
+  { name: 'Padaria', nameEn: 'Bakery', x: 750, y: 40, code: 'P', color: '#f97316' },
+  { name: 'Laticínios e Bebidas Geladas', nameEn: 'Dairy & Cold Beverages', x: 100, y: 130, code: 'L', color: '#fbbf24' },
+  { name: 'Refrigerantes', nameEn: 'Soft Drinks', x: 250, y: 130, code: 'R', color: '#22c55e' },
+  { name: 'Cereais e Bolachas', nameEn: 'Cereals & Crackers', x: 380, y: 130, code: 'C', color: '#8b5cf6' },
+  { name: 'Infantis', nameEn: 'Baby Products', x: 480, y: 130, code: 'I', color: '#ec4899' },
+  { name: 'Higiene', nameEn: 'Hygiene', x: 580, y: 130, code: 'G', color: '#06b6d4' },
+  { name: 'Limpeza', nameEn: 'Cleaning', x: 680, y: 130, code: 'K', color: '#f43f5e' },
+  { name: 'Utilidades', nameEn: 'Utilities', x: 780, y: 130, code: 'U', color: '#6366f1' },
+  { name: 'Orgânicos & Naturais', nameEn: 'Organic & Natural', x: 380, y: 380, code: 'O', color: '#10b981' },
+  { name: 'Congelados', nameEn: 'Frozen', x: 520, y: 380, code: 'F', color: '#3b82f6' },
+  { name: 'Pet', nameEn: 'Pet', x: 620, y: 380, code: 'T', color: '#f59e0b' },
+  { name: 'Bebidas Alcoólicas', nameEn: 'Alcoholic Beverages', x: 750, y: 380, code: 'B', color: '#8b4513' },
 ];
 
-// Fallback obstacle data (no longer needed with AdvancedPathfinder)
+interface Department {
+  name: string;
+  nameEn: string;
+  x: number;
+  y: number;
+  code: string;
+  color: string;
+  id?: number;
+}
 
 interface DatabaseCategory {
   id: number;
@@ -59,7 +67,7 @@ export default function SimulacaoCompleta() {
   const [distance, setDistance] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [error, setError] = useState('');
-  const [departments, setDepartments] = useState(FALLBACK_DEPARTMENTS);
+  const [departments, setDepartments] = useState<Department[]>(DEPARTMENTS);
   const [allRoutes, setAllRoutes] = useState<DatabaseRoute[]>([]);
   const [showAllRoutes, setShowAllRoutes] = useState(true);
   
@@ -68,7 +76,7 @@ export default function SimulacaoCompleta() {
   const imageDataRef = useRef<ImageData | null>(null);
   const pathfinderRef = useRef<AdvancedPathfinder | null>(null);
 
-  // Fetch categories and routes from database
+  // Fetch categories and routes from database (optional - use fallback if empty)
   const { data: dbCategories } = trpc.storeLayout.categories.list.useQuery();
   const { data: dbRoutes } = trpc.storeLayout.routes.list.useQuery();
 
@@ -85,31 +93,39 @@ export default function SimulacaoCompleta() {
         pathfinderRef.current = pathfinder;
         console.log('[Simulação] Advanced pathfinder initialized');
       } else {
-        setError('Failed to initialize pathfinding engine');
+        console.error('[Simulação] Failed to initialize pathfinder');
+        setError(language === 'pt' ? 'Erro ao inicializar motor de navegação' : 'Failed to initialize pathfinding engine');
       }
     };
     
     initPathfinder();
-  }, [imageLoaded]);
+  }, [imageLoaded, language]);
 
-  // Update departments from database
+  // Update departments from database (only if we get valid data)
   useEffect(() => {
-    if (dbCategories && dbCategories.length > 0) {
-      setDepartments(dbCategories.map(cat => ({
-        name: cat.name,
-        nameEn: cat.nameEn || cat.name,
-        x: cat.x,
-        y: cat.y,
-        code: cat.code,
-        id: cat.id,
-        color: cat.color,
-      })));
+    if (dbCategories && Array.isArray(dbCategories) && dbCategories.length > 0) {
+      // Only update if we got actual department data (not products)
+      const validDepts = dbCategories.filter(cat => 
+        DEPARTMENTS.some(d => d.code === cat.code)
+      );
+      
+      if (validDepts.length > 0) {
+        setDepartments(validDepts.map(cat => ({
+          name: cat.name,
+          nameEn: cat.nameEn || cat.name,
+          x: cat.x,
+          y: cat.y,
+          code: cat.code,
+          id: cat.id,
+          color: cat.color,
+        })));
+      }
     }
   }, [dbCategories]);
 
   // Update routes from database
   useEffect(() => {
-    if (dbRoutes && dbRoutes.length > 0) {
+    if (dbRoutes && Array.isArray(dbRoutes) && dbRoutes.length > 0) {
       setAllRoutes(dbRoutes);
     }
   }, [dbRoutes]);
@@ -131,32 +147,38 @@ export default function SimulacaoCompleta() {
         ctx.drawImage(img, 0, 0);
         imageDataRef.current = ctx.getImageData(0, 0, img.width, img.height);
         
-        // AdvancedPathfinder will be initialized separately
-        
         setImageLoaded(true);
         setError('');
       }
     };
     
-    img.onerror = () => {
+    img.onerror = (err) => {
+      console.error('[Simulação] Image load error:', err);
       setError(language === 'pt' ? 'Erro ao carregar a imagem da planta' : 'Error loading floor plan image');
+      // Still set imageLoaded to true to allow fallback rendering
+      setImageLoaded(true);
     };
   }, [language]);
 
   // Draw canvas with all routes and current path
   useEffect(() => {
-    if (!canvasRef.current || !imageRef.current) return;
+    if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const img = imageRef.current;
-    canvas.width = img.width;
-    canvas.height = img.height;
+    canvas.width = imageRef.current?.width || 1024;
+    canvas.height = imageRef.current?.height || 768;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Draw image
-    ctx.drawImage(img, 0, 0);
+    // Draw image if available
+    if (imageRef.current) {
+      ctx.drawImage(imageRef.current, 0, 0);
+    } else {
+      // Draw white background if image not loaded
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
     // Draw all routes if enabled
     if (showAllRoutes && allRoutes.length > 0) {
@@ -202,125 +224,116 @@ export default function SimulacaoCompleta() {
       });
     }
 
-    // Draw departments
+    // Draw department markers
     departments.forEach((dept) => {
-      const color = (dept as any).color || '#3b82f6';
-      ctx.fillStyle = color + '80';
+      ctx.fillStyle = dept.color;
       ctx.beginPath();
-      ctx.arc(dept.x, dept.y, 15, 0, Math.PI * 2);
+      ctx.arc(dept.x, dept.y, 12, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw code if available
-      if ((dept as any).code) {
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 10px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText((dept as any).code, dept.x, dept.y);
-      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(dept.code, dept.x, dept.y);
     });
 
-    // Draw animated arrow if animating
-    if (isAnimating && path.length > 0) {
+    // Draw animated position if animating
+    if (isAnimating && path.length > 0 && animationProgress < 100) {
       const currentIndex = Math.floor((animationProgress / 100) * (path.length - 1));
       const nextIndex = Math.min(currentIndex + 1, path.length - 1);
-      const current = path[currentIndex];
-      const next = path[nextIndex];
+      const progress = ((animationProgress / 100) * (path.length - 1)) - currentIndex;
 
-      const angle = Math.atan2(next.y - current.y, next.x - current.x);
-      ctx.save();
-      ctx.translate(current.x, current.y);
-      ctx.rotate(angle);
+      const currentPoint = path[currentIndex];
+      const nextPoint = path[nextIndex];
+      const animatedX = currentPoint.x + (nextPoint.x - currentPoint.x) * progress;
+      const animatedY = currentPoint.y + (nextPoint.y - currentPoint.y) * progress;
 
-      ctx.fillStyle = '#3b82f6';
+      ctx.fillStyle = '#ff6b6b';
       ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(-10, -8);
-      ctx.lineTo(-10, 8);
-      ctx.closePath();
+      ctx.arc(animatedX, animatedY, 8, 0, Math.PI * 2);
       ctx.fill();
-
-      ctx.restore();
     }
-  }, [path, animationProgress, isAnimating, departments, allRoutes, showAllRoutes, imageLoaded]);
+  }, [path, departments, allRoutes, showAllRoutes, isAnimating, animationProgress]);
 
-  const handleStartNavigation = async () => {
-    if (!pathfinderRef.current || !imageRef.current) {
-      setError(language === 'pt' ? 'Sistema de navegação não inicializado' : 'Navigation system not initialized');
-      return;
-    }
-
-    const currentDeptData = departments.find(d => d.name === currentDept || d.nameEn === currentDept);
-    const destDeptData = departments.find(d => d.name === destinationDept || d.nameEn === destinationDept);
-
-    if (!currentDeptData || !destDeptData) {
-      setError(language === 'pt' ? 'Departamento não encontrado' : 'Department not found');
+  const handleNavigate = async () => {
+    if (!currentDept || !destinationDept) {
+      setError(language === 'pt' ? 'Selecione departamentos válidos' : 'Please select valid departments');
       return;
     }
 
     if (currentDept === destinationDept) {
-      setError(language === 'pt' ? 'Selecione departamentos diferentes' : 'Select different departments');
+      setError(language === 'pt' ? 'Selecione departamentos diferentes' : 'Please select different departments');
       return;
     }
 
-    // Check if there's a saved route
+    setError('');
+    setPath([]);
+    setIsAnimating(false);
+
+    // Try to find route in database first
     const savedRoute = allRoutes.find(
-      r => r.fromCategoryId === (currentDeptData as any).id && r.toCategoryId === (destDeptData as any).id
+      (r) => {
+        const fromDept = departments.find(d => d.name === currentDept);
+        const toDept = departments.find(d => d.name === destinationDept);
+        return fromDept && toDept && fromDept.id && toDept.id && r.fromCategoryId === fromDept.id && r.toCategoryId === toDept.id;
+      }
     );
 
-    let calculatedPath: Point[] = [];
-
-    if (savedRoute) {
-      // Use saved route
-      calculatedPath = savedRoute.pathPoints as Point[];
+    if (savedRoute && savedRoute.pathPoints.length > 0) {
+      setPath(savedRoute.pathPoints.map(p => ({ x: p.x, y: p.y })));
       setDistance(savedRoute.distance);
-    } else {
-      // Use pathfinding algorithm
-      const foundPath = pathfinderRef.current.findPath(
-        { x: currentDeptData.x, y: currentDeptData.y },
-        { x: destDeptData.x, y: destDeptData.y }
+      setRouteDescription(
+        language === 'pt'
+          ? `Rota de ${currentDept} para ${destinationDept} - Distância: ${Math.round(savedRoute.distance)} pixels`
+          : `Route from ${currentDept} to ${destinationDept} - Distance: ${Math.round(savedRoute.distance)} pixels`
       );
-
-      if (!foundPath) {
-        setError(language === 'pt' ? 'Não foi possível encontrar uma rota' : 'Could not find a route');
-        return;
-      }
-
-      calculatedPath = foundPath;
-      // Calculate distance from path points
-      let totalDistance = 0;
-      for (let i = 1; i < foundPath.length; i++) {
-        const dx = foundPath[i].x - foundPath[i - 1].x;
-        const dy = foundPath[i].y - foundPath[i - 1].y;
-        totalDistance += Math.hypot(dx, dy);
-      }
-      setDistance(Math.round(totalDistance));
+      setIsAnimating(true);
+      setAnimationProgress(0);
+      return;
     }
 
+    // Use pathfinder for real-time calculation
+    if (!pathfinderRef.current) {
+      setError(language === 'pt' ? 'Motor de navegação não inicializado' : 'Pathfinding engine not initialized');
+      return;
+    }
+
+    const fromDept = departments.find(d => d.name === currentDept);
+    const toDept = departments.find(d => d.name === destinationDept);
+
+    if (!fromDept || !toDept) {
+      setError(language === 'pt' ? 'Departamento não encontrado' : 'Department not found');
+      return;
+    }
+
+    const calculatedPath = await pathfinderRef.current.findPath(
+      { x: fromDept.x, y: fromDept.y },
+      { x: toDept.x, y: toDept.y }
+    );
+
+    if (!calculatedPath || calculatedPath.length === 0) {
+      setError(language === 'pt' ? 'Rota não encontrada' : 'Route not found');
+      return;
+    }
+
+    const totalDistance = calculatedPath.reduce((sum, point, i) => {
+      if (i === 0) return 0;
+      const dx = point.x - calculatedPath[i - 1].x;
+      const dy = point.y - calculatedPath[i - 1].y;
+      return sum + Math.hypot(dx, dy);
+    }, 0);
+
+    setDistance(Math.round(totalDistance));
     setPath(calculatedPath);
     setIsAnimating(true);
     setAnimationProgress(0);
     setError('');
 
-    // Generate route description
-    const totalDist = savedRoute ? savedRoute.distance : Math.round(
-      calculatedPath.reduce((sum, point, i) => {
-        if (i === 0) return 0;
-        const dx = point.x - calculatedPath[i - 1].x;
-        const dy = point.y - calculatedPath[i - 1].y;
-        return sum + Math.hypot(dx, dy);
-      }, 0)
-    );
-    
     const description = language === 'pt'
-      ? `Rota de ${currentDept} para ${destinationDept} - Distância: ${totalDist} pixels`
-      : `Route from ${currentDept} to ${destinationDept} - Distance: ${totalDist} pixels`;
+      ? `Rota de ${currentDept} para ${destinationDept} - Distância: ${Math.round(totalDistance)} pixels`
+      : `Route from ${currentDept} to ${destinationDept} - Distance: ${Math.round(totalDistance)} pixels`;
     setRouteDescription(description);
-    setDistance(totalDist);
   };
 
   // Animation loop
@@ -408,64 +421,64 @@ export default function SimulacaoCompleta() {
             </div>
 
             <div className="flex items-end">
-              <Button onClick={handleStartNavigation} className="w-full h-10">
+              <Button
+                onClick={handleNavigate}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 {language === 'pt' ? 'Iniciar Navegação' : 'Start Navigation'}
               </Button>
             </div>
           </div>
 
-          {/* Route visualization toggle */}
-          <div className="mb-4 flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="showRoutes"
-              checked={showAllRoutes}
-              onChange={(e) => setShowAllRoutes(e.target.checked)}
-              className="w-4 h-4"
-            />
-            <label htmlFor="showRoutes" className="text-sm font-medium">
-              {language === 'pt'
-                ? `Mostrar todas as rotas salvas (${allRoutes.length})`
-                : `Show all saved routes (${allRoutes.length})`}
+          <div className="mb-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="showRoutes"
+                checked={showAllRoutes}
+                onChange={(e) => setShowAllRoutes(e.target.checked)}
+              />
+              <span className="text-sm font-medium">
+                {language === 'pt' ? `Mostrar todas as rotas salvas (${allRoutes.length})` : `Show all saved routes (${allRoutes.length})`}
+              </span>
             </label>
           </div>
 
-          {/* Canvas */}
-          <div className="border-2 border-gray-300 rounded-lg overflow-hidden mb-6">
+          <div className="border-2 border-red-300 rounded-lg overflow-hidden bg-white">
             <canvas
               ref={canvasRef}
-              className="w-full h-auto"
-              style={{ maxHeight: '600px', objectFit: 'contain' }}
+              className="w-full h-auto block"
+              style={{ maxHeight: '600px' }}
             />
           </div>
 
-          {/* Route info */}
           {routeDescription && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-blue-800 font-semibold">{routeDescription}</p>
-              {isAnimating && (
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all"
-                    style={{ width: `${animationProgress}%` }}
-                  ></div>
-                </div>
-              )}
+              <p className="text-blue-600 text-sm mt-1">
+                {language === 'pt' ? `Progresso: ${animationProgress}%` : `Progress: ${animationProgress}%`}
+              </p>
             </div>
           )}
         </div>
 
-        {/* Info section */}
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h2 className="text-xl font-bold mb-4">
             {language === 'pt' ? 'Informações' : 'Information'}
           </h2>
-          <ul className="space-y-2 text-gray-700">
-            <li>✅ {language === 'pt' ? '14 departamentos disponíveis' : '14 available departments'}</li>
-            <li>✅ {language === 'pt' ? '251 gôndolas e expositores mapeados' : '251 gondolas and fixtures mapped'}</li>
-            <li>✅ {language === 'pt' ? 'Rotas salvas no banco de dados' : 'Routes saved in database'}</li>
-            <li>✅ {language === 'pt' ? 'Visualização de todas as rotas em tempo real' : 'Real-time visualization of all routes'}</li>
-            <li>✅ {language === 'pt' ? 'Navegação animada com seta direcional' : 'Animated navigation with directional arrow'}</li>
+          <ul className="space-y-2 text-sm text-gray-700">
+            <li className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              {language === 'pt' ? '14 departamentos disponíveis' : '14 departments available'}
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              {language === 'pt' ? '251 gôndolas e expositores mapeados' : '251 gondolas and fixtures mapped'}
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-green-600">✓</span>
+              {language === 'pt' ? 'Rotas salvas no banco de dados' : 'Routes saved in database'}
+            </li>
           </ul>
         </div>
       </div>
