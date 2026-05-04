@@ -78,7 +78,7 @@ export default function SimulacaoCompleta() {
       if (!imageLoaded) return;
       
       const pathfinder = new AdvancedPathfinder();
-      const imageUrl = 'https://manus-webdev.s3.amazonaws.com/pasted_file_h1C8DW_image_a64ee5f4.png';
+      const imageUrl = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/modified_floor_plan_ultimate_0f7086cb.png';
       
       const initialized = await pathfinder.initialize(imageUrl);
       if (initialized) {
@@ -118,7 +118,7 @@ export default function SimulacaoCompleta() {
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/pasted_file_h1C8DW_image_a64ee5f4.png';
+    img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/modified_floor_plan_ultimate_0f7086cb.png';
     
     img.onload = () => {
       imageRef.current = img;
