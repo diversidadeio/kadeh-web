@@ -951,9 +951,3 @@
 - [ ] Implementar seletores de sessão (atual e destino)
 - [ ] Implementar animação de seta de rota
 - [ ] Testar navegação e animações
-
-## Simulador de Navegação - Novas Funcionalidades
-
-- [ ] Busca por nome de produto com localização automática
-- [ ] Modo Picking para múltiplos produtos com rota otimizada
-- [ ] Informações de gôndolas ao clicar em departamento

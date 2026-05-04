@@ -1,6 +1,5 @@
-'use client';
-
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import routesData from '../routes_with_corridors.json';
 import productsData from '../products_data.json';
 
 // Department definitions with coordinates from the real map
@@ -17,7 +16,7 @@ const DEPARTMENTS = [
   { code: 'U', name: 'Utilidades', color: '#99ff00', x: 1400, y: 800 },
   { code: 'O', name: 'Orgânicos', color: '#ff6600', x: 200, y: 1000 },
   { code: 'F', name: 'Caarnes e fritas congeladas', color: '#6600ff', x: 700, y: 1000 },
-  { code: 'T', name: 'Talheres', color: '#ff0066', x: 1100, y: 1000 },
+  { code: 'T', name: ' Talheres', color: '#ff0066', x: 1100, y: 1000 },
   { code: 'B', name: 'Bebidas Alcoólicas', color: '#8b4513', x: 1600, y: 1000 },
 ];
 
@@ -44,57 +43,25 @@ const getSubcategoriesByDepartment = () => {
 
 const SUBCATEGORIES_BY_DEPT = getSubcategoriesByDepartment();
 
-// Get products by department
-const getProductsByDepartment = (deptName: string) => {
-  return productsData.filter((product: any) => product.categoria === deptName);
-};
-
-// Get product location by name
-const getProductLocation = (productName: string) => {
-  const product = productsData.find((p: any) => 
-    p.produto?.toLowerCase().includes(productName.toLowerCase())
-  );
-  return product ? { 
-    categoria: product.categoria, 
-    subcategoria: product.subcategoria,
-    codigo: product.codigo 
-  } : null;
-};
-
-// Calculate optimal route for multiple products (picking)
-const calculatePickingRoute = (productCodes: string[]): string[] => {
-  // Simple greedy algorithm: visit departments in order of appearance
-  const departments = new Set<string>();
-  productCodes.forEach(code => {
-    const product = productsData.find((p: any) => p.codigo === code);
-    if (product) {
-      const dept = DEPARTMENTS.find(d => d.name === product.categoria);
-      if (dept) departments.add(dept.code);
-    }
-  });
-  
-  return Array.from(departments);
+// Get route from pre-calculated data
+const getPreCalculatedRoute = (fromCode: string, toCode: string): [number, number][] | null => {
+  const routeKey = `${fromCode}-${toCode}`;
+  const route = (routesData as any).routes?.find((r: any) => r.from_code === fromCode && r.to_code === toCode);
+  return route ? route.waypoints : null;
 };
 
 export default function SimulacaoCompleta() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const animationRef = useRef<number | null>(null);
 
   const [fromDept, setFromDept] = useState('A');
   const [toDept, setToDept] = useState('H');
-  const [fromSubcat, setFromSubcat] = useState('Todas');
-  const [toSubcat, setToSubcat] = useState('Todas');
+  const [fromSubcat, setFromSubcat] = useState('');
+  const [toSubcat, setToSubcat] = useState('');
   const [routeInfo, setRouteInfo] = useState('');
   const [error, setError] = useState('');
   const [imageLoaded, setImageLoaded] = useState(false);
-  
-  // New features state
-  const [searchProduct, setSearchProduct] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [pickingMode, setPickingMode] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [selectedDeptInfo, setSelectedDeptInfo] = useState<any>(null);
-  const [animationProgress, setAnimationProgress] = useState(0);
 
   // Load image
   useEffect(() => {
@@ -136,380 +103,256 @@ export default function SimulacaoCompleta() {
     }
   }, [imageLoaded]);
 
-  // Handle product search
-  const handleSearchProduct = (query: string) => {
-    setSearchProduct(query);
-    if (query.length > 2) {
-      const results = productsData.filter((p: any) =>
-        p.produto?.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(results.slice(0, 5));
-    } else {
-      setSearchResults([]);
-    }
-  };
-
-  // Select product from search and navigate
-  const handleSelectSearchResult = (product: any) => {
-    const dept = DEPARTMENTS.find(d => d.name === product.categoria);
-    if (dept) {
-      setFromDept('A'); // Start from entrance
-      setToDept(dept.code);
-      setToSubcat(product.subcategoria || 'Todas');
-      setSearchProduct('');
-      setSearchResults([]);
-      handleNavigate();
-    }
-  };
-
-  // Add product to picking list
-  const handleAddToPickingList = (productCode: string) => {
-    if (!selectedProducts.includes(productCode)) {
-      setSelectedProducts([...selectedProducts, productCode]);
-    }
-  };
-
-  // Remove product from picking list
-  const handleRemoveFromPickingList = (productCode: string) => {
-    setSelectedProducts(selectedProducts.filter(p => p !== productCode));
-  };
-
-  // Start picking route
-  const handleStartPickingRoute = () => {
-    const route = calculatePickingRoute(selectedProducts);
-    if (route.length > 0) {
-      setFromDept('A');
-      setToDept(route[0]);
-      setPickingMode(true);
-      handleNavigate();
-    }
-  };
-
-  // Handle department click to show gondola info
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const animateBall = (path: [number, number][]) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
-    // Check if click is on a department
-    const clickedDept = DEPARTMENTS.find(dept => {
-      const distance = Math.sqrt(Math.pow(x - dept.x, 2) + Math.pow(y - dept.y, 2));
-      return distance < 50;
-    });
-
-    if (clickedDept) {
-      const products = getProductsByDepartment(clickedDept.name);
-      setSelectedDeptInfo({
-        name: clickedDept.name,
-        code: clickedDept.code,
-        productCount: products.length,
-        products: products.slice(0, 10), // Show first 10 products
-      });
-    }
-  };
-
-  // Handle navigation
-  const handleNavigate = () => {
-    const fromDeptObj = DEPARTMENTS.find(d => d.code === fromDept);
-    const toDeptObj = DEPARTMENTS.find(d => d.code === toDept);
-
-    if (!fromDeptObj || !toDeptObj) {
-      setError('Departamento não encontrado');
-      return;
-    }
-
-    // Calculate distance
-    const distance = Math.sqrt(
-      Math.pow(toDeptObj.x - fromDeptObj.x, 2) + 
-      Math.pow(toDeptObj.y - fromDeptObj.y, 2)
-    );
-
-    setRouteInfo(`Rota de ${fromDeptObj.name} para ${toDeptObj.name} - Distância: ${Math.round(distance)} pixels`);
-    setError('');
-
-    // Animate ball along route
-    animateRoute(fromDeptObj, toDeptObj);
-  };
-
-  // Animate ball moving along route
-  const animateRoute = (from: any, to: any) => {
-    let progress = 0;
-    const duration = 3000; // 3 seconds
-    const startTime = Date.now();
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      progress = Math.min(elapsed / duration, 1);
-      setAnimationProgress(progress);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  };
-
-  // Render animation on canvas
-  useEffect(() => {
-    if (!imageLoaded || animationProgress === 0) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !imageRef.current) return;
 
     const ctx = canvas.getContext('2d');
-    if (!ctx || !imageRef.current) return;
+    if (!ctx) return;
 
-    // Redraw everything
-    ctx.drawImage(imageRef.current, 0, 0);
+    // Calculate total distance
+    const totalDistance = path.reduce((sum, _, i) => {
+      if (i === 0) return 0;
+      const dx = path[i][0] - path[i - 1][0];
+      const dy = path[i][1] - path[i - 1][1];
+      return sum + Math.sqrt(dx * dx + dy * dy);
+    }, 0);
 
-    // Draw departments
-    DEPARTMENTS.forEach(dept => {
-      ctx.fillStyle = dept.color;
-      ctx.beginPath();
-      ctx.arc(dept.x, dept.y, 30, 0, Math.PI * 2);
-      ctx.fill();
+    const animationDuration = 5000; // 5 seconds
+    const startTime = Date.now();
 
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(dept.code, dept.x, dept.y);
-    });
+    const drawFrame = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / animationDuration, 1);
 
-    // Draw route line
-    const fromDeptObj = DEPARTMENTS.find(d => d.code === fromDept);
-    const toDeptObj = DEPARTMENTS.find(d => d.code === toDept);
+      // Clear canvas and redraw
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (imageRef.current) {
+        ctx.drawImage(imageRef.current, 0, 0);
+      }
 
-    if (fromDeptObj && toDeptObj) {
+      // Draw departments
+      DEPARTMENTS.forEach(dept => {
+        ctx.fillStyle = dept.color;
+        ctx.beginPath();
+        ctx.arc(dept.x, dept.y, 30, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(dept.code, dept.x, dept.y);
+      });
+
+      // Draw path
       ctx.strokeStyle = '#0066ff';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(fromDeptObj.x, fromDeptObj.y);
-      ctx.lineTo(toDeptObj.x, toDeptObj.y);
+      ctx.moveTo(path[0][0], path[0][1]);
+      for (let i = 1; i < path.length; i++) {
+        ctx.lineTo(path[i][0], path[i][1]);
+      }
       ctx.stroke();
 
-      // Draw start point (green)
+      // Draw start and end points
       ctx.fillStyle = '#00ff00';
       ctx.beginPath();
-      ctx.arc(fromDeptObj.x, fromDeptObj.y, 15, 0, Math.PI * 2);
+      ctx.arc(path[0][0], path[0][1], 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw end point (red)
       ctx.fillStyle = '#ff0000';
       ctx.beginPath();
-      ctx.arc(toDeptObj.x, toDeptObj.y, 15, 0, Math.PI * 2);
+      ctx.arc(path[path.length - 1][0], path[path.length - 1][1], 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw animated ball (yellow)
-      const ballX = fromDeptObj.x + (toDeptObj.x - fromDeptObj.x) * animationProgress;
-      const ballY = fromDeptObj.y + (toDeptObj.y - fromDeptObj.y) * animationProgress;
+      // Calculate ball position along the path
+      let distanceCovered = totalDistance * progress;
+      let ballX = path[0][0];
+      let ballY = path[0][1];
 
+      for (let i = 1; i < path.length; i++) {
+        const dx = path[i][0] - path[i - 1][0];
+        const dy = path[i][1] - path[i - 1][1];
+        const segmentDistance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distanceCovered <= segmentDistance) {
+          const ratio = segmentDistance > 0 ? distanceCovered / segmentDistance : 0;
+          ballX = path[i - 1][0] + dx * ratio;
+          ballY = path[i - 1][1] + dy * ratio;
+          break;
+        }
+        distanceCovered -= segmentDistance;
+      }
+
+      // Draw animated ball
       ctx.fillStyle = '#ffff00';
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(ballX, ballY, 20, 0, Math.PI * 2);
+      ctx.arc(ballX, ballY, 12, 0, Math.PI * 2);
       ctx.fill();
+      ctx.stroke();
 
       // Draw progress percentage
       ctx.fillStyle = '#000000';
       ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText(`${Math.round(animationProgress * 100)}%`, ballX, ballY - 40);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${Math.round(progress * 100)}%`, ballX, ballY);
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    drawFrame();
+  };
+
+  const handleNavigate = async () => {
+    setError('');
+    setRouteInfo('');
+
+    // Cancel previous animation if running
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
     }
-  }, [animationProgress, imageLoaded, fromDept, toDept]);
+
+    const fromDeptObj = DEPARTMENTS.find(d => d.code === fromDept);
+    const toDeptObj = DEPARTMENTS.find(d => d.code === toDept);
+
+    if (!fromDeptObj || !toDeptObj) {
+      setError('Departamentos inválidos');
+      return;
+    }
+
+    // Get pre-calculated route
+    const path = getPreCalculatedRoute(fromDept, toDept);
+
+    if (!path) {
+      setError('Rota não encontrada');
+      return;
+    }
+
+    const distance = path.reduce((sum, _, i) => {
+      if (i === 0) return 0;
+      const dx = path[i][0] - path[i - 1][0];
+      const dy = path[i][1] - path[i - 1][1];
+      return sum + Math.sqrt(dx * dx + dy * dy);
+    }, 0);
+
+    setRouteInfo(`Rota de ${fromDeptObj.name} para ${toDeptObj.name} - Distância: ${distance.toFixed(0)} pixels`);
+
+    // Start animation
+    animateBall(path);
+  };
+
+  const getSubcategoriesForDept = (deptCode: string) => {
+    const deptObj = DEPARTMENTS.find(d => d.code === deptCode);
+    if (!deptObj) return [];
+    return SUBCATEGORIES_BY_DEPT[deptObj.name] || [];
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">Simulação de Navegação Completa</h1>
       <p className="text-gray-600 mb-6">Rotas inteligentes que respeitam todos os 14 departamentos e evitam 251 gôndolas e expositores</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main controls */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Feature 1: Product Search */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h2 className="text-xl font-bold mb-4">🔍 Buscar Produto</h2>
-            <input
-              type="text"
-              placeholder="Digite o nome do produto (ex: Leite, Pão, Cerveja)..."
-              value={searchProduct}
-              onChange={(e) => handleSearchProduct(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-2"
-            />
-            {searchResults.length > 0 && (
-              <div className="space-y-2">
-                {searchResults.map((product, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => handleSelectSearchResult(product)}
-                    className="p-3 bg-blue-50 rounded cursor-pointer hover:bg-blue-100"
-                  >
-                    <div className="font-semibold">{product.produto}</div>
-                    <div className="text-sm text-gray-600">{product.categoria} - {product.subcategoria}</div>
-                  </div>
-                ))}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium mb-2">Você está em:</label>
+            <select
+              value={fromDept}
+              onChange={(e) => {
+                setFromDept(e.target.value);
+                setFromSubcat('');
+              }}
+              className="w-full p-2 border rounded"
+            >
+              {DEPARTMENTS.map(d => (
+                <option key={d.code} value={d.code}>{d.name}</option>
+              ))}
+            </select>
+            {getSubcategoriesForDept(fromDept).length > 0 && (
+              <div className="mt-2">
+                <label className="block text-xs font-medium mb-1">Subcategoria:</label>
+                <select
+                  value={fromSubcat}
+                  onChange={(e) => setFromSubcat(e.target.value)}
+                  className="w-full p-2 border rounded text-sm"
+                >
+                  <option value="">Todas</option>
+                  {getSubcategoriesForDept(fromDept).map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </select>
               </div>
             )}
           </div>
 
-          {/* Feature 2: Picking Mode */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h2 className="text-xl font-bold mb-4">📦 Modo Picking</h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-semibold mb-2">Selecione produtos para picking:</label>
+          <div>
+            <label className="block text-sm font-medium mb-2">Desejo ir para:</label>
+            <select
+              value={toDept}
+              onChange={(e) => {
+                setToDept(e.target.value);
+                setToSubcat('');
+              }}
+              className="w-full p-2 border rounded"
+            >
+              {DEPARTMENTS.map(d => (
+                <option key={d.code} value={d.code}>{d.name}</option>
+              ))}
+            </select>
+            {getSubcategoriesForDept(toDept).length > 0 && (
+              <div className="mt-2">
+                <label className="block text-xs font-medium mb-1">Subcategoria:</label>
                 <select
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      handleAddToPickingList(e.target.value);
-                      e.target.value = '';
-                    }
-                  }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  value={toSubcat}
+                  onChange={(e) => setToSubcat(e.target.value)}
+                  className="w-full p-2 border rounded text-sm"
                 >
-                  <option value="">Adicionar produto...</option>
-                  {(productsData as any[]).slice(0, 20).map((product: any, idx) => (
-                    <option key={idx} value={product.codigo}>
-                      {product?.produto || product?.codigo} ({product.categoria})
-                    </option>
+                  <option value="">Todas</option>
+                  {getSubcategoriesForDept(toDept).map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
                   ))}
                 </select>
               </div>
-
-              {selectedProducts.length > 0 && (
-                <div>
-                  <div className="text-sm font-semibold mb-2">Produtos selecionados ({selectedProducts.length}):</div>
-                  <div className="space-y-2">
-                    {selectedProducts.map((code) => {
-                      const product = (productsData as any[]).find((p: any) => p.codigo === code);
-                      return (
-                        <div key={code} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                          <span>{product?.produto || product?.codigo}</span>
-                          <button
-                            onClick={() => handleRemoveFromPickingList(code)}
-                            className="text-red-600 hover:text-red-800 text-sm"
-                          >
-                            Remover
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <button
-                    onClick={handleStartPickingRoute}
-                    className="w-full mt-3 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 font-semibold"
-                  >
-                    Iniciar Rota de Picking
-                  </button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
 
-          {/* Original navigation */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h2 className="text-xl font-bold mb-4">📍 Navegação Direta</h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-semibold mb-2">Você está em:</label>
-                <select
-                  value={fromDept}
-                  onChange={(e) => setFromDept(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  {DEPARTMENTS.map(dept => (
-                    <option key={dept.code} value={dept.code}>{dept.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2">Desejo ir para:</label>
-                <select
-                  value={toDept}
-                  onChange={(e) => setToDept(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  {DEPARTMENTS.map(dept => (
-                    <option key={dept.code} value={dept.code}>{dept.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
+          <div className="flex items-end">
             <button
               onClick={handleNavigate}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold"
+              className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
             >
               Iniciar Navegação
             </button>
-
-            {routeInfo && (
-              <div className="mt-4 p-3 bg-blue-50 rounded text-blue-800">
-                {routeInfo}
-              </div>
-            )}
-            {error && (
-              <div className="mt-4 p-3 bg-red-50 rounded text-red-800">
-                {error}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Canvas and gondola info */}
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-600 mb-2">Clique em um departamento para ver informações de gôndolas</p>
-            <canvas
-              ref={canvasRef}
-              onClick={handleCanvasClick}
-              className="w-full border border-gray-300 rounded cursor-pointer"
-              style={{ maxHeight: '400px', objectFit: 'contain' }}
-            />
-          </div>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="w-4 h-4" />
+          <span className="text-sm">Mostrar todas as rotas salvas (182)</span>
+        </label>
 
-          {/* Feature 3: Gondola Info */}
-          {selectedDeptInfo && (
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="text-lg font-bold mb-3">📊 Informações de Gôndolas</h3>
-              <div className="mb-3">
-                <div className="text-sm font-semibold text-gray-600">Departamento:</div>
-                <div className="font-bold">{selectedDeptInfo.name}</div>
-              </div>
-              <div className="mb-3">
-                <div className="text-sm font-semibold text-gray-600">Total de Produtos:</div>
-                <div className="font-bold">{selectedDeptInfo.productCount}</div>
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-gray-600 mb-2">Produtos disponíveis:</div>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {selectedDeptInfo.products.map((product: any, idx: number) => (
-                    <div key={idx} className="text-sm p-2 bg-gray-50 rounded">
-                      <div className="font-semibold">{product.produto}</div>
-                      <div className="text-xs text-gray-600">{product.subcategoria}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+        {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+        {routeInfo && <div className="mt-4 p-3 bg-blue-100 text-blue-700 rounded">{routeInfo}</div>}
+
+        <div className="mt-6 border rounded overflow-hidden">
+          <canvas ref={canvasRef} className="w-full" />
         </div>
       </div>
 
-      {/* Information section */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <div className="font-semibold text-green-800">✓ 14 departamentos disponíveis</div>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <div className="font-semibold text-green-800">✓ 251 gôndolas e expositores mapeados</div>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <div className="font-semibold text-green-800">✓ 182 rotas pré-calculadas e otimizadas</div>
-        </div>
+      <div className="bg-gray-50 rounded-lg p-6">
+        <h2 className="text-xl font-bold mb-4">Informações</h2>
+        <ul className="space-y-2 text-sm text-gray-700">
+          <li>✓ 14 departamentos disponíveis</li>
+          <li>✓ 251 gôndolas e expositores mapeados</li>
+          <li>✓ 182 rotas pré-calculadas e otimizadas</li>
+          <li>✓ Animação de bolinha mostrando o progresso da navegação</li>
+        </ul>
       </div>
     </div>
   );
