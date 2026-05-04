@@ -86,7 +86,7 @@ export default function SimulacaoCompleta() {
       if (!imageLoaded) return;
       
       const pathfinder = new AdvancedPathfinder();
-      const imageUrl = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/modified_floor_plan_ultimate_0f7086cb.png';
+      const imageUrl = '/floor-plan.png';
       
       const initialized = await pathfinder.initialize(imageUrl);
       if (initialized) {
@@ -133,8 +133,7 @@ export default function SimulacaoCompleta() {
   // Load the floor plan image
   useEffect(() => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = 'https://d2xsxph8kpxj0f.cloudfront.net/310419663028736640/BKAb3rDvcpYXRM4gHpdsfv/modified_floor_plan_ultimate_0f7086cb.png';
+    img.src = '/floor-plan.png';
     
     img.onload = () => {
       imageRef.current = img;
@@ -165,19 +164,29 @@ export default function SimulacaoCompleta() {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    canvas.width = imageRef.current?.width || 1024;
-    canvas.height = imageRef.current?.height || 768;
+    // Set canvas dimensions to match image
+    if (imageRef.current) {
+      canvas.width = imageRef.current.width;
+      canvas.height = imageRef.current.height;
+    } else {
+      canvas.width = 2048;
+      canvas.height = 1150;
+    }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    console.log('[Canvas] Drawing image. Canvas:', canvas.width, 'x', canvas.height, 'Image:', imageRef.current?.width, 'x', imageRef.current?.height);
+
     // Draw image if available
     if (imageRef.current) {
       ctx.drawImage(imageRef.current, 0, 0);
+      console.log('[Canvas] Image drawn');
     } else {
       // Draw white background if image not loaded
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      console.log('[Canvas] White background drawn');
     }
 
     // Draw all routes if enabled
@@ -254,7 +263,7 @@ export default function SimulacaoCompleta() {
       ctx.arc(animatedX, animatedY, 8, 0, Math.PI * 2);
       ctx.fill();
     }
-  }, [path, departments, allRoutes, showAllRoutes, isAnimating, animationProgress]);
+  }, [path, departments, allRoutes, showAllRoutes, isAnimating, animationProgress, imageLoaded]);
 
   const handleNavigate = async () => {
     if (!currentDept || !destinationDept) {
@@ -444,11 +453,10 @@ export default function SimulacaoCompleta() {
             </label>
           </div>
 
-          <div className="border-2 border-red-300 rounded-lg overflow-hidden bg-white">
+          <div className="border-2 border-red-300 rounded-lg overflow-hidden bg-white" style={{ maxHeight: '600px', overflow: 'auto' }}>
             <canvas
               ref={canvasRef}
-              className="w-full h-auto block"
-              style={{ maxHeight: '600px' }}
+              style={{ display: 'block' }}
             />
           </div>
 
