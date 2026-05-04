@@ -1,0 +1,1402 @@
+[
+  {
+    "codigo": "A1",
+    "gondola": 1,
+    "posicao": "Term 1",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Óleo de soja em promoção"
+  },
+  {
+    "codigo": "A2",
+    "gondola": 1,
+    "posicao": "A",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Molhos"
+  },
+  {
+    "codigo": "A3",
+    "gondola": 1,
+    "posicao": "B",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Massas: Espaguete e lasanha "
+  },
+  {
+    "codigo": "A4",
+    "gondola": 1,
+    "posicao": "C",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Massas: Espaguete e lasanha "
+  },
+  {
+    "codigo": "A5",
+    "gondola": 1,
+    "posicao": "D",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Maionese"
+  },
+  {
+    "codigo": "A6",
+    "gondola": 1,
+    "posicao": "E",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Conservas"
+  },
+  {
+    "codigo": "A7",
+    "gondola": 1,
+    "posicao": "F",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Azeites"
+  },
+  {
+    "codigo": "A8",
+    "gondola": 1,
+    "posicao": "Term 2",
+    "categoria": "Óleos Molhos e Azeites",
+    "subcategoria": "Molhos em promoção"
+  },
+  {
+    "codigo": "A9",
+    "gondola": 2,
+    "posicao": "Term 1",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Farinha de trigo - Promoção"
+  },
+  {
+    "codigo": "A10",
+    "gondola": 2,
+    "posicao": "A",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Farinha de trigo"
+  },
+  {
+    "codigo": "A11",
+    "gondola": 2,
+    "posicao": "B",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Farinha Milho / Rosca / Mandioca"
+  },
+  {
+    "codigo": "A12",
+    "gondola": 2,
+    "posicao": "C",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Temperos"
+  },
+  {
+    "codigo": "A13",
+    "gondola": 2,
+    "posicao": "D",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Arroz"
+  },
+  {
+    "codigo": "A14",
+    "gondola": 2,
+    "posicao": "E",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Cereais"
+  },
+  {
+    "codigo": "A15",
+    "gondola": 2,
+    "posicao": "F",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Feijão"
+  },
+  {
+    "codigo": "A16",
+    "gondola": 2,
+    "posicao": "Term 2",
+    "categoria": "Temperos Arroz e Farinhas",
+    "subcategoria": "Promoção Temperos"
+  },
+  {
+    "codigo": "A17",
+    "gondola": 3,
+    "posicao": "Term 1",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Promoção de Massas"
+  },
+  {
+    "codigo": "A18",
+    "gondola": 3,
+    "posicao": "A",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Espaguetes"
+  },
+  {
+    "codigo": "A19",
+    "gondola": 3,
+    "posicao": "B",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Lasanhas"
+  },
+  {
+    "codigo": "A20",
+    "gondola": 3,
+    "posicao": "C",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Outras massas"
+  },
+  {
+    "codigo": "A21",
+    "gondola": 3,
+    "posicao": "D",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Pratos prontos importados"
+  },
+  {
+    "codigo": "A22",
+    "gondola": 3,
+    "posicao": "E",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Azeitonas e conservas"
+  },
+  {
+    "codigo": "A23",
+    "gondola": 3,
+    "posicao": "F",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Molhos importados"
+  },
+  {
+    "codigo": "A24",
+    "gondola": 3,
+    "posicao": "Term 2",
+    "categoria": "Massas molhos e importados",
+    "subcategoria": "Promoção conservas importados"
+  },
+  {
+    "codigo": "A25",
+    "gondola": 4,
+    "posicao": "Term 1",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Sucos Promoção"
+  },
+  {
+    "codigo": "A26",
+    "gondola": 4,
+    "posicao": "A",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Sucos  "
+  },
+  {
+    "codigo": "A27",
+    "gondola": 4,
+    "posicao": "B",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Sucos  "
+  },
+  {
+    "codigo": "A28",
+    "gondola": 4,
+    "posicao": "C",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Sucos  "
+  },
+  {
+    "codigo": "A29",
+    "gondola": 4,
+    "posicao": "D",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Xaropes"
+  },
+  {
+    "codigo": "A30",
+    "gondola": 4,
+    "posicao": "E",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Refrescos"
+  },
+  {
+    "codigo": "A31",
+    "gondola": 4,
+    "posicao": "F",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Refrescos"
+  },
+  {
+    "codigo": "A32",
+    "gondola": 4,
+    "posicao": "Term 2",
+    "categoria": "Sucos e Refrescos",
+    "subcategoria": "Promoção Refrescos"
+  },
+  {
+    "codigo": "A33",
+    "gondola": 5,
+    "posicao": "Term 1",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Promoção Cafés"
+  },
+  {
+    "codigo": "A34",
+    "gondola": 5,
+    "posicao": "A",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Chás"
+  },
+  {
+    "codigo": "A35",
+    "gondola": 5,
+    "posicao": "B",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Cafes pacotes"
+  },
+  {
+    "codigo": "A36",
+    "gondola": 5,
+    "posicao": "C",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "cafés cápsulas"
+  },
+  {
+    "codigo": "A37",
+    "gondola": 5,
+    "posicao": "D",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Açucar"
+  },
+  {
+    "codigo": "A38",
+    "gondola": 5,
+    "posicao": "E",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Açucar"
+  },
+  {
+    "codigo": "A39",
+    "gondola": 5,
+    "posicao": "F",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Açucar"
+  },
+  {
+    "codigo": "A40",
+    "gondola": 5,
+    "posicao": "Term 2",
+    "categoria": "Açucares Cafés e Chás",
+    "subcategoria": "Promoção Açucar"
+  },
+  {
+    "codigo": "A41",
+    "gondola": "=B34+1",
+    "posicao": "Term 1",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Peomoção Biscoito"
+  },
+  {
+    "codigo": "A42",
+    "gondola": "=B35+1",
+    "posicao": "A",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Biscoito Salgados"
+  },
+  {
+    "codigo": "A43",
+    "gondola": "=B36+1",
+    "posicao": "B",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Biscoitos Doces"
+  },
+  {
+    "codigo": "A44",
+    "gondola": "=B37+1",
+    "posicao": "C",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Biscoitos Recheados"
+  },
+  {
+    "codigo": "A45",
+    "gondola": "=B38+1",
+    "posicao": "D",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Cereais Matinais"
+  },
+  {
+    "codigo": "A46",
+    "gondola": "=B39+1",
+    "posicao": "E",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Salgadinhos Mistos"
+  },
+  {
+    "codigo": "A47",
+    "gondola": "=B40+1",
+    "posicao": "F",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Salgadinhos Batatas"
+  },
+  {
+    "codigo": "A48",
+    "gondola": "=B41+1",
+    "posicao": "Term 2",
+    "categoria": "Biscoitos Bolachas e Cereais",
+    "subcategoria": "Promoção Batatas Fritas"
+  },
+  {
+    "codigo": "A49",
+    "gondola": "=B42+1",
+    "posicao": "Term 1",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Promoção Achocolatados"
+  },
+  {
+    "codigo": "A50",
+    "gondola": "=B43+1",
+    "posicao": "A",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Café com leite / capuccino"
+  },
+  {
+    "codigo": "A51",
+    "gondola": "=B44+1",
+    "posicao": "B",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Achocolatados"
+  },
+  {
+    "codigo": "A52",
+    "gondola": "=B45+1",
+    "posicao": "C",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Achocolatados"
+  },
+  {
+    "codigo": "A53",
+    "gondola": "=B46+1",
+    "posicao": "D",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Granolas"
+  },
+  {
+    "codigo": "A54",
+    "gondola": "=B47+1",
+    "posicao": "E",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Leite em pó"
+  },
+  {
+    "codigo": "A55",
+    "gondola": "=B48+1",
+    "posicao": "F",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Leite em pó"
+  },
+  {
+    "codigo": "A56",
+    "gondola": "=B49+1",
+    "posicao": "Term 2",
+    "categoria": "Achocolatados e Granolas",
+    "subcategoria": "Promoção leite em pó"
+  },
+  {
+    "codigo": "A57",
+    "gondola": "=B50+1",
+    "posicao": "Term 1",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Promoção Xampú ou shampoo"
+  },
+  {
+    "codigo": "A58",
+    "gondola": "=B51+1",
+    "posicao": "A",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Condicionador"
+  },
+  {
+    "codigo": "A59",
+    "gondola": "=B52+1",
+    "posicao": "B",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Xampu ou Shampoo"
+  },
+  {
+    "codigo": "A60",
+    "gondola": "=B53+1",
+    "posicao": "C",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Sabonetes barra "
+  },
+  {
+    "codigo": "A61",
+    "gondola": "=B54+1",
+    "posicao": "D",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Desodorantes"
+  },
+  {
+    "codigo": "A62",
+    "gondola": "=B55+1",
+    "posicao": "E",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Hidratantes"
+  },
+  {
+    "codigo": "A63",
+    "gondola": "=B56+1",
+    "posicao": "F",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Sabonetes  líquidos"
+  },
+  {
+    "codigo": "A64",
+    "gondola": "=B57+1",
+    "posicao": "Term 2",
+    "categoria": "Higiene Pessoal",
+    "subcategoria": "Promoção sabonete"
+  },
+  {
+    "codigo": "A65",
+    "gondola": "=B58+1",
+    "posicao": "Term 1",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Promoção detergentes"
+  },
+  {
+    "codigo": "A66",
+    "gondola": "=B59+1",
+    "posicao": "A",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Alvejantes"
+  },
+  {
+    "codigo": "A67",
+    "gondola": "=B60+1",
+    "posicao": "B",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Amaciantes"
+  },
+  {
+    "codigo": "A68",
+    "gondola": "=B61+1",
+    "posicao": "C",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Sabão em pó"
+  },
+  {
+    "codigo": "A69",
+    "gondola": "=B62+1",
+    "posicao": "D",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Lustra Móveis e |Removedores"
+  },
+  {
+    "codigo": "A70",
+    "gondola": "=B63+1",
+    "posicao": "E",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Multiuso"
+  },
+  {
+    "codigo": "A71",
+    "gondola": "=B64+1",
+    "posicao": "F",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Detergentes"
+  },
+  {
+    "codigo": "A72",
+    "gondola": "=B65+1",
+    "posicao": "Term 2",
+    "categoria": "Detergentes e Desinfetantes",
+    "subcategoria": "Promoção desifetantes"
+  },
+  {
+    "codigo": "A73",
+    "gondola": "=B66+1",
+    "posicao": "Term 1",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Promoção Papel Higiênico"
+  },
+  {
+    "codigo": "A74",
+    "gondola": "=B67+1",
+    "posicao": "A",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Lenços Umidecidos"
+  },
+  {
+    "codigo": "A75",
+    "gondola": "=B68+1",
+    "posicao": "B",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Papel Higiênico"
+  },
+  {
+    "codigo": "A76",
+    "gondola": "=B69+1",
+    "posicao": "C",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Papel Higiênico"
+  },
+  {
+    "codigo": "A77",
+    "gondola": "=B70+1",
+    "posicao": "D",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Hidratantes"
+  },
+  {
+    "codigo": "A78",
+    "gondola": "=B71+1",
+    "posicao": "E",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Fraldas"
+  },
+  {
+    "codigo": "A79",
+    "gondola": "=B72+1",
+    "posicao": "F",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Fraldas"
+  },
+  {
+    "codigo": "A80",
+    "gondola": "=B73+1",
+    "posicao": "Term 2",
+    "categoria": "Higiene Geral",
+    "subcategoria": "Promoção Fraldas"
+  },
+  {
+    "codigo": "A81",
+    "gondola": "=B74+1",
+    "posicao": "Term 1",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": "Promoção Limpeza"
+  },
+  {
+    "codigo": "A82",
+    "gondola": "=B75+1",
+    "posicao": "A",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": "Limpeza Pesada"
+  },
+  {
+    "codigo": "A83",
+    "gondola": "=B76+1",
+    "posicao": "B",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": "Inseticidas"
+  },
+  {
+    "codigo": "A84",
+    "gondola": "=B77+1",
+    "posicao": "C",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": "Ceras para pisos"
+  },
+  {
+    "codigo": "A85",
+    "gondola": "=B78+1",
+    "posicao": "D",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A86",
+    "gondola": "=B79+1",
+    "posicao": "E",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A87",
+    "gondola": "=B80+1",
+    "posicao": "F",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A88",
+    "gondola": "=B81+1",
+    "posicao": "Term 2",
+    "categoria": "Materiais de Limpeza",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A89",
+    "gondola": "=B82+1",
+    "posicao": "Term 1",
+    "categoria": "Limpadores",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A90",
+    "gondola": "=B83+1",
+    "posicao": "A",
+    "categoria": "Limpadores",
+    "subcategoria": "Sacos de Lixo"
+  },
+  {
+    "codigo": "A91",
+    "gondola": "=B84+1",
+    "posicao": "B",
+    "categoria": "Limpadores",
+    "subcategoria": "Panos de Limpeza"
+  },
+  {
+    "codigo": "A92",
+    "gondola": "=B85+1",
+    "posicao": "C",
+    "categoria": "Limpadores",
+    "subcategoria": "Panos de Limpeza"
+  },
+  {
+    "codigo": "A93",
+    "gondola": "=B86+1",
+    "posicao": "D",
+    "categoria": "Limpadores",
+    "subcategoria": "Desengordurantes"
+  },
+  {
+    "codigo": "A94",
+    "gondola": "=B87+1",
+    "posicao": "E",
+    "categoria": "Limpadores",
+    "subcategoria": "Papel Toallha "
+  },
+  {
+    "codigo": "A95",
+    "gondola": "=B88+1",
+    "posicao": "F",
+    "categoria": "Limpadores",
+    "subcategoria": "Papel Toallha "
+  },
+  {
+    "codigo": "A96",
+    "gondola": "=B89+1",
+    "posicao": "Term 2",
+    "categoria": "Limpadores",
+    "subcategoria": "Esponjas"
+  },
+  {
+    "codigo": "A97",
+    "gondola": "=B90+1",
+    "posicao": "Term 1",
+    "categoria": "Utilidades",
+    "subcategoria": "Promoção jogo de jantar"
+  },
+  {
+    "codigo": "A98",
+    "gondola": "=B91+1",
+    "posicao": "A",
+    "categoria": "Utilidades",
+    "subcategoria": "Pratos"
+  },
+  {
+    "codigo": "A99",
+    "gondola": "=B92+1",
+    "posicao": "B",
+    "categoria": "Utilidades",
+    "subcategoria": "talheres"
+  },
+  {
+    "codigo": "A100",
+    "gondola": "=B93+1",
+    "posicao": "C",
+    "categoria": "Utilidades",
+    "subcategoria": "copos"
+  },
+  {
+    "codigo": "A101",
+    "gondola": "=B94+1",
+    "posicao": "D",
+    "categoria": "Utilidades",
+    "subcategoria": "taças"
+  },
+  {
+    "codigo": "A102",
+    "gondola": "=B95+1",
+    "posicao": "E",
+    "categoria": "Utilidades",
+    "subcategoria": "Panelas"
+  },
+  {
+    "codigo": "A103",
+    "gondola": "=B96+1",
+    "posicao": "F",
+    "categoria": "Utilidades",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A104",
+    "gondola": "=B97+1",
+    "posicao": "Term 2",
+    "categoria": "Utilidades",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A105",
+    "gondola": "=B98+1",
+    "posicao": "Term 1",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Promoção acessórios"
+  },
+  {
+    "codigo": "A106",
+    "gondola": "=B99+1",
+    "posicao": "A",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Velas Aromáticas"
+  },
+  {
+    "codigo": "A107",
+    "gondola": "=B100+1",
+    "posicao": "B",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Quadros"
+  },
+  {
+    "codigo": "A108",
+    "gondola": "=B101+1",
+    "posicao": "C",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Vasos"
+  },
+  {
+    "codigo": "A109",
+    "gondola": "=B102+1",
+    "posicao": "D",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Estátuas"
+  },
+  {
+    "codigo": "A110",
+    "gondola": "=B103+1",
+    "posicao": "E",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Centros de mesa"
+  },
+  {
+    "codigo": "A111",
+    "gondola": "=B104+1",
+    "posicao": "F",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Potes"
+  },
+  {
+    "codigo": "A112",
+    "gondola": "=B105+1",
+    "posicao": "Term 2",
+    "categoria": "Acessórios de Decoração",
+    "subcategoria": "Promoção Vasos"
+  },
+  {
+    "codigo": "A113",
+    "gondola": "=B106+1",
+    "posicao": "Term 1",
+    "categoria": " Talheres",
+    "subcategoria": "Promoção Talheres"
+  },
+  {
+    "codigo": "A114",
+    "gondola": "=B107+1",
+    "posicao": "A",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutos de talheres"
+  },
+  {
+    "codigo": "A115",
+    "gondola": "=B108+1",
+    "posicao": "B",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutos de talheres"
+  },
+  {
+    "codigo": "A116",
+    "gondola": "=B109+1",
+    "posicao": "C",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutos de talheres"
+  },
+  {
+    "codigo": "A117",
+    "gondola": "=B110+1",
+    "posicao": "D",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutnos itens culinários"
+  },
+  {
+    "codigo": "A118",
+    "gondola": "=B111+1",
+    "posicao": "E",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutnos itens culinários"
+  },
+  {
+    "codigo": "A119",
+    "gondola": "=B112+1",
+    "posicao": "F",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutnos itens culinários"
+  },
+  {
+    "codigo": "A120",
+    "gondola": "=B113+1",
+    "posicao": "Term 2",
+    "categoria": " Talheres",
+    "subcategoria": "Conjutnos itens culinários"
+  },
+  {
+    "codigo": "A121",
+    "gondola": "=B114+1",
+    "posicao": "Term 1",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Promoção Rações"
+  },
+  {
+    "codigo": "A122",
+    "gondola": "=B115+1",
+    "posicao": "A",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações cães filhotes"
+  },
+  {
+    "codigo": "A123",
+    "gondola": "=B116+1",
+    "posicao": "B",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações Cães Pequenos"
+  },
+  {
+    "codigo": "A124",
+    "gondola": "=B117+1",
+    "posicao": "C",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações Cães Grandes"
+  },
+  {
+    "codigo": "A125",
+    "gondola": "=B118+1",
+    "posicao": "D",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações Gatos filhotes"
+  },
+  {
+    "codigo": "A126",
+    "gondola": "=B119+1",
+    "posicao": "E",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações Gatos pequenos"
+  },
+  {
+    "codigo": "A127",
+    "gondola": "=B120+1",
+    "posicao": "F",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Rações Gatos Grandes"
+  },
+  {
+    "codigo": "A128",
+    "gondola": "=B121+1",
+    "posicao": "Term 2",
+    "categoria": "Pet - Rações e Acessórios Pet",
+    "subcategoria": "Promoção acessórios Pet"
+  },
+  {
+    "codigo": "A129",
+    "gondola": "=B122+1",
+    "posicao": "Term 1",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Promoção Bebidas alcoólicas"
+  },
+  {
+    "codigo": "A130",
+    "gondola": "=B123+1",
+    "posicao": "A",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Uísque"
+  },
+  {
+    "codigo": "A131",
+    "gondola": "=B124+1",
+    "posicao": "B",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Gin"
+  },
+  {
+    "codigo": "A132",
+    "gondola": "=B125+1",
+    "posicao": "C",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Aguardante"
+  },
+  {
+    "codigo": "A133",
+    "gondola": "=B126+1",
+    "posicao": "D",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Aguardante"
+  },
+  {
+    "codigo": "A134",
+    "gondola": "=B127+1",
+    "posicao": "E",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Aguardante"
+  },
+  {
+    "codigo": "A135",
+    "gondola": "=B128+1",
+    "posicao": "F",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Conhaque"
+  },
+  {
+    "codigo": "A136",
+    "gondola": "=B129+1",
+    "posicao": "Term 2",
+    "categoria": "Bebidas Alcoólicas",
+    "subcategoria": "Promoção Aguardente"
+  },
+  {
+    "codigo": "A137",
+    "gondola": "=B130+1",
+    "posicao": "Term 1",
+    "categoria": "Refrigeranes Gelados",
+    "subcategoria": "Refrigeranes Gelados"
+  },
+  {
+    "codigo": "A145",
+    "gondola": "=B138+1",
+    "posicao": "Term 1",
+    "categoria": "Geladeira Promocional",
+    "subcategoria": "Danone"
+  },
+  {
+    "codigo": "A153",
+    "gondola": "=B146+1",
+    "posicao": "Term 1",
+    "categoria": "Ilha Peromocional",
+    "subcategoria": "Leite em Pó Glória lata"
+  },
+  {
+    "codigo": "A161",
+    "gondola": "=B154+1",
+    "posicao": "Term 1",
+    "categoria": "Ilha Peromocional",
+    "subcategoria": "Leite em Pó Ninho"
+  },
+  {
+    "codigo": "A169",
+    "gondola": "=B162+1",
+    "posicao": "Term 1",
+    "categoria": "Ilha Peromocional",
+    "subcategoria": "Freezer Aurora"
+  },
+  {
+    "codigo": "A177",
+    "gondola": "=B170+1",
+    "posicao": "Term 1",
+    "categoria": "Caixa de pagamento",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A185",
+    "gondola": "=B178+1",
+    "posicao": "Term 1",
+    "categoria": "Caixa de pagamento",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A193",
+    "gondola": "=B186+1",
+    "posicao": "Term 1",
+    "categoria": "Caixa de pagamento",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A201",
+    "gondola": "=B194+1",
+    "posicao": "Term 1",
+    "categoria": "Açougue",
+    "subcategoria": "Promoção Açougue"
+  },
+  {
+    "codigo": "A202",
+    "gondola": "=B195+1",
+    "posicao": "A",
+    "categoria": "Açougue",
+    "subcategoria": "Bovinos - Bifes"
+  },
+  {
+    "codigo": "A203",
+    "gondola": "=B196+1",
+    "posicao": "B",
+    "categoria": "Açougue",
+    "subcategoria": "Bovinos - Carne moida"
+  },
+  {
+    "codigo": "A204",
+    "gondola": "=B197+1",
+    "posicao": "C",
+    "categoria": "Açougue",
+    "subcategoria": "Bovinos - Outras carnes"
+  },
+  {
+    "codigo": "A205",
+    "gondola": "=B198+1",
+    "posicao": "D",
+    "categoria": "Açougue",
+    "subcategoria": "Bovinos - Outras carnes"
+  },
+  {
+    "codigo": "A206",
+    "gondola": "=B199+1",
+    "posicao": "E",
+    "categoria": "Açougue",
+    "subcategoria": "Carne de Porco"
+  },
+  {
+    "codigo": "A207",
+    "gondola": "=B200+1",
+    "posicao": "F",
+    "categoria": "Açougue",
+    "subcategoria": "Frangos"
+  },
+  {
+    "codigo": "A208",
+    "gondola": "=B201+1",
+    "posicao": "Term 2",
+    "categoria": "Açougue",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A209",
+    "gondola": "=B202+1",
+    "posicao": "Term 1",
+    "categoria": "Hortifruti",
+    "subcategoria": "Legumes"
+  },
+  {
+    "codigo": "A210",
+    "gondola": "=B203+1",
+    "posicao": "A",
+    "categoria": "Hortifruti",
+    "subcategoria": "Legumes"
+  },
+  {
+    "codigo": "A211",
+    "gondola": "=B204+1",
+    "posicao": "B",
+    "categoria": "Hortifruti",
+    "subcategoria": "Legumes"
+  },
+  {
+    "codigo": "A212",
+    "gondola": "=B205+1",
+    "posicao": "C",
+    "categoria": "Hortifruti",
+    "subcategoria": "Legumes"
+  },
+  {
+    "codigo": "A213",
+    "gondola": "=B206+1",
+    "posicao": "D",
+    "categoria": "Hortifruti",
+    "subcategoria": "Verduras"
+  },
+  {
+    "codigo": "A214",
+    "gondola": "=B207+1",
+    "posicao": "E",
+    "categoria": "Hortifruti",
+    "subcategoria": "Verduras"
+  },
+  {
+    "codigo": "A215",
+    "gondola": "=B208+1",
+    "posicao": "F",
+    "categoria": "Hortifruti",
+    "subcategoria": "Frutas"
+  },
+  {
+    "codigo": "A216",
+    "gondola": "=B209+1",
+    "posicao": "Term 2",
+    "categoria": "Hortifruti",
+    "subcategoria": "Frutas"
+  },
+  {
+    "codigo": "A217",
+    "gondola": "=B210+1",
+    "posicao": "Term 1",
+    "categoria": "Padaria",
+    "subcategoria": "Pão Frqncês"
+  },
+  {
+    "codigo": "A218",
+    "gondola": "=B211+1",
+    "posicao": "A",
+    "categoria": "Padaria",
+    "subcategoria": "Pão Frqncês"
+  },
+  {
+    "codigo": "A219",
+    "gondola": "=B212+1",
+    "posicao": "B",
+    "categoria": "Padaria",
+    "subcategoria": "Pão Frqncês"
+  },
+  {
+    "codigo": "A220",
+    "gondola": "=B213+1",
+    "posicao": "C",
+    "categoria": "Padaria",
+    "subcategoria": "Pães especiais"
+  },
+  {
+    "codigo": "A221",
+    "gondola": "=B214+1",
+    "posicao": "D",
+    "categoria": "Padaria",
+    "subcategoria": "Bolos"
+  },
+  {
+    "codigo": "A222",
+    "gondola": "=B215+1",
+    "posicao": "E",
+    "categoria": "Padaria",
+    "subcategoria": "Bolos "
+  },
+  {
+    "codigo": "A223",
+    "gondola": "=B216+1",
+    "posicao": "F",
+    "categoria": "Padaria",
+    "subcategoria": "Doces"
+  },
+  {
+    "codigo": "A224",
+    "gondola": "=B217+1",
+    "posicao": "Term 2",
+    "categoria": "Padaria",
+    "subcategoria": "Promoção doces"
+  },
+  {
+    "codigo": "A225",
+    "gondola": "=B218+1",
+    "posicao": "Term 1",
+    "categoria": "Frezer Vertical",
+    "subcategoria": "Comidas congeladas"
+  },
+  {
+    "codigo": "A233",
+    "gondola": "=B226+1",
+    "posicao": "Term 1",
+    "categoria": "Frezer Vertical",
+    "subcategoria": "Sorvetes"
+  },
+  {
+    "codigo": "A241",
+    "gondola": "=B234+1",
+    "posicao": "Term 1",
+    "categoria": "Caarnes e fritas congeladas",
+    "subcategoria": "Promoção de carnes"
+  },
+  {
+    "codigo": "A249",
+    "gondola": "=B242+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Frutas",
+    "subcategoria": "Frutas"
+  },
+  {
+    "codigo": "A257",
+    "gondola": "=B250+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Legumes",
+    "subcategoria": "Legumes e verduras"
+  },
+  {
+    "codigo": "A265",
+    "gondola": "=B258+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Manteigas e Margarinas",
+    "subcategoria": "Manteigas e Margarinas"
+  },
+  {
+    "codigo": "A273",
+    "gondola": "=B266+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Pães",
+    "subcategoria": "Pães finos"
+  },
+  {
+    "codigo": "A281",
+    "gondola": "=B274+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Bolos",
+    "subcategoria": "Bolos finos "
+  },
+  {
+    "codigo": "A289",
+    "gondola": "=B282+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Produtos ",
+    "subcategoria": "Massas de Fabricação própria"
+  },
+  {
+    "codigo": "A297",
+    "gondola": "=B290+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de pães doces",
+    "subcategoria": "Pâes doces"
+  },
+  {
+    "codigo": "A305",
+    "gondola": "=B298+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de pães recheados",
+    "subcategoria": "Pães recheados"
+  },
+  {
+    "codigo": "A313",
+    "gondola": "=B306+1",
+    "posicao": "Term 1",
+    "categoria": "Expositpr de biscoitos",
+    "subcategoria": "Biscoitos Marca Própria"
+  },
+  {
+    "codigo": "A321",
+    "gondola": "=B314+1",
+    "posicao": "Term 1",
+    "categoria": "Geladeeira de Exposição 1",
+    "subcategoria": "Laticínios e bebidas lacteas"
+  },
+  {
+    "codigo": "A329",
+    "gondola": "=B322+1",
+    "posicao": "Term 1",
+    "categoria": "Refrigerantes e Xaropes",
+    "subcategoria": "Refrigerantes Diets"
+  },
+  {
+    "codigo": "A337",
+    "gondola": "=B330+1",
+    "posicao": "Term 1",
+    "categoria": "Cereais",
+    "subcategoria": "Milho a granel"
+  },
+  {
+    "codigo": "A345",
+    "gondola": "=B338+1",
+    "posicao": "Term 1",
+    "categoria": "Produtos Infantis",
+    "subcategoria": "Xampu Infantil"
+  },
+  {
+    "codigo": "A353",
+    "gondola": "=B346+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de Higiene",
+    "subcategoria": "Lenços Umidecidos"
+  },
+  {
+    "codigo": "A361",
+    "gondola": "=B354+1",
+    "posicao": "Term 1",
+    "categoria": "Expositor de limpeza",
+    "subcategoria": "Limpa limo"
+  },
+  {
+    "codigo": "A369",
+    "gondola": "=B362+1",
+    "posicao": "Term 1",
+    "categoria": "Utilidades",
+    "subcategoria": "Expositor de utilidades"
+  },
+  {
+    "codigo": "A377",
+    "gondola": "=B370+1",
+    "posicao": "Term 1",
+    "categoria": "Biscoitos finos",
+    "subcategoria": "Expositor de bicoitos"
+  },
+  {
+    "codigo": "A385",
+    "gondola": "=B378+1",
+    "posicao": "Term 1",
+    "categoria": "Massas",
+    "subcategoria": "Expositor de massas"
+  },
+  {
+    "codigo": "A393",
+    "gondola": "=B386+1",
+    "posicao": "Term 1",
+    "categoria": "Laticionios Especiais",
+    "subcategoria": "Expositor Zero Lactose"
+  },
+  {
+    "codigo": "A401",
+    "gondola": "=B394+1",
+    "posicao": "Term 1",
+    "categoria": "Biscoito s Light e Diet",
+    "subcategoria": "Expositor Diets"
+  },
+  {
+    "codigo": "A417",
+    "gondola": "=B410+1",
+    "posicao": "Term 1",
+    "categoria": "Massas Especiais",
+    "subcategoria": "Massas diets"
+  },
+  {
+    "codigo": "A425",
+    "gondola": "=B418+1",
+    "posicao": "Term 1",
+    "categoria": "Molhos especiais",
+    "subcategoria": "Molhos Light"
+  },
+  {
+    "codigo": "A433",
+    "gondola": "=B426+1",
+    "posicao": "Term 1",
+    "categoria": "Frutas Desidratadas",
+    "subcategoria": "Frutas em passa"
+  },
+  {
+    "codigo": "A441",
+    "gondola": "=B434+1",
+    "posicao": "Term 1",
+    "categoria": "Orgânicos",
+    "subcategoria": "Azeites orgânicos"
+  },
+  {
+    "codigo": "A449",
+    "gondola": "=B442+1",
+    "posicao": "Term 1",
+    "categoria": "Vinhos Tinto",
+    "subcategoria": "Vinho Tinto"
+  },
+  {
+    "codigo": "A457",
+    "gondola": "=B450+1",
+    "posicao": "Term 1",
+    "categoria": "Vinho Branco",
+    "subcategoria": "Vinho Branco"
+  },
+  {
+    "codigo": "A465",
+    "gondola": "=B458+1",
+    "posicao": "Term 1",
+    "categoria": "Vinho Espumante",
+    "subcategoria": "Espumantes"
+  },
+  {
+    "codigo": "A473",
+    "gondola": "=B466+1",
+    "posicao": "Term 1",
+    "categoria": "Banheiro Masculino",
+    "subcategoria": ""
+  },
+  {
+    "codigo": "A481",
+    "gondola": "=B474+1",
+    "posicao": "Term 1",
+    "categoria": "Banheiro Feminino",
+    "subcategoria": ""
+  }
+]
