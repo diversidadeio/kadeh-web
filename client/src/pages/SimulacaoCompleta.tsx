@@ -3,21 +3,40 @@ import routesData from '../routes_with_corridors.json';
 import productsData from '../products_data.json';
 
 // Department definitions with coordinates from the real map (2048x1150)
+// Organized by area for clarity
 const DEPARTMENTS = [
-  { code: 'A', name: 'Açougue', color: '#ff0000', x: 270, y: 45 },
-  { code: 'H', name: 'Hortifruti', color: '#0066ff', x: 830, y: 45 },
-  { code: 'P', name: 'Padaria', color: '#ff9900', x: 1400, y: 45 },
-  { code: 'L', name: 'Laticionios Especiais', color: '#ffff00', x: 140, y: 230 },
-  { code: 'R', name: 'Refrigerantes e Xaropes', color: '#00cc00', x: 460, y: 230 },
-  { code: 'C', name: 'Cereais', color: '#00cccc', x: 700, y: 230 },
-  { code: 'I', name: 'Produtos Infantis', color: '#0099ff', x: 900, y: 230 },
-  { code: 'G', name: 'Higiene Pessoal', color: '#ff00ff', x: 820, y: 480 },
-  { code: 'K', name: 'Materiais de Limpeza', color: '#ff0099', x: 1100, y: 480 },
-  { code: 'U', name: 'Utilidades', color: '#99ff00', x: 1340, y: 480 },
-  { code: 'O', name: 'Orgânicos', color: '#ff6600', x: 710, y: 730 },
-  { code: 'F', name: 'Caarnes e fritas congeladas', color: '#6600ff', x: 350, y: 730 },
-  { code: 'T', name: 'Talheres', color: '#ff0066', x: 1050, y: 690 },
-  { code: 'B', name: 'Bebidas Alcoólicas', color: '#8b4513', x: 1340, y: 690 },
+  // TOP ROW (banners)
+  { code: 'A', name: 'Açougue', color: '#cc0000', x: 275, y: 35 },
+  { code: 'H', name: 'Hortifruti', color: '#0066cc', x: 835, y: 35 },
+  { code: 'P', name: 'Padaria', color: '#e67300', x: 1305, y: 35 },
+  
+  // CATEGORY LABELS ROW
+  { code: 'L', name: 'Laticínios e Bebidas Geladas Lácteas', color: '#ccaa00', x: 140, y: 195 },
+  { code: 'R', name: 'Refrigerantes', color: '#009933', x: 400, y: 195 },
+  { code: 'C', name: 'Cereais', color: '#00aaaa', x: 700, y: 195 },
+  { code: 'I', name: 'Infantis', color: '#0077cc', x: 885, y: 195 },
+  { code: 'HG', name: 'Higiene', color: '#cc6699', x: 1030, y: 195 },
+  { code: 'LP', name: 'Limpeza', color: '#cc3366', x: 1170, y: 195 },
+  { code: 'U', name: 'Utilidades', color: '#666666', x: 1320, y: 195 },
+  
+  // BOTTOM SECTIONS
+  { code: 'O', name: 'Orgânicos & Naturais', color: '#339933', x: 710, y: 650 },
+  { code: 'OB', name: 'Biscoitos Diet e Light', color: '#ff8800', x: 560, y: 650 },
+  { code: 'OM', name: 'Massas Diet e Light', color: '#ff6600', x: 660, y: 650 },
+  { code: 'OZ', name: 'Zero Lactose', color: '#00cc99', x: 850, y: 650 },
+  { code: 'T', name: 'Talheres', color: '#333333', x: 1030, y: 650 },
+  { code: 'PT', name: 'Pet', color: '#996633', x: 1165, y: 650 },
+  { code: 'B', name: 'Bebidas Alcoólicas', color: '#660033', x: 1350, y: 650 },
+  
+  // FREEZERS
+  { code: 'F', name: 'Freezers (Danone, Glória, Itambé)', color: '#3399cc', x: 150, y: 650 },
+  
+  // CHECKOUT
+  { code: 'CX', name: 'Caixas', color: '#ffcc00', x: 170, y: 870 },
+  
+  // BANHEIROS
+  { code: 'BM', name: 'Banheiro Masculino', color: '#336699', x: 1370, y: 870 },
+  { code: 'BF', name: 'Banheiro Feminino', color: '#993366', x: 1440, y: 870 },
 ];
 
 // Extract unique subcategories from products data
@@ -45,7 +64,6 @@ const SUBCATEGORIES_BY_DEPT = getSubcategoriesByDepartment();
 
 // Get route from pre-calculated data
 const getPreCalculatedRoute = (fromCode: string, toCode: string): [number, number][] | null => {
-  const routeKey = `${fromCode}-${toCode}`;
   const route = (routesData as any).routes?.find((r: any) => r.from_code === fromCode && r.to_code === toCode);
   return route ? route.waypoints : null;
 };
@@ -91,11 +109,16 @@ export default function SimulacaoCompleta() {
       DEPARTMENTS.forEach(dept => {
         ctx.fillStyle = dept.color;
         ctx.beginPath();
-        ctx.arc(dept.x, dept.y, 30, 0, Math.PI * 2);
+        ctx.arc(dept.x, dept.y, 25, 0, Math.PI * 2);
         ctx.fill();
+        
+        // White border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px Arial';
+        ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(dept.code, dept.x, dept.y);
@@ -135,11 +158,15 @@ export default function SimulacaoCompleta() {
       DEPARTMENTS.forEach(dept => {
         ctx.fillStyle = dept.color;
         ctx.beginPath();
-        ctx.arc(dept.x, dept.y, 30, 0, Math.PI * 2);
+        ctx.arc(dept.x, dept.y, 25, 0, Math.PI * 2);
         ctx.fill();
+        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 16px Arial';
+        ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(dept.code, dept.x, dept.y);
@@ -147,7 +174,8 @@ export default function SimulacaoCompleta() {
 
       // Draw path
       ctx.strokeStyle = '#0066ff';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 4;
+      ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(path[0][0], path[0][1]);
       for (let i = 1; i < path.length; i++) {
@@ -155,16 +183,23 @@ export default function SimulacaoCompleta() {
       }
       ctx.stroke();
 
-      // Draw start and end points
-      ctx.fillStyle = '#00ff00';
+      // Draw start point (green)
+      ctx.fillStyle = '#00cc00';
       ctx.beginPath();
-      ctx.arc(path[0][0], path[0][1], 10, 0, Math.PI * 2);
+      ctx.arc(path[0][0], path[0][1], 12, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
 
+      // Draw end point (red)
       ctx.fillStyle = '#ff0000';
       ctx.beginPath();
-      ctx.arc(path[path.length - 1][0], path[path.length - 1][1], 10, 0, Math.PI * 2);
+      ctx.arc(path[path.length - 1][0], path[path.length - 1][1], 12, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
 
       // Calculate ball position along the path
       let distanceCovered = totalDistance * progress;
@@ -188,15 +223,15 @@ export default function SimulacaoCompleta() {
       // Draw animated ball
       ctx.fillStyle = '#ffff00';
       ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(ballX, ballY, 12, 0, Math.PI * 2);
+      ctx.arc(ballX, ballY, 14, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
       // Draw progress percentage
       ctx.fillStyle = '#000000';
-      ctx.font = 'bold 14px Arial';
+      ctx.font = 'bold 12px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(`${Math.round(progress * 100)}%`, ballX, ballY);
@@ -253,10 +288,12 @@ export default function SimulacaoCompleta() {
     return SUBCATEGORIES_BY_DEPT[deptObj.name] || [];
   };
 
+  const totalRoutes = (routesData as any).successful_routes || 420;
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">Simulação de Navegação Completa</h1>
-      <p className="text-gray-600 mb-6">Rotas inteligentes que respeitam todos os 14 departamentos e evitam 251 gôndolas e expositores</p>
+      <p className="text-gray-600 mb-6">Rotas inteligentes que respeitam todos os {DEPARTMENTS.length} departamentos e seguem apenas os corredores de trânsito</p>
 
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -334,7 +371,7 @@ export default function SimulacaoCompleta() {
 
         <label className="flex items-center gap-2">
           <input type="checkbox" className="w-4 h-4" />
-          <span className="text-sm">Mostrar todas as rotas salvas (182)</span>
+          <span className="text-sm">Mostrar todas as rotas salvas ({totalRoutes})</span>
         </label>
 
         {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
@@ -348,10 +385,12 @@ export default function SimulacaoCompleta() {
       <div className="bg-gray-50 rounded-lg p-6">
         <h2 className="text-xl font-bold mb-4">Informações</h2>
         <ul className="space-y-2 text-sm text-gray-700">
-          <li>✓ 14 departamentos disponíveis</li>
-          <li>✓ 251 gôndolas e expositores mapeados</li>
-          <li>✓ 182 rotas pré-calculadas e otimizadas</li>
+          <li>✓ {DEPARTMENTS.length} departamentos e destinos disponíveis</li>
+          <li>✓ {totalRoutes} rotas pré-calculadas e otimizadas</li>
+          <li>✓ Rotas seguem APENAS corredores de trânsito (nunca passam por gôndolas)</li>
           <li>✓ Animação de bolinha mostrando o progresso da navegação</li>
+          <li>✓ Inclui Orgânicos (Biscoitos Diet, Massas, Zero Lactose)</li>
+          <li>✓ Inclui Caixas, Banheiro Masculino e Banheiro Feminino</li>
         </ul>
       </div>
     </div>

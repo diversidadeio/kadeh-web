@@ -969,3 +969,19 @@
 - [x] Corrigir pathfinding da rota para não passar por cima de gôndolas
 - [x] Recalcular 182 rotas com algoritmo Dijkstra usando corredores válidos
 - [x] Atualizar coordenadas dos departamentos para nova planta (2048x1150)
+
+## Simulação - Melhorias de Marcadores, Subcategorias e Novos Destinos
+- [ ] Ajustar posição dos marcadores de departamento na nova planta
+- [ ] Adicionar subcategorias de Orgânicos e Naturais (Biscoitos Diet, Massas, Zero Lactose)
+- [ ] Incluir Caixas como destino navegável
+- [ ] Incluir Banheiros (Masculino e Feminino) como destinos navegáveis
+- [ ] Regenerar rotas com novos destinos incluídos
+- [ ] Testar todas as rotas e marcadores na simulação
+
+## CORREÇÃO CRÍTICA: Rotas passando por cima de gôndolas
+- [x] Corrigir algoritmo de pathfinding - rotas cortando diagonalmente por gôndolas
+- [x] Rota Padaria->Talheres passa por gôndola 9 (Detergentes) e Infantis
+- [x] Garantir que TODAS as rotas sigam APENAS corredores claros (áreas de trânsito)
+- [x] Reduzir MAX_EDGE_DIST e aumentar resolução de verificação de obstáculos
+- [x] Expandir bounding boxes das gôndolas para cobrir toda a área real
+- [x] Testar rotas P->T, A->B e outras rotas diagonais
