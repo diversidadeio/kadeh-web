@@ -1035,3 +1035,17 @@
 - [x] Testadas 3 rotas-chave: 30→61 (2347px), 26→23 (928px), 32→9 (1886px)
 - [x] Confirmado: todas as rotas seguem APENAS corredores, 0 cruzamentos de gôndolas
 - [x] Problema RESOLVIDO DEFINITIVAMENTE
+
+
+## NOVA FUNCIONALIDADE: Mapeador Interativo de Corredores
+- [x] Criar componente CorridorMapper com canvas interativo
+- [x] Implementar clique para criar nós de corredor
+- [x] Implementar arrastar para mover nós
+- [x] Implementar conectar nós e criar arestas com distância
+- [x] Adicionar UI para atribuir localizações aos nós
+- [x] Implementar visualização de rotas em tempo real com distâncias
+- [x] Implementar export de grafo para JSON
+- [ ] Integrar com SimulacaoCompleta para usar grafo customizado
+- [ ] Adicionar link no menu principal para acessar mapeador
+- [ ] Testar mapeador com todas as 61 localizações
+- [ ] Verificar que rotas geradas não cruzam gôndolas
