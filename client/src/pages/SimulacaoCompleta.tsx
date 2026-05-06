@@ -19,7 +19,7 @@ const LOCATIONS: {
 }[] = [
   // Main Gondolas (1-14)
   { id: 1, name: 'Óleos, Molhos e Conservas', category: 'Óleos Molhos e Azeites', subcategories: ['Óleo de soja em promoção', 'Molhos', 'Massas: Espaguete e lasanha', 'Maionese', 'Conservas', 'Azeites', 'Molhos em promoção'], color: '#cc6600', x: 20, y: 500 },
-  { id: 2, name: 'Temperos, Arroz e Farinhas', category: 'Temperos Arroz e Farinhas', subcategories: ['Farinha de trigo - Promoção', 'Farinha de trigo', 'Farinha Milho / Rosca / Mandioca', 'Temperos', 'Arroz', 'Cereais', 'Feijão', 'Promoção Temperos'], color: '#996633', x: 157, y: 500 },
+  { id: 2, name: 'Temperos, Arroz e Farinhas', category: 'Temperos Arroz e Farinhas', subcategories: ['Farinha de trigo - Promoção', 'Farinha de trigo', 'Farinha Milho / Rosca / Mandioca', 'Temperos', 'Arroz', 'Cereais', 'Feijão', 'Promoção Temperos'], color: '#996633', x: 148, y: 500 },
   { id: 3, name: 'Massas, Molhos e Importados', category: 'Massas molhos e importados', subcategories: ['Promoção de Massas', 'Espaguetes', 'Lasanhas', 'Outras massas', 'Pratos prontos importados', 'Azeitonas e conservas', 'Molhos importados', 'Promoção conservas importados'], color: '#cc9900', x: 265, y: 500 },
   { id: 4, name: 'Sucos e Refrescos', category: 'Sucos e Refrescos', subcategories: ['Sucos Promoção', 'Sucos', 'Xaropes', 'Refrescos', 'Promoção Refrescos'], color: '#ff9900', x: 385, y: 500 },
   { id: 5, name: 'Açúcares, Cafés e Chás', category: 'Açucares Cafés e Chás', subcategories: ['Promoção Cafés', 'Chás', 'Cafes pacotes', 'Cafés cápsulas', 'Açucar', 'Promoção Açucar'], color: '#663300', x: 385, y: 560 },
@@ -60,7 +60,7 @@ const LOCATIONS: {
   // Behind-counter expositores (29-40)
   { id: 29, name: 'Freezer Congelados', category: 'Freezer Vertical', subcategories: ['Comidas congeladas'], color: '#336699', x: 60, y: 180 },
   { id: 30, name: 'Freezer Sorvetes', category: 'Freezer Vertical', subcategories: ['Sorvetes'], color: '#9933cc', x: 110, y: 180 },
-  { id: 31, name: 'Carnes Congeladas', category: 'Carnes e fritas congeladas', subcategories: ['Promoção de carnes', 'Carnes - cortes especiais', 'Batatas congeladas'], color: '#cc3333', x: 21, y: 204 },
+  { id: 31, name: 'Carnes Congeladas', category: 'Carnes e fritas congeladas', subcategories: ['Promoção de carnes', 'Carnes - cortes especiais', 'Batatas congeladas'], color: '#cc3333', x: 60, y: 150 },
   { id: 32, name: 'Expositor de Frutas', category: 'Expositor de Frutas', subcategories: ['Frutas'], color: '#33cc33', x: 506, y: 240 },
   { id: 33, name: 'Expositor de Legumes', category: 'Expositor de Legumes', subcategories: ['Legumes e verduras'], color: '#009933', x: 720, y: 180 },
   { id: 34, name: 'Manteigas e Margarinas', category: 'Expositor de Manteigas e Margarinas', subcategories: ['Manteigas e Margarinas'], color: '#ffcc33', x: 950, y: 180 },
@@ -98,7 +98,7 @@ const LOCATIONS: {
 
   // Banheiros (60-61)
   { id: 60, name: 'Banheiro Masculino', category: 'Banheiro Masculino', subcategories: [], color: '#336699', x: 1750, y: 840 },
-  { id: 61, name: 'Banheiro Feminino', category: 'Banheiro Feminino', subcategories: [], color: '#993366', x: 1870, y: 838 },
+  { id: 61, name: 'Banheiro Feminino', category: 'Banheiro Feminino', subcategories: [], color: '#993366', x: 1870, y: 840 },
 ];
 
 // Get route from pre-calculated data (keyed as "from->to" with numeric IDs)
