@@ -1014,3 +1014,13 @@
 - [x] Regenerar todas as 3660 rotas com 0 falhas e 0 violações
 - [x] Validar com script independente: 0 segmentos cruzam obstáculos
 - [x] Verificar visualmente rotas 1→35, 43→24, 28→15 - todas seguem corredores
+
+## CORREÇÃO FINAL: Pathfinding baseado em grafo de corredores (Graph-based Dijkstra)
+- [x] Diagnosticar problema: grid-based A* permite atalhos diagonais que cruzam gôndolas visualmente
+- [x] Implementar grafo explícito de nós de intersecção de corredores e arestas de segmentos
+- [x] Definir 8 linhas horizontais de corredores (y=100, 135, 240, 390, 500, 625, 680, 840)
+- [x] Definir 13 aisles verticais (x=20, 148, 265, 385, 506, 625, 745, 865, 985, 1105, 1207, 1325, 2020)
+- [x] Implementar Dijkstra em grafo em vez de A* em grid - 3660 rotas, 0 falhas, <1 segundo
+- [x] Atualizar nav points no componente SimulacaoCompleta para usar coordenadas do grafo
+- [x] Testar rotas visuais: 32→9 (619px), 1→2 (348px) - ambas seguem corredores, 0 cruzamentos
+- [x] Verificar que rotas seguem APENAS corredores e aisles definidos explicitamente

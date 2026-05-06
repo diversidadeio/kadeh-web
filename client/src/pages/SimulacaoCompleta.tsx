@@ -61,7 +61,7 @@ const LOCATIONS: {
   { id: 29, name: 'Freezer Congelados', category: 'Freezer Vertical', subcategories: ['Comidas congeladas'], color: '#336699', x: 60, y: 180 },
   { id: 30, name: 'Freezer Sorvetes', category: 'Freezer Vertical', subcategories: ['Sorvetes'], color: '#9933cc', x: 110, y: 180 },
   { id: 31, name: 'Carnes Congeladas', category: 'Carnes e fritas congeladas', subcategories: ['Promoção de carnes', 'Carnes - cortes especiais', 'Batatas congeladas'], color: '#cc3333', x: 60, y: 150 },
-  { id: 32, name: 'Expositor de Frutas', category: 'Expositor de Frutas', subcategories: ['Frutas'], color: '#33cc33', x: 500, y: 180 },
+  { id: 32, name: 'Expositor de Frutas', category: 'Expositor de Frutas', subcategories: ['Frutas'], color: '#33cc33', x: 506, y: 240 },
   { id: 33, name: 'Expositor de Legumes', category: 'Expositor de Legumes', subcategories: ['Legumes e verduras'], color: '#009933', x: 720, y: 180 },
   { id: 34, name: 'Manteigas e Margarinas', category: 'Expositor de Manteigas e Margarinas', subcategories: ['Manteigas e Margarinas'], color: '#ffcc33', x: 950, y: 180 },
   { id: 35, name: 'Expositor de Pães', category: 'Expositor de Pães', subcategories: ['Pães finos'], color: '#cc9933', x: 1130, y: 180 },
@@ -73,8 +73,8 @@ const LOCATIONS: {
 
   // Refrigerated wall (41-47)
   { id: 41, name: 'Laticínios e Bebidas Lácteas', category: 'Geladeira de Exposição', subcategories: ['Laticínios e bebidas lacteas', 'Iogurtes', 'Queijos'], color: '#ccaa00', x: 175, y: 350 },
-  { id: 42, name: 'Refrigerantes e Xaropes', category: 'Refrigerantes e Xaropes', subcategories: ['Refrigerantes Diets', 'Refrigerantes Adoçados'], color: '#009933', x: 430, y: 350 },
-  { id: 43, name: 'Cereais', category: 'Cereais', subcategories: ['Milho a granel', 'Soja a granel'], color: '#00aaaa', x: 680, y: 350 },
+  { id: 42, name: 'Refrigerantes e Xaropes', category: 'Refrigerantes e Xaropes', subcategories: ['Refrigerantes Diets', 'Refrigerantes Adoçados'], color: '#009933', x: 385, y: 390 },
+  { id: 43, name: 'Cereais', category: 'Cereais', subcategories: ['Milho a granel', 'Soja a granel'], color: '#00aaaa', x: 625, y: 390 },
   { id: 44, name: 'Produtos Infantis', category: 'Produtos Infantis', subcategories: ['Xampu Infantil', 'Sabonete infantil', 'Talco Infantil'], color: '#0077cc', x: 830, y: 350 },
   { id: 45, name: 'Expositor de Higiene', category: 'Expositor de Higiene', subcategories: ['Lenços Umidecidos', 'Hidratantes'], color: '#cc6699', x: 960, y: 350 },
   { id: 46, name: 'Expositor de Limpeza', category: 'Expositor de limpeza', subcategories: ['Limpa limo'], color: '#cc3366', x: 1100, y: 350 },
