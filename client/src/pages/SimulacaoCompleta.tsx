@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import routesData from '../routes_with_corridors.json';
+import routesData from '../routes_final.json';
 
 /**
  * Simulação de Navegação Completa - Kadeh

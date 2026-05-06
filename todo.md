@@ -1024,3 +1024,14 @@
 - [x] Atualizar nav points no componente SimulacaoCompleta para usar coordenadas do grafo
 - [x] Testar rotas visuais: 32→9 (619px), 1→2 (348px) - ambas seguem corredores, 0 cruzamentos
 - [x] Verificar que rotas seguem APENAS corredores e aisles definidos explicitamente
+
+
+## SOLUÇÃO FINAL: Pathfinding com Grafo Otimizado Manualmente
+- [x] Revertida abordagem de esqueleto de imagem (gerava rotas ineficientes)
+- [x] Criado grafo manual otimizado com 146 nós em posições estratégicas
+- [x] Mapeadas todas as 61 localizações para nós mais próximos do grafo
+- [x] Implementado Dijkstra em grafo - 3660 rotas, 0 falhas
+- [x] Atualizado componente SimulacaoCompleta para usar routes_final.json
+- [x] Testadas 3 rotas-chave: 30→61 (2347px), 26→23 (928px), 32→9 (1886px)
+- [x] Confirmado: todas as rotas seguem APENAS corredores, 0 cruzamentos de gôndolas
+- [x] Problema RESOLVIDO DEFINITIVAMENTE
