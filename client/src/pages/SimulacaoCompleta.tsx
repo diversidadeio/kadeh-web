@@ -18,92 +18,92 @@ const LOCATIONS: {
   y: number;
 }[] = [
   // Main Gondolas (1-14)
-  { id: 1, name: 'Óleos, Molhos e Conservas', category: 'Óleos Molhos e Azeites', subcategories: ['Óleo de soja em promoção', 'Molhos', 'Massas: Espaguete e lasanha', 'Maionese', 'Conservas', 'Azeites', 'Molhos em promoção'], color: '#cc6600', x: 28, y: 549 },
-  { id: 2, name: 'Temperos, Arroz e Farinhas', category: 'Temperos Arroz e Farinhas', subcategories: ['Farinha de trigo - Promoção', 'Farinha de trigo', 'Farinha Milho / Rosca / Mandioca', 'Temperos', 'Arroz', 'Cereais', 'Feijão', 'Promoção Temperos'], color: '#996633', x: 170, y: 549 },
-  { id: 3, name: 'Massas, Molhos e Importados', category: 'Massas molhos e importados', subcategories: ['Promoção de Massas', 'Espaguetes', 'Lasanhas', 'Outras massas', 'Pratos prontos importados', 'Azeitonas e conservas', 'Molhos importados', 'Promoção conservas importados'], color: '#cc9900', x: 310, y: 549 },
-  { id: 4, name: 'Sucos e Refrescos', category: 'Sucos e Refrescos', subcategories: ['Sucos Promoção', 'Sucos', 'Xaropes', 'Refrescos', 'Promoção Refrescos'], color: '#ff9900', x: 457, y: 479 },
-  { id: 5, name: 'Açúcares, Cafés e Chás', category: 'Açucares Cafés e Chás', subcategories: ['Promoção Cafés', 'Chás', 'Cafes pacotes', 'Cafés cápsulas', 'Açucar', 'Promoção Açucar'], color: '#663300', x: 457, y: 683 },
-  { id: 6, name: 'Biscoitos, Bolachas e Cereais', category: 'Biscoitos Bolachas e Cereais', subcategories: ['Promoção Biscoito', 'Biscoito Salgados', 'Biscoitos Doces', 'Biscoitos Recheados', 'Cereais Matinais', 'Salgadinhos Mistos', 'Salgadinhos Batatas', 'Promoção Batatas Fritas'], color: '#cc6633', x: 612, y: 549 },
-  { id: 7, name: 'Achocolatados e Granolas', category: 'Achocolatados e Granolas', subcategories: ['Promoção Achocolatados', 'Café com leite / capuccino', 'Achocolatados', 'Granolas', 'Leite em pó', 'Promoção leite em pó'], color: '#663333', x: 774, y: 549 },
-  { id: 8, name: 'Higiene Pessoal', category: 'Higiene Pessoal', subcategories: ['Promoção Xampú', 'Condicionador', 'Xampu ou Shampoo', 'Sabonetes barra', 'Desodorantes', 'Hidratantes', 'Sabonetes líquidos', 'Promoção sabonete'], color: '#cc3399', x: 928, y: 549 },
-  { id: 9, name: 'Detergentes e Desinfetantes', category: 'Detergentes e Desinfetantes', subcategories: ['Promoção detergentes', 'Alvejantes', 'Amaciantes', 'Sabão em pó', 'Lustra Móveis e Removedores', 'Multiuso', 'Detergentes', 'Promoção desinfetantes'], color: '#009999', x: 1097, y: 549 },
-  { id: 10, name: 'Higiene Geral', category: 'Higiene Geral', subcategories: ['Promoção Papel Higiênico', 'Lenços Umidecidos', 'Papel Higiênico', 'Hidratantes', 'Fraldas', 'Promoção Fraldas'], color: '#cc6699', x: 1252, y: 549 },
-  { id: 11, name: 'Materiais de Limpeza', category: 'Materiais de Limpeza', subcategories: ['Promoção Limpeza', 'Limpeza Pesada', 'Inseticidas', 'Ceras para pisos'], color: '#339966', x: 1407, y: 549 },
-  { id: 12, name: 'Limpadores', category: 'Limpadores', subcategories: ['Sacos de Lixo', 'Panos de Limpeza', 'Desengordurantes', 'Papel Toalha', 'Esponjas'], color: '#669933', x: 1562, y: 549 },
-  { id: 13, name: 'Utilidades', category: 'Utilidades', subcategories: ['Promoção jogo de jantar', 'Pratos', 'Talheres', 'Copos', 'Taças', 'Panelas'], color: '#666666', x: 1717, y: 549 },
-  { id: 14, name: 'Acessórios de Decoração', category: 'Acessórios de Decoração', subcategories: ['Promoção acessórios', 'Velas Aromáticas', 'Quadros', 'Vasos', 'Estátuas', 'Centros de mesa', 'Potes', 'Promoção Vasos'], color: '#996699', x: 2020, y: 549 },
+  { id: 1, name: 'Óleos, Molhos e Conservas', category: 'Óleos Molhos e Azeites', subcategories: ['Óleo de soja em promoção', 'Molhos', 'Massas: Espaguete e lasanha', 'Maionese', 'Conservas', 'Azeites', 'Molhos em promoção'], color: '#cc6600', x: 20, y: 500 },
+  { id: 2, name: 'Temperos, Arroz e Farinhas', category: 'Temperos Arroz e Farinhas', subcategories: ['Farinha de trigo - Promoção', 'Farinha de trigo', 'Farinha Milho / Rosca / Mandioca', 'Temperos', 'Arroz', 'Cereais', 'Feijão', 'Promoção Temperos'], color: '#996633', x: 148, y: 500 },
+  { id: 3, name: 'Massas, Molhos e Importados', category: 'Massas molhos e importados', subcategories: ['Promoção de Massas', 'Espaguetes', 'Lasanhas', 'Outras massas', 'Pratos prontos importados', 'Azeitonas e conservas', 'Molhos importados', 'Promoção conservas importados'], color: '#cc9900', x: 265, y: 500 },
+  { id: 4, name: 'Sucos e Refrescos', category: 'Sucos e Refrescos', subcategories: ['Sucos Promoção', 'Sucos', 'Xaropes', 'Refrescos', 'Promoção Refrescos'], color: '#ff9900', x: 385, y: 500 },
+  { id: 5, name: 'Açúcares, Cafés e Chás', category: 'Açucares Cafés e Chás', subcategories: ['Promoção Cafés', 'Chás', 'Cafes pacotes', 'Cafés cápsulas', 'Açucar', 'Promoção Açucar'], color: '#663300', x: 385, y: 560 },
+  { id: 6, name: 'Biscoitos, Bolachas e Cereais', category: 'Biscoitos Bolachas e Cereais', subcategories: ['Promoção Biscoito', 'Biscoito Salgados', 'Biscoitos Doces', 'Biscoitos Recheados', 'Cereais Matinais', 'Salgadinhos Mistos', 'Salgadinhos Batatas', 'Promoção Batatas Fritas'], color: '#cc6633', x: 506, y: 500 },
+  { id: 7, name: 'Achocolatados e Granolas', category: 'Achocolatados e Granolas', subcategories: ['Promoção Achocolatados', 'Café com leite / capuccino', 'Achocolatados', 'Granolas', 'Leite em pó', 'Promoção leite em pó'], color: '#663333', x: 625, y: 500 },
+  { id: 8, name: 'Higiene Pessoal', category: 'Higiene Pessoal', subcategories: ['Promoção Xampú', 'Condicionador', 'Xampu ou Shampoo', 'Sabonetes barra', 'Desodorantes', 'Hidratantes', 'Sabonetes líquidos', 'Promoção sabonete'], color: '#cc3399', x: 745, y: 500 },
+  { id: 9, name: 'Detergentes e Desinfetantes', category: 'Detergentes e Desinfetantes', subcategories: ['Promoção detergentes', 'Alvejantes', 'Amaciantes', 'Sabão em pó', 'Lustra Móveis e Removedores', 'Multiuso', 'Detergentes', 'Promoção desinfetantes'], color: '#009999', x: 865, y: 500 },
+  { id: 10, name: 'Higiene Geral', category: 'Higiene Geral', subcategories: ['Promoção Papel Higiênico', 'Lenços Umidecidos', 'Papel Higiênico', 'Hidratantes', 'Fraldas', 'Promoção Fraldas'], color: '#cc6699', x: 985, y: 500 },
+  { id: 11, name: 'Materiais de Limpeza', category: 'Materiais de Limpeza', subcategories: ['Promoção Limpeza', 'Limpeza Pesada', 'Inseticidas', 'Ceras para pisos'], color: '#339966', x: 1105, y: 500 },
+  { id: 12, name: 'Limpadores', category: 'Limpadores', subcategories: ['Sacos de Lixo', 'Panos de Limpeza', 'Desengordurantes', 'Papel Toalha', 'Esponjas'], color: '#669933', x: 1207, y: 500 },
+  { id: 13, name: 'Utilidades', category: 'Utilidades', subcategories: ['Promoção jogo de jantar', 'Pratos', 'Talheres', 'Copos', 'Taças', 'Panelas'], color: '#666666', x: 1325, y: 500 },
+  { id: 14, name: 'Acessórios de Decoração', category: 'Acessórios de Decoração', subcategories: ['Promoção acessórios', 'Velas Aromáticas', 'Quadros', 'Vasos', 'Estátuas', 'Centros de mesa', 'Potes', 'Promoção Vasos'], color: '#996699', x: 1445, y: 500 },
 
   // Bottom-right departments (15-17)
-  { id: 15, name: 'Talheres', category: 'Talheres', subcategories: ['Promoção Talheres', 'Conjuntos de talheres', 'Conjuntos itens culinários'], color: '#333333', x: 1372, y: 803 },
-  { id: 16, name: 'Pet - Rações e Acessórios', category: 'Pet - Rações e Acessórios Pet', subcategories: ['Promoção Rações', 'Rações cães filhotes', 'Rações Cães Pequenos', 'Rações Cães Grandes', 'Rações Gatos filhotes', 'Rações Gatos pequenos', 'Rações Gatos Grandes', 'Promoção acessórios Pet'], color: '#996633', x: 1531, y: 803 },
-  { id: 17, name: 'Bebidas Alcoólicas', category: 'Bebidas Alcoólicas', subcategories: ['Promoção Bebidas alcoólicas', 'Uísque', 'Gin', 'Aguardente', 'Conhaque', 'Promoção Aguardente'], color: '#660033', x: 1787, y: 803 },
+  { id: 15, name: 'Talheres', category: 'Talheres', subcategories: ['Promoção Talheres', 'Conjuntos de talheres', 'Conjuntos itens culinários'], color: '#333333', x: 1030, y: 670 },
+  { id: 16, name: 'Pet - Rações e Acessórios', category: 'Pet - Rações e Acessórios Pet', subcategories: ['Promoção Rações', 'Rações cães filhotes', 'Rações Cães Pequenos', 'Rações Cães Grandes', 'Rações Gatos filhotes', 'Rações Gatos pequenos', 'Rações Gatos Grandes', 'Promoção acessórios Pet'], color: '#996633', x: 1150, y: 670 },
+  { id: 17, name: 'Bebidas Alcoólicas', category: 'Bebidas Alcoólicas', subcategories: ['Promoção Bebidas alcoólicas', 'Uísque', 'Gin', 'Aguardente', 'Conhaque', 'Promoção Aguardente'], color: '#660033', x: 1330, y: 670 },
 
   // Refrigerantes gelados (18)
-  { id: 18, name: 'Refrigerantes Gelados', category: 'Refrigerantes Gelados', subcategories: ['Refrigerantes Lata 300 ml', 'Refrigerantes Garrafa 600 ml', 'Refrigerantes Garrafa 1,0 l', 'Refrigerantes Garrafa 2,0 l', 'Refrigerantes Kit com 2'], color: '#009933', x: 499, y: 232 },
+  { id: 18, name: 'Refrigerantes Gelados', category: 'Refrigerantes Gelados', subcategories: ['Refrigerantes Lata 300 ml', 'Refrigerantes Garrafa 600 ml', 'Refrigerantes Garrafa 1,0 l', 'Refrigerantes Garrafa 2,0 l', 'Refrigerantes Kit com 2'], color: '#009933', x: 540, y: 250 },
 
   // Freezers/Islands (19-22)
-  { id: 19, name: 'Geladeira Danone', category: 'Geladeira Promocional', subcategories: ['Danone Iogurtes pote Natural', 'Danone Iogurtes pote Sabores', 'Danone Iogurtes pote Grego', 'Danone Iogurtes Garrafa 350 ml', 'Danone Iogurtes Garrafa 1,0 l', 'Danone Iogurtes Garrafa 1,5 l'], color: '#3399cc', x: 77, y: 775 },
-  { id: 20, name: 'Ilha Glória', category: 'Ilha Promocional', subcategories: ['Leite em Pó Glória lata'], color: '#ffcc00', x: 180, y: 775 },
-  { id: 21, name: 'Ilha Ninho', category: 'Ilha Promocional', subcategories: ['Leite em Pó Ninho'], color: '#0066cc', x: 281, y: 775 },
-  { id: 22, name: 'Freezer Aurora', category: 'Ilha Promocional', subcategories: ['Freezer Aurora'], color: '#cc3300', x: 436, y: 775 },
+  { id: 19, name: 'Geladeira Danone', category: 'Geladeira Promocional', subcategories: ['Danone Iogurtes pote Natural', 'Danone Iogurtes pote Sabores', 'Danone Iogurtes pote Grego', 'Danone Iogurtes Garrafa 350 ml', 'Danone Iogurtes Garrafa 1,0 l', 'Danone Iogurtes Garrafa 1,5 l'], color: '#3399cc', x: 100, y: 680 },
+  { id: 20, name: 'Ilha Glória', category: 'Ilha Promocional', subcategories: ['Leite em Pó Glória lata'], color: '#ffcc00', x: 200, y: 680 },
+  { id: 21, name: 'Ilha Ninho', category: 'Ilha Promocional', subcategories: ['Leite em Pó Ninho'], color: '#0066cc', x: 300, y: 680 },
+  { id: 22, name: 'Freezer Aurora', category: 'Ilha Promocional', subcategories: ['Freezer Aurora'], color: '#cc3300', x: 400, y: 680 },
 
   // Caixas (23-25)
-  { id: 23, name: 'Caixa 1', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 67, y: 972 },
-  { id: 24, name: 'Caixa A', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 124, y: 972 },
-  { id: 25, name: 'Caixas 3/4', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 310, y: 972 },
+  { id: 23, name: 'Caixa 1', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 60, y: 840 },
+  { id: 24, name: 'Caixa A', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 200, y: 840 },
+  { id: 25, name: 'Caixas 3/4', category: 'Caixa de pagamento', subcategories: [], color: '#ffcc00', x: 330, y: 840 },
 
   // Top wall (26-28)
-  { id: 26, name: 'Açougue', category: 'Açougue', subcategories: ['Promoção Açougue', 'Bovinos - Bifes', 'Bovinos - Carne moida', 'Bovinos - Outras carnes', 'Carne de Porco', 'Frangos'], color: '#cc0000', x: 373, y: 113 },
-  { id: 27, name: 'Hortifruti', category: 'Hortifruti', subcategories: ['Legumes', 'Verduras', 'Frutas'], color: '#0066cc', x: 1139, y: 113 },
-  { id: 28, name: 'Padaria', category: 'Padaria', subcategories: ['Pão Francês', 'Pães especiais', 'Bolos', 'Doces', 'Promoção doces'], color: '#e67300', x: 1801, y: 113 },
+  { id: 26, name: 'Açougue', category: 'Açougue', subcategories: ['Promoção Açougue', 'Bovinos - Bifes', 'Bovinos - Carne moida', 'Bovinos - Outras carnes', 'Carne de Porco', 'Frangos'], color: '#cc0000', x: 290, y: 100 },
+  { id: 27, name: 'Hortifruti', category: 'Hortifruti', subcategories: ['Legumes', 'Verduras', 'Frutas'], color: '#0066cc', x: 830, y: 100 },
+  { id: 28, name: 'Padaria', category: 'Padaria', subcategories: ['Pão Francês', 'Pães especiais', 'Bolos', 'Doces', 'Promoção doces'], color: '#e67300', x: 1305, y: 100 },
 
   // Behind-counter expositores (29-40)
-  { id: 29, name: 'Freezer Congelados', category: 'Freezer Vertical', subcategories: ['Comidas congeladas'], color: '#336699', x: 63, y: 218 },
-  { id: 30, name: 'Freezer Sorvetes', category: 'Freezer Vertical', subcategories: ['Sorvetes'], color: '#9933cc', x: 106, y: 218 },
-  { id: 31, name: 'Carnes Congeladas', category: 'Carnes e fritas congeladas', subcategories: ['Promoção de carnes', 'Carnes - cortes especiais', 'Batatas congeladas'], color: '#cc3333', x: 317, y: 218 },
-  { id: 32, name: 'Expositor de Frutas', category: 'Expositor de Frutas', subcategories: ['Frutas'], color: '#33cc33', x: 640, y: 218 },
-  { id: 33, name: 'Expositor de Legumes', category: 'Expositor de Legumes', subcategories: ['Legumes e verduras'], color: '#009933', x: 957, y: 218 },
-  { id: 34, name: 'Manteigas e Margarinas', category: 'Expositor de Manteigas e Margarinas', subcategories: ['Manteigas e Margarinas'], color: '#ffcc33', x: 1189, y: 218 },
-  { id: 35, name: 'Expositor de Pães', category: 'Expositor de Pães', subcategories: ['Pães finos'], color: '#cc9933', x: 1284, y: 218 },
-  { id: 36, name: 'Expositor de Bolos', category: 'Expositor de Bolos', subcategories: ['Bolos finos'], color: '#cc6633', x: 1382, y: 218 },
-  { id: 37, name: 'Massas Fabricação Própria', category: 'Expositor de Produtos', subcategories: ['Massas de Fabricação própria'], color: '#cc9966', x: 1481, y: 218 },
-  { id: 38, name: 'Pães Doces', category: 'Expositor de pães doces', subcategories: ['Pães doces'], color: '#ff9966', x: 1579, y: 218 },
-  { id: 39, name: 'Pães Recheados', category: 'Expositor de pães recheados', subcategories: ['Pães recheados'], color: '#ff6633', x: 1678, y: 218 },
-  { id: 40, name: 'Biscoitos Marca Própria', category: 'Expositor de biscoitos', subcategories: ['Biscoitos Marca Própria'], color: '#cc6600', x: 1784, y: 218 },
+  { id: 29, name: 'Freezer Congelados', category: 'Freezer Vertical', subcategories: ['Comidas congeladas'], color: '#336699', x: 60, y: 180 },
+  { id: 30, name: 'Freezer Sorvetes', category: 'Freezer Vertical', subcategories: ['Sorvetes'], color: '#9933cc', x: 110, y: 180 },
+  { id: 31, name: 'Carnes Congeladas', category: 'Carnes e fritas congeladas', subcategories: ['Promoção de carnes', 'Carnes - cortes especiais', 'Batatas congeladas'], color: '#cc3333', x: 60, y: 150 },
+  { id: 32, name: 'Expositor de Frutas', category: 'Expositor de Frutas', subcategories: ['Frutas'], color: '#33cc33', x: 500, y: 180 },
+  { id: 33, name: 'Expositor de Legumes', category: 'Expositor de Legumes', subcategories: ['Legumes e verduras'], color: '#009933', x: 720, y: 180 },
+  { id: 34, name: 'Manteigas e Margarinas', category: 'Expositor de Manteigas e Margarinas', subcategories: ['Manteigas e Margarinas'], color: '#ffcc33', x: 950, y: 180 },
+  { id: 35, name: 'Expositor de Pães', category: 'Expositor de Pães', subcategories: ['Pães finos'], color: '#cc9933', x: 1130, y: 180 },
+  { id: 36, name: 'Expositor de Bolos', category: 'Expositor de Bolos', subcategories: ['Bolos finos'], color: '#cc6633', x: 1250, y: 180 },
+  { id: 37, name: 'Massas Fabricação Própria', category: 'Expositor de Produtos', subcategories: ['Massas de Fabricação própria'], color: '#cc9966', x: 1350, y: 180 },
+  { id: 38, name: 'Pães Doces', category: 'Expositor de pães doces', subcategories: ['Pães doces'], color: '#ff9966', x: 1450, y: 180 },
+  { id: 39, name: 'Pães Recheados', category: 'Expositor de pães recheados', subcategories: ['Pães recheados'], color: '#ff6633', x: 1550, y: 180 },
+  { id: 40, name: 'Biscoitos Marca Própria', category: 'Expositor de biscoitos', subcategories: ['Biscoitos Marca Própria'], color: '#cc6600', x: 1650, y: 180 },
 
   // Refrigerated wall (41-47)
-  { id: 41, name: 'Laticínios e Bebidas Lácteas', category: 'Geladeira de Exposição', subcategories: ['Laticínios e bebidas lacteas', 'Iogurtes', 'Queijos'], color: '#ccaa00', x: 197, y: 310 },
-  { id: 42, name: 'Refrigerantes e Xaropes', category: 'Refrigerantes e Xaropes', subcategories: ['Refrigerantes Diets', 'Refrigerantes Adoçados'], color: '#009933', x: 598, y: 310 },
-  { id: 43, name: 'Cereais', category: 'Cereais', subcategories: ['Milho a granel', 'Soja a granel'], color: '#00aaaa', x: 957, y: 310 },
-  { id: 44, name: 'Produtos Infantis', category: 'Produtos Infantis', subcategories: ['Xampu Infantil', 'Sabonete infantil', 'Talco Infantil'], color: '#0077cc', x: 1210, y: 310 },
-  { id: 45, name: 'Expositor de Higiene', category: 'Expositor de Higiene', subcategories: ['Lenços Umidecidos', 'Hidratantes'], color: '#cc6699', x: 1365, y: 310 },
-  { id: 46, name: 'Expositor de Limpeza', category: 'Expositor de limpeza', subcategories: ['Limpa limo'], color: '#cc3366', x: 1541, y: 310 },
-  { id: 47, name: 'Utilidades (Expositor)', category: 'Utilidades', subcategories: ['Expositor de utilidades'], color: '#666666', x: 1830, y: 310 },
+  { id: 41, name: 'Laticínios e Bebidas Lácteas', category: 'Geladeira de Exposição', subcategories: ['Laticínios e bebidas lacteas', 'Iogurtes', 'Queijos'], color: '#ccaa00', x: 175, y: 350 },
+  { id: 42, name: 'Refrigerantes e Xaropes', category: 'Refrigerantes e Xaropes', subcategories: ['Refrigerantes Diets', 'Refrigerantes Adoçados'], color: '#009933', x: 430, y: 350 },
+  { id: 43, name: 'Cereais', category: 'Cereais', subcategories: ['Milho a granel', 'Soja a granel'], color: '#00aaaa', x: 680, y: 350 },
+  { id: 44, name: 'Produtos Infantis', category: 'Produtos Infantis', subcategories: ['Xampu Infantil', 'Sabonete infantil', 'Talco Infantil'], color: '#0077cc', x: 830, y: 350 },
+  { id: 45, name: 'Expositor de Higiene', category: 'Expositor de Higiene', subcategories: ['Lenços Umidecidos', 'Hidratantes'], color: '#cc6699', x: 960, y: 350 },
+  { id: 46, name: 'Expositor de Limpeza', category: 'Expositor de limpeza', subcategories: ['Limpa limo'], color: '#cc3366', x: 1100, y: 350 },
+  { id: 47, name: 'Utilidades (Expositor)', category: 'Utilidades', subcategories: ['Expositor de utilidades'], color: '#666666', x: 1260, y: 350 },
 
   // Orgânicos & Naturais (48-56)
-  { id: 48, name: 'Biscoitos Finos', category: 'Biscoitos finos', subcategories: ['Expositor de biscoitos'], color: '#ff8800', x: 690, y: 803 },
-  { id: 49, name: 'Massas (Orgânicos)', category: 'Massas', subcategories: ['Expositor de massas'], color: '#ff6600', x: 788, y: 803 },
-  { id: 50, name: 'Zero Lactose', category: 'Laticínios Especiais', subcategories: ['Expositor Zero Lactose'], color: '#00cc99', x: 1041, y: 803 },
-  { id: 51, name: 'Biscoitos Light e Diet', category: 'Biscoitos Light e Diet', subcategories: ['Expositor Diets', 'Expositor Light'], color: '#ff9933', x: 845, y: 866 },
-  { id: 52, name: 'Orgânicos (Vazio)', category: '', subcategories: [], color: '#99cc99', x: 898, y: 866 },
-  { id: 53, name: 'Massas Especiais', category: 'Massas Especiais', subcategories: ['Massas diets', 'Massas Light'], color: '#cc9933', x: 968, y: 866 },
-  { id: 54, name: 'Molhos Especiais', category: 'Molhos especiais', subcategories: ['Molhos Light'], color: '#996633', x: 978, y: 866 },
-  { id: 55, name: 'Frutas Desidratadas', category: 'Frutas Desidratadas', subcategories: ['Frutas em passa', 'Frutas desidratadas'], color: '#cc6633', x: 1109, y: 866 },
-  { id: 56, name: 'Orgânicos', category: 'Orgânicos', subcategories: ['Azeites orgânicos', 'Óleos Orgânicos'], color: '#339933', x: 1178, y: 866 },
+  { id: 48, name: 'Biscoitos Finos', category: 'Biscoitos finos', subcategories: ['Expositor de biscoitos'], color: '#ff8800', x: 570, y: 700 },
+  { id: 49, name: 'Massas (Orgânicos)', category: 'Massas', subcategories: ['Expositor de massas'], color: '#ff6600', x: 640, y: 750 },
+  { id: 50, name: 'Zero Lactose', category: 'Laticínios Especiais', subcategories: ['Expositor Zero Lactose'], color: '#00cc99', x: 750, y: 700 },
+  { id: 51, name: 'Biscoitos Light e Diet', category: 'Biscoitos Light e Diet', subcategories: ['Expositor Diets', 'Expositor Light'], color: '#ff9933', x: 570, y: 770 },
+  { id: 52, name: 'Orgânicos (Vazio)', category: '', subcategories: [], color: '#99cc99', x: 640, y: 770 },
+  { id: 53, name: 'Massas Especiais', category: 'Massas Especiais', subcategories: ['Massas diets', 'Massas Light'], color: '#cc9933', x: 710, y: 770 },
+  { id: 54, name: 'Molhos Especiais', category: 'Molhos especiais', subcategories: ['Molhos Light'], color: '#996633', x: 780, y: 770 },
+  { id: 55, name: 'Frutas Desidratadas', category: 'Frutas Desidratadas', subcategories: ['Frutas em passa', 'Frutas desidratadas'], color: '#cc6633', x: 850, y: 770 },
+  { id: 56, name: 'Orgânicos', category: 'Orgânicos', subcategories: ['Azeites orgânicos', 'Óleos Orgânicos'], color: '#339933', x: 920, y: 770 },
 
   // Wine/Spirits (57-59)
-  { id: 57, name: 'Vinhos Tinto', category: 'Vinhos Tinto', subcategories: ['Vinho Tinto'], color: '#660033', x: 1348, y: 922 },
-  { id: 58, name: 'Vinho Branco', category: 'Vinho Branco', subcategories: ['Vinho Branco'], color: '#cccc66', x: 1432, y: 922 },
-  { id: 59, name: 'Espumantes', category: 'Vinho Espumante', subcategories: ['Espumantes'], color: '#ffcc99', x: 1520, y: 922 },
+  { id: 57, name: 'Vinhos Tinto', category: 'Vinhos Tinto', subcategories: ['Vinho Tinto'], color: '#660033', x: 1030, y: 780 },
+  { id: 58, name: 'Vinho Branco', category: 'Vinho Branco', subcategories: ['Vinho Branco'], color: '#cccc66', x: 1100, y: 780 },
+  { id: 59, name: 'Espumantes', category: 'Vinho Espumante', subcategories: ['Espumantes'], color: '#ffcc99', x: 1180, y: 780 },
 
   // Banheiros (60-61)
-  { id: 60, name: 'Banheiro Masculino', category: 'Banheiro Masculino', subcategories: [], color: '#336699', x: 1914, y: 922 },
-  { id: 61, name: 'Banheiro Feminino', category: 'Banheiro Feminino', subcategories: [], color: '#993366', x: 2027, y: 922 },
+  { id: 60, name: 'Banheiro Masculino', category: 'Banheiro Masculino', subcategories: [], color: '#336699', x: 1750, y: 840 },
+  { id: 61, name: 'Banheiro Feminino', category: 'Banheiro Feminino', subcategories: [], color: '#993366', x: 1870, y: 840 },
 ];
 
 // Get route from pre-calculated data (keyed as "from->to" with numeric IDs)
 const getPreCalculatedRoute = (fromId: number, toId: number): [number, number][] | null => {
-  const key = `${fromId}->${toId}`;
+  const key = `${fromId}-${toId}`;
   const route = (routesData as any)[key];
   return route ? route.waypoints : null;
 };

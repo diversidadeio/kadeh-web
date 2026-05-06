@@ -1004,3 +1004,13 @@
 - [x] Verificar e corrigir coordenadas de todos os nav points - Recalculado para 2048x1150
 - [x] Regenerar rotas com obstáculos corrigidos - 3660 rotas, 0 falhas
 - [x] Testar rotas visuais após correção - Ambas rotas verificadas visualmente OK
+
+## CORREÇÃO DEFINITIVA: Simplificação RDP criando diagonais que cruzam gôndolas
+- [x] Identificar causa raiz: RDP (Ramer-Douglas-Peucker) com tolerance=12 cria segmentos diagonais que cruzam obstáculos
+- [x] Adicionar função segment_is_walkable() que verifica cada pixel ao longo de um segmento
+- [x] Prevenir corner-cutting no A*: movimentos diagonais só permitidos se ambas células adjacentes forem walkable
+- [x] Modificar simplify_path() para validar cada segmento simplificado contra a grid walkable
+- [x] Adicionar passo final de validação: se segmento ainda cruza obstáculo, restaurar pontos intermediários do A*
+- [x] Regenerar todas as 3660 rotas com 0 falhas e 0 violações
+- [x] Validar com script independente: 0 segmentos cruzam obstáculos
+- [x] Verificar visualmente rotas 1→35, 43→24, 28→15 - todas seguem corredores
