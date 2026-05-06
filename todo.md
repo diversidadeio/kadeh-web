@@ -996,4 +996,11 @@
 - [x] Garantir que nenhuma rota cruze qualquer gôndola ou expositor (3660 rotas, 0 falhas)
 - [x] Reescrever SimulacaoCompleta com mapeamento correto gôndola→categoria→subcategoria
 - [x] Testar rotas visuais (Padaria→Talheres confirmada visualmente)
-- [ ] Salvar checkpoint e publicar
+- [x] Salvar checkpoint e publicar
+
+## CORREÇÃO: Rotas e Posições de Navegação
+- [x] Fix: Expositor de Pães (35) está posicionado no local errado - CAUSA: escala errada (1456x816 vs 2048x1150)
+- [x] Fix: Rota de Cereais (43) para Caixa A (24) passa por cima das gôndolas - CAUSA: mesma escala errada
+- [x] Verificar e corrigir coordenadas de todos os nav points - Recalculado para 2048x1150
+- [x] Regenerar rotas com obstáculos corrigidos - 3660 rotas, 0 falhas
+- [x] Testar rotas visuais após correção - Ambas rotas verificadas visualmente OK
