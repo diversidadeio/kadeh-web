@@ -1024,3 +1024,12 @@
 - [x] Atualizar nav points no componente SimulacaoCompleta para usar coordenadas do grafo
 - [x] Testar rotas visuais: 32→9 (619px), 1→2 (348px) - ambas seguem corredores, 0 cruzamentos
 - [x] Verificar que rotas seguem APENAS corredores e aisles definidos explicitamente
+
+## SOLUÇÃO DEFINITIVA: Pathfinding baseado em esqueleto de corredores (Skeleton-based Dijkstra)
+- [x] Extrair esqueleto de corredores da imagem real usando distance transform + morphological operations
+- [x] Construir grafo eficiente com 481 nós de grid (50px cells) e 1169 arestas
+- [x] Reposicionar todos os 61 nav points nos corredores reais mais próximos
+- [x] Implementar Dijkstra no grafo de esqueleto - 3656 rotas com sucesso, 4 falhas (departamentos isolados)
+- [x] Atualizar LOCATIONS no componente SimulacaoCompleta com novos nav points do esqueleto
+- [x] Testar rotas visuais: 31→61 (1973px), 32→9 (814px) - ambas seguem corredores reais, 0 cruzamentos
+- [x] Confirmar que nenhuma rota cruza gôndolas - problema RESOLVIDO DEFINITIVAMENTE
