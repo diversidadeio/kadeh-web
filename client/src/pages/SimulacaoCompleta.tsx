@@ -39,21 +39,67 @@ const DEPARTMENTS = [
   { code: 'BF', name: 'Banheiro Feminino', color: '#993366', x: 1440, y: 870 },
 ];
 
+// Mapping from department codes to product category names in products_data.json
+// Some departments map to multiple categories
+const DEPT_TO_CATEGORIES: { [code: string]: string[] } = {
+  'A': ['Açougue'],
+  'H': ['Hortifruti', 'Expositor de Frutas', 'Expositor de Legumes'],
+  'P': ['Padaria', 'Expositor de Pães', 'Expositor de Bolos', 'Expositor de pães doces', 'Expositor de pães recheados'],
+  'L': ['Geladeeira de Exposição 1', 'Geladeira Promocional', 'Laticionios Especiais'],
+  'R': ['Refrigeranes Gelados', 'Refrigerantes e Xaropes', 'Sucos e Refrescos'],
+  'C': ['Cereais'],
+  'I': ['Produtos Infantis'],
+  'HG': ['Higiene Pessoal', 'Higiene Geral', 'Expositor de Higiene'],
+  'LP': ['Limpadores', 'Materiais de Limpeza', 'Expositor de limpeza'],
+  'U': ['Utilidades', 'Acessórios de Decoração'],
+  'O': ['Orgânicos', 'Achocolatados e Granolas'],
+  'OB': ['Biscoito s Light e Diet', 'Biscoitos finos', 'Biscoitos Bolachas e Cereais'],
+  'OM': ['Massas Especiais', 'Massas', 'Molhos especiais'],
+  'OZ': ['Laticionios Especiais'],
+  'T': [' Talheres'],
+  'PT': ['Pet - Rações e Acessórios Pet'],
+  'B': ['Bebidas Alcoólicas', 'Vinho Branco', 'Vinho Espumante', 'Vinhos Tinto'],
+  'F': ['Frezer Vertical', 'Caarnes e fritas congeladas', 'Ilha Peromocional'],
+};
+
+// Additional gondola-level categories for departments that contain gondolas
+const GONDOLA_CATEGORIES: { [code: string]: string[] } = {
+  'A': ['Açougue'],
+  'H': ['Hortifruti'],
+  'P': ['Padaria'],
+  // Gondola 1: Óleos, molhos, conservas
+  // Gondola 2: Temperos, arroz, farinhas
+  // Gondola 3: Massas, molhos, importados
+  // Gondola 4: Açúcares, cafés, chás
+  // Gondola 5: (small)
+  // Gondola 6: Biscoitos, bolachas, cereais
+  // Gondola 7: Achocolatados e granolas
+  // Gondola 8: Higiene pessoal
+  // Gondola 9: Detergentes, desinfetantes
+  // Gondola 10: Higiene
+  // Gondola 11: Materiais de limpeza
+  // Gondola 12: Limpadores
+};
+
 // Extract unique subcategories from products data
 const getSubcategoriesByDepartment = () => {
-  const result: { [key: string]: string[] } = {};
+  const result: { [code: string]: string[] } = {};
   
-  productsData.forEach((product: any) => {
-    const categoria = product.categoria;
-    const subcategoria = product.subcategoria;
+  // Build subcategory lists per department code
+  Object.entries(DEPT_TO_CATEGORIES).forEach(([code, categories]) => {
+    const subcatSet = new Set<string>();
     
-    if (categoria && subcategoria) {
-      if (!result[categoria]) {
-        result[categoria] = [];
+    productsData.forEach((product: any) => {
+      const categoria = product.categoria;
+      const subcategoria = product.subcategoria?.trim();
+      
+      if (categoria && subcategoria && categories.includes(categoria)) {
+        subcatSet.add(subcategoria);
       }
-      if (!result[categoria].includes(subcategoria)) {
-        result[categoria].push(subcategoria);
-      }
+    });
+    
+    if (subcatSet.size > 0) {
+      result[code] = Array.from(subcatSet).sort();
     }
   });
   
@@ -283,9 +329,7 @@ export default function SimulacaoCompleta() {
   };
 
   const getSubcategoriesForDept = (deptCode: string) => {
-    const deptObj = DEPARTMENTS.find(d => d.code === deptCode);
-    if (!deptObj) return [];
-    return SUBCATEGORIES_BY_DEPT[deptObj.name] || [];
+    return SUBCATEGORIES_BY_DEPT[deptCode] || [];
   };
 
   const totalRoutes = (routesData as any).successful_routes || 420;

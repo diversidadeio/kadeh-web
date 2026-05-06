@@ -971,12 +971,14 @@
 - [x] Atualizar coordenadas dos departamentos para nova planta (2048x1150)
 
 ## Simulação - Melhorias de Marcadores, Subcategorias e Novos Destinos
-- [ ] Ajustar posição dos marcadores de departamento na nova planta
-- [ ] Adicionar subcategorias de Orgânicos e Naturais (Biscoitos Diet, Massas, Zero Lactose)
-- [ ] Incluir Caixas como destino navegável
-- [ ] Incluir Banheiros (Masculino e Feminino) como destinos navegáveis
-- [ ] Regenerar rotas com novos destinos incluídos
-- [ ] Testar todas as rotas e marcadores na simulação
+- [x] Ajustar posição dos marcadores de departamento na nova planta
+- [x] Adicionar subcategorias de Orgânicos e Naturais (Biscoitos Diet, Massas, Zero Lactose)
+- [x] Incluir Caixas como destino navegável
+- [x] Incluir Banheiros (Masculino e Feminino) como destinos navegáveis
+- [x] Regenerar rotas com novos destinos incluídos (420 rotas)
+- [x] Testar todas as rotas e marcadores na simulação
+- [x] Corrigir filtro de subcategorias - mapeamento correto entre departamentos e categorias do JSON
+- [x] Remover duplicatas de subcategorias usando Set com trim()
 
 ## CORREÇÃO CRÍTICA: Rotas passando por cima de gôndolas
 - [x] Corrigir algoritmo de pathfinding - rotas cortando diagonalmente por gôndolas
