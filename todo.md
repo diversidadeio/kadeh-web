@@ -987,3 +987,13 @@
 - [x] Reduzir MAX_EDGE_DIST e aumentar resolução de verificação de obstáculos
 - [x] Expandir bounding boxes das gôndolas para cobrir toda a área real
 - [x] Testar rotas P->T, A->B e outras rotas diagonais
+
+## REBUILD DEFINITIVO: Simulação com mapeamento correto de gôndolas 1-61
+- [x] Mapear posições exatas (pixels) de todas as 61 gôndolas/locais do mapa
+- [x] Correlacionar cada número (1-61) com suas categorias e subcategorias conforme arquivo enviado
+- [x] Criar grid de obstáculos pixel-accurate cobrindo todas as gôndolas e expositores
+- [x] Reconstruir algoritmo de rotas que SOMENTE segue corredores claros (cinza/branco)
+- [x] Garantir que nenhuma rota cruze qualquer gôndola ou expositor (3660 rotas, 0 falhas)
+- [x] Reescrever SimulacaoCompleta com mapeamento correto gôndola→categoria→subcategoria
+- [x] Testar rotas visuais (Padaria→Talheres confirmada visualmente)
+- [ ] Salvar checkpoint e publicar
