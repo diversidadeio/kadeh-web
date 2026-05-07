@@ -25,6 +25,8 @@ interface Location {
   nodeId: string;
   name: string;
   category?: string;
+  subcategory?: string;
+  customName?: string;
 }
 
 interface Route {
@@ -60,6 +62,17 @@ const VENUE_TYPES = [
   { value: 'other', label: 'Outro' },
 ];
 
+const CATEGORIES_BY_VENUE: Record<string, string[]> = {
+  market: ['Categoria', 'Subcategoria', 'Caixa', 'Saida', 'Banheiros'],
+  store: ['Secao'],
+  shopping: ['Entrada', 'Saida', 'Lojas', 'Ponto de Informacao', 'Pagamento de Estacionamento', 'Praca de Alimentacao', 'Fraldario', 'Banheiros', 'Caixas 24 Horas', 'Pontos de Interesse', 'Elevadores', 'Escadas'],
+  event_pavilion: ['Entrada', 'Saida', 'Saida de Emergencia', 'Informacoes', 'Banheiros', 'Praca de Alimentacao', 'Acesso a Camarotes', 'Locais VIP', 'Bebedouros'],
+  parks: ['Entrada', 'Saida', 'Saida de Emergencia', 'Informacoes', 'Banheiros', 'Praca de Alimentacao', 'Apoio Policial'],
+  hospital: ['Entrada', 'Saida', 'Banheiros', 'Locais de Informacao', 'Consultorios', 'Salas de Raio X', 'Salas de Medicacao', 'Elevadores', 'Escadas'],
+  public_agency: ['Entradas', 'Saidas', 'Pontos de Informacao'],
+  other: [],
+};
+
 const LocationMapper: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState<'addNode' | 'connectNode' | 'assignLocation' | 'view'>('addNode');
@@ -85,6 +98,8 @@ const LocationMapper: React.FC = () => {
   const [routeStart, setRouteStart] = useState<string | null>(null);
   const [routeEnd, setRouteEnd] = useState<string | null>(null);
   const [routeWaypoints, setRouteWaypoints] = useState<Array<{ x: number; y: number }>>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [customLocationName, setCustomLocationName] = useState<string>('');
 
   const NODE_RADIUS = 8;
   const EDGE_COLOR = '#3b82f6';
@@ -708,32 +723,47 @@ const LocationMapper: React.FC = () => {
       )}
 
       {selectedNode && mode === 'assignLocation' && (
-        <Dialog open={true} onOpenChange={() => setSelectedNode(null)}>
+        <Dialog open={true} onOpenChange={() => {
+          setSelectedNode(null);
+          setSelectedCategory('');
+          setCustomLocationName('');
+        }}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Atribuir Localização</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="locationName">Nome da Localização</Label>
-                <Input
-                  id="locationName"
-                  placeholder="Ex: Caixa 1, Padaria, Entrada"
-                />
+                <Label htmlFor="category">Categoria</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Selecione uma categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES_BY_VENUE[venueType]?.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <Label htmlFor="category">Categoria (opcional)</Label>
+                <Label htmlFor="customName">Nome Personalizado (opcional)</Label>
                 <Input
-                  id="category"
-                  placeholder="Ex: Caixas, Alimentos, Entrada"
+                  id="customName"
+                  placeholder="Ex: Caixa 1, Entrada Principal"
+                  value={customLocationName}
+                  onChange={(e) => setCustomLocationName(e.target.value)}
                 />
               </div>
               <Button
                 onClick={() => {
-                  const nameInput = document.getElementById('locationName') as HTMLInputElement;
-                  const categoryInput = document.getElementById('category') as HTMLInputElement;
-                  handleAssignLocation(nameInput.value, categoryInput.value);
+                  const finalName = customLocationName || selectedCategory || 'Localização';
+                  handleAssignLocation(finalName, selectedCategory);
                   setSelectedNode(null);
+                  setSelectedCategory('');
+                  setCustomLocationName('');
                 }}
               >
                 Atribuir

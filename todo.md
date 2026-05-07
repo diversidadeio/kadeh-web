@@ -1091,3 +1091,12 @@
 - [ ] Implementar cálculo automático de rotas (Dijkstra)
 - [ ] Criar testes unitários
 - [ ] Publicar no kadeh.io
+
+
+## NOVA FUNCIONALIDADE: Sistema de Categorias por Tipo de Local
+- [ ] Definir estrutura de categorias para cada tipo de local (Mercado, Loja, Shopping, Pavilhão, Parque, Hospital, Órgão Público)
+- [ ] Atualizar interface Location com campos de categoria/subcategoria
+- [ ] Criar seletor de categoria no diálogo de atribuição de localização
+- [ ] Atualizar renderização do canvas para mostrar categoria/subcategoria
+- [ ] Atualizar export para incluir dados de categoria
+- [ ] Testar seleção de categorias no navegador
