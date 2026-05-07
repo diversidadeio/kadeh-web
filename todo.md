@@ -1049,3 +1049,42 @@
 - [ ] Adicionar link no menu principal para acessar mapeador
 - [ ] Testar mapeador com todas as 61 localizações
 - [ ] Verificar que rotas geradas não cruzam gôndolas
+
+
+## NOVA FUNCIONALIDADE: Mapeador de Locais (Location Mapper) - Genérico
+- [ ] Atualizar schema do banco de dados: adicionar tabela location_maps com venue_type, floor_plan_url, nodes, edges, routes
+- [ ] Criar procedimento tRPC: locations.createMap (cria novo mapa de local)
+- [ ] Criar procedimento tRPC: locations.updateMap (atualiza nós, arestas e rotas)
+- [ ] Criar procedimento tRPC: locations.uploadFloorPlan (upload de imagem da planta)
+- [ ] Criar procedimento tRPC: locations.getMap (recupera mapa completo)
+- [ ] Criar procedimento tRPC: locations.deleteRoute (deleta uma rota específica)
+- [ ] Criar procedimento tRPC: locations.correctRoute (edita waypoints de uma rota)
+- [ ] Criar procedimento tRPC: locations.exportPackage (exporta planta + rotas em JSON/ZIP)
+- [ ] Refatorar CorridorMapper em LocationMapper com seletor de tipo de local
+- [ ] Adicionar tipos de local: Loja, Mercado, Shopping Center, Pavilhão de Eventos, Parques, Hospitais, Órgãos Públicos, Outros
+- [ ] Implementar upload de planta baixa diretamente no mapeador
+- [ ] Implementar funcionalidade de corrigir rota (editar waypoints)
+- [ ] Implementar funcionalidade de apagar rota (com confirmação)
+- [ ] Implementar listagem de rotas com opções de editar/deletar
+- [ ] Implementar export de pacote (planta + rotas JSON)
+- [ ] Implementar export em PDF com visualização de planta e rotas
+- [ ] Criar testes unitários para procedures de location
+- [ ] Testar Location Mapper em português e inglês
+- [ ] Adicionar link no menu principal para acessar Location Mapper
+- [ ] Validar que rotas não cruzam obstáculos (gôndolas/paredes)
+
+
+## NOVA FUNCIONALIDADE: Mapeador de Locais (Location Mapper)
+- [x] Criar componente LocationMapper com suporte a múltiplos tipos de locais
+- [x] Implementar criação de nós (clique no canvas)
+- [x] Implementar conexão de nós com cálculo de distância
+- [x] Implementar atribuição de localizações aos nós
+- [x] Implementar upload de planta baixa
+- [x] Implementar export de dados em JSON
+- [x] Implementar gerenciamento de rotas (listar, editar, deletar)
+- [x] Criar página LocationMapperPage
+- [x] Adicionar rotas em App.tsx (PT, EN, default)
+- [ ] Integrar com banco de dados para persistência
+- [ ] Implementar cálculo automático de rotas (Dijkstra)
+- [ ] Criar testes unitários
+- [ ] Publicar no kadeh.io

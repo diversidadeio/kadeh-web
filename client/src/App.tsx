@@ -31,6 +31,7 @@ import SimulacaoCompleta from "./pages/SimulacaoCompleta";
 import AdminStoreLayout from "./pages/AdminStoreLayout";
 import AdminBulkProducts from "./pages/AdminBulkProducts";
 import CorridorMapperPage from "./pages/CorridorMapperPage";
+import LocationMapperPage from "./pages/LocationMapperPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -62,6 +63,7 @@ function Router() {
       <Route path="/pt/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/pt/admin/bulk-products" component={AdminBulkProducts} />
       <Route path="/pt/corridor-mapper" component={CorridorMapperPage} />
+      <Route path="/pt/location-mapper" component={LocationMapperPage} />
 
       {/* English routes */}
       <Route path="/en" component={Home} />
@@ -81,6 +83,7 @@ function Router() {
       <Route path="/en/kadeh-ads/contratacao" component={KadehAdsContratacao} />
       <Route path="/en/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/en/kadeh-ads/dashboard" component={KadehAdsDashboard} />
+      <Route path="/en/kadeh-ads/manual" component={KadehAdsManual} />
       <Route path="/en/store-mapping" component={StoreMapping} />
       <Route path="/en/admin/categories" component={AdminCategories} />
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
@@ -88,6 +91,7 @@ function Router() {
       <Route path="/en/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/en/admin/bulk-products" component={AdminBulkProducts} />
       <Route path="/en/corridor-mapper" component={CorridorMapperPage} />
+      <Route path="/en/location-mapper" component={LocationMapperPage} />
 
       {/* Default routes (redirect to Portuguese) */}
       <Route path="/" component={Home} />
@@ -108,6 +112,7 @@ function Router() {
       <Route path="/simulacao" component={SimulacaoCompleta} />
       <Route path="/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/admin/bulk-products" component={AdminBulkProducts} />
+      <Route path="/location-mapper" component={LocationMapperPage} />
 
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
