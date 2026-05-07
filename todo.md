@@ -1084,6 +1084,9 @@
 - [x] Implementar gerenciamento de rotas (listar, editar, deletar)
 - [x] Criar página LocationMapperPage
 - [x] Adicionar rotas em App.tsx (PT, EN, default)
+- [x] Implementar busca em tempo real para nós, locais e rotas
+- [x] Adicionar destaque visual dos resultados de busca no canvas
+- [x] Criar listagem de resultados com navegação
 - [ ] Integrar com banco de dados para persistência
 - [ ] Implementar cálculo automático de rotas (Dijkstra)
 - [ ] Criar testes unitários

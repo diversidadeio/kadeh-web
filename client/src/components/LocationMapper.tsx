@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, Edit2, Download, Upload } from 'lucide-react';
+import { Trash2, Edit2, Download, Upload, Search, X } from 'lucide-react';
 
 interface Node {
   id: string;
@@ -74,6 +74,10 @@ const LocationMapper: React.FC = () => {
   const [venueType, setVenueType] = useState<'store' | 'market' | 'shopping' | 'event_pavilion' | 'parks' | 'hospital' | 'public_agency' | 'other'>('store');
   const [editingRoute, setEditingRoute] = useState<string | null>(null);
   const [showRouteList, setShowRouteList] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Array<{type: 'node' | 'location' | 'route', id: string, name: string, details?: string}>>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
 
   const NODE_RADIUS = 8;
   const EDGE_COLOR = '#3b82f6';
@@ -121,7 +125,8 @@ const LocationMapper: React.FC = () => {
     // Draw nodes
     nodes.forEach((node) => {
       const isSelected = node.id === selectedNode;
-      ctx.fillStyle = isSelected ? SELECTED_COLOR : NODE_COLOR;
+      const isHighlighted = highlightedIds.has(node.id);
+      ctx.fillStyle = isHighlighted ? '#fbbf24' : (isSelected ? SELECTED_COLOR : NODE_COLOR);
       ctx.beginPath();
       ctx.arc(node.x, node.y, NODE_RADIUS, 0, Math.PI * 2);
       ctx.fill();
@@ -152,7 +157,87 @@ const LocationMapper: React.FC = () => {
         ctx.fillText(location.name, node.x, node.y + NODE_RADIUS + 12);
       }
     });
-  }, [nodes, edges, locations, selectedNode, floorPlanImage]);
+  }, [nodes, edges, locations, selectedNode, floorPlanImage, highlightedIds]);
+
+  // Search function
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      setHighlightedIds(new Set());
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const results: Array<{type: 'node' | 'location' | 'route', id: string, name: string, details?: string}> = [];
+    const highlighted = new Set<string>();
+
+    // Search nodes
+    nodes.forEach((node) => {
+      if (node.label?.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          type: 'node',
+          id: node.id,
+          name: `Nó: ${node.label}`,
+          details: `Posição: (${Math.round(node.x)}, ${Math.round(node.y)})`
+        });
+        highlighted.add(node.id);
+      }
+    });
+
+    // Search locations
+    locations.forEach((location) => {
+      if (location.name.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          type: 'location',
+          id: location.id,
+          name: `Local: ${location.name}`,
+          details: location.category ? `Categoria: ${location.category}` : undefined
+        });
+        highlighted.add(location.nodeId);
+      }
+    });
+
+    // Search routes
+    routes.forEach((route) => {
+      const routeLabel = `${route.from} → ${route.to}`;
+      if (routeLabel.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          type: 'route',
+          id: route.id,
+          name: `Rota: ${routeLabel}`,
+          details: `Distância: ${Math.round(route.distance)}px`
+        });
+      }
+    });
+
+    setSearchResults(results);
+    setShowSearchResults(true);
+    setHighlightedIds(highlighted);
+  };
+
+  const handleResultClick = (result: typeof searchResults[0]) => {
+    if (result.type === 'node') {
+      const node = nodes.find((n) => n.id === result.id);
+      if (node) {
+        setSelectedNode(result.id);
+      }
+    } else if (result.type === 'location') {
+      const location = locations.find((l) => l.id === result.id);
+      if (location) {
+        setSelectedNode(location.nodeId);
+      }
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowSearchResults(false);
+    setHighlightedIds(new Set());
+  };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -308,6 +393,56 @@ const LocationMapper: React.FC = () => {
             </Select>
           </div>
         </div>
+
+        <div className="mb-4">
+          <Label htmlFor="search">Buscar Nós, Locais ou Rotas</Label>
+          <div className="flex gap-2 items-center">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              <Input
+                id="search"
+                type="text"
+                placeholder="Digite para buscar..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            {searchQuery && (
+              <Button
+                onClick={clearSearch}
+                variant="outline"
+                size="sm"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {showSearchResults && searchResults.length > 0 && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <h3 className="font-bold mb-2 text-sm">Resultados da Busca ({searchResults.length})</h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {searchResults.map((result, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleResultClick(result)}
+                  className="w-full text-left p-2 bg-white rounded border border-blue-100 hover:bg-blue-100 transition text-sm"
+                >
+                  <div className="font-semibold text-blue-900">{result.name}</div>
+                  {result.details && <div className="text-xs text-gray-600">{result.details}</div>}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {showSearchResults && searchResults.length === 0 && searchQuery && (
+          <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200 text-sm text-yellow-800">
+            Nenhum resultado encontrado para "{searchQuery}"
+          </div>
+        )}
 
         <div className="flex gap-2 mb-4 flex-wrap">
           <Button

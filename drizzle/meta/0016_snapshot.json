@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1be8111c-5fee-4c7b-9cc5-02f7250e634a",
-  "prevId": "07be50e4-5c27-46d0-93cc-c3b3e19b4f6a",
+  "id": "7fb4042f-49c0-45f0-b771-506d7470881c",
+  "prevId": "1be8111c-5fee-4c7b-9cc5-02f7250e634a",
   "tables": {
     "adAnalytics": {
       "name": "adAnalytics",
@@ -1761,139 +1761,6 @@
       "compositePrimaryKeys": {
         "gondolas_id": {
           "name": "gondolas_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "locationMaps": {
-      "name": "locationMaps",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "userId": {
-          "name": "userId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "venueType": {
-          "name": "venueType",
-          "type": "enum('store','market','shopping','event_pavilion','parks','hospital','public_agency','other')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "floorPlanUrl": {
-          "name": "floorPlanUrl",
-          "type": "varchar(500)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "floorPlanWidth": {
-          "name": "floorPlanWidth",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "floorPlanHeight": {
-          "name": "floorPlanHeight",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "nodes": {
-          "name": "nodes",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "edges": {
-          "name": "edges",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "locations": {
-          "name": "locations",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "routes": {
-          "name": "routes",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "onUpdate": true,
-          "default": "(now())"
-        }
-      },
-      "indexes": {
-        "locationMaps_user_idx": {
-          "name": "locationMaps_user_idx",
-          "columns": [
-            "userId"
-          ],
-          "isUnique": false
-        },
-        "locationMaps_venueType_idx": {
-          "name": "locationMaps_venueType_idx",
-          "columns": [
-            "venueType"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "locationMaps_id": {
-          "name": "locationMaps_id",
           "columns": [
             "id"
           ]
