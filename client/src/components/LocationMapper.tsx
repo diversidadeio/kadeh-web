@@ -78,6 +78,13 @@ const LocationMapper: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Array<{type: 'node' | 'location' | 'route', id: string, name: string, details?: string}>>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
+  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const [tooltipText, setTooltipText] = useState<string>('');
+  const [routeMode, setRouteMode] = useState<'idle' | 'selectStart' | 'selectEnd' | 'drawWaypoints'>('idle');
+  const [routeStart, setRouteStart] = useState<string | null>(null);
+  const [routeEnd, setRouteEnd] = useState<string | null>(null);
+  const [routeWaypoints, setRouteWaypoints] = useState<Array<{ x: number; y: number }>>([]);
 
   const NODE_RADIUS = 8;
   const EDGE_COLOR = '#3b82f6';
@@ -145,19 +152,20 @@ const LocationMapper: React.FC = () => {
     locations.forEach((location) => {
       const node = nodes.find((n) => n.id === location.nodeId);
       if (node) {
-        ctx.fillStyle = 'rgba(34, 197, 94, 0.3)';
+        const isHovered = location.id === hoveredLocationId;
+        ctx.fillStyle = isHovered ? 'rgba(59, 130, 246, 0.4)' : 'rgba(34, 197, 94, 0.3)';
         ctx.beginPath();
         ctx.arc(node.x, node.y, NODE_RADIUS + 8, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#22c55e';
+        ctx.fillStyle = isHovered ? '#3b82f6' : '#22c55e';
         ctx.font = '10px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         ctx.fillText(location.name, node.x, node.y + NODE_RADIUS + 12);
       }
     });
-  }, [nodes, edges, locations, selectedNode, floorPlanImage, highlightedIds]);
+  }, [nodes, edges, locations, selectedNode, floorPlanImage, highlightedIds, hoveredLocationId, routes, routeMode, routeStart, routeEnd, routeWaypoints]);
 
   // Search function
   const handleSearch = (query: string) => {
@@ -282,6 +290,27 @@ const LocationMapper: React.FC = () => {
       if (clickedNode) {
         setSelectedNode(clickedNode.id);
       }
+    } else if (routeMode === 'selectStart') {
+      const clickedLocation = locations.find((l) => {
+        const node = nodes.find((n) => n.id === l.nodeId);
+        return node && Math.hypot(node.x - x, node.y - y) < NODE_RADIUS + 8;
+      });
+      if (clickedLocation) {
+        setRouteStart(clickedLocation.id);
+        setRouteMode('selectEnd');
+      }
+    } else if (routeMode === 'selectEnd') {
+      const clickedLocation = locations.find((l) => {
+        const node = nodes.find((n) => n.id === l.nodeId);
+        return node && Math.hypot(node.x - x, node.y - y) < NODE_RADIUS + 8;
+      });
+      if (clickedLocation && clickedLocation.id !== routeStart) {
+        setRouteEnd(clickedLocation.id);
+        setRouteMode('drawWaypoints');
+        setRouteWaypoints([]);
+      }
+    } else if (routeMode === 'drawWaypoints') {
+      setRouteWaypoints([...routeWaypoints, { x, y }]);
     }
   };
 
@@ -296,6 +325,39 @@ const LocationMapper: React.FC = () => {
     const y = e.clientY - rect.top;
 
     setNodes(nodes.map((n) => (n.id === selectedNode ? { ...n, x, y } : n)));
+  };
+
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Check if hovering over a location
+    let foundLocation: Location | null = null;
+    for (const location of locations) {
+      const node = nodes.find((n) => n.id === location.nodeId);
+      if (node && Math.hypot(node.x - x, node.y - y) < NODE_RADIUS + 12) {
+        foundLocation = location;
+        break;
+      }
+    }
+
+    if (foundLocation) {
+      setHoveredLocationId(foundLocation.id);
+      setTooltipText(foundLocation.name);
+      setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top - 30 });
+    } else {
+      setHoveredLocationId(null);
+      setTooltipPos(null);
+    }
+  };
+
+  const handleCanvasMouseLeave = () => {
+    setHoveredLocationId(null);
+    setTooltipPos(null);
   };
 
   const handleAssignLocation = (locationName: string, category?: string) => {
@@ -494,6 +556,22 @@ const LocationMapper: React.FC = () => {
             Exportar
           </Button>
 
+          <Button 
+            onClick={() => {
+              if (routeMode === 'idle') {
+                setRouteMode('selectStart');
+              } else {
+                setRouteMode('idle');
+                setRouteStart(null);
+                setRouteEnd(null);
+                setRouteWaypoints([]);
+              }
+            }}
+            variant={routeMode !== 'idle' ? 'default' : 'outline'}
+          >
+            {routeMode === 'idle' ? 'Criar Rota' : 'Cancelar Rota'}
+          </Button>
+
           <Button onClick={() => setShowRouteList(!showRouteList)} variant="outline">
             Rotas ({routes.length})
           </Button>
@@ -516,14 +594,33 @@ const LocationMapper: React.FC = () => {
         </div>
       </div>
 
-      <canvas
-        ref={canvasRef}
-        width={1024}
-        height={768}
-        onClick={handleCanvasClick}
-        onMouseMove={handleCanvasDrag}
-        className="border-2 border-gray-300 rounded-lg w-full bg-gray-50 cursor-crosshair"
-      />
+      <div className="relative">
+        <canvas
+          ref={canvasRef}
+          width={1024}
+          height={768}
+          onClick={handleCanvasClick}
+          onMouseMove={(e) => {
+            handleCanvasDrag(e);
+            handleCanvasMouseMove(e);
+          }}
+          onMouseLeave={handleCanvasMouseLeave}
+          className="border-2 border-gray-300 rounded-lg w-full bg-gray-50 cursor-crosshair"
+        />
+        {tooltipPos && hoveredLocationId && (
+          <div
+            className="absolute bg-gray-900 text-white px-2 py-1 rounded text-xs whitespace-nowrap pointer-events-none"
+            style={{
+              left: `${tooltipPos.x}px`,
+              top: `${tooltipPos.y}px`,
+              transform: 'translate(-50%, -100%)',
+              zIndex: 50,
+            }}
+          >
+            {tooltipText}
+          </div>
+        )}
+      </div>
 
       {showRouteList && (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
@@ -555,6 +652,56 @@ const LocationMapper: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {routeMode !== 'idle' && (
+        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm font-semibold text-blue-900 mb-2">
+            {routeMode === 'selectStart' && '📍 Clique no local de ORIGEM da rota'}
+            {routeMode === 'selectEnd' && '📍 Clique no local de DESTINO da rota'}
+            {routeMode === 'drawWaypoints' && '📍 Clique no canvas para adicionar waypoints. Clique em "Concluir Rota" quando terminar.'}
+          </p>
+          {routeMode === 'drawWaypoints' && (
+            <div className="flex gap-2 mt-3">
+              <Button
+                size="sm"
+                onClick={() => {
+                  if (routeStart && routeEnd) {
+                    const startLoc = locations.find((l) => l.id === routeStart);
+                    const endLoc = locations.find((l) => l.id === routeEnd);
+                    if (startLoc && endLoc) {
+                      const newRoute: Route = {
+                        id: `route-${Date.now()}`,
+                        from: routeStart,
+                        to: routeEnd,
+                        distance: Math.round(Math.hypot(
+                          (nodes.find((n) => n.id === startLoc.nodeId)?.x || 0) - (nodes.find((n) => n.id === endLoc.nodeId)?.x || 0),
+                          (nodes.find((n) => n.id === startLoc.nodeId)?.y || 0) - (nodes.find((n) => n.id === endLoc.nodeId)?.y || 0)
+                        )),
+                        waypoints: routeWaypoints,
+                      };
+                      setRoutes([...routes, newRoute]);
+                      setRouteMode('idle');
+                      setRouteStart(null);
+                      setRouteEnd(null);
+                      setRouteWaypoints([]);
+                    }
+                  }
+                }}
+              >
+                ✓ Concluir Rota
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setRouteWaypoints(routeWaypoints.slice(0, -1))}
+                disabled={routeWaypoints.length === 0}
+              >
+                ← Desfazer Último
+              </Button>
             </div>
           )}
         </div>
