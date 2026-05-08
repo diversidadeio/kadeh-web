@@ -1100,3 +1100,13 @@
 - [ ] Atualizar renderização do canvas para mostrar categoria/subcategoria
 - [ ] Atualizar export para incluir dados de categoria
 - [ ] Testar seleção de categorias no navegador
+
+
+## NOVA FUNCIONALIDADE: Sistema de Autenticação de Administradores
+- [ ] Criar página de login para admins
+- [ ] Implementar lógica de autenticação e gerenciamento de sessão
+- [ ] Criar wrapper de rotas protegidas para páginas admin-only
+- [ ] Criar Painel de Controle (Admin Dashboard)
+- [ ] Integrar Mapeador de Locais com autenticação de admin
+- [ ] Adicionar funcionalidade de logout
+- [ ] Testar fluxo de autenticação no navegador

@@ -30,6 +30,8 @@ import SimulacaoPixelBased from "./pages/SimulacaoPixelBased";
 import SimulacaoCompleta from "./pages/SimulacaoCompleta";
 import AdminStoreLayout from "./pages/AdminStoreLayout";
 import AdminBulkProducts from "./pages/AdminBulkProducts";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
 import CorridorMapperPage from "./pages/CorridorMapperPage";
 import LocationMapperPage from "./pages/LocationMapperPage";
 
@@ -62,6 +64,8 @@ function Router() {
       <Route path="/pt/simulacao" component={SimulacaoCompleta} />
       <Route path="/pt/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/pt/admin/bulk-products" component={AdminBulkProducts} />
+      <Route path="/pt/admin/dashboard" component={AdminDashboard} />
+      <Route path="/pt/admin/login" component={AdminLogin} />
       <Route path="/pt/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/pt/location-mapper" component={LocationMapperPage} />
 
@@ -90,6 +94,8 @@ function Router() {
       <Route path="/en/simulacao" component={SimulacaoCompleta} />
       <Route path="/en/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/en/admin/bulk-products" component={AdminBulkProducts} />
+      <Route path="/en/admin/dashboard" component={AdminDashboard} />
+      <Route path="/en/admin/login" component={AdminLogin} />
       <Route path="/en/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/en/location-mapper" component={LocationMapperPage} />
 
@@ -112,6 +118,8 @@ function Router() {
       <Route path="/simulacao" component={SimulacaoCompleta} />
       <Route path="/admin/store-layout" component={AdminStoreLayout} />
       <Route path="/admin/bulk-products" component={AdminBulkProducts} />
+      <Route path="/admin/dashboard" component={AdminDashboard} />
+      <Route path="/admin/login" component={AdminLogin} />
       <Route path="/location-mapper" component={LocationMapperPage} />
 
       <Route path="/404" component={NotFound} />
