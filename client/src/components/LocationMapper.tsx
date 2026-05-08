@@ -267,8 +267,11 @@ const LocationMapper: React.FC = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    // Fix: Scale coordinates to match canvas resolution (1024x768) vs display size
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     if (mode === 'addNode') {
       const newNode: Node = {
@@ -336,8 +339,11 @@ const LocationMapper: React.FC = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    // Fix: Scale coordinates to match canvas resolution
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     setNodes(nodes.map((n) => (n.id === selectedNode ? { ...n, x, y } : n)));
   };
@@ -347,8 +353,11 @@ const LocationMapper: React.FC = () => {
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    // Fix: Scale coordinates to match canvas resolution
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     // Check if hovering over a location
     let foundLocation: Location | null = null;
@@ -573,6 +582,10 @@ const LocationMapper: React.FC = () => {
 
           <Button 
             onClick={() => {
+              if (locations.length < 2) {
+                alert('Crie pelo menos 2 localizações para criar uma rota');
+                return;
+              }
               if (routeMode === 'idle') {
                 setRouteMode('selectStart');
               } else {
@@ -586,6 +599,38 @@ const LocationMapper: React.FC = () => {
           >
             {routeMode === 'idle' ? 'Criar Rota' : 'Cancelar Rota'}
           </Button>
+
+          {routeMode === 'drawWaypoints' && routeStart && routeEnd && (
+            <Button 
+              onClick={() => {
+                if (routeWaypoints.length > 0 || (routeStart && routeEnd)) {
+                  const startLoc = locations.find(l => l.id === routeStart);
+                  const endLoc = locations.find(l => l.id === routeEnd);
+                  if (startLoc && endLoc) {
+                    const distance = Math.hypot(
+                      (nodes.find(n => n.id === startLoc.nodeId)?.x || 0) - (nodes.find(n => n.id === endLoc.nodeId)?.x || 0),
+                      (nodes.find(n => n.id === startLoc.nodeId)?.y || 0) - (nodes.find(n => n.id === endLoc.nodeId)?.y || 0)
+                    );
+                    const newRoute: Route = {
+                      id: `route-${Date.now()}`,
+                      from: startLoc.name,
+                      to: endLoc.name,
+                      waypoints: routeWaypoints,
+                      distance: Math.round(distance),
+                    };
+                    setRoutes([...routes, newRoute]);
+                    setRouteMode('idle');
+                    setRouteStart(null);
+                    setRouteEnd(null);
+                    setRouteWaypoints([]);
+                  }
+                }
+              }}
+              variant="default"
+            >
+              ✓ Concluir Rota
+            </Button>
+          )}
 
           <Button onClick={() => setShowRouteList(!showRouteList)} variant="outline">
             Rotas ({routes.length})
@@ -608,6 +653,14 @@ const LocationMapper: React.FC = () => {
           Nós: {nodes.length} | Arestas: {edges.length} | Localizações: {locations.length} | Rotas: {routes.length}
         </div>
       </div>
+
+      {routeMode !== 'idle' && (
+        <div className="mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg text-sm text-blue-800">
+          {routeMode === 'selectStart' && '📍 Clique no local de ORIGEM da rota'}
+          {routeMode === 'selectEnd' && '📍 Clique no local de DESTINO da rota'}
+          {routeMode === 'drawWaypoints' && '📍 Clique no canvas para adicionar waypoints ou clique em Concluir Rota'}
+        </div>
+      )}
 
       <div className="relative">
         <canvas
