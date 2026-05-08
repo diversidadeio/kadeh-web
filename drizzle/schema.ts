@@ -27,6 +27,112 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 // ============================================================================
+// KADEH LOCATION MAPPER - Interactive Location Mapping
+// ============================================================================
+
+/**
+ * Location Maps - Mapas interativos de locais (lojas, mercados, shopping, etc)
+ */
+export const locationMaps = mysqlTable("locationMaps", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Proprietário do mapa
+  name: varchar("name", { length: 255 }).notNull(), // Nome do mapa (ex: "Shopping Butantã - Piso Térreo")
+  venueType: varchar("venueType", { length: 50 }).notNull(), // Tipo de local (loja, mercado, shopping, etc)
+  floorPlanUrl: text("floorPlanUrl"), // URL da imagem da planta baixa
+  description: text("description"), // Descrição do mapa
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("locationMaps_user_idx").on(table.userId),
+  venueTypeIdx: index("locationMaps_venueType_idx").on(table.venueType),
+}));
+
+export type LocationMap = typeof locationMaps.$inferSelect;
+export type InsertLocationMap = typeof locationMaps.$inferInsert;
+
+/**
+ * Location Map Nodes - Nós/pontos de intersecção no mapa
+ */
+export const locationMapNodes = mysqlTable("locationMapNodes", {
+  id: int("id").autoincrement().primaryKey(),
+  mapId: int("mapId").notNull(), // ID do mapa
+  nodeId: varchar("nodeId", { length: 50 }).notNull(), // ID único do nó (ex: N1, N2)
+  x: int("x").notNull(), // Posição X no canvas
+  y: int("y").notNull(), // Posição Y no canvas
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  mapIdx: index("locationMapNodes_map_idx").on(table.mapId),
+  nodeIdIdx: index("locationMapNodes_nodeId_idx").on(table.nodeId),
+}));
+
+export type LocationMapNode = typeof locationMapNodes.$inferSelect;
+export type InsertLocationMapNode = typeof locationMapNodes.$inferInsert;
+
+/**
+ * Location Map Edges - Arestas/conexões entre nós
+ */
+export const locationMapEdges = mysqlTable("locationMapEdges", {
+  id: int("id").autoincrement().primaryKey(),
+  mapId: int("mapId").notNull(), // ID do mapa
+  fromNodeId: varchar("fromNodeId", { length: 50 }).notNull(), // ID do nó de origem
+  toNodeId: varchar("toNodeId", { length: 50 }).notNull(), // ID do nó de destino
+  distance: decimal("distance", { precision: 10, scale: 2 }).notNull(), // Distância em metros
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  mapIdx: index("locationMapEdges_map_idx").on(table.mapId),
+  fromIdx: index("locationMapEdges_from_idx").on(table.fromNodeId),
+  toIdx: index("locationMapEdges_to_idx").on(table.toNodeId),
+}));
+
+export type LocationMapEdge = typeof locationMapEdges.$inferSelect;
+export type InsertLocationMapEdge = typeof locationMapEdges.$inferInsert;
+
+/**
+ * Location Map Locations - Localizações atribuídas aos nós
+ */
+export const locationMapLocations = mysqlTable("locationMapLocations", {
+  id: int("id").autoincrement().primaryKey(),
+  mapId: int("mapId").notNull(), // ID do mapa
+  nodeId: varchar("nodeId", { length: 50 }).notNull(), // ID do nó
+  name: varchar("name", { length: 255 }).notNull(), // Nome da localização (ex: "Entrada Principal")
+  category: varchar("category", { length: 100 }).notNull(), // Categoria (ex: "Entrada", "Saída", "Caixa")
+  subcategory: varchar("subcategory", { length: 100 }), // Subcategoria (opcional)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  mapIdx: index("locationMapLocations_map_idx").on(table.mapId),
+  nodeIdx: index("locationMapLocations_node_idx").on(table.nodeId),
+}));
+
+export type LocationMapLocation = typeof locationMapLocations.$inferSelect;
+export type InsertLocationMapLocation = typeof locationMapLocations.$inferInsert;
+
+/**
+ * Location Map Routes - Rotas criadas entre localizações
+ */
+export const locationMapRoutes = mysqlTable("locationMapRoutes", {
+  id: int("id").autoincrement().primaryKey(),
+  mapId: int("mapId").notNull(), // ID do mapa
+  routeId: varchar("routeId", { length: 50 }).notNull(), // ID único da rota (ex: R1, R2)
+  name: varchar("name", { length: 255 }).notNull(), // Nome da rota (ex: "Entrada → Caixa")
+  fromLocationId: int("fromLocationId").notNull(), // ID da localização de origem
+  toLocationId: int("toLocationId").notNull(), // ID da localização de destino
+  waypoints: json("waypoints").$type<Array<{nodeId: string, x: number, y: number}>>(), // Array de waypoints
+  totalDistance: decimal("totalDistance", { precision: 10, scale: 2 }), // Distância total da rota
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  mapIdx: index("locationMapRoutes_map_idx").on(table.mapId),
+  routeIdIdx: index("locationMapRoutes_routeId_idx").on(table.routeId),
+}));
+
+export type LocationMapRoute = typeof locationMapRoutes.$inferSelect;
+export type InsertLocationMapRoute = typeof locationMapRoutes.$inferInsert;
+
+// ============================================================================
 // KADEH SMART LAYOUT - Store Layout Management
 // ============================================================================
 

@@ -1,5 +1,6 @@
-import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
+
+const COOKIE_NAME = "session";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
@@ -15,7 +16,7 @@ import { stripeRouter } from "./stripeRouter";
 import { storeLayoutRouter } from "./storeLayoutRouter";
 import { bulkProductsRouter } from "./bulkProductsRouter";
 import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
-import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition } from "./db";
+import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition, createLocationMap, getLocationMapsByUserId, getLocationMapById, createLocationMapNode, getLocationMapNodes, createLocationMapEdge, getLocationMapEdges, createLocationMapLocation, getLocationMapLocations, createLocationMapRoute, getLocationMapRoutes, deleteLocationMapRoute, updateLocationMapRoute } from "./db";
 import { eq, and } from "drizzle-orm";
 
 export const appRouter = router({
@@ -28,6 +29,195 @@ export const appRouter = router({
   products: productsRouter,
   storeLayout: storeLayoutRouter,
   bulkProducts: bulkProductsRouter,
+  
+  locationMapper: router({
+    // Save a complete map with all nodes, edges, locations, and routes
+    saveMap: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          venueType: z.string(),
+          floorPlanUrl: z.string().optional(),
+          description: z.string().optional(),
+          nodes: z.array(z.object({
+            nodeId: z.string(),
+            x: z.number(),
+            y: z.number(),
+          })),
+          edges: z.array(z.object({
+            fromNodeId: z.string(),
+            toNodeId: z.string(),
+            distance: z.number(),
+          })),
+          locations: z.array(z.object({
+            nodeId: z.string(),
+            name: z.string(),
+            category: z.string(),
+            subcategory: z.string().optional(),
+          })),
+          routes: z.array(z.object({
+            routeId: z.string(),
+            name: z.string(),
+            fromLocationId: z.number(),
+            toLocationId: z.number(),
+            waypoints: z.any().optional(),
+            totalDistance: z.number().optional(),
+          })),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          // Create the map
+          const mapResult = await createLocationMap({
+            userId: ctx.user!.id,
+            name: input.name,
+            venueType: input.venueType,
+            floorPlanUrl: input.floorPlanUrl,
+            description: input.description,
+            isActive: true,
+          });
+          
+          const mapId = (mapResult as any).insertId || (mapResult as any)[0];
+          
+          // Create nodes
+          for (const node of input.nodes) {
+            await createLocationMapNode({
+              mapId,
+              nodeId: node.nodeId,
+              x: node.x,
+              y: node.y,
+            });
+          }
+          
+          // Create edges
+          for (const edge of input.edges) {
+            await createLocationMapEdge({
+              mapId,
+              fromNodeId: edge.fromNodeId,
+              toNodeId: edge.toNodeId,
+              distance: String(edge.distance),
+            });
+          }
+          
+          // Create locations
+          for (const location of input.locations) {
+            await createLocationMapLocation({
+              mapId,
+              nodeId: location.nodeId,
+              name: location.name,
+              category: location.category,
+              subcategory: location.subcategory,
+            });
+          }
+          
+          // Create routes
+          for (const route of input.routes) {
+            await createLocationMapRoute({
+              mapId,
+              routeId: route.routeId,
+              name: route.name,
+              fromLocationId: route.fromLocationId,
+              toLocationId: route.toLocationId,
+              waypoints: route.waypoints as any,
+              totalDistance: route.totalDistance ? String(route.totalDistance) : undefined,
+            });
+          }
+          
+          return { success: true, mapId };
+        } catch (error) {
+          console.error("Error saving map:", error);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to save map" });
+        }
+      }),
+    
+    // Get all maps for the current user
+    getMyMaps: protectedProcedure.query(async ({ ctx }) => {
+      try {
+        return await getLocationMapsByUserId(ctx.user!.id);
+      } catch (error) {
+        console.error("Error getting maps:", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get maps" });
+      }
+    }),
+    
+    // Get a specific map with all its data
+    getMap: protectedProcedure
+      .input(z.object({ mapId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        try {
+          const map = await getLocationMapById(input.mapId);
+          if (!map || map.userId !== ctx.user!.id) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Map not found" });
+          }
+          
+          const nodes = await getLocationMapNodes(input.mapId);
+          const edges = await getLocationMapEdges(input.mapId);
+          const locations = await getLocationMapLocations(input.mapId);
+          const routes = await getLocationMapRoutes(input.mapId);
+          
+          return {
+            map,
+            nodes,
+            edges,
+            locations,
+            routes,
+          };
+        } catch (error) {
+          console.error("Error getting map:", error);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get map" });
+        }
+      }),
+    
+    // Delete a route
+    deleteRoute: protectedProcedure
+      .input(z.object({ routeId: z.number(), mapId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const map = await getLocationMapById(input.mapId);
+          if (!map || map.userId !== ctx.user!.id) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Map not found" });
+          }
+          
+          await deleteLocationMapRoute(input.routeId);
+          return { success: true };
+        } catch (error) {
+          console.error("Error deleting route:", error);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to delete route" });
+        }
+      }),
+    
+    // Update a route
+    updateRoute: protectedProcedure
+      .input(
+        z.object({
+          routeId: z.number(),
+          mapId: z.number(),
+          name: z.string().optional(),
+          waypoints: z.any().optional(),
+          totalDistance: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const map = await getLocationMapById(input.mapId);
+          if (!map || map.userId !== ctx.user!.id) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Map not found" });
+          }
+          
+          const updateData: any = {};
+          if (input.name) updateData.name = input.name;
+          if (input.waypoints) updateData.waypoints = JSON.stringify(input.waypoints);
+          if (input.totalDistance) updateData.totalDistance = input.totalDistance;
+          
+          await updateLocationMapRoute(input.routeId, updateData);
+          return { success: true };
+        } catch (error) {
+          console.error("Error updating route:", error);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update route" });
+        }
+      }),
+  }),
+  
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

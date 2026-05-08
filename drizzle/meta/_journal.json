@@ -1,124 +1,12 @@
 {
-  "version": "7",
+  "version": "5",
   "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1768349721378,
-      "tag": "0000_parallel_dust",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1770513728793,
-      "tag": "0001_gray_caretaker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1772129944460,
-      "tag": "0002_parched_roughhouse",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1772192616574,
-      "tag": "0003_misty_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1772797959959,
-      "tag": "0004_serious_annihilus",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1772808746220,
-      "tag": "0005_good_kate_bishop",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1772814622715,
-      "tag": "0006_marvelous_korath",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1772815572732,
-      "tag": "0007_nostalgic_champions",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1772824448479,
-      "tag": "0008_unusual_newton_destine",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "5",
-      "when": 1773689347624,
-      "tag": "0009_clumsy_anita_blake",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "5",
-      "when": 1775134969237,
-      "tag": "0010_silent_titania",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "5",
-      "when": 1777161512596,
-      "tag": "0011_quick_captain_marvel",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "5",
-      "when": 1777296253646,
-      "tag": "0012_yielding_major_mapleleaf",
-      "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "5",
-      "when": 1777898524992,
-      "tag": "0013_hot_zarda",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "5",
-      "when": 1777921846785,
-      "tag": "0014_confused_vapor",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "5",
-      "when": 1778152068353,
-      "tag": "0015_purple_lily_hollister",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "5",
-      "when": 1778152385188,
-      "tag": "0016_thin_agent_zero",
+      "when": 1778270664337,
+      "tag": "0000_supreme_prima",
       "breakpoints": true
     }
   ]

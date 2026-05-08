@@ -1,6 +1,6 @@
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, advertisers, advertisements, pricingPlans, adAnalytics, adPayments, correlatedCategories, adCampaigns, stripeCheckoutSessions, stripePayments, stripeCustomers } from "../drizzle/schema";
+import { InsertUser, users, advertisers, advertisements, pricingPlans, adAnalytics, adPayments, correlatedCategories, adCampaigns, stripeCheckoutSessions, stripePayments, stripeCustomers, locationMaps, locationMapNodes, locationMapEdges, locationMapLocations, locationMapRoutes, LocationMap, InsertLocationMap, LocationMapNode, InsertLocationMapNode, LocationMapEdge, InsertLocationMapEdge, LocationMapLocation, InsertLocationMapLocation, LocationMapRoute, InsertLocationMapRoute } from "../drizzle/schema";
 import * as schema from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -247,4 +247,122 @@ export async function getNextPriorityPosition() {
     .limit(1);
 
   return result.length > 0 ? result[0].priorityPosition + 1 : 1;
+}
+
+// ============================================================================
+// KADEH LOCATION MAPPER - Location Mapping Queries
+// ============================================================================
+
+export async function createLocationMap(data: InsertLocationMap) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(locationMaps).values(data);
+  return result;
+}
+
+export async function getLocationMapsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db
+    .select()
+    .from(locationMaps)
+    .where(eq(locationMaps.userId, userId))
+    .orderBy(desc(locationMaps.createdAt));
+}
+
+export async function getLocationMapById(mapId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db
+    .select()
+    .from(locationMaps)
+    .where(eq(locationMaps.id, mapId))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createLocationMapNode(data: InsertLocationMapNode) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.insert(locationMapNodes).values(data);
+}
+
+export async function getLocationMapNodes(mapId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db
+    .select()
+    .from(locationMapNodes)
+    .where(eq(locationMapNodes.mapId, mapId));
+}
+
+export async function createLocationMapEdge(data: InsertLocationMapEdge) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.insert(locationMapEdges).values(data);
+}
+
+export async function getLocationMapEdges(mapId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db
+    .select()
+    .from(locationMapEdges)
+    .where(eq(locationMapEdges.mapId, mapId));
+}
+
+export async function createLocationMapLocation(data: InsertLocationMapLocation) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.insert(locationMapLocations).values(data);
+}
+
+export async function getLocationMapLocations(mapId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db
+    .select()
+    .from(locationMapLocations)
+    .where(eq(locationMapLocations.mapId, mapId));
+}
+
+export async function createLocationMapRoute(data: InsertLocationMapRoute) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.insert(locationMapRoutes).values(data);
+}
+
+export async function getLocationMapRoutes(mapId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db
+    .select()
+    .from(locationMapRoutes)
+    .where(eq(locationMapRoutes.mapId, mapId));
+}
+
+export async function deleteLocationMapRoute(routeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.delete(locationMapRoutes).where(eq(locationMapRoutes.id, routeId));
+}
+
+export async function updateLocationMapRoute(routeId: number, data: Partial<InsertLocationMapRoute>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.update(locationMapRoutes).set(data).where(eq(locationMapRoutes.id, routeId));
 }
