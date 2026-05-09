@@ -4,7 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, Edit2, Download, Upload, Search, X } from 'lucide-react';
+import { Trash2, Edit2, Download, Upload, Search, X, Save, FolderOpen } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 interface Node {
   id: string;
@@ -100,6 +101,15 @@ const LocationMapper: React.FC = () => {
   const [routeWaypoints, setRouteWaypoints] = useState<Array<{ x: number; y: number }>>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [customLocationName, setCustomLocationName] = useState<string>('');
+  const [saveMapName, setSaveMapName] = useState<string>('');
+  const [showSaveDialog, setShowSaveDialog] = useState<boolean>(false);
+  const [showLoadDialog, setShowLoadDialog] = useState<boolean>(false);
+  const [savedMaps, setSavedMaps] = useState<any[]>([]);
+  const [loadingMaps, setLoadingMaps] = useState<boolean>(false);
+  const [savingMap, setSavingMap] = useState<boolean>(false);
+  
+  const saveMapMutation = trpc.locationMapper.saveMap.useMutation();
+  const getMyMapsQuery = trpc.locationMapper.getMyMaps.useQuery();
 
   const NODE_RADIUS = 8;
   const EDGE_COLOR = '#3b82f6';
@@ -647,6 +657,109 @@ const LocationMapper: React.FC = () => {
           >
             Limpar Tudo
           </Button>
+          
+          {/* Save Map Button */}
+          <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+            <DialogTrigger asChild>
+              <Button variant="default">
+                <Save className="w-4 h-4 mr-2" />
+                Salvar Mapa
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Salvar Mapa</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="map-name">Nome do Mapa</Label>
+                  <Input
+                    id="map-name"
+                    placeholder="Ex: Shopping Butantã - Piso L1"
+                    value={saveMapName}
+                    onChange={(e) => setSaveMapName(e.target.value)}
+                  />
+                </div>
+                <Button
+                  onClick={async () => {
+                    if (!saveMapName.trim()) {
+                      alert('Digite um nome para o mapa');
+                      return;
+                    }
+                    
+                    setSavingMap(true);
+                    try {
+                      await saveMapMutation.mutateAsync({
+                        name: saveMapName,
+                        venueType: venueType,
+                        floorPlanUrl: undefined,
+                        description: `Mapa com ${nodes.length} nós, ${edges.length} arestas, ${locations.length} localizações e ${routes.length} rotas`,
+                        nodes: nodes.map(n => ({ nodeId: n.id, x: n.x, y: n.y })),
+                        edges: edges.map(e => ({ fromNodeId: e.from, toNodeId: e.to, distance: e.distance })),
+                        locations: locations.map(l => ({ nodeId: l.nodeId, name: l.name, category: l.category || '', subcategory: l.subcategory })),
+                        routes: routes.map(r => ({ routeId: r.id, name: `${r.from} → ${r.to}`, fromLocationId: 0, toLocationId: 0, waypoints: r.waypoints, totalDistance: r.distance })),
+                      });
+                      alert('Mapa salvo com sucesso!');
+                      setSaveMapName('');
+                      setShowSaveDialog(false);
+                      getMyMapsQuery.refetch();
+                    } catch (error) {
+                      alert('Erro ao salvar mapa: ' + (error as any).message);
+                    } finally {
+                      setSavingMap(false);
+                    }
+                  }}
+                  disabled={savingMap || !saveMapName.trim()}
+                  className="w-full"
+                >
+                  {savingMap ? 'Salvando...' : 'Salvar'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Load Map Button */}
+          <Dialog open={showLoadDialog} onOpenChange={setShowLoadDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Carregar Mapa
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Carregar Mapa Salvo</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {getMyMapsQuery.isLoading ? (
+                  <p>Carregando mapas...</p>
+                ) : !getMyMapsQuery.data || getMyMapsQuery.data.length === 0 ? (
+                  <p>Nenhum mapa salvo encontrado</p>
+                ) : (
+                  getMyMapsQuery.data.map((map: any) => (
+                    <div key={map.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{map.name}</h3>
+                          <p className="text-sm text-gray-600">{map.description}</p>
+                          <p className="text-xs text-gray-500 mt-1">Tipo: {map.venueType} | Criado: {new Date(map.createdAt).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            alert('Funcionalidade de carregamento será implementada em breve');
+                            setShowLoadDialog(false);
+                          }}
+                          size="sm"
+                        >
+                          Carregar
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="text-sm text-gray-600 mb-4">
