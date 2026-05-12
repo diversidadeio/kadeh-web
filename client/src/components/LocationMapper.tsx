@@ -63,15 +63,100 @@ const VENUE_TYPES = [
   { value: 'other', label: 'Outro' },
 ];
 
-const CATEGORIES_BY_VENUE: Record<string, string[]> = {
-  market: ['Categoria', 'Subcategoria', 'Caixa', 'Saida', 'Banheiros'],
-  store: ['Secao'],
-  shopping: ['Entrada', 'Saida', 'Lojas', 'Ponto de Informacao', 'Pagamento de Estacionamento', 'Praca de Alimentacao', 'Fraldario', 'Banheiros', 'Caixas 24 Horas', 'Pontos de Interesse', 'Elevadores', 'Escadas'],
-  event_pavilion: ['Entrada', 'Saida', 'Saida de Emergencia', 'Informacoes', 'Banheiros', 'Praca de Alimentacao', 'Acesso a Camarotes', 'Locais VIP', 'Bebedouros'],
-  parks: ['Entrada', 'Saida', 'Saida de Emergencia', 'Informacoes', 'Banheiros', 'Praca de Alimentacao', 'Apoio Policial'],
-  hospital: ['Entrada', 'Saida', 'Banheiros', 'Locais de Informacao', 'Consultorios', 'Salas de Raio X', 'Salas de Medicacao', 'Elevadores', 'Escadas'],
-  public_agency: ['Entradas', 'Saidas', 'Pontos de Informacao'],
-  other: [],
+const CATEGORIES_BY_VENUE: Record<string, Record<string, string[]>> = {
+  market: {
+    'Gôndola 1': ['Óleos Molhos e Azeites', 'Óleo de soja em promoção', 'Molhos', 'Massas: Espaguete e lasanha', 'Maionese', 'Conservas', 'Azeites', 'Molhos em promoção'],
+    'Gôndola 2': ['Temperos Arroz e Farinhas', 'Farinha de trigo - Promoção', 'Farinha de trigo', 'Farinha Milho / Rosca / Mandioca', 'Temperos', 'Arroz', 'Cereais', 'Feijão', 'Promoção Temperos'],
+    'Gôndola 3': ['Massas molhos e importados', 'Promoção de Massas', 'Espaguetes', 'Lasanhas', 'Outras massas', 'Pratos prontos importados', 'Azeitonas e conservas', 'Molhos importados', 'Promoção conservas importados'],
+    'Gôndola 4': ['Sucos e Refrescos', 'Sucos Promoção', 'Sucos', 'Xaropes', 'Refrescos', 'Promoção Refrescos'],
+    'Gôndola 5': ['Açucares Cafés e Chás', 'Promoção Cafés', 'Chás', 'Cafes pacotes', 'Cafés cápsulas', 'Açucar', 'Promoção Açucar'],
+    'Gôndola 6': ['Biscoitos Bolachas e Cereais', 'Peomoção Biscoito', 'Biscoito Salgados', 'Biscoitos Doces', 'Biscoitos Recheados', 'Cereais Matinais', 'Salgadinhos Mistos', 'Salgadinhos Batatas', 'Promoção Batatas Fritas'],
+    'Gôndola 7': ['Achocolatados e Granolas', 'Promoção Achocolatados', 'Café com leite / capuccino', 'Achocolatados', 'Granolas', 'Leite em pó', 'Promoção leite em pó'],
+    'Gôndola 8': ['Higiene Pessoal', 'Promoção Xampú ou shampoo', 'Condicionador', 'Xampu ou Shampoo', 'Sabonetes barra', 'Desodorantes', 'Hidratantes', 'Sabonetes líquidos', 'Promoção sabonete'],
+    'Gôndola 9': ['Detergentes e Desinfetantes', 'Promoção detergentes', 'Alvejantes', 'Amaciantes', 'Sabão em pó', 'Lustra Móveis e Removedores', 'Multiuso', 'Detergentes', 'Promoção desifetantes'],
+    'Gôndola 10': ['Higiene Geral', 'Promoção Papel Higiênico', 'Lenços Umidecidos', 'Papel Higiênico', 'Hidratantes', 'Fraldas', 'Promoção Fraldas'],
+    'Gôndola 11': ['Materiais de Limpeza', 'Promoção Limpeza', 'Limpeza Pesada', 'Inseticidas', 'Ceras para pisos'],
+    'Gôndola 12': ['Limpadores', 'Sacos de Lixo', 'Panos de Limpeza', 'Desengordurantes', 'Papel Toallha', 'Esponjas'],
+    'Gôndola 13': ['Utilidades', 'Promoção jogo de jantar', 'Pratos', 'Talheres', 'Copos', 'Taças', 'Panelas'],
+    'Gôndola 14': ['Acessórios de Decoração', 'Promoção acessórios', 'Velas Aromáticas', 'Quadros', 'Vasos', 'Estátuas', 'Centros de mesa', 'Potes', 'Promoção Vasos'],
+    'Gôndola 15': ['Talheres', 'Promoção Talheres', 'Conjutos de talheres', 'Conjutnos itens culinários'],
+    'Gôndola 16': ['Pet - Rações e Acessórios Pet', 'Promoção Rações', 'Rações cães filhotes', 'Rações Cães Pequenos', 'Rações Cães Grandes', 'Rações Gatos filhotes', 'Rações Gatos pequenos', 'Rações Gatos Grandes', 'Promoção acessórios Pet'],
+    'Gôndola 17': ['Bebidas Alcoólicas', 'Promoção Bebidas alcoólicas', 'Uísque', 'Gin', 'Aguardante', 'Conhaque', 'Promoção Aguardente'],
+    'Gôndola 18': ['Refrigeranes Gelados', 'Refrigerantes Lata 300 ml', 'Refrigerantes Garrafa 600 ml', 'Refrigerantes Garrafa 1,0 l', 'Refrigerantes Garaffa 2,0 l', 'Refrigerantes Kit com 2'],
+    'Gôndola 19': ['Geladeira Promocional - Danone', 'Danone Iogurtes pote Natural', 'Danone Iogurtes pote Sabores', 'Danone Iogurtes pote Grego', 'Danone Iogurtes Garrafa 350 ml', 'Danone Iogurtes Garrafa 1,0 l', 'Danone Iogurtes Garrafa 1,5 l'],
+    'Gôndola 20': ['Ilha Promocional - Leite em Pó Glória'],
+    'Gôndola 21': ['Ilha Promocional - Leite em Pó Ninho'],
+    'Gôndola 22': ['Ilha Promocional - Freezer Aurora'],
+    'Gôndola 23': ['Caixa de pagamento'],
+    'Gôndola 24': ['Caixa de pagamento'],
+    'Gôndola 25': ['Caixa de pagamento'],
+    'Gôndola 26': ['Açougue', 'Promoção Açougue', 'Bovinos - Bifes', 'Bovinos - Carne moida', 'Bovinos - Outras carnes', 'Carne de Porco', 'Frangos'],
+    'Gôndola 27': ['Hortifruti', 'Legumes', 'Verduras', 'Frutas'],
+    'Gôndola 28': ['Padaria', 'Pão Frqncês', 'Pães especiais', 'Bolos', 'Doces', 'Promoção doces'],
+    'Gôndola 29': ['Frezer Vertical - Comidas congeladas'],
+    'Gôndola 30': ['Frezer Vertical - Sorvetes'],
+    'Gôndola 31': ['Carnes e fritas congeladas', 'Promoção de carnes', 'Carnes - cortes especias', 'Batatas congeladas'],
+    'Gôndola 32': ['Expositor de Frutas', 'Frutas'],
+    'Gôndola 33': ['Expositor de Legumes', 'Legumes e verduras'],
+    'Gôndola 34': ['Expositor de Manteigas e Margarinas', 'Manteigas e Margarinas'],
+    'Gôndola 35': ['Expositor de Pães', 'Pães finos'],
+    'Gôndola 36': ['Expositor de Bolos', 'Bolos finos'],
+    'Gôndola 37': ['Expositor de Produtos', 'Massas de Fabricação própria'],
+  },
+  store: {
+    'Seção': ['Seção'],
+  },
+  shopping: {
+    'Entrada': ['Entrada'],
+    'Saida': ['Saida'],
+    'Lojas': ['Lojas'],
+    'Ponto de Informacao': ['Ponto de Informacao'],
+    'Pagamento de Estacionamento': ['Pagamento de Estacionamento'],
+    'Praca de Alimentacao': ['Praca de Alimentacao'],
+    'Fraldario': ['Fraldario'],
+    'Banheiros': ['Banheiros'],
+    'Caixas 24 Horas': ['Caixas 24 Horas'],
+    'Pontos de Interesse': ['Pontos de Interesse'],
+    'Elevadores': ['Elevadores'],
+    'Escadas': ['Escadas'],
+  },
+  event_pavilion: {
+    'Entrada': ['Entrada'],
+    'Saida': ['Saida'],
+    'Saida de Emergencia': ['Saida de Emergencia'],
+    'Informacoes': ['Informacoes'],
+    'Banheiros': ['Banheiros'],
+    'Praca de Alimentacao': ['Praca de Alimentacao'],
+    'Acesso a Camarotes': ['Acesso a Camarotes'],
+    'Locais VIP': ['Locais VIP'],
+    'Bebedouros': ['Bebedouros'],
+  },
+  parks: {
+    'Entrada': ['Entrada'],
+    'Saida': ['Saida'],
+    'Saida de Emergencia': ['Saida de Emergencia'],
+    'Informacoes': ['Informacoes'],
+    'Banheiros': ['Banheiros'],
+    'Praca de Alimentacao': ['Praca de Alimentacao'],
+    'Apoio Policial': ['Apoio Policial'],
+  },
+  hospital: {
+    'Entrada': ['Entrada'],
+    'Saida': ['Saida'],
+    'Banheiros': ['Banheiros'],
+    'Locais de Informacao': ['Locais de Informacao'],
+    'Consultorios': ['Consultorios'],
+    'Salas de Raio X': ['Salas de Raio X'],
+    'Salas de Medicacao': ['Salas de Medicacao'],
+    'Elevadores': ['Elevadores'],
+    'Escadas': ['Escadas'],
+  },
+  public_agency: {
+    'Entradas': ['Entradas'],
+    'Saidas': ['Saidas'],
+    'Pontos de Informacao': ['Pontos de Informacao'],
+  },
+  other: {},
 };
 
 const LocationMapper: React.FC = () => {
@@ -906,7 +991,7 @@ const LocationMapper: React.FC = () => {
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CATEGORIES_BY_VENUE[venueType]?.map((cat) => (
+                    {Object.keys(CATEGORIES_BY_VENUE[venueType] || {}).map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
                       </SelectItem>
