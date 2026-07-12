@@ -23,6 +23,8 @@ import KadehAdsContratacao from "./pages/KadehAdsContratacao";
 import KadehAdsPaymentPage from "./pages/KadehAdsPaymentPage";
 import KadehAdsDashboard from "./pages/KadehAdsDashboard";
 import KadehAdsManual from "./pages/KadehAdsManual";
+import KadehAdsCheckoutGeneric from "./pages/KadehAdsCheckoutGeneric";
+import KadehAdsCheckoutProcess from "./pages/KadehAdsCheckoutProcess";
 import StoreMapping from "./pages/StoreMapping";
 import AdminCategories from "./pages/AdminCategories";
 import CategoryPerformanceDashboard from "./pages/CategoryPerformanceDashboard";
@@ -58,6 +60,8 @@ function Router() {
       <Route path="/pt/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/pt/kadeh-ads/dashboard" component={KadehAdsDashboard} />
       <Route path="/pt/kadeh-ads/manual" component={KadehAdsManual} />
+      <Route path="/pt/kadeh-ads/checkout-generic" component={KadehAdsCheckoutGeneric} />
+      <Route path="/pt/kadeh-ads/checkout-process" component={KadehAdsCheckoutProcess} />
       <Route path="/pt/store-mapping" component={StoreMapping} />
       <Route path="/pt/admin/categories" component={AdminCategories} />
       <Route path="/pt/categories/performance" component={CategoryPerformanceDashboard} />
@@ -88,6 +92,8 @@ function Router() {
       <Route path="/en/kadeh-ads/payment" component={KadehAdsPaymentPage} />
       <Route path="/en/kadeh-ads/dashboard" component={KadehAdsDashboard} />
       <Route path="/en/kadeh-ads/manual" component={KadehAdsManual} />
+      <Route path="/en/kadeh-ads/checkout-generic" component={KadehAdsCheckoutGeneric} />
+      <Route path="/en/kadeh-ads/checkout-process" component={KadehAdsCheckoutProcess} />
       <Route path="/en/store-mapping" component={StoreMapping} />
       <Route path="/en/admin/categories" component={AdminCategories} />
       <Route path="/en/categories/performance" component={CategoryPerformanceDashboard} />
