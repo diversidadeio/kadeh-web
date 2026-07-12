@@ -11,8 +11,9 @@ export default function KadehAdsFull() {
   const [, navigate] = useLocation();
   const { language } = useLanguage();
   
-  // Simulador de investimento - Versão com 4 variáveis completas
+  // Simulador de investimento - Versão com 5 variáveis completas
   const [duration, setDuration] = useState(7);
+  const [recurring, setRecurring] = useState("no");
   const [stores, setStores] = useState(1.0);
   const [products, setProducts] = useState(1);
   const [customProducts, setCustomProducts] = useState("");
@@ -274,6 +275,33 @@ export default function KadehAdsFull() {
                     Dashboard com analytics em tempo real: impressões, cliques e conversões
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Recurrence Selector - Above Calculator */}
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-white">Tipo de Contratação</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setRecurring("no")}
+                  className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                    recurring === "no"
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-400 text-gray-700 hover:bg-gray-500'
+                  }`}
+                >
+                  Uma única vez
+                </button>
+                <button
+                  onClick={() => setRecurring("yes")}
+                  className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                    recurring === "yes"
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-400 text-gray-700 hover:bg-gray-500'
+                  }`}
+                >
+                  Recorrente (3x)
+                </button>
               </div>
             </div>
 
