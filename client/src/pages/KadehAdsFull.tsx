@@ -208,37 +208,6 @@ export default function KadehAdsFull() {
         </div>
       </section>
 
-      {/* Recurrence Selector - Above Everything */}
-      <section className="py-8 px-4 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="space-y-3">
-            <label className="block text-sm font-semibold text-white">Tipo de Contratação</label>
-            <div className="grid grid-cols-2 gap-2 max-w-xs">
-              <button
-                onClick={() => setRecurring("no")}
-                className={`py-2 px-3 rounded-lg font-semibold transition-all ${
-                  recurring === "no"
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-400 text-gray-700 hover:bg-gray-500'
-                }`}
-              >
-                Uma única vez
-              </button>
-              <button
-                onClick={() => setRecurring("yes")}
-                className={`py-2 px-3 rounded-lg font-semibold transition-all ${
-                  recurring === "yes"
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-400 text-gray-700 hover:bg-gray-500'
-                }`}
-              >
-                Recorrente (3x)
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Advertiser Flow Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
         <div className="max-w-6xl mx-auto">
@@ -313,6 +282,33 @@ export default function KadehAdsFull() {
             <div className="bg-white rounded-lg p-8 text-gray-900 space-y-4 overflow-y-auto max-h-full">
               <h3 className="text-2xl font-bold">Calcule seu Investimento - 4 Variáveis</h3>
               
+              {/* Recurrence Selector */}
+              <div>
+                <label className="block text-sm font-semibold mb-3">Tipo de Contratação</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setRecurring("no")}
+                    className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                      recurring === "no"
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    Uma única vez
+                  </button>
+                  <button
+                    onClick={() => setRecurring("yes")}
+                    className={`py-2 px-3 rounded-lg font-semibold transition-all ${
+                      recurring === "yes"
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    Recorrente (3x)
+                  </button>
+                </div>
+              </div>
+
               {/* Duration Selector */}
               <div>
                 <label className="block text-sm font-semibold mb-3">Duração da Campanha</label>
