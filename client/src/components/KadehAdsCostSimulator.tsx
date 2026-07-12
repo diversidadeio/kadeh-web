@@ -163,6 +163,29 @@ export function KadehAdsCostSimulator() {
           Simulador de Custos
         </h2>
 
+        {/* Legend for Recurring Pricing */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 mb-6 rounded">
+          <div className="flex items-start gap-3">
+            <div className="text-2xl">💰</div>
+            <div className="flex-1">
+              <h3 className="font-bold text-green-900 mb-2">Opção de Recorrência com 50% OFF</h3>
+              <p className="text-sm text-green-800 mb-3">
+                Contratar 3 pacotes consecutivos com desconto de 50% mantém sua campanha sempre ativa!
+              </p>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="bg-white p-2 rounded">
+                  <span className="font-semibold text-green-900">Sem Recorrência:</span>
+                  <div className="text-xs text-green-700">Valor único por campanha</div>
+                </div>
+                <div className="bg-white p-2 rounded">
+                  <span className="font-semibold text-green-900">Com Recorrência:</span>
+                  <div className="text-xs text-green-700">3 pacotes com 50% desconto</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Duration Selection */}
         <div className="mb-8">
           <label className="block text-sm font-semibold text-gray-700 mb-4">
