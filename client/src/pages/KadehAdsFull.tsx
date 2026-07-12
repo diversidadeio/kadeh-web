@@ -31,10 +31,10 @@ export default function KadehAdsFull() {
 
   // Preços fixos por duração da campanha (novos valores)
   const durationPrices: { [key: number]: number } = {
-    1: 1000,    // 1 dia: R$ 1.000,00
-    3: 2700,    // 3 dias: R$ 2.700,00
-    5: 4000,    // 5 dias: R$ 4.000,00
-    7: 4900,    // 7 dias: R$ 4.900,00
+    1: 1500,    // 1 dia: R$ 1.500,00
+    3: 4000,    // 3 dias: R$ 4.000,00
+    5: 5000,    // 5 dias: R$ 5.000,00
+    7: 6300,    // 7 dias: R$ 6.300,00
   };
 
   // Multiplicadores por quantidade de lojas
