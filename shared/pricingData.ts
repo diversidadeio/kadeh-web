@@ -5,10 +5,10 @@
  */
 
 export const DURATION_PRICES = {
-  "1day": 1000,
-  "3days": 2700,
-  "5days": 4000,
-  "7days": 4900,
+  "1day": 4000,
+  "3days": 10800,
+  "5days": 16000,
+  "7days": 19600,
 } as const;
 
 export const STORE_MULTIPLIERS = {
@@ -19,10 +19,18 @@ export const STORE_MULTIPLIERS = {
 } as const;
 
 export const PRODUCT_PACKAGES = {
-  "1": 100,
-  "3": 270,
-  "5": 350,
-  "10": 500,
+  "1": 400,
+  "3": 1080,
+  "5": 1400,
+  "10": 2000,
+} as const;
+
+// Recurring subscription: 3 packages with 50% discount
+export const RECURRING_PACKAGES = {
+  "1": 600, // 3 × 400 × 0.5
+  "3": 1620, // 3 × 1080 × 0.5
+  "5": 2100, // 3 × 1400 × 0.5
+  "10": 3000, // 3 × 2000 × 0.5
 } as const;
 
 export const DURATION_LABELS = {
@@ -49,6 +57,7 @@ export const PRODUCT_LABELS = {
 export type DurationType = keyof typeof DURATION_PRICES;
 export type StoreType = keyof typeof STORE_MULTIPLIERS;
 export type ProductType = keyof typeof PRODUCT_PACKAGES;
+export type RecurringType = "yes" | "no";
 
 /**
  * Calcula o custo total da campanha
@@ -73,7 +82,28 @@ export const PRICING_DATA = {
   durations: DURATION_PRICES,
   stores: STORE_MULTIPLIERS,
   products: PRODUCT_PACKAGES,
+  recurring: RECURRING_PACKAGES,
   durationLabels: DURATION_LABELS,
   storeLabels: STORE_LABELS,
   productLabels: PRODUCT_LABELS,
 } as const;
+
+/**
+ * Calcula o custo com opção de recorrência
+ * Recorrência: 3 pacotes com 50% de desconto
+ */
+export function calculateCampaignCostWithRecurring(
+  duration: DurationType,
+  stores: StoreType,
+  products: ProductType,
+  recurring: RecurringType = "no"
+): number {
+  const baseCost = calculateCampaignCost(duration, stores, products);
+  
+  if (recurring === "yes") {
+    // 3 pacotes com 50% de desconto
+    return baseCost * 3 * 0.5;
+  }
+  
+  return baseCost;
+}

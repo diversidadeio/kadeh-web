@@ -3,13 +3,16 @@ import {
   DURATION_PRICES,
   STORE_MULTIPLIERS,
   PRODUCT_PACKAGES,
+  RECURRING_PACKAGES,
   DURATION_LABELS,
   STORE_LABELS,
   PRODUCT_LABELS,
   calculateCampaignCost,
+  calculateCampaignCostWithRecurring,
   type DurationType,
   type StoreType,
   type ProductType,
+  type RecurringType,
 } from "@shared/pricingData";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -19,8 +22,11 @@ export function KadehAdsCostSimulator() {
   const [duration, setDuration] = useState<DurationType>("1day");
   const [stores, setStores] = useState<StoreType>("1-5");
   const [products, setProducts] = useState<ProductType>("1");
+  const [recurring, setRecurring] = useState<RecurringType>("no");
 
-  const totalCost = calculateCampaignCost(duration, stores, products);
+  const totalCost = calculateCampaignCostWithRecurring(duration, stores, products, recurring);
+  const baseCost = calculateCampaignCost(duration, stores, products);
+  const recurringCost = recurring === "yes" ? baseCost * 3 * 0.5 : baseCost;
   const durationPrice = DURATION_PRICES[duration];
   const storeMultiplier = STORE_MULTIPLIERS[stores];
   const productPrice = PRODUCT_PACKAGES[products];
