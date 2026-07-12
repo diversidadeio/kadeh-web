@@ -334,17 +334,54 @@ export function KadehAdsCostSimulator() {
                 R${productPrice.toLocaleString("pt-BR")}
               </span>
             </div>
+
+            {recurring === "yes" && (
+              <>
+                <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
+                  <span className="text-green-800">
+                    Valor sem desconto (1 campanha)
+                  </span>
+                  <span className="font-semibold text-gray-500 line-through">
+                    R${baseCost.toLocaleString("pt-BR")}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
+                  <span className="text-green-800">
+                    Recorrência (3 pacotes × 50% OFF)
+                  </span>
+                  <span className="font-semibold text-green-600">
+                    R${totalCost.toLocaleString("pt-BR")}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
+                  <span className="text-green-800">
+                    Economia total
+                  </span>
+                  <span className="font-semibold text-green-600">
+                    -R${(baseCost * 3 - totalCost).toLocaleString("pt-BR")}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Total */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4 text-white">
-            <div className="text-sm opacity-90 mb-1">Custo Total da Campanha</div>
+          <div className={`rounded-lg p-4 text-white ${
+            recurring === "yes"
+              ? "bg-gradient-to-r from-green-600 to-emerald-600"
+              : "bg-gradient-to-r from-blue-600 to-indigo-600"
+          }`}>
+            <div className="text-sm opacity-90 mb-1">
+              {recurring === "yes" ? "Custo Total com Recorrência (3 pacotes)" : "Custo Total da Campanha"}
+            </div>
             <div className="text-3xl font-bold">
               R${totalCost.toLocaleString("pt-BR")}
             </div>
             <div className="text-xs opacity-75 mt-2">
-              Fórmula: (R${durationPrice} × {storeMultiplier}) + R$
-              {productPrice} = R${totalCost.toLocaleString("pt-BR")}
+              {recurring === "yes"
+                ? `Fórmula: ((R$${durationPrice} × ${storeMultiplier}) + R$${productPrice}) × 3 × 0.5 = R$${totalCost.toLocaleString("pt-BR")}`
+                : `Fórmula: (R$${durationPrice} × ${storeMultiplier}) + R$${productPrice} = R$${totalCost.toLocaleString("pt-BR")}`
+              }
             </div>
           </div>
         </div>
