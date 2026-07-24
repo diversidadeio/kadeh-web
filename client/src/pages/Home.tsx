@@ -120,8 +120,8 @@ export default function Home() {
         subtitle={t.hero.description}
         primaryCTA={t.header.requestDemo}
         secondaryCTA={t.hero.viewSolutions}
-        imageUrl="https://files.manuscdn.com/user_upload_by_module/session_file/310419663028736640/xXOvSTrqbBQYstKf.png"
-        imageAlt="Navegação indoor com IA"
+        imageUrl="/images/app-screenshot.png"
+        imageAlt="App Kadeh - Navegação Indoor Inteligente"
       />
 
       {/* O que a Kadeh entrega */}

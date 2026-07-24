@@ -83,11 +83,11 @@ export default function Hero({
           </div>
 
           {/* Right: Image */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex justify-center items-center">
             <img
               src={imageUrl}
               alt={imageAlt}
-              className="w-full h-auto rounded-lg shadow-lg"
+              className="h-[520px] w-auto object-contain drop-shadow-2xl"
             />
           </div>
         </div>
