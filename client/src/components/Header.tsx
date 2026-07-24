@@ -19,9 +19,7 @@ export default function Header() {
 
   const navLinks = [
     { href: "/#solucoes", label: t.header.solutions },
-    { href: "/picking", label: t.header.picking },
-    { href: "/smart-layout", label: t.header.smartLayout },
-    { href: "/data-intelligence", label: t.header.intelligence },
+    { href: "/varejo", label: "Varejo" },
     { href: "/how-it-works", label: t.header.howItWorks },
     { href: "/media", label: t.header.media },
     { href: "/faq", label: t.header.faq },

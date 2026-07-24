@@ -45,6 +45,7 @@ export default function Footer() {
               <li><Link href={`/${language}/#solucoes`} className="hover:text-primary transition-colors">{t.events}</Link></li>
               <li><Link href={`/${language}/#solucoes`} className="hover:text-primary transition-colors">{t.healthcare}</Link></li>
               <li><Link href={`/${language}/#solucoes`} className="hover:text-primary transition-colors">{t.localization}</Link></li>
+              <li><Link href={`/${language}/varejo`} className="hover:text-primary transition-colors">Varejo</Link></li>
               <li><Link href={`/${language}/picking`} className="hover:text-primary transition-colors">{t.picking}</Link></li>
               <li><Link href={`/${language}/smart-layout`} className="hover:text-primary transition-colors">{t.smartLayout}</Link></li>
               <li><Link href={`/${language}/data-intelligence`} className="hover:text-primary transition-colors">{t.intelligence}</Link></li>
