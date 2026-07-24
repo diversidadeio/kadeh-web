@@ -193,17 +193,6 @@ export function KadehAdsCostSimulator() {
           </label>
           <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() => setRecurring("no")}
-              className={`p-3 rounded-lg font-medium transition-all ${
-                recurring === "no"
-                  ? "bg-blue-600 text-white shadow-lg scale-105"
-                  : "bg-white text-gray-700 border border-gray-200 hover:border-blue-400"
-              }`}
-            >
-              <div className="text-sm">Sem Recorrência</div>
-              <div className="text-xs opacity-75 mt-1">Valor único</div>
-            </button>
-            <button
               onClick={() => setRecurring("yes")}
               className={`p-3 rounded-lg font-medium transition-all ${
                 recurring === "yes"
@@ -213,6 +202,17 @@ export function KadehAdsCostSimulator() {
             >
               <div className="text-sm">Com Recorrência</div>
               <div className="text-xs opacity-75 mt-1">3 pacotes -50%</div>
+            </button>
+            <button
+              onClick={() => setRecurring("no")}
+              className={`p-3 rounded-lg font-medium transition-all ${
+                recurring === "no"
+                  ? "bg-blue-600 text-white shadow-lg scale-105"
+                  : "bg-white text-gray-700 border border-gray-200 hover:border-blue-400"
+              }`}
+            >
+              <div className="text-sm">Sem Recorrência</div>
+              <div className="text-xs opacity-75 mt-1">Valor único</div>
             </button>
           </div>
         </div>
