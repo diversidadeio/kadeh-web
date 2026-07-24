@@ -26,7 +26,7 @@ export function KadehAdsCostSimulator() {
 
   const totalCost = calculateCampaignCostWithRecurring(duration, stores, products, recurring);
   const baseCost = calculateCampaignCost(duration, stores, products);
-  const recurringCost = recurring === "yes" ? baseCost * 3 * 0.5 : baseCost;
+  const fullPrice = Math.round(baseCost * 1.5); // Valor sem recorrência (cheio)
   const durationPrice = DURATION_PRICES[duration];
   const storeMultiplier = STORE_MULTIPLIERS[stores];
   const productPrice = PRODUCT_PACKAGES[products];
@@ -339,15 +339,15 @@ export function KadehAdsCostSimulator() {
               <>
                 <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
                   <span className="text-green-800">
-                    Valor sem desconto (1 campanha)
+                    Valor sem recorrência
                   </span>
                   <span className="font-semibold text-gray-500 line-through">
-                    R${baseCost.toLocaleString("pt-BR")}
+                    R${fullPrice.toLocaleString("pt-BR")}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
                   <span className="text-green-800">
-                    Recorrência (3 pacotes × 50% OFF)
+                    Com recorrência (desconto aplicado)
                   </span>
                   <span className="font-semibold text-green-600">
                     R${totalCost.toLocaleString("pt-BR")}
@@ -355,10 +355,10 @@ export function KadehAdsCostSimulator() {
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-green-200 bg-green-50 px-2 rounded">
                   <span className="text-green-800">
-                    Economia total
+                    Economia
                   </span>
                   <span className="font-semibold text-green-600">
-                    -R${(baseCost * 3 - totalCost).toLocaleString("pt-BR")}
+                    -R${(fullPrice - totalCost).toLocaleString("pt-BR")}
                   </span>
                 </div>
               </>
@@ -372,15 +372,15 @@ export function KadehAdsCostSimulator() {
               : "bg-gradient-to-r from-blue-600 to-indigo-600"
           }`}>
             <div className="text-sm opacity-90 mb-1">
-              {recurring === "yes" ? "Custo Total com Recorrência (3 pacotes)" : "Custo Total da Campanha"}
+              {recurring === "yes" ? "Custo Total com Recorrência" : "Custo Total da Campanha"}
             </div>
             <div className="text-3xl font-bold">
               R${totalCost.toLocaleString("pt-BR")}
             </div>
             <div className="text-xs opacity-75 mt-2">
               {recurring === "yes"
-                ? `Fórmula: ((R$${durationPrice} × ${storeMultiplier}) + R$${productPrice}) × 3 × 0.5 = R$${totalCost.toLocaleString("pt-BR")}`
-                : `Fórmula: (R$${durationPrice} × ${storeMultiplier}) + R$${productPrice} = R$${totalCost.toLocaleString("pt-BR")}`
+                ? `Valor com desconto de recorrência aplicado`
+                : `Fórmula: ((R$${durationPrice} × ${storeMultiplier}) + R$${productPrice}) × 1.5 = R$${totalCost.toLocaleString("pt-BR")}`
               }
             </div>
           </div>

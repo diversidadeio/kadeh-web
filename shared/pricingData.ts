@@ -90,7 +90,8 @@ export const PRICING_DATA = {
 
 /**
  * Calcula o custo com opção de recorrência
- * Recorrência: 3 pacotes com 50% de desconto
+ * Sem recorrência: valor cheio (baseCost × 1.5)
+ * Com recorrência: valor com desconto (baseCost) - sempre menor
  */
 export function calculateCampaignCostWithRecurring(
   duration: DurationType,
@@ -101,9 +102,10 @@ export function calculateCampaignCostWithRecurring(
   const baseCost = calculateCampaignCost(duration, stores, products);
   
   if (recurring === "yes") {
-    // 3 pacotes com 50% de desconto
-    return baseCost * 3 * 0.5;
+    // Com recorrência: valor com desconto (menor)
+    return baseCost;
   }
   
-  return baseCost;
+  // Sem recorrência: valor cheio (maior)
+  return Math.round(baseCost * 1.5);
 }
