@@ -63,6 +63,23 @@ export default function Varejo() {
       ],
     },
     {
+      id: "localiza",
+      title: "Kadeh Localiza",
+      subtitle: "Navegação indoor para Mercados e Museus",
+      description:
+        "Rotas precisas dentro de Mercados Municipais e Museus. Selecione múltiplos boxes, deixe a IA sugerir produtos complementares e explore obras com popups informativos — tudo na palma da mão.",
+      icon: <MapPin className="w-10 h-10 text-white" />,
+      color: "from-blue-500 to-blue-700",
+      hoverColor: "hover:from-blue-600 hover:to-blue-800",
+      href: `${prefix}/kadeh-localiza`,
+      features: [
+        "Rotas entre boxes no Mercado Municipal",
+        "Agente de IA para sugestão de compras",
+        "Popup de informações de obras em Museus",
+        "Banheiros, saídas, táxis e aplicativos",
+      ],
+    },
+    {
       id: "intelligence",
       title: "Kadeh Intelligence",
       subtitle: "Analytics on-time para varejo",
