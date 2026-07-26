@@ -229,6 +229,15 @@ export default function KadehLocaliza() {
               </p>
             </div>
 
+            {/* Hero Image - Mercado Municipal */}
+            <div className="mb-12 rounded-3xl overflow-hidden shadow-xl">
+              <img
+                src="/manus-storage/mercado-municipal_4dbcefe6.jpg"
+                alt="Pessoas visitando um mercado municipal com smartphones para navegação"
+                className="w-full h-80 object-cover"
+              />
+            </div>
+
             {/* Feature Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
               {mercadoFeatures.map((feature, index) => (
@@ -324,6 +333,15 @@ export default function KadehLocaliza() {
                 história no momento certo, no lugar certo, com roteiros que
                 respeitam seu tempo e seus interesses.
               </p>
+            </div>
+
+            {/* Hero Image - Museu */}
+            <div className="mb-12 rounded-3xl overflow-hidden shadow-xl">
+              <img
+                src="/manus-storage/museu-visita_4c8dba3f.jpg"
+                alt="Visitantes em museu usando smartphones para acessar informações das obras"
+                className="w-full h-80 object-cover"
+              />
             </div>
 
             {/* Feature Cards */}
