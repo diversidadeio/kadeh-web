@@ -227,7 +227,6 @@ export default function DataDeletion() {
                       { value: "app_android", label: "App Android" },
                       { value: "app_ios", label: "App iOS (iPhone)" },
                       { value: "web", label: "Site Web" },
-                      { value: "other", label: "Outro" },
                     ].map((opt) => (
                       <button
                         key={opt.value}
