@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Shield, Mail, MapPin, ChevronDown, ChevronUp } from "lucide-react";
+import { Shield, Mail, MapPin, ChevronDown, ChevronUp, Search, X } from "lucide-react";
 import { useState } from "react";
 
 const sections = [
@@ -270,6 +270,18 @@ const sections = [
 
 export default function PrivacyPolicy() {
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredSections = searchQuery.trim()
+    ? sections.filter((s) => {
+        const q = searchQuery.toLowerCase();
+        // Search in title
+        if (s.title.toLowerCase().includes(q)) return true;
+        // Search in content (convert JSX to string via a simple approach)
+        const contentStr = JSON.stringify(s.content).toLowerCase();
+        return contentStr.includes(q);
+      })
+    : sections;
 
   return (
     <div className="min-h-screen bg-white">
@@ -305,11 +317,49 @@ export default function PrivacyPolicy() {
             A Kadeh está comprometida com a privacidade, com a segurança das informações e com o tratamento transparente e responsável de dados pessoais, em conformidade com a <strong>Lei nº 13.709/2018 — LGPD</strong> e com as demais normas aplicáveis.
           </p>
         </div>
+
+        {/* Search Field */}
+        <div className="mt-6 relative">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <Search className="w-5 h-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setOpenSection(null);
+            }}
+            placeholder="Buscar na política de privacidade... (ex: localização, cookies, exclusão)"
+            className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-blue-500 transition-colors bg-white shadow-sm"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(""); setOpenSection(null); }}
+              className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="mt-2 text-sm text-gray-500 px-1">
+            {filteredSections.length === 0
+              ? "Nenhuma seção encontrada para este termo."
+              : `${filteredSections.length} seção${filteredSections.length > 1 ? "ões" : ""} encontrada${filteredSections.length > 1 ? "s" : ""} para "${searchQuery}"`}
+          </p>
+        )}
       </section>
 
       {/* Sections accordion */}
       <section className="max-w-4xl mx-auto px-4 pb-16 space-y-3">
-        {sections.map((section) => (
+        {filteredSections.length === 0 && searchQuery ? (
+          <div className="text-center py-16 text-gray-500">
+            <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <p className="text-lg font-medium">Nenhum resultado encontrado</p>
+            <p className="text-sm mt-1">Tente buscar por outro termo, como "dados", "localização" ou "direitos".</p>
+          </div>
+        ) : filteredSections.map((section) => (
           <div key={section.id} className="border border-gray-200 rounded-2xl overflow-hidden">
             <button
               className="w-full flex items-center justify-between px-6 py-5 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
