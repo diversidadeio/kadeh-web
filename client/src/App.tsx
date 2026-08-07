@@ -9,6 +9,7 @@ import Varejo from "./pages/Varejo";
 import KadehLocaliza from "./pages/KadehLocaliza";
 import Picking from "./pages/Picking";
 import DataDeletion from "./pages/DataDeletion";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import SmartLayout from "./pages/SmartLayout";
 import DataIntelligence from "./pages/DataIntelligence";
 import HowItWorks from "./pages/HowItWorks";
@@ -123,6 +124,10 @@ function Router() {
       <Route path="/picking" component={Picking} />
       <Route path="/exclusao-de-dados" component={DataDeletion} />
       <Route path="/data-deletion" component={DataDeletion} />
+      <Route path="/politica-de-privacidade" component={PrivacyPolicy} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/politica-de-privacidade" component={PrivacyPolicy} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/smart-layout" component={SmartLayout} />
       <Route path="/data-intelligence" component={DataIntelligence} />
       <Route path="/media" component={Media} />
