@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import {
   Shield,
   Trash2,
-  Download,
   CheckCircle,
   AlertCircle,
   Smartphone,
@@ -34,7 +33,7 @@ export default function DataDeletion() {
     name: "",
     email: "",
     phone: "",
-    requestType: "full_deletion" as "full_deletion" | "partial_deletion" | "data_export",
+    requestType: "full_deletion" as "full_deletion",
     platform: "app_android" as "app_android" | "app_ios" | "web" | "other",
     dataToDelete: [] as string[],
     reason: "",
@@ -62,10 +61,6 @@ export default function DataDeletion() {
     setError("");
     if (!form.name || !form.email) {
       setError("Nome e e-mail são obrigatórios.");
-      return;
-    }
-    if (form.requestType === "partial_deletion" && form.dataToDelete.length === 0) {
-      setError("Selecione ao menos uma categoria de dados para exclusão parcial.");
       return;
     }
     submitMutation.mutate(form);
@@ -213,53 +208,16 @@ export default function DataDeletion() {
                 </div>
 
                 {/* Tipo de solicitação */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Tipo de solicitação</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {[
-                      { value: "full_deletion", icon: <Trash2 className="w-5 h-5" />, label: "Excluir tudo", desc: "Remove todos os seus dados permanentemente" },
-                      { value: "partial_deletion", icon: <Trash2 className="w-5 h-5" />, label: "Exclusão parcial", desc: "Escolha quais dados excluir" },
-                      { value: "data_export", icon: <Download className="w-5 h-5" />, label: "Exportar dados", desc: "Receba uma cópia dos seus dados" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setForm({ ...form, requestType: opt.value as typeof form.requestType })}
-                        className={`p-4 rounded-xl border-2 text-left transition-all ${
-                          form.requestType === opt.value
-                            ? "border-blue-600 bg-blue-50"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <div className={`mb-2 ${form.requestType === opt.value ? "text-blue-600" : "text-gray-500"}`}>
-                          {opt.icon}
-                        </div>
-                        <p className="font-semibold text-sm text-gray-900">{opt.label}</p>
-                        <p className="text-xs text-gray-500 mt-1">{opt.desc}</p>
-                      </button>
-                    ))}
+                {/* Aviso de exclusão total */}
+                <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+                  <Trash2 className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-red-800 text-sm">Exclusão completa e permanente</p>
+                    <p className="text-red-700 text-sm mt-1">
+                      Todos os seus dados pessoais, histórico de navegação, listas de compras, dados de localização e informações de conta serão <strong>removidos permanentemente</strong> de nossos servidores. Esta ação não pode ser desfeita.
+                    </p>
                   </div>
                 </div>
-
-                {/* Categorias (exclusão parcial) */}
-                {form.requestType === "partial_deletion" && (
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">Dados a excluir</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {DATA_CATEGORIES.map((cat) => (
-                        <label key={cat} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
-                          <input
-                            type="checkbox"
-                            checked={form.dataToDelete.includes(cat)}
-                            onChange={() => handleToggleData(cat)}
-                            className="w-4 h-4 text-blue-600"
-                          />
-                          <span className="text-sm text-gray-700">{cat}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Plataforma */}
                 <div className="space-y-3">
