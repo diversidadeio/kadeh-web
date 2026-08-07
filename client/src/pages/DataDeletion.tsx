@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const DATA_CATEGORIES = [
   "Dados de perfil (nome, e-mail, telefone)",
@@ -262,7 +263,17 @@ export default function DataDeletion() {
                   disabled={submitMutation.isPending}
                   className="w-full bg-[#1a3a5c] hover:bg-[#0d2d4a] text-white py-3 text-base font-semibold"
                 >
-                  {submitMutation.isPending ? "Enviando..." : "Enviar Solicitação"}
+                  {submitMutation.isPending ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Enviando solicitação...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <Trash2 className="w-5 h-5" />
+                      Enviar Solicitação de Exclusão
+                    </span>
+                  )}
                 </Button>
 
                 <p className="text-xs text-gray-400 text-center">
