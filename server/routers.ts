@@ -15,7 +15,7 @@ import { adsPaymentRouter } from "./adsPaymentRouter";
 import { stripeRouter } from "./stripeRouter";
 import { storeLayoutRouter } from "./storeLayoutRouter";
 import { bulkProductsRouter } from "./bulkProductsRouter";
-import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory } from "../drizzle/schema";
+import { advertisers, advertisements, adPayments, adAnalytics, pricingPlans, correlatedCategories, InsertAdvertiser, InsertAdvertisement, InsertAdPayment, InsertAdAnalytic, InsertPricingPlan, InsertCorrelatedCategory, dataDeletionRequests } from "../drizzle/schema";
 import { getAdvertiserByUserId, getAdvertiserById, getPendingAdvertisers, getApprovedAdvertisers, getActiveAdsByCategory, getAdvertisementById, getAdvertisementsByAdvertiserId, getPricingPlans, getCorrelatedCategories, getAdAnalyticsByAdvertisementId, getPaymentByAdvertisementId, getNextPriorityPosition, createLocationMap, getLocationMapsByUserId, getLocationMapById, createLocationMapNode, getLocationMapNodes, createLocationMapEdge, getLocationMapEdges, createLocationMapLocation, getLocationMapLocations, createLocationMapRoute, getLocationMapRoutes, deleteLocationMapRoute, updateLocationMapRoute } from "./db";
 import { eq, and } from "drizzle-orm";
 
@@ -281,8 +281,83 @@ ${input.message}
   }),
 
   // ============================================================================
-  // KADEH ADS - Advertising System (integrado via adsRouter)
+// KADEH ADS - Advertising System (integrado via adsRouter)
+// ============================================================================
+
   // ============================================================================
+  // DATA DELETION - Solicitações de Exclusão de Dados (LGPD / Google Play / Apple)
+  // ============================================================================
+  dataDeletion: router({
+    // Submeter solicitação de exclusão de dados (público, sem autenticação)
+    submitRequest: publicProcedure
+      .input(z.object({
+        name: z.string().min(2, "Nome é obrigatório"),
+        email: z.string().email("E-mail inválido"),
+        phone: z.string().optional(),
+        requestType: z.enum(["full_deletion", "partial_deletion", "data_export"]),
+        platform: z.enum(["app_android", "app_ios", "web", "other"]),
+        dataToDelete: z.array(z.string()).optional(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = getDb();
+        const token = crypto.randomBytes(32).toString("hex");
+        const db_ = await db;
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30);
+
+        await db_.insert(dataDeletionRequests).values({
+          name: input.name,
+          email: input.email,
+          phone: input.phone,
+          requestType: input.requestType,
+          platform: input.platform,
+          dataToDelete: input.dataToDelete ?? [],
+          reason: input.reason,
+          status: "pending",
+          emailConfirmed: false,
+          confirmationToken: token,
+          dueDate,
+        });
+
+        // Notificar o admin sobre a nova solicitação
+        await notifyOwner({
+          title: `Nova solicitação de exclusão de dados`,
+          content: `${input.name} (${input.email}) solicitou ${input.requestType === "full_deletion" ? "exclusão completa" : input.requestType === "partial_deletion" ? "exclusão parcial" : "exportação"} de dados via ${input.platform}. Prazo: ${dueDate.toLocaleDateString("pt-BR")}.`,
+        });
+
+        return { success: true, message: "Solicitação recebida. Você receberá uma confirmação em até 30 dias." };
+      }),
+
+    // Listar solicitações (apenas admin)
+    listRequests: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user?.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        const db = await getDb();
+        return db.select().from(dataDeletionRequests).orderBy(dataDeletionRequests.createdAt);
+      }),
+
+    // Atualizar status da solicitação (apenas admin)
+    updateStatus: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["pending", "in_progress", "completed", "rejected"]),
+        processingNotes: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        const db = await getDb();
+        await db.update(dataDeletionRequests)
+          .set({
+            status: input.status,
+            processingNotes: input.processingNotes,
+            processedBy: ctx.user.id,
+            processedAt: new Date(),
+          })
+          .where(eq(dataDeletionRequests.id, input.id));
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
@@ -466,3 +541,4 @@ export type AppRouter = typeof appRouter;
       }),
   }),
 */
+import crypto from "crypto";

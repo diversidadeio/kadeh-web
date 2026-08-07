@@ -426,6 +426,42 @@ export type InsertAdPayment = typeof adPayments.$inferInsert;
 // ============================================================================
 // Relations
 // ============================================================================
+// ============================================================================
+// DATA DELETION REQUESTS - Solicitações de Exclusão de Dados (LGPD / Google Play / Apple)
+// ============================================================================
+
+/**
+ * Solicitações de Exclusão de Dados
+ * Conforme exigido pelo Google Play, Apple App Store e LGPD
+ */
+export const dataDeletionRequests = mysqlTable("dataDeletionRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  requestType: mysqlEnum("requestType", ["full_deletion", "partial_deletion", "data_export"]).notNull(),
+  platform: mysqlEnum("platform", ["app_android", "app_ios", "web", "other"]).notNull(),
+  dataToDelete: json("dataToDelete").$type<string[]>(),
+  reason: text("reason"),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "rejected"]).default("pending").notNull(),
+  emailConfirmed: boolean("emailConfirmed").default(false).notNull(),
+  confirmationToken: varchar("confirmationToken", { length: 64 }),
+  confirmedAt: timestamp("confirmedAt"),
+  processedBy: int("processedBy"),
+  processedAt: timestamp("processedAt"),
+  processingNotes: text("processingNotes"),
+  dueDate: timestamp("dueDate").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  emailIdx: index("dataDeletionRequests_email_idx").on(table.email),
+  statusIdx: index("dataDeletionRequests_status_idx").on(table.status),
+  tokenIdx: index("dataDeletionRequests_token_idx").on(table.confirmationToken),
+}));
+
+export type DataDeletionRequest = typeof dataDeletionRequests.$inferSelect;
+export type InsertDataDeletionRequest = typeof dataDeletionRequests.$inferInsert;
+
 
 export const usersRelations = relations(users, ({ many }) => ({
   advertisers: many(advertisers),

@@ -69,6 +69,7 @@ export default function Footer() {
               <li><a href="#" className="hover:text-primary transition-colors">{t.privacy}</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">{t.terms}</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">{t.lgpd}</a></li>
+              <li><Link href={`/${language}/exclusao-de-dados`} className="hover:text-primary transition-colors">Exclusão de Dados</Link></li>
             </ul>
           </div>
         </div>
