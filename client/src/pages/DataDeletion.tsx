@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ const DATA_CATEGORIES = [
 ];
 
 export default function DataDeletion() {
+  const { isAuthenticated, loading } = useAuth({ redirectOnUnauthenticated: true, redirectPath: "/login" });
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -93,6 +95,18 @@ export default function DataDeletion() {
       a: "Seguimos as diretrizes da LGPD, GDPR, Google Play Data Safety e Apple App Store Privacy. Seus dados são criptografados e nunca são vendidos a terceiros.",
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-white">

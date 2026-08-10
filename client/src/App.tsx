@@ -40,6 +40,7 @@ import AdminStoreLayout from "./pages/AdminStoreLayout";
 import AdminBulkProducts from "./pages/AdminBulkProducts";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
+import Login from "./pages/Login";
 import CorridorMapperPage from "./pages/CorridorMapperPage";
 import LocationMapperPage from "./pages/LocationMapperPage";
 
@@ -80,6 +81,7 @@ function Router() {
       <Route path="/pt/admin/bulk-products" component={AdminBulkProducts} />
       <Route path="/pt/admin/dashboard" component={AdminDashboard} />
       <Route path="/pt/admin/login" component={AdminLogin} />
+      <Route path="/pt/login" component={Login} />
       <Route path="/pt/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/pt/location-mapper" component={LocationMapperPage} />
 
@@ -116,6 +118,7 @@ function Router() {
       <Route path="/en/admin/bulk-products" component={AdminBulkProducts} />
       <Route path="/en/admin/dashboard" component={AdminDashboard} />
       <Route path="/en/admin/login" component={AdminLogin} />
+      <Route path="/en/login" component={Login} />
       <Route path="/en/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/en/location-mapper" component={LocationMapperPage} />
 
@@ -146,6 +149,7 @@ function Router() {
       <Route path="/admin/bulk-products" component={AdminBulkProducts} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/login" component={Login} />
       <Route path="/location-mapper" component={LocationMapperPage} />
 
       <Route path="/404" component={NotFound} />

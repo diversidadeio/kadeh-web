@@ -262,23 +262,25 @@ export default function Home() {
               href="https://apps.apple.com/br/app/kadeh-shopping/id6747453355"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
+              className="inline-flex hover:opacity-80 transition-opacity items-center"
             >
-              <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.05 13.5c-.91 0-1.82.55-2.25 1.51.5.89 1.86 1.99 4.25 1.99 1.5 0 2.89-.6 3.63-1.5-.74-.9-2.23-1.99-3.63-1.99zm-4.3 0c-.91 0-1.82.55-2.25 1.51.5.89 1.86 1.99 4.25 1.99 1.5 0 2.89-.6 3.63-1.5-.74-.9-2.23-1.99-3.63-1.99z"/>
-              </svg>
-              {t.appDownload.appStore}
+              <img 
+                src="/images/app-store-badge.png" 
+                alt={t.appDownload.appStore}
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </a>
             <a
               href="https://play.google.com/store/apps/details?id=com.br.kadeheventos.lusa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+              className="inline-flex hover:opacity-80 transition-opacity items-center"
             >
-              <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 13.5v8.75c0 .41.34.75.75.75h16.5c.41 0 .75-.34.75-.75V13.5M3.75 3h16.5c.41 0 .75.34.75.75v9h-18v-9c0-.41.34-.75.75-.75z"/>
-              </svg>
-              {t.appDownload.googlePlay}
+              <img 
+                src="/images/google-play.png" 
+                alt={t.appDownload.googlePlay}
+                className="h-14 sm:h-16 w-auto object-contain"
+              />
             </a>
           </div>
         </div>
