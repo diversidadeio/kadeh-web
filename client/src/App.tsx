@@ -41,6 +41,7 @@ import AdminBulkProducts from "./pages/AdminBulkProducts";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import CorridorMapperPage from "./pages/CorridorMapperPage";
 import LocationMapperPage from "./pages/LocationMapperPage";
 
@@ -82,6 +83,7 @@ function Router() {
       <Route path="/pt/admin/dashboard" component={AdminDashboard} />
       <Route path="/pt/admin/login" component={AdminLogin} />
       <Route path="/pt/login" component={Login} />
+      <Route path="/pt/redefinir-senha" component={ResetPassword} />
       <Route path="/pt/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/pt/location-mapper" component={LocationMapperPage} />
 
@@ -119,6 +121,7 @@ function Router() {
       <Route path="/en/admin/dashboard" component={AdminDashboard} />
       <Route path="/en/admin/login" component={AdminLogin} />
       <Route path="/en/login" component={Login} />
+      <Route path="/en/reset-password" component={ResetPassword} />
       <Route path="/en/corridor-mapper" component={CorridorMapperPage} />
       <Route path="/en/location-mapper" component={LocationMapperPage} />
 
@@ -150,6 +153,8 @@ function Router() {
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/login" component={Login} />
+      <Route path="/redefinir-senha" component={ResetPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/location-mapper" component={LocationMapperPage} />
 
       <Route path="/404" component={NotFound} />

@@ -51,9 +51,9 @@ export default function HowItWorks() {
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <img
-            src="/images/kadeh-app-users.png"
-            alt={language === 'pt' ? 'Usuários do App Kadeh' : 'Kadeh App Users'}
-            className="w-full h-auto rounded-lg shadow-lg object-cover"
+            src="/images/telaapp.png"
+            alt={language === 'pt' ? 'Aplicativo Kadeh' : 'Kadeh App'}
+            className="w-full h-auto max-h-[600px] object-contain drop-shadow-2xl scale-110 sm:scale-100"
           />
         </div>
       </section>

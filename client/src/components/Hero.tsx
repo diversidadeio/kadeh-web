@@ -87,7 +87,7 @@ export default function Hero({
             <img
               src={imageUrl}
               alt={imageAlt}
-              className="h-[520px] w-auto object-contain drop-shadow-2xl rounded-[2.5rem]"
+              className="h-[650px] w-auto object-contain drop-shadow-2xl scale-110"
             />
           </div>
         </div>

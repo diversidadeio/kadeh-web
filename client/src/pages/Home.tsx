@@ -120,7 +120,7 @@ export default function Home() {
         subtitle={t.hero.description}
         primaryCTA={t.header.requestDemo}
         secondaryCTA={t.hero.viewSolutions}
-        imageUrl="/images/app-kadeh-lojas-mercados.png"
+        imageUrl="/images/telaapp.png"
         imageAlt="App Kadeh - Navegação Indoor Inteligente"
       />
 

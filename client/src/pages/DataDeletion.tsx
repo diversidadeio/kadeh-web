@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { useLocation } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
   Globe,
   ChevronDown,
   ChevronUp,
+  LogOut,
 } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
@@ -31,7 +33,48 @@ const DATA_CATEGORIES = [
 ];
 
 export default function DataDeletion() {
-  const { isAuthenticated, loading } = useAuth({ redirectOnUnauthenticated: true, redirectPath: "/login" });
+  const [, setLocation] = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        setLocation("/login");
+      } else {
+        setIsAuthenticated(true);
+        if (session.user) {
+          setForm(prev => ({
+            ...prev,
+            email: session.user.email || "",
+            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || "",
+            phone: session.user.phone || session.user.user_metadata?.phone || ""
+          }));
+        }
+      }
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setLocation("/login");
+      } else {
+        setIsAuthenticated(true);
+        if (session.user) {
+          setForm(prev => ({
+            ...prev,
+            email: session.user.email || "",
+            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || "",
+            phone: session.user.phone || session.user.user_metadata?.phone || ""
+          }));
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setLocation]);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -45,10 +88,7 @@ export default function DataDeletion() {
   const [error, setError] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const submitMutation = trpc.dataDeletion.submitRequest.useMutation({
-    onSuccess: () => setSubmitted(true),
-    onError: (err) => setError(err.message),
-  });
+  const [deleting, setDeleting] = useState(false);
 
   const handleToggleData = (item: string) => {
     setForm((prev) => ({
@@ -59,14 +99,51 @@ export default function DataDeletion() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!form.name || !form.email) {
       setError("Nome e e-mail são obrigatórios.");
       return;
     }
-    submitMutation.mutate(form);
+
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError("Sessão expirada. Faça login novamente.");
+        setDeleting(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || "Erro ao processar solicitação. Tente novamente.");
+        setDeleting(false);
+        return;
+      }
+
+      // Deslogar localmente e mostrar confirmação
+      await supabase.auth.signOut();
+      setSubmitted(true);
+    } catch (err) {
+      setError("Erro de conexão. Verifique sua internet e tente novamente.");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const faqs = [
@@ -193,8 +270,9 @@ export default function DataDeletion() {
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                         placeholder="Seu nome"
-                        className="mt-1"
+                        className="mt-1 bg-gray-50 text-gray-500 cursor-not-allowed focus-visible:ring-0 focus-visible:ring-offset-0"
                         required
+                        readOnly
                       />
                     </div>
                     <div>
@@ -205,8 +283,9 @@ export default function DataDeletion() {
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         placeholder="seu@email.com"
-                        className="mt-1"
+                        className="mt-1 bg-gray-50 text-gray-500 cursor-not-allowed focus-visible:ring-0 focus-visible:ring-offset-0"
                         required
+                        readOnly
                       />
                     </div>
                   </div>
@@ -217,7 +296,8 @@ export default function DataDeletion() {
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="(11) 99999-9999"
-                      className="mt-1"
+                      className="mt-1 bg-gray-50 text-gray-500 cursor-not-allowed focus-visible:ring-0 focus-visible:ring-offset-0"
+                      readOnly
                     />
                   </div>
                 </div>
@@ -274,13 +354,13 @@ export default function DataDeletion() {
 
                 <Button
                   type="submit"
-                  disabled={submitMutation.isPending}
+                  disabled={deleting}
                   className="w-full bg-[#1a3a5c] hover:bg-[#0d2d4a] text-white py-3 text-base font-semibold"
                 >
-                  {submitMutation.isPending ? (
+                  {deleting ? (
                     <span className="flex items-center justify-center gap-2">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Enviando solicitação...
+                      Excluindo seus dados...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center gap-2">
@@ -339,6 +419,25 @@ export default function DataDeletion() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Logout */}
+        <div className="mt-12 pt-12 border-t border-gray-200 flex flex-col items-center justify-center">
+          <p className="text-gray-600 mb-4 text-center">
+            Não deseja excluir seus dados? Você pode apenas se desconectar de forma segura.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              setLocation("/login");
+            }}
+            className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            <LogOut className="w-4 h-4" />
+            Desconectar
+          </Button>
         </div>
 
         {/* FAQ */}
