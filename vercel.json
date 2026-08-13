@@ -6,6 +6,10 @@
       "destination": "/api/send-recovery"
     },
     {
+      "source": "/api/delete-user",
+      "destination": "/api/delete-user"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api"
     },

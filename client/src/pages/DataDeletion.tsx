@@ -116,9 +116,7 @@ export default function DataDeletion() {
         return;
       }
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`,
-        {
+      const response = await fetch('/api/delete-user', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
