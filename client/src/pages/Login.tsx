@@ -49,7 +49,7 @@ export default function Login() {
     setResetError(null);
 
     try {
-      const response = await fetch('/api/send-recovery-email', {
+      const response = await fetch('/api/send-recovery', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
