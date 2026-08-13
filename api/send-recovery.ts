@@ -38,8 +38,15 @@ export default async function handler(req: any, res: any) {
       options: { redirectTo: redirectTo || "https://kadeh-web.tawny.vercel.app/redefinir-senha" },
     });
 
-    if (linkError || !data?.properties?.action_link) {
-      console.error("[Recovery] Erro ao gerar link:", linkError?.message || "Link vazio");
+    if (linkError) {
+      console.error("[Recovery] Erro ao gerar link:", linkError.message);
+      if (linkError.message.includes("User not found") || linkError.status === 404) {
+        return res.status(404).json({ error: "Este e-mail não está cadastrado." });
+      }
+      return res.status(500).json({ error: "Erro ao gerar link de recuperacao." });
+    }
+
+    if (!data?.properties?.action_link) {
       return res.status(500).json({ error: "Erro ao gerar link de recuperacao." });
     }
 
