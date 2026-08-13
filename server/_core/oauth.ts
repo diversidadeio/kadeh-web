@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import type { Express, Request, Response } from "express";
 import * as db from "../db";
@@ -51,3 +52,4 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 }
+

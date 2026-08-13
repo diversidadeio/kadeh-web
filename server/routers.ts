@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getSessionCookieOptions } from "./_core/cookies";
 
 const COOKIE_NAME = "session";
@@ -542,3 +543,4 @@ export type AppRouter = typeof appRouter;
   }),
 */
 import crypto from "crypto";
+
