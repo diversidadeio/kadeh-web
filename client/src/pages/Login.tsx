@@ -48,22 +48,33 @@ export default function Login() {
     setResetLoading(true);
     setResetError(null);
 
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${window.location.origin}/redefinir-senha`,
-    });
+    try {
+      const response = await fetch('/api/send-recovery-email', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: resetEmail,
+          redirectTo: `${window.location.origin}/redefinir-senha`,
+        }),
+      });
 
-    if (error) {
-      if (error.message.includes("rate limit")) {
-        setResetError("Muitas tentativas. Aguarde alguns minutos e tente novamente.");
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setResetError(result.error || "Erro ao enviar e-mail. Tente novamente.");
+        setResetLoading(false);
       } else {
-        setResetError(error.message);
+        setTela("email-enviado");
+        setResetLoading(false);
       }
-      setResetLoading(false);
-    } else {
-      setTela("email-enviado");
+    } catch (err) {
+      setResetError("Erro de conexão. Verifique sua internet e tente novamente.");
       setResetLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col">
