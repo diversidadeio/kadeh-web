@@ -25,7 +25,7 @@ export const PRICING_UPDATE_EMAIL = {
     <body>
       <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://kadeh-web.tawny.vercel.app/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
+          <img src="https://kadeh.io/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
         </div>
         <div class="header">
           <h1>🎉 Kadeh Ads - Atualização de Preços</h1>
@@ -137,7 +137,7 @@ export const RECURRING_OFFER_EMAIL = {
     <body>
       <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://kadeh-web.tawny.vercel.app/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
+          <img src="https://kadeh.io/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
         </div>
         <div class="header">
           <h1>💰 Economize 50% com Recorrência</h1>
@@ -206,7 +206,7 @@ export const WELCOME_NEW_PRICING_EMAIL = {
     <body>
       <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://kadeh-web.tawny.vercel.app/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
+          <img src="https://kadeh.io/images/logo-kadeh.png" alt="Kadeh" style="max-height: 50px;">
         </div>
         <div class="header">
           <h1>Bem-vindo ao Kadeh Ads!</h1>
