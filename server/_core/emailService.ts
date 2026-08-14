@@ -256,3 +256,105 @@ export function isEmailServiceConfigured(): boolean {
     process.env.SMTP_FROM
   );
 }
+
+export interface ContactFormData {
+  name: string;
+  phone: string;
+  email: string;
+  type: string;
+  companyName?: string;
+  cnpj?: string;
+  contactPreference: string;
+  message?: string;
+}
+
+/**
+ * Enviar email de contato do formulário para a equipe
+ */
+export async function sendContactEmail(data: ContactFormData) {
+  try {
+    const mailer = await Promise.resolve(transporter);
+    
+    const contactType = data.type === "consumer" ? "Consumidor" : "Empresa";
+    const preferenceLabel = data.contactPreference === "whatsapp" ? "WhatsApp" : data.contactPreference === "email" ? "Email" : "Telefone";
+
+    const htmlContent = `
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+            .header { background-color: #1a1a1a; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { background-color: white; padding: 20px; }
+            .footer { background-color: #f0f0f0; padding: 15px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 5px 5px; }
+            .details { background-color: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 4px solid #1a1a1a; }
+            .details-row { margin: 8px 0; }
+            .label { font-weight: bold; color: #1a1a1a; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Novo Contato - Kadeh.io</h1>
+            </div>
+            <div class="content">
+              <p>Você recebeu uma nova mensagem através do formulário de contato do site.</p>
+              
+              <div class="details">
+                <h3 style="color: #1a1a1a; margin-top: 0;">Dados do Contato</h3>
+                <div class="details-row">
+                  <span class="label">Nome:</span> ${data.name}
+                </div>
+                <div class="details-row">
+                  <span class="label">Telefone:</span> ${data.phone}
+                </div>
+                <div class="details-row">
+                  <span class="label">Email:</span> ${data.email}
+                </div>
+                <div class="details-row">
+                  <span class="label">Tipo:</span> ${contactType}
+                </div>
+                <div class="details-row">
+                  <span class="label">Preferência de Contato:</span> ${preferenceLabel}
+                </div>
+                ${data.type === 'business' ? `
+                <div class="details-row">
+                  <span class="label">Empresa:</span> ${data.companyName || "N/A"}
+                </div>
+                <div class="details-row">
+                  <span class="label">CNPJ:</span> ${data.cnpj || "N/A"}
+                </div>
+                ` : ''}
+                ${data.message ? `
+                <div class="details-row">
+                  <span class="label">Mensagem:</span><br/>
+                  <p style="white-space: pre-wrap;">${data.message}</p>
+                </div>
+                ` : ''}
+              </div>
+            </div>
+            <div class="footer">
+              <p>&copy; 2026 Kadeh. Todos os direitos reservados.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: process.env.SMTP_FROM || "noreply@kadeh.io",
+      to: "tecnologia@diversidade.io",
+      replyTo: data.email,
+      subject: \`Novo Contato pelo Site: \${data.name}\`,
+      html: htmlContent,
+    };
+
+    const info = await mailer.sendMail(mailOptions);
+    console.log("[Email] Notificação de contato enviada", info.messageId);
+    return true;
+  } catch (error) {
+    console.error("[Email] Erro ao enviar notificação de contato:", error);
+    return false;
+  }
+}

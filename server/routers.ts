@@ -6,6 +6,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { notifyOwner } from "./_core/notification";
+import { sendContactEmail } from "./_core/emailService";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./db";
 import { adsRouter } from "./adsRouter";
@@ -272,10 +273,14 @@ ${input.message}
 `;
         }
 
+        // Keep notifyOwner just in case they still want push notifications
         await notifyOwner({
           title: `Novo Contato: ${input.name}`,
           content: emailContent,
         });
+
+        // Send actual email to tecnologia@diversidade.io
+        await sendContactEmail(input);
 
         return { success: true };
       }),
