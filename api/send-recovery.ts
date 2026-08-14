@@ -35,7 +35,7 @@ export default async function handler(req: any, res: any) {
     const { data, error: linkError } = await (supabaseAdmin.auth.admin as any).generateLink({
       type: "recovery",
       email: email,
-      options: { redirectTo: redirectTo || "https://kadeh-web.tawny.vercel.app/redefinir-senha" },
+      options: { redirectTo: redirectTo || "https://www.kadeh.io/redefinir-senha" },
     });
 
     if (linkError) {

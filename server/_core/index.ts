@@ -63,7 +63,7 @@ async function startServer() {
       const { data, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
         type: 'recovery',
         email,
-        options: { redirectTo: redirectTo || 'https://kadeh-web.tawny.vercel.app/redefinir-senha' },
+        options: { redirectTo: redirectTo || "https://www.kadeh.io/redefinir-senha" },
       });
 
       if (linkError || !data?.properties?.action_link) {
