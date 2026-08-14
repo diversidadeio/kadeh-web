@@ -273,12 +273,6 @@ ${input.message}
 `;
         }
 
-        // Keep notifyOwner just in case they still want push notifications
-        await notifyOwner({
-          title: `Novo Contato: ${input.name}`,
-          content: emailContent,
-        });
-
         // Send actual email to tecnologia@diversidade.io
         await sendContactEmail(input);
 

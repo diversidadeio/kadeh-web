@@ -344,9 +344,9 @@ export async function sendContactEmail(data: ContactFormData) {
 
     const mailOptions = {
       from: process.env.SMTP_FROM || "noreply@kadeh.io",
-      to: "tecnologia@diversidade.io",
+      to: "tecnologia@diversidade.io, suporte@kadeh.io",
       replyTo: data.email,
-      subject: \`Novo Contato pelo Site: \${data.name}\`,
+      subject: `Novo Contato pelo Site: ${data.name}`,
       html: htmlContent,
     };
 
