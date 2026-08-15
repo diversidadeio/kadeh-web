@@ -40,6 +40,16 @@ export default function Contact() {
     onSuccess: () => {
       setSubmitted(true);
       toast.success("Formulário enviado com sucesso! Entraremos em contato em breve.");
+      
+      // Google Ads Conversion Tag
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag('event', 'conversion', {
+          'send_to': 'AW-18360406366/R4nOCPKm_9scEN6i9rJE',
+          'value': 0.0,
+          'currency': 'BRL'
+        });
+      }
+
       setTimeout(() => {
         setFormData({
           name: "",
